@@ -88,6 +88,22 @@ class FlxVideoSprite extends FlxSprite
 		super.update(elapsed);
 	}
 
+        override public function kill():Void
+        {
+		if (bitmap != null)
+			bitmap.pause();
+
+                super.kill();
+        }
+
+        override public function revive():Void
+        {
+                super.revive();
+
+		if (bitmap != null)
+			bitmap.resume();
+	}
+
 	override public function destroy():Void
 	{
 		if (FlxG.autoPause)
