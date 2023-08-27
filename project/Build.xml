@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+	<pragma once="true" />
+
+	<files id="haxe">
+		<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" unless="linux" />
+	</files>
+
+	<files id="__main__">
+		<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" unless="linux" />
+	</files>
+
+	<target id="haxe">
+		<vflag name="-rpath" value="@executable_path/lib/" if="macos" />
+
+		<section if="windows">
+			<section if="HXCPP_M64">
+				<lib name="${haxelib:hxvlc}/project/vlc/lib/Windows/libvlc.lib" />
+				<lib name="${haxelib:hxvlc}/project/vlc/lib/Windows/libvlccore.lib" />
+			</section>
+		</section>
+
+		<section if="macos">
+			<lib name="${haxelib:hxvlc}/project/vlc/dll/MacOS/lib/libvlc.dylib" />
+			<lib name="${haxelib:hxvlc}/project/vlc/dll/MacOS/lib/libvlccore.dylib" />
+		</section>
+
+		<section if="linux">
+			<lib name="-lvlc" />
+			<lib name="-lvlccore" />
+		</section>
+
+		<section if="android">
+			<lib name="${haxelib:hxvlc}/project/vlc/lib/Android/libvlc-64.so" if="HXCPP_ARM64" />
+			<lib name="${haxelib:hxvlc}/project/vlc/lib/Android/libvlc-v7.so" if="HXCPP_ARMV7" />
+			<lib name="${haxelib:hxvlc}/project/vlc/lib/Android/libvlc-x86.so" if="HXCPP_X86" />
+			<lib name="${haxelib:hxvlc}/project/vlc/lib/Android/libvlc-x86_64.so" if="HXCPP_X86_64" />
+		</section>
+	</target>
+</xml>

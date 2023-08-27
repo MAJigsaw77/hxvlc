@@ -1,0 +1,47 @@
+name: Testing
+on:
+  push:
+    branches: main
+  workflow_dispatch:
+jobs:
+  Job:
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        sample: [flixel-playback, openfl-playback]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+        with:
+          submodules: true
+
+      - name: Setup Haxe
+        uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: 4.3.1
+
+      - name: Installing Dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get install libvlc-dev libvlccore-dev
+
+      - name: Installing Haxe Libraries
+        run: |
+          haxelib install hxcpp --quiet
+          haxelib install lime --quiet
+          haxelib install openfl --quiet
+          haxelib install flixel --quiet
+          haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git ${{github.ref_name}} --quiet
+
+      - name: Building Windows
+        if: matrix.os == 'windows-latest'
+        run: cd samples/${{matrix.sample}} && haxelib run lime build windows -debug
+
+      - name: Building MacOS
+        if: matrix.os == 'macos-latest'
+        run: cd samples/${{matrix.sample}} && haxelib run lime build mac -debug
+
+      - name: Building Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: cd samples/${{matrix.sample}} && haxelib run lime build linux -debug
