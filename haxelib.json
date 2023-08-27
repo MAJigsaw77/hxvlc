@@ -6,8 +6,8 @@
 		"cpp",
 		"haxe",
 		"openfl",
-		"haxeflixel",
-		"libvlc"
+		"libvlc",
+		"haxeflixel"
 	],
 	"description":"A Haxe/OpenFL library for video playback using LibVLC.",
 	"version":"1.0.0",
