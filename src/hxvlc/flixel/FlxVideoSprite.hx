@@ -47,8 +47,8 @@ class FlxVideoSprite extends FlxSprite
 		{
 			if (FileSystem.exists(Sys.getCwd() + location))
 				return bitmap.play(Sys.getCwd() + location, shouldLoop);
-			else
-				return bitmap.play(location, shouldLoop);
+
+			return bitmap.play(location, shouldLoop);
 		}
 		else
 			return false;
