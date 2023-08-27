@@ -38,8 +38,8 @@ class FlxVideo extends Video
 
 		if (FileSystem.exists(Sys.getCwd() + location))
 			return super.play(Sys.getCwd() + location, shouldLoop);
-		else
-			return super.play(location, shouldLoop);
+
+		return super.play(location, shouldLoop);
 	}
 
 	override public function dispose():Void
