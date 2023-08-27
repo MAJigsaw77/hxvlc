@@ -18,7 +18,7 @@ A Haxe/[OpenFL](https://www.openfl.org) library for video playback using [LibVLC
     </section>
     ```
 
-    **(Optional) Defines**
+    **(Optional)** Defines.
     ```xml
     <!-- LibVLC Logging for hxvlc -->
     <haxedef name="HXVLC_LOGGING" if="debug" />
