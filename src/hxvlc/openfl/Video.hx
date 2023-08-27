@@ -140,6 +140,7 @@ class Video extends Bitmap
 	public var onMediaChanged(default, null):Event<Void->Void>;
 	public var onTextureSetup(default, null):Event<Void->Void>;
 
+	@:noPrivateAccess private var oldTime:Float = 0;
 	@:noPrivateAccess private var deltaTime:Float = 0;
 	@:noPrivateAccess private var events:Array<Bool>;
 	@:noPrivateAccess private var pixels:cpp.RawPointer<cpp.UInt8>;
@@ -468,8 +469,8 @@ class Video extends Bitmap
 		{
 			deltaTime += elapsed;
 
-			if (Math.abs(deltaTime) >= 8.3) // 8.(3) means 120 fps in milliseconds...
-				deltaTime = 0;
+			if (Math.abs(deltaTime - oldTime) >= 8.3) // 8.(3) means 120 fps in milliseconds...
+				oldTime = deltaTime;
 			else
 				return;
 
