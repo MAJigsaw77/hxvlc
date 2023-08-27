@@ -14,7 +14,7 @@ A Haxe/[OpenFL](https://www.openfl.org) library for video playback using [LibVLC
 2. Add this code in the **project.xml** file.
     ```xml
     <section if="cpp">
-        <haxelib name="hxvlc" if="desktop || android" />
+    	<haxelib name="hxvlc" if="desktop || android" />
     </section>
     ```
 
