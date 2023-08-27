@@ -187,7 +187,7 @@ class Video extends Bitmap
 
 	public function play(location:String, shouldLoop:Bool = false):Bool
 	{
-		if (location != null && location.indexOf('://') != false)
+		if (location != null && location.indexOf('://') != -1)
 			mediaItem = LibVLC.media_new_location(instance, location);
 		else if (location != null)
 		{
