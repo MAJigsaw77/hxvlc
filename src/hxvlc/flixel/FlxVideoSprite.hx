@@ -50,8 +50,8 @@ class FlxVideoSprite extends FlxSprite
 
 			return bitmap.play(location, shouldLoop);
 		}
-		else
-			return false;
+
+		return false;
 	}
 
 	public function stop():Void
