@@ -170,11 +170,12 @@ class Video extends Bitmap
 		onTextureSetup = new Event<Void->Void>();
 
 		#if android
-		// LibVLC Jni doesn't set this on it's own...
+		// LibVLC-JNI doesn't set this on it's own so...
 		Sys.putEnv('VLC_DATA_PATH', '/system/usr/share');
 		#end
 
 		#if mac
+		// This needs to be set as MacOS VLC can't set the plugins path automatically...
 		Sys.putEnv('VLC_PLUGIN_PATH', Path.directory(Sys.programPath()) + '/plugins');
 		#end
 
