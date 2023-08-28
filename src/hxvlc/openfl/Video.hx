@@ -9,6 +9,7 @@ import hxvlc.libvlc.Types;
 import lime.app.Event;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
+import sys.FileSystem;
 
 /**
  * @author Mihai Alexandru (M.A. Jigsaw).
@@ -167,6 +168,9 @@ class Video extends Bitmap
 		onBackward = new Event<Void->Void>();
 		onMediaChanged = new Event<Void->Void>();
 		onTextureSetup = new Event<Void->Void>();
+
+		if ((Sys.getCwd() != null && Sys.getCwd() != '/') && FileSystem.exists('share'))
+			Sys.putEnv('VLC_DATA_PATH', Sys.getCwd() + 'share');
 
 		#if mac
 		Sys.putEnv('VLC_PLUGIN_PATH', Path.directory(Sys.programPath()) + '/plugins');
