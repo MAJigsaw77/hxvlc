@@ -9,7 +9,6 @@ import hxvlc.libvlc.Types;
 import lime.app.Event;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
-import sys.FileSystem;
 
 /**
  * @author Mihai Alexandru (M.A. Jigsaw).
