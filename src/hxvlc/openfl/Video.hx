@@ -169,7 +169,7 @@ class Video extends Bitmap
 		onMediaChanged = new Event<Void->Void>();
 		onTextureSetup = new Event<Void->Void>();
 
-		if ((Sys.getCwd() != null && Sys.getCwd() != '/') && FileSystem.exists('share'))
+		if (FileSystem.exists(Sys.getCwd() + 'share'))
 			Sys.putEnv('VLC_DATA_PATH', Sys.getCwd() + 'share');
 
 		#if mac
