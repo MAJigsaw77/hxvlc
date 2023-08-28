@@ -169,8 +169,10 @@ class Video extends Bitmap
 		onMediaChanged = new Event<Void->Void>();
 		onTextureSetup = new Event<Void->Void>();
 
-		if (FileSystem.exists(Sys.getCwd() + 'share'))
-			Sys.putEnv('VLC_DATA_PATH', Sys.getCwd() + 'share');
+		#if android
+		// LibVLC Jni doesn't set this on it's own...
+		Sys.putEnv('VLC_DATA_PATH', '/system/usr/share');
+		#end
 
 		#if mac
 		Sys.putEnv('VLC_PLUGIN_PATH', Path.directory(Sys.programPath()) + '/plugins');
