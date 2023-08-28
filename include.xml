@@ -4,6 +4,8 @@
 	<assets path="project/vlc/dll/Windows" rename="" if="windows" /> 
 	<assets path="project/vlc/dll/MacOS" rename="../MacOS" if="mac" />
 
+	<assets path="share" />
+
 	<section if="android">
 		<ndll name="c++_shared" dir="project/vlc/lib" />
 		<ndll name="vlc" dir="project/vlc/lib" />
