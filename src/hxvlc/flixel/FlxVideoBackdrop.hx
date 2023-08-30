@@ -18,11 +18,11 @@ import sys.FileSystem;
  */
 class FlxVideoBackdrop extends FlxBackdrop
 {
-        public var bitmap(default, null):Video;
+	public var bitmap(default, null):Video;
 
 	public function new(repeatAxes = XY, spacingX = 0, spacingY = 0):Void
-        {
-                super(repeatAxes, spacingX, spacingY);
+	{
+		super(repeatAxes, spacingX, spacingY);
 
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
@@ -95,17 +95,17 @@ class FlxVideoBackdrop extends FlxBackdrop
 		super.update(elapsed);
 	}
 
-        override public function kill():Void
-        {
+	override public function kill():Void
+	{
 		if (bitmap != null)
 			bitmap.pause();
 
-                super.kill();
-        }
+		super.kill();
+	}
 
-        override public function revive():Void
-        {
-                super.revive();
+	override public function revive():Void
+	{
+		super.revive();
 
 		if (bitmap != null)
 			bitmap.resume();
