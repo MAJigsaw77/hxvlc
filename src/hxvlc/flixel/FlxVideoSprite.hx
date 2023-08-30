@@ -121,6 +121,8 @@ class FlxVideoSprite extends FlxSprite
 
 			if (FlxG.game.contains(bitmap))
 				FlxG.game.removeChild(bitmap);
+
+			bitmap = null;
 		}
 
 		super.destroy();

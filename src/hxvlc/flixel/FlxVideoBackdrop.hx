@@ -128,6 +128,8 @@ class FlxVideoBackdrop extends FlxBackdrop
 
 			if (FlxG.game.contains(bitmap))
 				FlxG.game.removeChild(bitmap);
+
+			bitmap = null;
 		}
 
 		super.destroy();
