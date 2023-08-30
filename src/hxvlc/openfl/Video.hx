@@ -174,7 +174,7 @@ class Video extends Bitmap
 		#end
 
 		#if mac
-		// This needs to be set as MacOS VLC can't set the plugins path automatically...
+		// This needs to be set as MacOS libvlc can't set the plugins path automatically...
 		Sys.putEnv('VLC_PLUGIN_PATH', Path.directory(Sys.programPath()) + '/plugins');
 		#end
 
