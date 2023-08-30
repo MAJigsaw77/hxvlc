@@ -169,7 +169,7 @@ class Video extends Bitmap
 		onTextureSetup = new Event<Void->Void>();
 
 		#if android
-		// LibVLC-JNI doesn't set this on it's own so...
+		// libvlcjni doesn't set this on it's own so...
 		Sys.putEnv('VLC_DATA_PATH', '/system/usr/share');
 		#end
 
@@ -475,7 +475,8 @@ class Video extends Bitmap
 		{
 			deltaTime += elapsed;
 
-			if (Math.abs(deltaTime - oldTime) >= 8.3) // 8.(3) means 120 fps in milliseconds...
+			// 8.(3) means 120 fps in milliseconds...
+			if (Math.abs(deltaTime - oldTime) >= 8.3)
 				oldTime = deltaTime;
 			else
 				return;
@@ -492,9 +493,10 @@ class Video extends Bitmap
 	}
 
 	// Internal Methods
+	@:noCompletion
 	private function checkEvents():Void
 	{
-		// `for` takes much more time comparing to this.
+		// `for` takes much more time comparing to this...
 		if (events[0])
 		{
 			events[0] = false;
@@ -555,6 +557,7 @@ class Video extends Bitmap
 
 			if (bitmapData != null)
 			{
+				// Don't dispose the bitmapData if isn't necessary...
 				if (bitmapData.width != videoWidth && bitmapData.height != videoHeight)
 					bitmapData.dispose();
 				else
@@ -569,6 +572,7 @@ class Video extends Bitmap
 		}
 	}
 
+	@:noCompletion
 	private function attachEvents():Void
 	{
 		if (mediaPlayer == null || eventManager != null)
@@ -587,6 +591,7 @@ class Video extends Bitmap
 		LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this'));
 	}
 
+	@:noCompletion
 	private function detachEvents():Void
 	{
 		if (eventManager == null)
