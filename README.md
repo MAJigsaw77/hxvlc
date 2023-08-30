@@ -28,12 +28,12 @@ A Haxe/[OpenFL](https://www.openfl.org) library for video playback using [LibVLC
 
 In order to build a application with the library on **Linux**, you **have to install** `libvlc` and `libvlccore` from your distro's package manager.
 
-* Debian based distributions:
+* [Debian](https://debian.org) based distributions:
     ```bash
     sudo apt-get install libvlc-dev libvlccore-dev 
     ```
 
-* Arch based distributions:
+* [Arch](https://archlinux.org) based distributions:
     ```bash
     sudo pacman -S vlc 
     ```
