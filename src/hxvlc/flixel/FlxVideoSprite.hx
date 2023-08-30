@@ -13,7 +13,7 @@ class FlxVideoSprite extends FlxSprite
 {
 	public var bitmap(default, null):Video;
 
-	public function new(x:Float = 0, y:Float = 0):Void
+	public function new(x = 0, y = 0):Void
 	{
 		super(x, y);
 
@@ -88,17 +88,17 @@ class FlxVideoSprite extends FlxSprite
 		super.update(elapsed);
 	}
 
-        override public function kill():Void
-        {
+	override public function kill():Void
+	{
 		if (bitmap != null)
 			bitmap.pause();
 
-                super.kill();
-        }
+		super.kill();
+	}
 
-        override public function revive():Void
-        {
-                super.revive();
+	override public function revive():Void
+	{
+		super.revive();
 
 		if (bitmap != null)
 			bitmap.resume();
