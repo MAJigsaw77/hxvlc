@@ -1,8 +1,8 @@
 package hxvlc.flixel;
 
+import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.util.FlxColor;
 import hxvlc.openfl.Video;
 import sys.FileSystem;
 
