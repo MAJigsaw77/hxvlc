@@ -9,7 +9,7 @@ import sys.FileSystem;
 /**
  * This class allows you to play videos using sprites (FlxExtendedSprite).
  */
-class FlxExtendedVideoSprite extends FlxExtendedSprite
+class FlxVideoSpriteExt extends FlxExtendedSprite
 {
 	public var bitmap(default, null):Video;
 
