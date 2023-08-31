@@ -188,7 +188,7 @@ class Video extends Bitmap
 			"--reset-plugins-cache"
 		};');
 
-		instance = LibVLC.create(6, untyped __cpp__('argv'));
+		instance = LibVLC.create(5, untyped __cpp__('argv'));
 		#else
 		untyped __cpp__('
 		const char *argv[] = {
@@ -196,10 +196,9 @@ class Video extends Bitmap
 			"--intf=dummy",
 			"--no-lua",
 			"--no-media-library",
-			"--no-stats"
 		};');
 
-		instance = LibVLC.create(5, untyped __cpp__('argv'));
+		instance = LibVLC.create(4, untyped __cpp__('argv'));
 		#end
 
 		#if HXVLC_LOGGING
