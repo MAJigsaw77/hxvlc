@@ -179,27 +179,12 @@ class Video extends Bitmap
 		#end
 
 		#if (windows || mac)
-		untyped __cpp__('
-		const char *argv[] = {
-			"--ignore-config",
-			"--intf=dummy",
-			"--no-lua",
-			"--no-media-library",
-			"--reset-plugins-cache"
-		};');
-
-		instance = LibVLC.create(5, untyped __cpp__('argv'));
+		untyped __cpp__('const char *args[] = { "--ignore-config", "--intf=dummy", "--no-lua", "--no-media-library", "--reset-plugins-cache" };');
 		#else
-		untyped __cpp__('
-		const char *argv[] = {
-			"--ignore-config",
-			"--intf=dummy",
-			"--no-lua",
-			"--no-media-library",
-		};');
-
-		instance = LibVLC.create(4, untyped __cpp__('argv'));
+		untyped __cpp__('const char *args[] = { "--ignore-config", "--intf=dummy", "--no-lua", "--no-media-library" };');
 		#end
+
+		instance = LibVLC.create(untyped __cpp__('sizeof(args) / sizeof(*args)'), untyped __cpp__('argv'));
 
 		#if HXVLC_LOGGING
 		LibVLC.log_set(instance, untyped __cpp__('logging'), untyped __cpp__('NULL'));
