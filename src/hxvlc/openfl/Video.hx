@@ -123,9 +123,9 @@ static void logging(void *data, int level, const libvlc_log_t *ctx, const char *
 		return;
 
 	#ifdef __ANDROID__
-	__android_log_print(ANDROID_LOG_DEFAULT, "HXVLC", "%s\n", message);
+	__android_log_print(ANDROID_LOG_DEFAULT, "HXVLC", "LOG(%d) %s\n", level, message);
 	#else
-	printf("%s\n", message);
+	printf("LOG(%d) %s\n", level, message);
 	#endif
 }')
 class Video extends Bitmap
