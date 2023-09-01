@@ -86,9 +86,8 @@ static void callbacks(const libvlc_event_t *event, void *data)
 			self->events[8] = true;
 			break;
 	}
-}')
-#if HXVLC_LOGGING
-@:cppNamespaceCode('
+}
+
 static void logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
 	#ifdef __ANDROID__
@@ -111,7 +110,6 @@ static void logging(void *data, int level, const libvlc_log_t *ctx, const char *
 	vprintf(fmt, args);
 	#endif
 }')
-#end
 class Video extends Bitmap
 {
 	public var videoWidth(default, null):Int = 0;
