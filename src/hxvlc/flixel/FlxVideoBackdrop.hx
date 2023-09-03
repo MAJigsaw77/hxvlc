@@ -122,6 +122,8 @@ class FlxVideoBackdrop extends FlxBackdrop
 				FlxG.signals.focusLost.remove(pause);
 		}
 
+		super.destroy();
+
 		if (bitmap != null)
 		{
 			bitmap.dispose();
@@ -131,7 +133,5 @@ class FlxVideoBackdrop extends FlxBackdrop
 
 			bitmap = null;
 		}
-
-		super.destroy();
 	}
 }
