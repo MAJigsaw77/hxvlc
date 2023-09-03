@@ -115,6 +115,8 @@ class FlxVideoSprite extends FlxSprite
 				FlxG.signals.focusLost.remove(pause);
 		}
 
+		super.destroy();
+
 		if (bitmap != null)
 		{
 			bitmap.dispose();
@@ -124,7 +126,5 @@ class FlxVideoSprite extends FlxSprite
 
 			bitmap = null;
 		}
-
-		super.destroy();
 	}
 }
