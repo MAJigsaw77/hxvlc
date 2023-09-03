@@ -13,8 +13,6 @@ import sys.FileSystem;
 
 /**
  * This class allows you to play a video as a `FlxBackdrop`.
- *
- * @author Sword352
  */
 class FlxVideoBackdrop extends FlxBackdrop
 {
