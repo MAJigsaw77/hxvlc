@@ -38,7 +38,7 @@ extern class LibVLC_Log_T {}
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
 @:unreflective
-@:native('libvlc_event_t')
+@:native('libvlc_event_e')
 extern enum abstract LibVLC_Event_E(Int) from Int to Int
 {
 	@:native('libvlc_MediaMetaChanged')
