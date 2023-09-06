@@ -35,11 +35,9 @@ extern class LibVLC_Event_T {}
 @:native('libvlc_log_t')
 extern class LibVLC_Log_T {}
 
-/**
- * Event types.
- */
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
+@:unreflective
 @:native('libvlc_event_t')
 extern enum abstract LibVLC_Event_E(Int) from Int to Int
 {
