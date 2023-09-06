@@ -38,85 +38,202 @@ extern class LibVLC_Log_T {}
 /**
  * Event types.
  */
-enum abstract LibVLC_Event_Type(Int) from Int to Int
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include('vlc/vlc.h')
+@:native('libvlc_event_t')
+extern enum abstract LibVLC_Event_E(Int) from Int to Int
 {
-	final LibVLC_MediaMetaChanged = 0;
-	final LibVLC_MediaSubItemAdded = 1;
-	final LibVLC_MediaDurationChanged = 2;
-	final LibVLC_MediaParsedChanged = 3;
-	final LibVLC_MediaFreed = 4;
-	final LibVLC_MediaStateChanged = 5;
-	final LibVLC_MediaSubItemTreeAdded = 6;
-	final LibVLC_MediaPlayerMediaChanged = 256;
-	final LibVLC_MediaPlayerNothingSpecial = 257;
-	final LibVLC_MediaPlayerOpening = 258;
-	final LibVLC_MediaPlayerBuffering = 259;
-	final LibVLC_MediaPlayerPlaying = 260;
-	final LibVLC_MediaPlayerPaused = 261;
-	final LibVLC_MediaPlayerStopped = 262;
-	final LibVLC_MediaPlayerForward = 263;
-	final LibVLC_MediaPlayerBackward = 264;
-	final LibVLC_MediaPlayerEndReached = 265;
-	final LibVLC_MediaPlayerEncounteredError = 266;
-	final LibVLC_MediaPlayerTimeChanged = 267;
-	final LibVLC_MediaPlayerPositionChanged = 268;
-	final LibVLC_MediaPlayerSeekableChanged = 269;
-	final LibVLC_MediaPlayerPausableChanged = 270;
-	final LibVLC_MediaPlayerTitleChanged = 271;
-	final LibVLC_MediaPlayerSnapshotTaken = 272;
-	final LibVLC_MediaPlayerLengthChanged = 273;
-	final LibVLC_MediaPlayerVout = 274;
-	final LibVLC_MediaPlayerScrambledChanged = 275;
-	final LibVLC_MediaPlayerESAdded = 276;
-	final LibVLC_MediaPlayerESDeleted = 277;
-	final LibVLC_MediaPlayerESSelected = 278;
-	final LibVLC_MediaPlayerCorked = 279;
-	final LibVLC_MediaPlayerUncorked = 280;
-	final LibVLC_MediaPlayerMuted = 281;
-	final LibVLC_MediaPlayerUnmuted = 282;
-	final LibVLC_MediaPlayerAudioVolume = 283;
-	final LibVLC_MediaPlayerAudioDevice = 284;
-	final LibVLC_MediaPlayerChapterChanged = 285;
-	final LibVLC_MediaListItemAdded = 512;
-	final LibVLC_MediaListWillAddItem = 513;
-	final LibVLC_MediaListItemDeleted = 514;
-	final LibVLC_MediaListWillDeleteItem = 515;
-	final LibVLC_MediaListEndReached = 516;
-	final LibVLC_MediaListViewItemAdded = 768;
-	final LibVLC_MediaListViewWillAddItem = 769;
-	final LibVLC_MediaListViewItemDeleted = 770;
-	final LibVLC_MediaListViewWillDeleteItem = 771;
-	final LibVLC_MediaListPlayerPlayed = 1024;
-	final LibVLC_MediaListPlayerNextItemSet = 1025;
-	final LibVLC_MediaListPlayerStopped = 1026;
-	final LibVLC_MediaDiscovererStarted = 1280; /* @deprecated Useless event, it will be triggered only when calling libvlc_media_discoverer_start(). */
-	final LibVLC_MediaDiscovererEnded = 1281; /* @deprecated Useless event, it will be triggered only when calling libvlc_media_discoverer_stop(). */
-	final LibVLC_RendererDiscovererItemAdded = 1282;
-	final LibVLC_RendererDiscovererItemDeleted = 1283;
-	final LibVLC_VlmMediaAdded = 1536;
-	final LibVLC_VlmMediaRemoved = 1537;
-	final LibVLC_VlmMediaChanged = 1538;
-	final LibVLC_VlmMediaInstanceStarted = 1539;
-	final LibVLC_VlmMediaInstanceStopped = 1540;
-	final LibVLC_VlmMediaInstanceStatusInit = 1541;
-	final LibVLC_VlmMediaInstanceStatusOpening = 1542;
-	final LibVLC_VlmMediaInstanceStatusPlaying = 1543;
-	final LibVLC_VlmMediaInstanceStatusPause = 1544;
-	final LibVLC_VlmMediaInstanceStatusEnd = 1545;
-	final LibVLC_VlmMediaInstanceStatusError = 1546;
-}
+	@:native('libvlc_MediaMetaChanged')
+	var LibVLC_MediaMetaChanged = 0;
 
-/**
- * Audio channels.
- */
-enum abstract LibVLC_Audio_Output_Channel(Int) from Int to Int
-{
-	final LibVLC_AudioChannel_Error = -1;
-	final LibVLC_AudioChannel_Stereo = 1;
-	final LibVLC_AudioChannel_RStereo = 2;
-	final LibVLC_AudioChannel_Left = 3;
-	final LibVLC_AudioChannel_Right = 4;
-	final LibVLC_AudioChannel_Dolbys = 5;
+	@:native('libvlc_MediaSubItemAdded')
+	var LibVLC_MediaSubItemAdded = 1;
+
+	@:native('libvlc_MediaDurationChanged')
+	var LibVLC_MediaDurationChanged = 2;
+
+	@:native('libvlc_MediaParsedChanged')
+	var LibVLC_MediaParsedChanged = 3;
+
+	@:native('libvlc_MediaFreed')
+	var LibVLC_MediaFreed = 4;
+
+	@:native('libvlc_MediaStateChanged')
+	var LibVLC_MediaStateChanged = 5;
+
+	@:native('libvlc_MediaSubItemTreeAdded')
+	var LibVLC_MediaSubItemTreeAdded = 6;
+
+	@:native('libvlc_MediaPlayerMediaChanged')
+	var LibVLC_MediaPlayerMediaChanged = 256;
+
+	@:native('libvlc_MediaPlayerNothingSpecial')
+	var LibVLC_MediaPlayerNothingSpecial = 257;
+
+	@:native('libvlc_MediaPlayerOpening')
+	var LibVLC_MediaPlayerOpening = 258;
+
+	@:native('libvlc_MediaPlayerBuffering')
+	var LibVLC_MediaPlayerBuffering = 259;
+
+	@:native('libvlc_MediaPlayerPlaying')
+	var LibVLC_MediaPlayerPlaying = 260;
+
+	@:native('libvlc_MediaPlayerPaused')
+	var LibVLC_MediaPlayerPaused = 261;
+
+	@:native('libvlc_MediaPlayerStopped')
+	var LibVLC_MediaPlayerStopped = 262;
+
+	@:native('libvlc_MediaPlayerForward')
+	var LibVLC_MediaPlayerForward = 263;
+
+	@:native('libvlc_MediaPlayerBackward')
+	var LibVLC_MediaPlayerBackward = 264;
+
+	@:native('libvlc_MediaPlayerEndReached')
+	var LibVLC_MediaPlayerEndReached = 265;
+
+	@:native('libvlc_MediaPlayerEncounteredError')
+	var LibVLC_MediaPlayerEncounteredError = 266;
+
+	@:native('libvlc_MediaPlayerTimeChanged')
+	var LibVLC_MediaPlayerTimeChanged = 267;
+
+	@:native('libvlc_MediaPlayerPositionChanged')
+	var LibVLC_MediaPlayerPositionChanged = 268;
+
+	@:native('libvlc_MediaPlayerSeekableChanged')
+	var LibVLC_MediaPlayerSeekableChanged = 269;
+
+	@:native('libvlc_MediaPlayerPausableChanged')
+	var LibVLC_MediaPlayerPausableChanged = 270;
+
+	@:native('libvlc_MediaPlayerTitleChanged')
+	var LibVLC_MediaPlayerTitleChanged = 271;
+
+	@:native('libvlc_MediaPlayerSnapshotTaken')
+	var LibVLC_MediaPlayerSnapshotTaken = 272;
+
+	@:native('libvlc_MediaPlayerLengthChanged')
+	var LibVLC_MediaPlayerLengthChanged = 273;
+
+	@:native('libvlc_MediaPlayerVout')
+	var LibVLC_MediaPlayerVout = 274;
+
+	@:native('libvlc_MediaPlayerScrambledChanged')
+	var LibVLC_MediaPlayerScrambledChanged = 275;
+
+	@:native('libvlc_MediaPlayerESAdded')
+	var LibVLC_MediaPlayerESAdded = 276;
+
+	@:native('libvlc_MediaPlayerESDeleted')
+	var LibVLC_MediaPlayerESDeleted = 277;
+
+	@:native('libvlc_MediaPlayerESSelected')
+	var LibVLC_MediaPlayerESSelected = 278;
+
+	@:native('libvlc_MediaPlayerCorked')
+	var LibVLC_MediaPlayerCorked = 279;
+
+	@:native('libvlc_MediaPlayerUncorked')
+	var LibVLC_MediaPlayerUncorked = 280;
+
+	@:native('libvlc_MediaPlayerMuted')
+	var LibVLC_MediaPlayerMuted = 281;
+
+	@:native('libvlc_MediaPlayerUnmuted')
+	var LibVLC_MediaPlayerUnmuted = 282;
+
+	@:native('libvlc_MediaPlayerAudioVolume')
+	var LibVLC_MediaPlayerAudioVolume = 283;
+
+	@:native('libvlc_MediaPlayerAudioDevice')
+	var LibVLC_MediaPlayerAudioDevice = 284;
+
+	@:native('libvlc_MediaPlayerChapterChanged')
+	var LibVLC_MediaPlayerChapterChanged = 285;
+
+	@:native('libvlc_MediaListItemAdded')
+	var LibVLC_MediaListItemAdded = 512;
+
+	@:native('libvlc_MediaListWillAddItem')
+	var LibVLC_MediaListWillAddItem = 513;
+
+	@:native('libvlc_MediaListItemDeleted')
+	var LibVLC_MediaListItemDeleted = 514;
+
+	@:native('libvlc_MediaListWillDeleteItem')
+	var LibVLC_MediaListWillDeleteItem = 515;
+
+	@:native('libvlc_MediaListEndReached')
+	var LibVLC_MediaListEndReached = 516;
+
+	@:native('libvlc_MediaListViewItemAdded')
+	var LibVLC_MediaListViewItemAdded = 768;
+
+	@:native('libvlc_MediaListViewWillAddItem')
+	var LibVLC_MediaListViewWillAddItem = 769;
+
+	@:native('libvlc_MediaListViewItemDeleted')
+	var LibVLC_MediaListViewItemDeleted = 770;
+
+	@:native('libvlc_MediaListViewWillDeleteItem')
+	var LibVLC_MediaListViewWillDeleteItem = 771;
+
+	@:native('libvlc_MediaListPlayerPlayed')
+	var LibVLC_MediaListPlayerPlayed = 1024;
+
+	@:native('libvlc_MediaListPlayerNextItemSet')
+	var LibVLC_MediaListPlayerNextItemSet = 1025;
+
+	@:native('libvlc_MediaListPlayerStopped')
+	var LibVLC_MediaListPlayerStopped = 1026;
+
+	@:native('libvlc_MediaDiscovererStarted')
+	var LibVLC_MediaDiscovererStarted = 1280; /* @deprecated Useless event, it will be triggered only when calling libvlc_media_discoverer_start(). */
+
+	@:native('libvlc_MediaDiscovererEnded')
+	var LibVLC_MediaDiscovererEnded = 1281; /* @deprecated Useless event, it will be triggered only when calling libvlc_media_discoverer_stop(). */
+
+	@:native('libvlc_RendererDiscovererItemAdded')
+	var LibVLC_RendererDiscovererItemAdded = 1282;
+
+	@:native('libvlc_RendererDiscovererItemDeleted')
+	var LibVLC_RendererDiscovererItemDeleted = 1283;
+
+	@:native('libvlc_VlmMediaAdded')
+	var LibVLC_VlmMediaAdded = 1536;
+
+	@:native('libvlc_VlmMediaRemoved')
+	var LibVLC_VlmMediaRemoved = 1537;
+
+	@:native('libvlc_VlmMediaChanged')
+	var LibVLC_VlmMediaChanged = 1538;
+
+	@:native('libvlc_VlmMediaInstanceStarted')
+	var LibVLC_VlmMediaInstanceStarted = 1539;
+
+	@:native('libvlc_VlmMediaInstanceStopped')
+	var LibVLC_VlmMediaInstanceStopped = 1540;
+
+	@:native('libvlc_VlmMediaInstanceStatusInit')
+	var LibVLC_VlmMediaInstanceStatusInit = 1541;
+
+	@:native('libvlc_VlmMediaInstanceStatusOpening')
+	var LibVLC_VlmMediaInstanceStatusOpening = 1542;
+
+	@:native('libvlc_VlmMediaInstanceStatusPlaying')
+	var LibVLC_VlmMediaInstanceStatusPlaying = 1543;
+
+	@:native('libvlc_VlmMediaInstanceStatusPause')
+	var LibVLC_VlmMediaInstanceStatusPause = 1544;
+
+	@:native('libvlc_VlmMediaInstanceStatusEnd')
+	var LibVLC_VlmMediaInstanceStatusEnd = 1545;
+
+	@:native('libvlc_VlmMediaInstanceStatusError')
+	var LibVLC_VlmMediaInstanceStatusError = 1546;
 }
 
 typedef LibVLC_Callback_T = cpp.Callable<(p_event:cpp.RawConstPointer<LibVLC_Event_T>, p_data:cpp.RawPointer<cpp.Void>) -> Void>;
