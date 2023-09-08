@@ -11,16 +11,14 @@
 	</files>
 
 	<target id="haxe">
-		<vflag name="-rpath" value="@executable_path/lib/" if="macos" />
-
 		<section if="windows">
-			<section if="HXCPP_M64">
-				<lib name="${haxelib:hxvlc}/project/vlc/lib/Windows/libvlc.lib" />
-				<lib name="${haxelib:hxvlc}/project/vlc/lib/Windows/libvlccore.lib" />
-			</section>
+			<lib name="${haxelib:hxvlc}/project/vlc/lib/Windows/libvlc.lib" />
+			<lib name="${haxelib:hxvlc}/project/vlc/lib/Windows/libvlccore.lib" />
 		</section>
 
 		<section if="macos">
+			<vflag name="-rpath" value="@executable_path/lib/" />
+
 			<lib name="${haxelib:hxvlc}/project/vlc/dll/MacOS/lib/libvlc.dylib" />
 			<lib name="${haxelib:hxvlc}/project/vlc/dll/MacOS/lib/libvlccore.dylib" />
 		</section>
