@@ -12,7 +12,8 @@ class VideoMacros
 			{
 				$event = false;
 
-				$body;
+				if ($body != null)
+					$body();
 			}
 		}
 	}
