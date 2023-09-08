@@ -42,6 +42,11 @@ In order to build a application with the library on **Linux**, you **have to ins
 
 Check out the [Samples Folder](samples/) for examples on how to use this library.
 
+## Limitations
+
+> **Important**
+> If you are compiling on `Windows` be aware that 32bit building doesn't work.
+
 ## Licensing
 
 **hxvlc** is made available under the **MIT License**. Check [LICENSE](./LICENSE) for more information.
