@@ -23,6 +23,9 @@ A Haxe/[OpenFL](https://www.openfl.org) library for video playback using [LibVLC
     <!--LibVLC Logging for hxvlc-->
     <haxedef name="HXVLC_LOGGING" if="debug" />
     ```
+3. Limitations
+    > **Important**
+    > Be aware that 32bit compiling on `Desktop` doesn't work.
 
 ## Linux Libs Instructions
 
@@ -41,11 +44,6 @@ In order to build a application with the library on **Linux**, you **have to ins
 ## Usage Examples
 
 Check out the [Samples Folder](samples/) for examples on how to use this library.
-
-## Limitations
-
-> **Important**
-> If you are compiling on `Windows` be aware that 32bit building doesn't work.
 
 ## Licensing
 
