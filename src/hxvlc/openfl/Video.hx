@@ -6,7 +6,7 @@ package hxvlc.openfl;
 import haxe.io.Path;
 import hxvlc.libvlc.LibVLC;
 import hxvlc.libvlc.Types;
-import hxvlc.openfl.VideoMacros;
+import hxvlc.openfl.Macros;
 import lime.app.Event;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -512,43 +512,43 @@ class Video extends Bitmap
 	@:noCompletion
 	private function checkEvents():Void
 	{
-		VideoMacros.checkEvent(events[0], {
+		Macros.checkEvent(events[0], {
 			onOpening.dispatch();
 		});
 
-		VideoMacros.checkEvent(events[1], {
+		Macros.checkEvent(events[1], {
 			onPlaying.dispatch();
 		});
 
-		VideoMacros.checkEvent(events[2], {
+		Macros.checkEvent(events[2], {
 			onStopped.dispatch();
 		});
 
-		VideoMacros.checkEvent(events[3], {
+		Macros.checkEvent(events[3], {
 			onPaused.dispatch();
 		});
 
-		VideoMacros.checkEvent(events[4], {
+		Macros.checkEvent(events[4], {
 			onEndReached.dispatch();
 		});
 
-		VideoMacros.checkEvent(events[5], {
+		Macros.checkEvent(events[5], {
 			onEncounteredError.dispatch();
 		});
 
-		VideoMacros.checkEvent(events[6], {
+		Macros.checkEvent(events[6], {
 			onForward.dispatch();
 		});
 
-		VideoMacros.checkEvent(events[7], {
+		Macros.checkEvent(events[7], {
 			onBackward.dispatch();
 		});
 
-		VideoMacros.checkEvent(events[8], {
+		Macros.checkEvent(events[8], {
 			onMediaChanged.dispatch();
 		});
 
-		VideoMacros.checkEvent(events[9], {
+		Macros.checkEvent(events[9], {
 			if (bitmapData != null)
 			{
 				// Don't dispose the bitmapData if isn't necessary...
