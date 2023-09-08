@@ -49,7 +49,7 @@ Check out the [Samples Folder](samples/) for examples on how to use this library
 
 **hxvlc** is made available under the **MIT License**. Check [LICENSE](./LICENSE) for more information.
 
-![](https://raw.githubusercontent.com/videolan/vlc/master/share/icons/256x256/vlc.png)
+![](https://raw.githubusercontent.com/videolan/vlc/master/share/icons/256x256/vlc-xmas.png)
 
 [**LibVLC**](https://www.videolan.org/vlc/libvlc.html) is the engine of **VLC** released under the **LGPLv2 License** (or later). Check [VideoLAN.org](https://www.videolan.org/legal.html) for more information.
 
