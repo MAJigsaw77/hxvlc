@@ -1,6 +1,6 @@
 package hxvlc.libvlc;
 
-#if !cpp
+#if (!cpp && macro)
 #error 'LibVLC supports only C++ target platforms.'
 #end
 import hxvlc.libvlc.Types;
