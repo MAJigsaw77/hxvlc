@@ -4,6 +4,7 @@ package hxvlc.openfl;
 #error 'The current target platform isn\'t supported by hxvlc.'
 #end
 import haxe.io.Path;
+import haxe.macro.Expr;
 import hxvlc.libvlc.LibVLC;
 import hxvlc.libvlc.Types;
 import lime.app.Event;
@@ -511,65 +512,43 @@ class Video extends Bitmap
 	@:noCompletion
 	private function checkEvents():Void
 	{
-		// `for` takes much more time comparing to this...
-		if (events[0])
-		{
-			events[0] = false;
+		checkEvent(events[0], {
 			onOpening.dispatch();
-		}
+		});
 
-		if (events[1])
-		{
-			events[1] = false;
+		checkEvent(events[1], {
 			onPlaying.dispatch();
-		}
+		});
 
-		if (events[2])
-		{
-			events[2] = false;
+		checkEvent(events[2], {
 			onStopped.dispatch();
-		}
+		});
 
-		if (events[3])
-		{
-			events[3] = false;
+		checkEvent(events[3], {
 			onPaused.dispatch();
-		}
+		});
 
-		if (events[4])
-		{
-			events[4] = false;
+		checkEvent(events[4], {
 			onEndReached.dispatch();
-		}
+		});
 
-		if (events[5])
-		{
-			events[5] = false;
+		checkEvent(events[5], {
 			onEncounteredError.dispatch();
-		}
+		});
 
-		if (events[6])
-		{
-			events[6] = false;
+		checkEvent(events[6], {
 			onForward.dispatch();
-		}
+		});
 
-		if (events[7])
-		{
-			events[7] = false;
+		checkEvent(events[7], {
 			onBackward.dispatch();
-		}
+		});
 
-		if (events[8])
-		{
-			events[8] = false;
+		checkEvent(events[8], {
 			onMediaChanged.dispatch();
-		}
+		});
 
-		if (events[9])
-		{
-			events[9] = false;
-
+		checkEvent(events[9], {
 			if (bitmapData != null)
 			{
 				// Don't dispose the bitmapData if isn't necessary...
@@ -584,7 +563,7 @@ class Video extends Bitmap
 			smoothing = true;
 
 			onTextureSetup.dispatch();
-		}
+		});
 	}
 
 	@:noCompletion
@@ -621,5 +600,19 @@ class Video extends Bitmap
 		LibVLC.event_detach(eventManager, LibVLC_MediaPlayerForward, untyped __cpp__('callbacks'), untyped __cpp__('this'));
 		LibVLC.event_detach(eventManager, LibVLC_MediaPlayerBackward, untyped __cpp__('callbacks'), untyped __cpp__('this'));
 		LibVLC.event_detach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this'));
+	}
+
+	@:noCompletion
+	private macro function checkEvent(event:Expr, body:Expr):Expr
+	{
+		return macro
+		{
+			if ($event)
+			{
+				$event = false;
+
+				$body;
+			}
+		}
 	}
 }
