@@ -12,7 +12,7 @@ class VideoMacros
 			{
 				$event = false;
 
-				$body();
+				$body;
 			}
 		}
 	}
