@@ -113,7 +113,14 @@ static void logging(void *data, int level, const libvlc_log_t *ctx, const char *
 }')
 class Video extends Bitmap
 {
+	/**
+	 * The width of the video, in pixels.
+	 */
 	public var videoWidth(default, null):Int = 0;
+
+	/**
+	 * The height of the video, in pixels.
+	 */
 	public var videoHeight(default, null):Int = 0;
 
 	public var time(get, set):Int;
