@@ -511,17 +511,43 @@ class Video extends Bitmap
 	@:noCompletion
 	private function checkEvents():Void
 	{
-		VideoMacros.checkEvent(events[0], onOpening.dispatch);
-		VideoMacros.checkEvent(events[1], onPlaying.dispatch);
-		VideoMacros.checkEvent(events[2], onStopped.dispatch);
-		VideoMacros.checkEvent(events[3], onPaused.dispatch);
-		VideoMacros.checkEvent(events[4], onEndReached.dispatch);
-		VideoMacros.checkEvent(events[5], onEncounteredError.dispatch);
-		VideoMacros.checkEvent(events[6], onForward.dispatch);
-		VideoMacros.checkEvent(events[7], onBackward.dispatch);
-		VideoMacros.checkEvent(events[8], onMediaChanged.dispatch);
-		VideoMacros.checkEvent(events[9], function()
-		{
+		checkEvent(events[0], {
+			onOpening.dispatch();
+		});
+
+		checkEvent(events[1], {
+			onPlaying.dispatch();
+		});
+
+		checkEvent(events[2], {
+			onStopped.dispatch();
+		});
+
+		checkEvent(events[3], {
+			onPaused.dispatch();
+		});
+
+		checkEvent(events[4], {
+			onEndReached.dispatch();
+		});
+
+		checkEvent(events[5], {
+			onEncounteredError.dispatch();
+		});
+
+		checkEvent(events[6], {
+			onForward.dispatch();
+		});
+
+		checkEvent(events[7], {
+			onBackward.dispatch();
+		});
+
+		checkEvent(events[8], {
+			onMediaChanged.dispatch();
+		});
+
+		checkEvent(events[9], {
 			if (bitmapData != null)
 			{
 				// Don't dispose the bitmapData if isn't necessary...
