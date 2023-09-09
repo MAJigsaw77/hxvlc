@@ -23,7 +23,7 @@ class FlxVideo extends Video
 		FlxG.addChildBelowMouse(this);
 	}
 
-	override public function play(location:String, shouldLoop:Bool = false):Bool
+	public override function play(location:String, shouldLoop:Bool = false):Bool
 	{
 		if (FlxG.autoPause)
 		{
@@ -42,7 +42,7 @@ class FlxVideo extends Video
 		return super.play(location, shouldLoop);
 	}
 
-	override public function dispose():Void
+	public override function dispose():Void
 	{
 		if (FlxG.autoPause)
 		{

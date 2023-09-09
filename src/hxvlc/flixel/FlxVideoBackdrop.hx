@@ -84,7 +84,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 	}
 
 	// Overrides
-	override public function update(elapsed:Float):Void
+	public override function update(elapsed:Float):Void
 	{
 		#if FLX_SOUND_SYSTEM
 		bitmap.volume = Math.floor((FlxG.sound.muted ? 0 : 1) * (FlxG.sound.volume * 100));
@@ -93,7 +93,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 		super.update(elapsed);
 	}
 
-	override public function kill():Void
+	public override function kill():Void
 	{
 		if (bitmap != null)
 			bitmap.pause();
@@ -101,7 +101,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 		super.kill();
 	}
 
-	override public function revive():Void
+	public override function revive():Void
 	{
 		super.revive();
 
@@ -109,7 +109,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 			bitmap.resume();
 	}
 
-	override public function destroy():Void
+	public override function destroy():Void
 	{
 		if (FlxG.autoPause)
 		{
