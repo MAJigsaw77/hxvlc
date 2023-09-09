@@ -25,7 +25,7 @@ A Haxe/[OpenFL](https://www.openfl.org) library for video playback using [LibVLC
 
 3. Limitations
     > **Important**
-    > Be aware that 32bit compiling on `Desktop` doesn't work.
+    > Be aware that 32bit compiling for `desktop` target doesn't work.
 
 ## Linux Libs Instructions
 
