@@ -148,7 +148,11 @@ class Video extends Bitmap
 	 */
 	public var mrl(get, never):String;
 
+	/**
+	 * The video volume in percents (0 = mute, 100 = nominal / 0dB).
+	 */
 	public var volume(get, set):Int;
+
 	public var channel(get, set):Int;
 	public var delay(get, set):Int;
 	public var rate(get, set):Single;
@@ -170,7 +174,7 @@ class Video extends Bitmap
 
 	@:noCompletion private var oldTime:Float = 0;
 	@:noCompletion private var deltaTime:Float = 0;
-	@:noCompletion private var events:Array<Bool>;
+	@:noCompletion private var events:Array<Bool> = [];
 	@:noCompletion private var pixels:cpp.RawPointer<cpp.UInt8>;
 	@:noCompletion private var instance:cpp.RawPointer<LibVLC_Instance_T>;
 	@:noCompletion private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
@@ -181,7 +185,6 @@ class Video extends Bitmap
 	{
 		super(bitmapData, AUTO, true);
 
-		events = new Array<Bool>();
 		for (i in 0...9)
 			events[i] = false;
 
