@@ -123,8 +123,16 @@ class Video extends Bitmap
 	 */
 	public var videoHeight(default, null):Int = 0;
 
+	/**
+	 * The video time in milliseconds.
+	 */
 	public var time(get, set):Int;
+
+	/**
+	 * The video position as percentage between `0.0` and `1.0`.
+	 */
 	public var position(get, set):Single;
+
 	public var length(get, never):Int;
 	public var duration(get, never):Int;
 	public var mrl(get, never):String;
