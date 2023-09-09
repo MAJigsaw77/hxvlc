@@ -133,7 +133,11 @@ class Video extends Bitmap
 	 */
 	public var position(get, set):Single;
 
+	/**
+	 * The video length in milliseconds.
+	 */
 	public var length(get, never):Int;
+
 	public var duration(get, never):Int;
 	public var mrl(get, never):String;
 	public var volume(get, set):Int;
