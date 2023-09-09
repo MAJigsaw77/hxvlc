@@ -149,12 +149,20 @@ class Video extends Bitmap
 	public var mrl(get, never):String;
 
 	/**
-	 * The video volume in percents (0 = mute, 100 = nominal / 0dB).
+	 * The video audio volume in percents (0 = mute, 100 = nominal / 0dB).
 	 */
 	public var volume(get, set):Int;
 
+	/**
+	 * The video audio channel.
+	 */
 	public var channel(get, set):Int;
+
+	/**
+	 * The video audio delay in microseconds.
+	 */
 	public var delay(get, set):Int;
+
 	public var rate(get, set):Single;
 	public var isPlaying(get, never):Bool;
 	public var isSeekable(get, never):Bool;
