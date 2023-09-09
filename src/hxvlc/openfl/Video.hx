@@ -177,6 +177,10 @@ class Video extends Bitmap
 	public var isPlaying(get, never):Bool;
 	public var isSeekable(get, never):Bool;
 	public var canPause(get, never):Bool;
+
+	/**
+	 * The video's mute status.
+	 */
 	public var mute(get, set):Bool;
 
 	public var onOpening(default, null):Event<Void->Void>;
@@ -199,9 +203,14 @@ class Video extends Bitmap
 	@:noCompletion private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
 	@:noCompletion private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
 
-	public function new():Void
+	/**
+	 * Initializes a Video object.
+	 *
+	 * @param smoothing Whether or not the video is smoothed when scaled. 
+	 */
+	public function new(smoothing:Bool = true):Void
 	{
-		super(bitmapData, AUTO, true);
+		super(bitmapData, AUTO, smoothing);
 
 		for (i in 0...9)
 			events[i] = false;
@@ -530,9 +539,11 @@ class Video extends Bitmap
 					return;
 			}
 
+			final oldSmoothing:Bool = smoothing;
+			
 			bitmapData = new BitmapData(videoWidth, videoHeight, true, 0);
 
-			smoothing = true;
+			smoothing = oldSmoothing;
 
 			onTextureSetup.dispatch();
 		});
