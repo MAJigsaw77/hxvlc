@@ -155,6 +155,12 @@ class Video extends Bitmap
 
 	/**
 	 * The video audio channel.
+	 *
+	 * - [Stereo] = 1
+	 * - [RStereo] = 2
+	 * - [Left] = 3
+	 * - [Right] = 4
+	 * - [Dolbys] = 5
 	 */
 	public var channel(get, set):Int;
 
