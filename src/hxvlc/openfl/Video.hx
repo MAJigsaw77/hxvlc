@@ -138,8 +138,16 @@ class Video extends Bitmap
 	 */
 	public var length(get, never):Int;
 
+	/**
+	 * The video duration.
+	 */
 	public var duration(get, never):Int;
+
+	/**
+	 * The video media resource locator.
+	 */
 	public var mrl(get, never):String;
+
 	public var volume(get, set):Int;
 	public var channel(get, set):Int;
 	public var delay(get, set):Int;
@@ -160,29 +168,14 @@ class Video extends Bitmap
 	public var onMediaChanged(default, null):Event<Void->Void>;
 	public var onTextureSetup(default, null):Event<Void->Void>;
 
-	@:noCompletion
-	private var oldTime:Float = 0;
-
-	@:noCompletion
-	private var deltaTime:Float = 0;
-
-	@:noCompletion
-	private var events:Array<Bool>;
-
-	@:noCompletion
-	private var pixels:cpp.RawPointer<cpp.UInt8>;
-
-	@:noCompletion
-	private var instance:cpp.RawPointer<LibVLC_Instance_T>;
-
-	@:noPrivateAccess
-	private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
-
-	@:noCompletion
-	private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
-
-	@:noCompletion
-	private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
+	@:noCompletion private var oldTime:Float = 0;
+	@:noCompletion private var deltaTime:Float = 0;
+	@:noCompletion private var events:Array<Bool>;
+	@:noCompletion private var pixels:cpp.RawPointer<cpp.UInt8>;
+	@:noCompletion private var instance:cpp.RawPointer<LibVLC_Instance_T>;
+	@:noCompletion private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
+	@:noCompletion private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
+	@:noCompletion private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
 
 	public function new():Void
 	{
@@ -319,17 +312,12 @@ class Video extends Bitmap
 	}
 
 	// Get & Set Methods
-	@:noCompletion
-	private function get_time():Int
+	@:noCompletion private function get_time():Int
 	{
-		if (mediaPlayer != null)
-			return cast(LibVLC.media_player_get_time(mediaPlayer), Int);
-
-		return -1;
+		return mediaPlayer != null ? cast(LibVLC.media_player_get_time(mediaPlayer), Int) : -1;
 	}
 
-	@:noCompletion
-	private function set_time(value:Int):Int
+	@:noCompletion private function set_time(value:Int):Int
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_set_time(mediaPlayer, value);
@@ -337,17 +325,12 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion
-	private function get_position():Single
+	@:noCompletion private function get_position():Single
 	{
-		if (mediaPlayer != null)
-			return LibVLC.media_player_get_position(mediaPlayer);
-
-		return -1;
+		return mediaPlayer != null ? LibVLC.media_player_get_position(mediaPlayer) : -1;
 	}
 
-	@:noCompletion
-	private function set_position(value:Single):Single
+	@:noCompletion private function set_position(value:Single):Single
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_set_position(mediaPlayer, value);
@@ -355,44 +338,27 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion
-	private function get_length():Int
+	@:noCompletion private function get_length():Int
 	{
-		if (mediaPlayer != null)
-			return cast(LibVLC.media_player_get_length(mediaPlayer), Int);
-
-		return -1;
+		return mediaPlayer != null ? cast(LibVLC.media_player_get_length(mediaPlayer), Int) : -1;
 	}
 
-	@:noCompletion
-	private function get_duration():Int
+	@:noCompletion private function get_duration():Int
 	{
-		if (mediaItem != null)
-			return cast(LibVLC.media_get_duration(mediaItem), Int);
-
-		return -1;
+		return mediaItem != null ? cast(LibVLC.media_get_duration(mediaItem), Int) : -1;
 	}
 
-	@:noCompletion
-	private function get_mrl():String
+	@:noCompletion private function get_mrl():String
 	{
-		if (mediaItem != null)
-			return cast(LibVLC.media_get_mrl(mediaItem), String);
-
-		return null;
+		return mediaItem != null ? cast(LibVLC.media_get_mrl(mediaItem), String) : null;
 	}
 
-	@:noCompletion
-	private function get_volume():Int
+	@:noCompletion private function get_volume():Int
 	{
-		if (mediaPlayer != null)
-			return LibVLC.audio_get_volume(mediaPlayer);
-
-		return -1;
+		return mediaPlayer != null ? LibVLC.audio_get_volume(mediaPlayer) : -1;
 	}
 
-	@:noCompletion
-	private function set_volume(value:Int):Int
+	@:noCompletion private function set_volume(value:Int):Int
 	{
 		if (mediaPlayer != null)
 			LibVLC.audio_set_volume(mediaPlayer, value);
@@ -400,17 +366,12 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion
-	private function get_channel():Int
+	@:noCompletion private function get_channel():Int
 	{
-		if (mediaPlayer != null)
-			return LibVLC.audio_get_channel(mediaPlayer);
-
-		return -1;
+		return mediaPlayer != null ? LibVLC.audio_get_channel(mediaPlayer) : -1;
 	}
 
-	@:noCompletion
-	private function set_channel(value:Int):Int
+	@:noCompletion private function set_channel(value:Int):Int
 	{
 		if (mediaPlayer != null)
 			LibVLC.audio_set_channel(mediaPlayer, value);
@@ -418,17 +379,12 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion
-	private function get_delay():Int
+	@:noCompletion private function get_delay():Int
 	{
-		if (mediaPlayer != null)
-			return cast(LibVLC.audio_get_delay(mediaPlayer), Int);
-
-		return -1;
+		return mediaPlayer != null ? cast(LibVLC.audio_get_delay(mediaPlayer), Int) : -1;
 	}
 
-	@:noCompletion
-	private function set_delay(value:Int):Int
+	@:noCompletion private function set_delay(value:Int):Int
 	{
 		if (mediaPlayer != null)
 			LibVLC.audio_set_delay(mediaPlayer, value);
@@ -436,17 +392,12 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion
-	private function get_rate():Single
+	@:noCompletion private function get_rate():Single
 	{
-		if (mediaPlayer != null)
-			return LibVLC.media_player_get_rate(mediaPlayer);
-
-		return -1;
+		return mediaPlayer != null ? LibVLC.media_player_get_rate(mediaPlayer) : -1;
 	}
 
-	@:noCompletion
-	private function set_rate(value:Single):Single
+	@:noCompletion private function set_rate(value:Single):Single
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_set_rate(mediaPlayer, value);
@@ -454,44 +405,27 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion
-	private function get_isPlaying():Bool
+	@:noCompletion private function get_isPlaying():Bool
 	{
-		if (mediaPlayer != null)
-			return LibVLC.media_player_is_playing(mediaPlayer);
-
-		return false;
+		return mediaPlayer != null ? LibVLC.media_player_is_playing(mediaPlayer) : false;
 	}
 
-	@:noCompletion
-	private function get_isSeekable():Bool
+	@:noCompletion private function get_isSeekable():Bool
 	{
-		if (mediaPlayer != null)
-			return LibVLC.media_player_is_seekable(mediaPlayer);
-
-		return false;
+		return mediaPlayer != null ? LibVLC.media_player_is_seekable(mediaPlayer) : false;
 	}
 
-	@:noCompletion
-	private function get_canPause():Bool
+	@:noCompletion private function get_canPause():Bool
 	{
-		if (mediaPlayer != null)
-			return LibVLC.media_player_can_pause(mediaPlayer);
-
-		return false;
+		return mediaPlayer != null ? LibVLC.media_player_can_pause(mediaPlayer) : false;
 	}
 
-	@:noCompletion
-	private function get_mute():Bool
+	@:noCompletion private function get_mute():Bool
 	{
-		if (mediaPlayer != null)
-			return LibVLC.audio_get_mute(mediaPlayer) > 0;
-
-		return false;
+		return mediaPlayer != null ? (LibVLC.audio_get_mute(mediaPlayer) > 0) : false;
 	}
 
-	@:noCompletion
-	private function set_mute(value:Bool):Bool
+	@:noCompletion private function set_mute(value:Bool):Bool
 	{
 		if (mediaPlayer != null)
 			LibVLC.audio_set_mute(mediaPlayer, value);
@@ -500,8 +434,7 @@ class Video extends Bitmap
 	}
 
 	// Overrides
-	@:noCompletion
-	private override function __enterFrame(elapsed:Int):Void
+	@:noCompletion private override function __enterFrame(elapsed:Int):Void
 	{
 		if (events.contains(true))
 			checkEvents();
@@ -528,8 +461,7 @@ class Video extends Bitmap
 	}
 
 	// Internal Methods
-	@:noCompletion
-	private function checkEvents():Void
+	@:noCompletion private function checkEvents():Void
 	{
 		Macros.checkEvent(events[0], {
 			onOpening.dispatch();
@@ -585,8 +517,7 @@ class Video extends Bitmap
 		});
 	}
 
-	@:noCompletion
-	private function attachEvents():Void
+	@:noCompletion private function attachEvents():Void
 	{
 		if (mediaPlayer == null || eventManager != null)
 			return;
@@ -604,8 +535,7 @@ class Video extends Bitmap
 		LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this'));
 	}
 
-	@:noCompletion
-	private function detachEvents():Void
+	@:noCompletion private function detachEvents():Void
 	{
 		if (eventManager == null)
 			return;
