@@ -124,37 +124,37 @@ class Video extends Bitmap
 	public var videoHeight(default, null):Int = 0;
 
 	/**
-	 * The video time in milliseconds.
+	 * The video's time in milliseconds.
 	 */
 	public var time(get, set):Int;
 
 	/**
-	 * The video position as percentage between `0.0` and `1.0`.
+	 * The video's position as percentage between `0.0` and `1.0`.
 	 */
 	public var position(get, set):Single;
 
 	/**
-	 * The video length in milliseconds.
+	 * The video's length in milliseconds.
 	 */
 	public var length(get, never):Int;
 
 	/**
-	 * The video duration.
+	 * The video's duration.
 	 */
 	public var duration(get, never):Int;
 
 	/**
-	 * The video media resource locator.
+	 * The video's media resource locator.
 	 */
 	public var mrl(get, never):String;
 
 	/**
-	 * The video audio volume in percents (0 = mute, 100 = nominal / 0dB).
+	 * The video's audio volume in percents (0 = mute, 100 = nominal / 0dB).
 	 */
 	public var volume(get, set):Int;
 
 	/**
-	 * The video audio channel.
+	 * The video's audio channel.
 	 *
 	 * - [Stereo] = 1
 	 * - [RStereo] = 2
@@ -165,11 +165,15 @@ class Video extends Bitmap
 	public var channel(get, set):Int;
 
 	/**
-	 * The video audio delay in microseconds.
+	 * The video's audio delay in microseconds.
 	 */
 	public var delay(get, set):Int;
 
+	/**
+	 * The video's play rate.
+	 */
 	public var rate(get, set):Single;
+
 	public var isPlaying(get, never):Bool;
 	public var isSeekable(get, never):Bool;
 	public var canPause(get, never):Bool;
