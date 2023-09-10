@@ -61,6 +61,7 @@ class FlxVideo extends Video
 		FlxG.removeChild(this);
 	}
 
+	@:noCompletion
 	private function onEnterFrame(e:Event):Void
 	{
 		if (autoResize)
