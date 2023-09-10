@@ -16,6 +16,9 @@ import openfl.display.BitmapData;
  *
  * This class lets you to use LibVLC externs as a bitmap that you can displaylist along other items.
  */
+#if android
+@:headerInclude('android/log.h')
+#end
 @:headerInclude('stdint.h')
 @:headerInclude('stdio.h')
 @:cppNamespaceCode('
@@ -82,12 +85,25 @@ static void callbacks(const libvlc_event_t *event, void *data)
 
 static void logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
-	char* msg = { 0 };
-
-	if (vsprintf(msg, fmt, args) < 0)
-		return;
-
-	__hxcpp_println(::String(msg));
+	#ifdef __ANDROID__
+	switch (level)
+	{
+		case LIBVLC_DEBUG:
+			__android_log_vprint(ANDROID_LOG_DEBUG, "HXVLC", fmt, args);
+			break;
+		case LIBVLC_NOTICE:
+			__android_log_vprint(ANDROID_LOG_INFO, "HXVLC", fmt, args);
+			break;
+		case LIBVLC_WARNING:
+			__android_log_vprint(ANDROID_LOG_WARN, "HXVLC", fmt, args);
+			break;
+		case LIBVLC_ERROR:
+			__android_log_vprint(ANDROID_LOG_ERROR, "HXVLC", fmt, args);
+			break;
+	}
+	#else
+	vprintf(fmt, args);
+	#endif
 }')
 class Video extends Bitmap
 {
