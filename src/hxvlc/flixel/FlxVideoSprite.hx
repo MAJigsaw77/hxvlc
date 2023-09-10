@@ -27,7 +27,7 @@ class FlxVideoSprite extends FlxSprite
 			bitmap.volume = Math.floor((FlxG.sound.muted ? 0 : 1) * (FlxG.sound.volume * 100));
 			#end
 		});
-		bitmap.onTextureSetup.add(() -> loadGraphic(bitmap.bitmapData));
+		bitmap.onFormatSetup.add(() -> loadGraphic(bitmap.bitmapData));
 
 		FlxG.game.addChild(bitmap);
 	}

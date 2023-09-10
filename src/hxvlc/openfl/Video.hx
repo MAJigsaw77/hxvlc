@@ -224,9 +224,9 @@ class Video extends Bitmap
 	public var onMediaChanged(default, null):Event<Void->Void>;
 
 	/**
-	 * An event that is dispatched when the texture is being initialized.
+	 * An event that is dispatched when the format is being initialized.
 	 */
-	public var onTextureSetup(default, null):Event<Void->Void>;
+	public var onFormatSetup(default, null):Event<Void->Void>;
 
 	@:noCompletion private var oldTime:Float = 0;
 	@:noCompletion private var deltaTime:Float = 0;
@@ -254,7 +254,7 @@ class Video extends Bitmap
 		onEndReached = new Event<Void->Void>();
 		onEncounteredError = new Event<Void->Void>();
 		onMediaChanged = new Event<Void->Void>();
-		onTextureSetup = new Event<Void->Void>();
+		onFormatSetup = new Event<Void->Void>();
 
 		#if android
 		// libvlcjni doesn't set this on it's own so...
@@ -588,7 +588,7 @@ class Video extends Bitmap
 
 			smoothing = true;
 
-			onTextureSetup.dispatch();
+			onFormatSetup.dispatch();
 		});
 	}
 
