@@ -19,33 +19,6 @@ import openfl.display.BitmapData;
 @:headerInclude('stdint.h')
 @:headerInclude('stdio.h')
 @:cppNamespaceCode('
-#ifndef vasprintf
-int vasprintf(char **sptr, const char *__restrict fmt, va_list ap)
-{
-	*sptr = NULL;
-
-	int count = vsnprintf(NULL, 0, fmt, ap); // Query the buffer size required.
-
-	if (count >= 0)
-	{
-		char *p = static_cast<char*> (malloc(count + 1)); // Allocate memory for it.
-		if (p == NULL)
-			return -1;
-
-		if (vsnprintf(p, count + 1, fmt, ap) == count) // We should have used exactly what was required.
-			*sptr = p;
-		else
-		{
-			// Otherwise something is wrong, likely a bug in vsnprintf. If so free the memory and report the error.
-			free(p);
-			return -1;
-		}
-	}
-
-	return count;
-}
-#endif // vasprintf
-
 static unsigned format_setup(void **data, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(*data);
@@ -109,9 +82,9 @@ static void callbacks(const libvlc_event_t *event, void *data)
 
 static void logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
-	char* msg = NULL;
+	char* msg = { 0 };
 
-	if (vasprintf(&msg, fmt, args) < 0)
+	if (vsprintf(msg, fmt, args) < 0)
 		return;
 
 	__hxcpp_println(::String(msg));
