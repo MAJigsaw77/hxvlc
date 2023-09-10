@@ -174,8 +174,19 @@ class Video extends Bitmap
 	 */
 	public var rate(get, set):Single;
 
+	/**
+	 * Whether the video is playing or not.
+	 */
 	public var isPlaying(get, never):Bool;
+
+	/**
+	 * Whether the video is seekable or not.
+	 */
 	public var isSeekable(get, never):Bool;
+
+	/**
+	 * Whether the video can be paused or not.
+	 */
 	public var canPause(get, never):Bool;
 
 	/**
@@ -205,12 +216,10 @@ class Video extends Bitmap
 
 	/**
 	 * Initializes a Video object.
-	 *
-	 * @param smoothing Whether or not the video is smoothed when scaled. 
 	 */
-	public function new(smoothing:Bool = true):Void
+	public function new():Void
 	{
-		super(bitmapData, AUTO, smoothing);
+		super(bitmapData, AUTO, true);
 
 		for (i in 0...9)
 			events[i] = false;
@@ -538,12 +547,10 @@ class Video extends Bitmap
 				else
 					return;
 			}
-
-			final oldSmoothing:Bool = smoothing;
 			
 			bitmapData = new BitmapData(videoWidth, videoHeight, true, 0);
 
-			smoothing = oldSmoothing;
+			smoothing = true;
 
 			onTextureSetup.dispatch();
 		});
