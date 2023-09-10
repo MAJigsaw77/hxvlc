@@ -37,7 +37,7 @@ static unsigned format_setup(void **data, char *chroma, unsigned *width, unsigne
 	self->videoWidth = formatWidth;
 	self->videoHeight = formatHeight;
 
-	self->events[9] = true;
+	self->events[7] = true;
 
 	if (self->pixels != NULL)
 		delete self->pixels;
@@ -77,14 +77,8 @@ static void callbacks(const libvlc_event_t *event, void *data)
 		case libvlc_MediaPlayerEncounteredError:
 			self->events[5] = true;
 			break;
-		case libvlc_MediaPlayerForward:
-			self->events[6] = true;
-			break;
-		case libvlc_MediaPlayerBackward:
-			self->events[7] = true;
-			break;
 		case libvlc_MediaPlayerMediaChanged:
-			self->events[8] = true;
+			self->events[6] = true;
 			break;
 	}
 }
@@ -194,15 +188,44 @@ class Video extends Bitmap
 	 */
 	public var mute(get, set):Bool;
 
+	/**
+	 * An event that is dispatched when the video is opening.
+	 */
 	public var onOpening(default, null):Event<Void->Void>;
+
+	/**
+	 * An event that is dispatched when the video is playing.
+	 */
 	public var onPlaying(default, null):Event<Void->Void>;
+
+	/**
+	 * An event that is dispatched when the video stopped.
+	 */
 	public var onStopped(default, null):Event<Void->Void>;
+
+	/**
+	 * An event that is dispatched when the video is paused.
+	 */
 	public var onPaused(default, null):Event<Void->Void>;
+
+	/**
+	 * An event that is dispatched when the video reached the end.
+	 */
 	public var onEndReached(default, null):Event<Void->Void>;
+
+	/**
+	 * An event that is dispatched when the video encountered an error.
+	 */
 	public var onEncounteredError(default, null):Event<Void->Void>;
-	public var onForward(default, null):Event<Void->Void>;
-	public var onBackward(default, null):Event<Void->Void>;
+
+	/**
+	 * An event that is dispatched when the media is changed.
+	 */
 	public var onMediaChanged(default, null):Event<Void->Void>;
+
+	/**
+	 * An event that is dispatched when the texture is being initialized.
+	 */
 	public var onTextureSetup(default, null):Event<Void->Void>;
 
 	@:noCompletion private var oldTime:Float = 0;
@@ -221,7 +244,7 @@ class Video extends Bitmap
 	{
 		super(bitmapData, AUTO, true);
 
-		for (i in 0...9)
+		for (i in 0...7)
 			events[i] = false;
 
 		onOpening = new Event<Void->Void>();
@@ -230,8 +253,6 @@ class Video extends Bitmap
 		onPaused = new Event<Void->Void>();
 		onEndReached = new Event<Void->Void>();
 		onEncounteredError = new Event<Void->Void>();
-		onForward = new Event<Void->Void>();
-		onBackward = new Event<Void->Void>();
 		onMediaChanged = new Event<Void->Void>();
 		onTextureSetup = new Event<Void->Void>();
 
@@ -550,18 +571,10 @@ class Video extends Bitmap
 		});
 
 		Macros.checkEvent(events[6], {
-			onForward.dispatch();
-		});
-
-		Macros.checkEvent(events[7], {
-			onBackward.dispatch();
-		});
-
-		Macros.checkEvent(events[8], {
 			onMediaChanged.dispatch();
 		});
 
-		Macros.checkEvent(events[9], {
+		Macros.checkEvent(events[7], {
 			if (bitmapData != null)
 			{
 				// Don't dispose the bitmapData if isn't necessary...
