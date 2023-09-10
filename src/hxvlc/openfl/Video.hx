@@ -263,6 +263,8 @@ class Video extends Bitmap
 	 *
 	 * @param location The local filesystem path or the media location url.
 	 * @param shouldLoop Whether to repeat the video or not.
+	 *
+	 * @return `true` if the video started playing or `false` if there's an error.
 	 */
 	public function play(location:String, shouldLoop:Bool = false):Bool
 	{
