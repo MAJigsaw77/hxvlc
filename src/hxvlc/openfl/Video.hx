@@ -32,7 +32,7 @@ int vasprintf(char **sptr, const char *__restrict fmt, va_list ap)
 		if (p == NULL)
 			return -1;
 
-		if (vsnprintf(p, count + 1, fmt, ap) == count)	// We should have used exactly what was required.
+		if (vsnprintf(p, count + 1, fmt, ap) == count) // We should have used exactly what was required.
 			*sptr = p;
 		else
 		{
@@ -53,13 +53,13 @@ static unsigned format_setup(void **data, char *chroma, unsigned *width, unsigne
 	unsigned formatWidth = (*width);
 	unsigned formatHeight = (*height);
 
+	self->videoWidth = formatWidth;
+	self->videoHeight = formatHeight;
+
 	(*pitches) = formatWidth * 4;
 	(*lines) = formatHeight;
 
 	strcpy(chroma, "RV32");
-
-	self->videoWidth = formatWidth;
-	self->videoHeight = formatHeight;
 
 	self->events[7] = true;
 
@@ -109,22 +109,22 @@ static void callbacks(const libvlc_event_t *event, void *data)
 
 static void logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
-	char* message = NULL;
+	char* msg = NULL;
 
-	if (vasprintf(&message, fmt, args) < 0)
+	if (vasprintf(&msg, fmt, args) < 0)
 		return;
 
-	__hxcpp_println(::String(message));
+	__hxcpp_println(::String(msg));
 }')
 class Video extends Bitmap
 {
 	/**
-	 * The width of the video, in pixels.
+	 * The video format width, in pixels.
 	 */
 	public var videoWidth(default, null):Int = 0;
 
 	/**
-	 * The height of the video, in pixels.
+	 * The video format height, in pixels.
 	 */
 	public var videoHeight(default, null):Int = 0;
 
