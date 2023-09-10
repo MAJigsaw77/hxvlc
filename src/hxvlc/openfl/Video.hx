@@ -258,6 +258,12 @@ class Video extends Bitmap
 		#end
 	}
 
+	/**
+	 * Call this function to play a video.
+	 *
+	 * @param location The local filesystem path or the media location url.
+	 * @param shouldLoop Whether to repeat the video or not.
+	 */
 	public function play(location:String, shouldLoop:Bool = false):Bool
 	{
 		if (location != null && location.indexOf('://') != -1)
@@ -290,30 +296,45 @@ class Video extends Bitmap
 		return LibVLC.media_player_play(mediaPlayer) == 0;
 	}
 
+	/**
+	 * Call this function to stop the video.
+	 */
 	public function stop():Void
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_stop(mediaPlayer);
 	}
 
+	/**
+	 * Call this function to pause the video.
+	 */
 	public function pause():Void
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_set_pause(mediaPlayer, 1);
 	}
 
+	/**
+	 * Call this function to resume the video.
+	 */
 	public function resume():Void
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_set_pause(mediaPlayer, 0);
 	}
 
+	/**
+	 * Call this function to toggle the pause of the video.
+	 */
 	public function togglePaused():Void
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_pause(mediaPlayer);
 	}
 
+	/**
+	 * Frees libvlc and the memory that is used to store the Video object.
+	 */
 	public function dispose():Void
 	{
 		detachEvents();
