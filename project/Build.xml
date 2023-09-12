@@ -10,17 +10,22 @@
 		<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" unless="linux" />
 	</files>
 
+	<section if="windows">
+		<copyFile name="libvlc.dll" from="${haxelib:hxvlc}/project/vlc/lib/Windows" toolId="exe" overwrite="true" />
+		<copyFile name="libvlccore.dll" from="${haxelib:hxvlc}/project/vlc/lib/Windows" toolId="exe" overwrite="true" />
+	</section>
+
 	<target id="haxe">
+		<vflag name="-rpath" value="@executable_path/lib/" if="macos" />
+
 		<section if="windows">
 			<lib name="${haxelib:hxvlc}/project/vlc/lib/Windows/libvlc.lib" />
 			<lib name="${haxelib:hxvlc}/project/vlc/lib/Windows/libvlccore.lib" />
 		</section>
 
 		<section if="macos">
-			<vflag name="-rpath" value="@executable_path/lib/" />
-
-			<lib name="${haxelib:hxvlc}/project/vlc/dll/MacOS/lib/libvlc.dylib" />
-			<lib name="${haxelib:hxvlc}/project/vlc/dll/MacOS/lib/libvlccore.dylib" />
+			<lib name="${haxelib:hxvlc}/project/vlc/lib/MacOS/libvlc.dylib" />
+			<lib name="${haxelib:hxvlc}/project/vlc/lib/MacOS/libvlccore.dylib" />
 		</section>
 
 		<section if="linux">
