@@ -45,3 +45,27 @@ jobs:
       - name: Building Linux
         if: matrix.os == 'ubuntu-latest'
         run: cd samples/${{matrix.sample}} && haxelib run lime build linux -debug
+
+      - name: Upload Artifact Windows
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@main
+        with:
+          name: windowsBuild
+          path: export/windows/bin
+          if-no-files-found: warn
+
+      - name: Upload Artifact MacOS
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-artifact@main
+        with:
+          name: macBuild
+          path: export/macos/bin
+          if-no-files-found: warn
+
+      - name: Upload Artifact Windows
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@main
+        with:
+          name: linuxBuild
+          path: export/linux/bin
+          if-no-files-found: warn
