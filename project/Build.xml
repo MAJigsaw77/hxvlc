@@ -2,6 +2,9 @@
 <xml>
 	<pragma once="true" />
 
+	<copyFile name="libvlc.dll" from="${haxelib:hxvlc}/project/vlc/lib/Windows" toolId="exe" overwrite="true" if="windows" />
+	<copyFile name="libvlccore.dll" from="${haxelib:hxvlc}/project/vlc/lib/Windows" toolId="exe" overwrite="true" if="windows" />
+
 	<files id="haxe">
 		<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" unless="linux" />
 	</files>
@@ -9,9 +12,6 @@
 	<files id="__main__">
 		<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" unless="linux" />
 	</files>
-
-	<copyFile name="libvlc.dll" from="${haxelib:hxvlc}/project/vlc/lib/Windows" toolId="exe" overwrite="true" if="windows" />
-	<copyFile name="libvlccore.dll" from="${haxelib:hxvlc}/project/vlc/lib/Windows" toolId="exe" overwrite="true" if="windows" />
 
 	<target id="haxe">
 		<vflag name="-rpath" value="@executable_path/lib/" if="macos" />
