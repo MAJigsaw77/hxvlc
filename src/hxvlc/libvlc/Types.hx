@@ -37,14 +37,6 @@ extern class LibVLC_Log_T {}
 
 enum abstract LibVLC_Event_E(Int) from Int to Int
 {
-	var LibVLC_MediaMetaChanged = 0;
-	var LibVLC_MediaSubItemAdded = 1;
-	var LibVLC_MediaDurationChanged = 2;
-	var LibVLC_MediaParsedChanged = 3;
-	var LibVLC_MediaFreed = 4;
-	var LibVLC_MediaStateChanged = 5;
-	var LibVLC_MediaSubItemTreeAdded = 6;
-
 	var LibVLC_MediaPlayerMediaChanged = 256;
 	var LibVLC_MediaPlayerNothingSpecial = 257;
 	var LibVLC_MediaPlayerOpening = 258;
@@ -75,38 +67,6 @@ enum abstract LibVLC_Event_E(Int) from Int to Int
 	var LibVLC_MediaPlayerAudioVolume = 283;
 	var LibVLC_MediaPlayerAudioDevice = 284;
 	var LibVLC_MediaPlayerChapterChanged = 285;
-
-	var LibVLC_MediaListItemAdded = 512;
-	var LibVLC_MediaListWillAddItem = 513;
-	var LibVLC_MediaListItemDeleted = 514;
-	var LibVLC_MediaListWillDeleteItem = 515;
-	var LibVLC_MediaListEndReached = 516;
-
-	var LibVLC_MediaListViewItemAdded = 768;
-	var LibVLC_MediaListViewWillAddItem = 769;
-	var LibVLC_MediaListViewItemDeleted = 770;
-	var LibVLC_MediaListViewWillDeleteItem = 771;
-
-	var LibVLC_MediaListPlayerPlayed = 1024;
-	var LibVLC_MediaListPlayerNextItemSet = 1025;
-	var LibVLC_MediaListPlayerStopped = 1026;
-
-	var LibVLC_MediaDiscovererStarted = 1280; /* @deprecated Useless event, it will be triggered only when calling libvlc_media_discoverer_start(). */
-	var LibVLC_MediaDiscovererEnded = 1281; /* @deprecated Useless event, it will be triggered only when calling libvlc_media_discoverer_stop(). */
-	var LibVLC_RendererDiscovererItemAdded = 1282;
-	var LibVLC_RendererDiscovererItemDeleted = 1283;
-
-	var LibVLC_VlmMediaAdded = 1536;
-	var LibVLC_VlmMediaRemoved = 1537;
-	var LibVLC_VlmMediaChanged = 1538;
-	var LibVLC_VlmMediaInstanceStarted = 1539;
-	var LibVLC_VlmMediaInstanceStopped = 1540;
-	var LibVLC_VlmMediaInstanceStatusInit = 1541;
-	var LibVLC_VlmMediaInstanceStatusOpening = 1542;
-	var LibVLC_VlmMediaInstanceStatusPlaying = 1543;
-	var LibVLC_VlmMediaInstanceStatusPause = 1544;
-	var LibVLC_VlmMediaInstanceStatusEnd = 1545;
-	var LibVLC_VlmMediaInstanceStatusError = 1546;
 }
 
 typedef LibVLC_Callback_T = cpp.Callable<(p_event:cpp.RawConstPointer<LibVLC_Event_T>, p_data:cpp.RawPointer<cpp.Void>) -> Void>;
