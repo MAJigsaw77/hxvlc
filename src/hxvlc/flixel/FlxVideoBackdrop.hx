@@ -1,5 +1,6 @@
 package hxvlc.flixel;
 
+#if flixel
 #if (!flixel_addons && macro)
 #error 'Your project must use flixel-addons in order to use this class.'
 #end
@@ -133,3 +134,4 @@ class FlxVideoBackdrop extends FlxBackdrop
 		}
 	}
 }
+#end

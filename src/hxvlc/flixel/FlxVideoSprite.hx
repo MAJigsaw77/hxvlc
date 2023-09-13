@@ -1,5 +1,6 @@
 package hxvlc.flixel;
 
+#if flixel
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -128,3 +129,4 @@ class FlxVideoSprite extends FlxSprite
 		}
 	}
 }
+#end
