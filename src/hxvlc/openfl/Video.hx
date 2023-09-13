@@ -267,9 +267,26 @@ class Video extends Bitmap
 		#end
 
 		#if (windows || mac)
-		untyped __cpp__('const char *args[] = { "--ignore-config", "--intf=dummy", "--no-spu", "--no-osd", "--no-lua", "--reset-plugins-cache" };');
+		untyped __cpp__('const char *args[] = {
+			"--ignore-config",
+			"--intf=dummy",
+			"--text-renderer=dummy",
+			"--no-stats",
+			"--no-spu",
+			"--no-osd",
+			"--no-lua",
+			"--reset-plugins-cache"
+		};');
 		#else
-		untyped __cpp__('const char *args[] = { "--ignore-config", "--intf=dummy", "--no-spu", "--no-osd", "--no-lua" };');
+		untyped __cpp__('const char *args[] = {
+			"--ignore-config",
+			"--intf=dummy",
+			"--text-renderer=dummy",
+			"--no-stats",
+			"--no-spu",
+			"--no-osd",
+			"--no-lua"
+		};');
 		#end
 
 		instance = LibVLC.create(untyped __cpp__('sizeof(args) / sizeof(*args)'), untyped __cpp__('args'));
