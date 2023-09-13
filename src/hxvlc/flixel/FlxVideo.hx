@@ -13,12 +13,12 @@ class FlxVideo extends Video
 	{
 		super();
 
+		#if FLX_SOUND_SYSTEM
 		onOpening.add(function()
 		{
-			#if FLX_SOUND_SYSTEM
 			volume = Math.floor((FlxG.sound.muted ? 0 : 1) * (FlxG.sound.volume * 100));
-			#end
 		});
+		#end
 
 		FlxG.addChildBelowMouse(this);
 	}
