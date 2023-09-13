@@ -51,7 +51,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: windowsBuild
-          path: export/windows/bin
+          path: samples/${{matrix.sample}}/export/windows/bin
           if-no-files-found: warn
 
       - name: Upload Artifact MacOS
@@ -59,7 +59,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: macBuild
-          path: export/macos/bin
+          path: samples/${{matrix.sample}}/export/macos/bin
           if-no-files-found: warn
 
       - name: Upload Artifact Windows
@@ -67,5 +67,5 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: linuxBuild
-          path: export/linux/bin
+          path: samples/${{matrix.sample}}/export/linux/bin
           if-no-files-found: warn
