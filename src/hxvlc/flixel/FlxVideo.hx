@@ -8,8 +8,14 @@ import sys.FileSystem;
 
 class FlxVideo extends Video
 {
+	/**
+	 * Whether you want the video to automatically be resized.
+	 */
 	public var autoResize:Bool = true;
 
+	/**
+	 * Initializes a FlxVideo object.
+	 */
 	public function new():Void
 	{
 		super();
