@@ -3,6 +3,11 @@
 
 	<assets path="project/vlc/plugins/Windows" rename="plugins" if="windows" />
 
+	<section if="windows">
+		<dependency name="libvlc.dll" path="project/vlc/lib/Windows" />
+		<dependency name="libvlccore.dll" path="project/vlc/lib/Windows" />
+	</section>
+
 	<section if="mac">
 		<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" />
 		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" />
