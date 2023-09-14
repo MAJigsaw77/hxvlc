@@ -13,8 +13,6 @@ import openfl.display.BitmapData;
 
 /**
  * @author Mihai Alexandru (M.A. Jigsaw).
- *
- * This class lets you to use LibVLC externs as a bitmap that you can displaylist along other items.
  */
 #if android
 @:headerInclude('android/log.h')
