@@ -11,9 +11,6 @@ import lime.app.Event;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 
-/**
- * @author Mihai Alexandru (M.A. Jigsaw).
- */
 #if android
 @:headerInclude('android/log.h')
 #end
