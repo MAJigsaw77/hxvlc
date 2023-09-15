@@ -24,6 +24,7 @@ class FlxVideo extends Video
 		onOpening.add(function()
 		{
 			mute = FlxG.sound.muted;
+
 			volume = Math.floor(FlxG.sound.volume * 100);
 		});
 		#end
@@ -90,6 +91,7 @@ class FlxVideo extends Video
 
 		#if FLX_SOUND_SYSTEM
 		mute = FlxG.sound.muted;
+
 		volume = Math.floor(FlxG.sound.volume * 100);
 		#end
 	}

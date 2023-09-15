@@ -23,6 +23,7 @@ class FlxVideoSprite extends FlxSprite
 		bitmap.onOpening.add(function()
 		{
 			bitmap.mute = FlxG.sound.muted;
+
 			bitmap.volume = Math.floor(FlxG.sound.volume * 100);
 		});
 		#end
@@ -80,6 +81,7 @@ class FlxVideoSprite extends FlxSprite
 	{
 		#if FLX_SOUND_SYSTEM
 		bitmap.mute = FlxG.sound.muted;
+
 		bitmap.volume = Math.floor(FlxG.sound.volume * 100);
 		#end
 

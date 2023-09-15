@@ -28,6 +28,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 		bitmap.onOpening.add(function()
 		{
 			bitmap.mute = FlxG.sound.muted;
+
 			bitmap.volume = Math.floor(FlxG.sound.volume * 100);
 		});
 		#end
@@ -85,6 +86,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 	{
 		#if FLX_SOUND_SYSTEM
 		bitmap.mute = FlxG.sound.muted;
+
 		bitmap.volume = Math.floor(FlxG.sound.volume * 100);
 		#end
 
