@@ -7,9 +7,6 @@ import flixel.FlxSprite;
 import hxvlc.openfl.Video;
 import sys.FileSystem;
 
-/**
- * This class allows you to play videos using sprites (FlxSprite).
- */
 class FlxVideoSprite extends FlxSprite
 {
 	public var bitmap(default, null):Video;
@@ -35,6 +32,9 @@ class FlxVideoSprite extends FlxSprite
 
 	public function play(location:String, shouldLoop:Bool = false):Bool
 	{
+		if (bitmap == null)
+			return false;
+
 		if (FlxG.autoPause)
 		{
 			if (!FlxG.signals.focusGained.has(resume))
@@ -44,15 +44,10 @@ class FlxVideoSprite extends FlxSprite
 				FlxG.signals.focusLost.add(pause);
 		}
 
-		if (bitmap != null)
-		{
-			if (FileSystem.exists(Sys.getCwd() + location))
-				return bitmap.play(Sys.getCwd() + location, shouldLoop);
+		if (FileSystem.exists(Sys.getCwd() + location))
+			return bitmap.play(Sys.getCwd() + location, shouldLoop);
 
-			return bitmap.play(location, shouldLoop);
-		}
-
-		return false;
+		return bitmap.play(location, shouldLoop);
 	}
 
 	public function stop():Void
