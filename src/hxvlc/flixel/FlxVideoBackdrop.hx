@@ -35,7 +35,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 		FlxG.game.addChild(bitmap);
 	}
 
-	public function play(location:String, shouldLoop:Bool = false):Int
+	public function play(location:String, shouldLoop:Bool = false):Bool
 	{
 		if (bitmap == null)
 			return false;
