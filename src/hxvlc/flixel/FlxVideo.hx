@@ -77,13 +77,11 @@ class FlxVideo extends Video
 
 			if (FlxG.stage.stageWidth / FlxG.stage.stageHeight > aspectRatio)
 			{
-				// stage is wider than video...
 				width = FlxG.stage.stageHeight * aspectRatio;
 				height = FlxG.stage.stageHeight;
 			}
 			else
 			{
-				// stage is taller than video...
 				width = FlxG.stage.stageWidth;
 				height = FlxG.stage.stageWidth * (1 / aspectRatio);
 			}
