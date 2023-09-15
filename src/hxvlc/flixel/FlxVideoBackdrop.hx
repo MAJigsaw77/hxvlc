@@ -12,9 +12,6 @@ import flixel.FlxSprite;
 import hxvlc.openfl.Video;
 import sys.FileSystem;
 
-/**
- * This class allows you to play a video as a `FlxBackdrop`.
- */
 class FlxVideoBackdrop extends FlxBackdrop
 {
 	public var bitmap(default, null):Video;
@@ -40,6 +37,9 @@ class FlxVideoBackdrop extends FlxBackdrop
 
 	public function play(location:String, shouldLoop:Bool = false):Int
 	{
+		if (bitmap == null)
+			return false;
+
 		if (FlxG.autoPause)
 		{
 			if (!FlxG.signals.focusGained.has(resume))
@@ -49,15 +49,10 @@ class FlxVideoBackdrop extends FlxBackdrop
 				FlxG.signals.focusLost.add(pause);
 		}
 
-		if (bitmap != null)
-		{
-			if (FileSystem.exists(Sys.getCwd() + location))
-				return bitmap.play(Sys.getCwd() + location, shouldLoop);
+		if (FileSystem.exists(Sys.getCwd() + location))
+			return bitmap.play(Sys.getCwd() + location, shouldLoop);
 
-			return bitmap.play(location, shouldLoop);
-		}
-
-		return false;
+		return bitmap.play(location, shouldLoop);
 	}
 
 	public function stop():Void
