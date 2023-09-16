@@ -16,11 +16,15 @@ class Main extends Sprite
 		video.onEndReached.add(video.dispose);
 		addChild(video);
 
-		video.play(Sys.getCwd() + 'assets/video.mp4');
-
 		stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
 		stage.addEventListener(Event.ACTIVATE, stage_onActivate);
 		stage.addEventListener(Event.DEACTIVATE, stage_onDeactivate);
+
+		#if android
+		video.play('https://github.com/MAJigsaw77/hxvlc/raw/main/samples/openfl/assets/video.mp4');
+		#else
+		video.play(Sys.getCwd() + 'assets/video.mp4');
+		#end
 	}
 
 	private function stage_onEnterFrame(event:Event):Void
