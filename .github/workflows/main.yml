@@ -33,6 +33,9 @@ jobs:
           haxelib install flixel --quiet
           haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git ${{github.ref_name}} --quiet
 
+      - name: List of installed Haxe Libraries
+        run: haxelib list
+
       - name: Building Windows
         if: matrix.os == 'windows-latest'
         run: cd samples/${{matrix.sample}} && haxelib run lime build windows -debug
@@ -103,6 +106,9 @@ jobs:
           haxe compile.hxml
           cd ${{github.workspace}}
 
+      - name: List of installed Haxe Libraries
+        run: haxelib list
+
       - name: Configure Android
         run: |
           haxelib run lime setup -alias -y
@@ -112,7 +118,7 @@ jobs:
           haxelib run lime config ANDROID_SETUP true
 
       - name: Building
-        run: haxelib run lime build android
+        run: cd samples/${{matrix.sample}} && haxelib run lime build android -debug
 
       - name: Upload Artifact
         uses: actions/upload-artifact@main
