@@ -21,7 +21,7 @@ class Main extends Sprite
 		stage.addEventListener(Event.DEACTIVATE, stage_onDeactivate);
 
 		#if android
-		video.play('https://github.com/MAJigsaw77/hxvlc/raw/main/samples/openfl/assets/video.mp4');
+		video.play('https://www.youtube.com/embed/S19UcWdOA-I');
 		#else
 		video.play(Sys.getCwd() + 'assets/video.mp4');
 		#end
