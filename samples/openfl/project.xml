@@ -1,32 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project xmlns="http://lime.openfl.org/project/1.0.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://lime.openfl.org/project/1.0.4 http://lime.openfl.org/xsd/project-1.0.4.xsd">
 
-	<!-- _________________________ Application Settings _________________________ -->
+	<!--Application Settings-->
 
-	<app title="hxVLC Sample (OpenFL)" file="Test" main="Main" version="0.0.1" company="MAJigsaw77" />
+	<app title="hxVLC Sample (OpenFL)" file="Test" main="Main" version="0.0.1" company="MAJigsaw77" path="export" />
 
-	<!-- ____________________________ Window Settings ___________________________ -->
+	<!--Window Settings-->
 
-	<!--These window settings apply to all targets-->
-	<window width="1280" height="720" fps="60" background="#FF00FF" hardware="true" vsync="false" />
+	<window orientation="landscape" width="1280" height="720" fps="60" background="#FF00FF" hardware="true" vsync="false" fullscreen="false" resizable="true" />
 
-	<!--HTML5-specific-->
-	<window if="html5" resizable="false" />
+	<window fullscreen="true" resizable="false" if="mobile" />
 
-	<!--Desktop-specific-->
-	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true" />
-
-	<!--Mobile-specific-->
-	<window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" />
-
-	<!-- _____________________________ Path Settings ____________________________ -->
-
-	<set name="BUILD_DIR" value="export" />
+	<!--Path Settings-->
 
 	<source path="source" />
 	<assets path="assets" />
 
-	<!-- _______________________________ Libraries ______________________________ -->
+	<!--Libraries-->
 
 	<haxelib name="openfl" />
 
@@ -34,9 +24,20 @@
 		<haxelib name="hxvlc" if="desktop || android" />
 	</section>
 
-	<!-- ______________________________ Haxedefines _____________________________ -->
+	<!--Libraries Settings-->
 
-	<!--LibVLC Logging for hxvlc-->
 	<haxedef name="HXVLC_LOGGING" if="debug" />
+
+	<!--Platforms Config-->
+
+	<section if="android">
+		<config>
+			<!--Gradle-->
+			<android gradle-version="7.4.2" gradle-plugin="7.3.1" />
+
+			<!--Target SDK-->
+			<android target-sdk-version="29" if="${lime &lt; 8.1.0}" />
+		</config>
+	</section>
 
 </project>
