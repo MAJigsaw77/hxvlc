@@ -591,7 +591,6 @@ class Video extends Bitmap
 				if (bitmapData.width != videoWidth && bitmapData.height != videoHeight)
 				{
 					bitmapData.dispose();
-
 					texture.dispose();
 				}
 				else
