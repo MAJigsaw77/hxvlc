@@ -254,13 +254,11 @@ class Video extends Bitmap
 		onMediaChanged = new Event<Void->Void>();
 		onFormatSetup = new Event<Void->Void>();
 
-		#if android
-		// libvlcjni doesn't set this on it's own so...
+		#if android // This needs to be set as libvlcjni sets this on its source files (they aren't used here).
 		Sys.putEnv('VLC_DATA_PATH', '/system/usr/share');
 		#end
 
-		#if mac
-		// This needs to be set as MacOS libvlc can't set the plugins path automatically...
+		#if mac // This needs to be set as MacOS libvlc can't set the plugins path automatically.
 		Sys.putEnv('VLC_PLUGIN_PATH', Path.directory(Sys.programPath()) + '/plugins');
 		#end
 
