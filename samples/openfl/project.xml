@@ -7,9 +7,7 @@
 
 	<!--Window Settings-->
 
-	<window orientation="landscape" width="1280" height="720" fps="60" background="#FF00FF" hardware="true" vsync="false" fullscreen="false" resizable="true" />
-
-	<window fullscreen="true" resizable="false" if="mobile" />
+	<window fps="60" />
 
 	<!--Path Settings-->
 
