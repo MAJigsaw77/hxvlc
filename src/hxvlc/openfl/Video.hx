@@ -10,6 +10,7 @@ import hxvlc.openfl.Macros;
 import lime.app.Event;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
+import openfl.display3D.textures.RectangleTexture;
 
 #if android
 @:headerInclude('android/log.h')
@@ -226,6 +227,7 @@ class Video extends Bitmap
 	@:noCompletion private var oldTime:Float = 0;
 	@:noCompletion private var deltaTime:Float = 0;
 	@:noCompletion private var events:Array<Bool> = [];
+	@:noCompletion private var texture:RectangleTexture;
 	@:noCompletion private var pixels:cpp.RawPointer<cpp.UInt8>;
 	@:noCompletion private var instance:cpp.RawPointer<LibVLC_Instance_T>;
 	@:noCompletion private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
@@ -378,6 +380,12 @@ class Video extends Bitmap
 		{
 			bitmapData.dispose();
 			bitmapData = null;
+		}
+
+		if (texture != null)
+		{
+			texture.dispose();
+			texture = null;
 		}
 
 		videoWidth = 0;
@@ -538,12 +546,8 @@ class Video extends Bitmap
 			else
 				return;
 
-			if (bitmapData != null && pixels != null)
-			{
-				bitmapData.lock();
-				bitmapData.setPixels(bitmapData.rect, cpp.Pointer.fromRaw(pixels).toUnmanagedArray(videoWidth * videoHeight * 4));
-				bitmapData.unlock();
-			}
+			if (texture != null && pixels != null)
+				texture.uploadFromByteArray(cpp.Pointer.fromRaw(pixels).toUnmanagedArray(videoWidth * videoHeight * 4), 0);
 
 			__setRenderDirty();
 		}
@@ -581,17 +585,21 @@ class Video extends Bitmap
 		});
 
 		Macros.checkEvent(events[7], {
-			if (bitmapData != null)
+			if (bitmapData != null && texture != null)
 			{
 				// Don't dispose the bitmapData if isn't necessary...
 				if (bitmapData.width != videoWidth && bitmapData.height != videoHeight)
+				{
 					bitmapData.dispose();
+
+					texture.dispose();
+				}
 				else
 					return;
 			}
-			
-			bitmapData = new BitmapData(videoWidth, videoHeight, true, 0);
 
+			texture = Lib.current.stage.context3D.createRectangleTexture(videoWidth, videoHeight, BGRA, true);
+			bitmapData = BitmapData.fromTexture(texture);
 			smoothing = true;
 
 			onFormatSetup.dispatch();
