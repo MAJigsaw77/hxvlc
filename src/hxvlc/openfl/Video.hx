@@ -541,7 +541,7 @@ class Video extends Bitmap
 		{
 			deltaTime += elapsed;
 
-			if (Math.abs(deltaTime - oldTime) >= Lib.application.window.displayMode.refreshRate / 1000)
+			if (Math.abs(deltaTime - oldTime) >= 1000 / Lib.application.window.displayMode.refreshRate)
 				oldTime = deltaTime;
 			else
 				return;
