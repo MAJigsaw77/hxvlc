@@ -232,8 +232,8 @@ class Video extends Bitmap
 	@:noCompletion private var texture:RectangleTexture;
 	@:noCompletion private var pixels:cpp.RawPointer<cpp.UInt8>;
 	@:noCompletion private var instance:cpp.RawPointer<LibVLC_Instance_T>;
-	@:noCompletion private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
 	@:noCompletion private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
+	@:noCompletion private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
 	@:noCompletion private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
 
 	/**
