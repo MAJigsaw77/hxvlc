@@ -46,7 +46,7 @@ static unsigned format_setup(void **data, char *chroma, unsigned *width, unsigne
 static void *lock(void *data, void **p_pixels)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(data);
-	*p_pixels = self->pixels;
+	(*p_pixels) = self->pixels;
 	return NULL; // picture identifier, not needed here
 }
 
@@ -280,7 +280,6 @@ class Video extends Bitmap
 			"--intf=dummy",
 			"--text-renderer=dummy",
 			"--no-video-title-show",
-			"--no-plugins-cache",
 			"--no-stats",
 			"--no-spu",
 			"--no-osd",
