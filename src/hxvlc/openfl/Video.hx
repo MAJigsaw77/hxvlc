@@ -541,8 +541,7 @@ class Video extends Bitmap
 		{
 			deltaTime += elapsed;
 
-			// 8.(3) means 120 fps in milliseconds...
-			if (Math.abs(deltaTime - oldTime) >= 8.3)
+			if (Math.abs(deltaTime - oldTime) >= Lib.application.window.displayMode.refreshRate / 1000)
 				oldTime = deltaTime;
 			else
 				return;
