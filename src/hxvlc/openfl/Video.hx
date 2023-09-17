@@ -11,6 +11,7 @@ import lime.app.Event;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.RectangleTexture;
+import openfl.Lib;
 
 #if android
 @:headerInclude('android/log.h')
