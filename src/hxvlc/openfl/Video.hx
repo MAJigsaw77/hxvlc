@@ -269,8 +269,10 @@ class Video extends Bitmap
 			"--intf=dummy",
 			"--text-renderer=dummy",
 			"--no-video-title-show",
+			"--no-snapshot-preview",
 			"--no-stats",
 			"--no-spu",
+			"--no-interact",
 			"--no-osd",
 			"--no-lua",
 			"--reset-plugins-cache"
@@ -281,8 +283,10 @@ class Video extends Bitmap
 			"--intf=dummy",
 			"--text-renderer=dummy",
 			"--no-video-title-show",
+			"--no-snapshot-preview",
 			"--no-stats",
 			"--no-spu",
+			"--no-interact",
 			"--no-osd",
 			"--no-lua"
 		};');
