@@ -12,8 +12,9 @@
 	</section>
 
 	<section if="mac">
-		<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" type="template" />
-		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" type="template" />
+		<!--TODO: Fix the plugins being add to the asset's manifest-->
+		<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" />
+		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" />
 	</section>
 
 	<section if="android">
