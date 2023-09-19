@@ -2,9 +2,6 @@
 <xml>
 	<pragma once="true" />
 
-	<!-- <copyFile toolId="exe" name="libvlc.dll" from="${haxelib:hxvlc}/project/vlc/lib/Windows" overwrite="true" if="windows" /> -->
-	<!-- <copyFile toolId="exe" name="libvlccore.dll" from="${haxelib:hxvlc}/project/vlc/lib/Windows" overwrite="true" if="windows" /> -->
-
 	<files id="haxe">
 		<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" unless="linux" />
 	</files>
