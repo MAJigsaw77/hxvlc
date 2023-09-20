@@ -539,8 +539,7 @@ class Video extends Bitmap
 	// Overrides
 	@:noCompletion private override function __enterFrame(elapsed:Int):Void
 	{
-		if (events.contains(true))
-			checkEvents();
+		checkEvents();
 
 		if (__renderable && isPlaying)
 		{
@@ -561,6 +560,9 @@ class Video extends Bitmap
 	// Internal Methods
 	@:noCompletion private function checkEvents():Void
 	{
+		if (!events.contains(true))
+			return;
+
 		Macros.checkEvent(events[0], {
 			onOpening.dispatch();
 		});
