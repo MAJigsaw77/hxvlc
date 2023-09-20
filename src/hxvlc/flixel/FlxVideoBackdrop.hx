@@ -12,10 +12,23 @@ import flixel.FlxSprite;
 import hxvlc.openfl.Video;
 import sys.FileSystem;
 
+/**
+ * `FlxVideoBackdrop` is made for showing infinitely scrolling video backgrounds using FlxBackdrop.
+ */
 class FlxVideoBackdrop extends FlxBackdrop
 {
+	/**
+	 * The Video Bitmap.
+	 */
 	public var bitmap(default, null):Video;
 
+	/**
+	 * Creates an instance of the `FlxVideoBackdrop` class, used to create infinitely scrolling backgrounds.
+	 *
+	 * @param repeatAxes The axes on which to repeat. The default, `XY` will tile the entire camera.
+	 * @param spacingX Amount of spacing between tiles on the X axis.
+	 * @param spacingY Amount of spacing between tiles on the Y axis.
+	 */
 	public function new(repeatAxes = XY, spacingX = 0, spacingY = 0):Void
 	{
 		super(repeatAxes, spacingX, spacingY);
@@ -37,6 +50,14 @@ class FlxVideoBackdrop extends FlxBackdrop
 		FlxG.stage.addChild(bitmap);
 	}
 
+	/**
+	 * Call this function to play a video.
+	 *
+	 * @param location The local filesystem path or the media location url.
+	 * @param shouldLoop Whether to repeat the video or not.
+	 *
+	 * @return `true` if the video started playing or `false` if there's an error.
+	 */
 	public function play(location:String, shouldLoop:Bool = false):Bool
 	{
 		if (bitmap == null)
@@ -57,24 +78,36 @@ class FlxVideoBackdrop extends FlxBackdrop
 		return bitmap.play(location, shouldLoop);
 	}
 
+	/**
+	 * Call this function to stop the video.
+	 */
 	public function stop():Void
 	{
 		if (bitmap != null)
 			bitmap.stop();
 	}
 
+	/**
+	 * Call this function to pause the video.
+	 */
 	public function pause():Void
 	{
 		if (bitmap != null)
 			bitmap.pause();
 	}
 
+	/**
+	 * Call this function to resume the video.
+	 */
 	public function resume():Void
 	{
 		if (bitmap != null)
 			bitmap.resume();
 	}
 
+	/**
+	 * Call this function to toggle the pause of the video.
+	 */
 	public function togglePaused():Void
 	{
 		if (bitmap != null)
