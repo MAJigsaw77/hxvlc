@@ -4,13 +4,21 @@
 
 A Haxe/[OpenFL](https://www.openfl.org) library for video playback using [LibVLC](https://www.videolan.org/vlc/libvlc.html).
 
+## Supported platforms
+
+- [x] Windows **(x86_64 only)**.
+- [x] MacOS **(x86_64 and arm64 only)**.
+- [x] Linux **(x86_64 only)**.
+- [x] Android **(arm64, armv7a, x86 and x86_64 only)**.
+
+These platforms need be to compiled to C++ using [Lime](https://lime.openfl.org) in order to work.
+
 ## Instructions
 
 1. Install the latest stable version of `hxvlc` by running the following haxelib command.
     ```bash
     haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git
     ```
-
 2. Add this code in the **project.xml** file.
     ```xml
     <section if="cpp">
@@ -22,10 +30,7 @@ A Haxe/[OpenFL](https://www.openfl.org) library for video playback using [LibVLC
     ```xml
     <haxedef name="HXVLC_LOGGING" if="debug" />
     ```
-
-3. Limitations
-    > **Important**
-    > Be aware that 32bit compiling for `desktop` target doesn't work.
+3. **Well done!**
 
 ## Linux Libs Instructions
 
