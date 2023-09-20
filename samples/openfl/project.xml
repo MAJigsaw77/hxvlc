@@ -7,7 +7,7 @@
 
 	<!--Window Settings-->
 
-	<window fps="60" />
+	<window allow-high-dpi="true" fps="60" />
 
 	<!--Path Settings-->
 
