@@ -34,7 +34,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 		#end
 		bitmap.onFormatSetup.add(() -> loadGraphic(bitmap.bitmapData));
 
-		FlxG.game.addChild(bitmap);
+		FlxG.stage.addChild(bitmap);
 	}
 
 	public function play(location:String, shouldLoop:Bool = false):Bool
@@ -126,8 +126,8 @@ class FlxVideoBackdrop extends FlxBackdrop
 		{
 			bitmap.dispose();
 
-			if (FlxG.game.contains(bitmap))
-				FlxG.game.removeChild(bitmap);
+			if (FlxG.stage.contains(bitmap))
+				FlxG.stage.removeChild(bitmap);
 
 			bitmap = null;
 		}
