@@ -32,6 +32,10 @@
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
 	<haxedef name="HXVLC_LOGGING" if="debug" />
 
+	<!--Full Dead Code Elimination-->
+
+	<haxeflag name="-dce" value="full" />
+
 	<!--Platforms Config-->
 
 	<section if="android">
