@@ -23,7 +23,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 	public var bitmap(default, null):Video;
 
 	/**
-	 * Creates an instance of the `FlxVideoBackdrop` class, used to create infinitely scrolling backgrounds.
+	 * Creates an instance of the `FlxVideoBackdrop` class, used to create infinitely scrolling video backgrounds.
 	 *
 	 * @param repeatAxes The axes on which to repeat. The default, `XY` will tile the entire camera.
 	 * @param spacingX Amount of spacing between tiles on the X axis.
