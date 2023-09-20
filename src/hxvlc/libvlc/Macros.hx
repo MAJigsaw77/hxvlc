@@ -1,4 +1,4 @@
-package hxvlc.openfl;
+package hxvlc.libvlc;
 
 import haxe.macro.Expr;
 
