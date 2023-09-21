@@ -570,35 +570,59 @@ class Video extends Bitmap
 		if (!events.contains(true))
 			return;
 
-		Macros.checkEvent(events[0], {
+		if (events[0])
+		{
+			events[0] = false;
+
 			onOpening.dispatch();
-		});
+		}
 
-		Macros.checkEvent(events[1], {
+		if (events[1])
+		{
+			events[1] = false;
+
 			onPlaying.dispatch();
-		});
+		}
 
-		Macros.checkEvent(events[2], {
+		if (events[2])
+		{
+			events[2] = false;
+
 			onStopped.dispatch();
-		});
+		}
 
-		Macros.checkEvent(events[3], {
+		if (events[3])
+		{
+			events[3] = false;
+
 			onPaused.dispatch();
-		});
+		}
 
-		Macros.checkEvent(events[4], {
+		if (events[4])
+		{
+			events[4] = false;
+
 			onEndReached.dispatch();
-		});
+		}
 
-		Macros.checkEvent(events[5], {
+		if (events[5])
+		{
+			events[5] = false;
+
 			onEncounteredError.dispatch();
-		});
+		}
 
-		Macros.checkEvent(events[6], {
+		if (events[6])
+		{
+			events[6] = false;
+
 			onMediaChanged.dispatch();
-		});
+		}
 
-		Macros.checkEvent(events[7], {
+		if (events[7])
+		{
+			events[7] = false;
+
 			if (bitmapData != null && texture != null)
 			{
 				// Don't dispose the bitmapData if isn't necessary...
@@ -615,7 +639,7 @@ class Video extends Bitmap
 			bitmapData = BitmapData.fromTexture(texture);
 
 			onFormatSetup.dispatch();
-		});
+		}
 	}
 
 	@:noCompletion private function attachEvents():Void
