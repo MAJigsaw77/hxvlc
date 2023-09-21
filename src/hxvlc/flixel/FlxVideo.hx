@@ -15,10 +15,12 @@ class FlxVideo extends Video
 
 	/**
 	 * Initializes a FlxVideo object.
+	 *
+	 * @param smoothing Whether or not the video is smoothed when scaled.
 	 */
-	public function new():Void
+	public function new(smoothing:Bool = true):Void
 	{
-		super();
+		super(smoothing);
 
 		#if FLX_SOUND_SYSTEM
 		onOpening.add(function()
