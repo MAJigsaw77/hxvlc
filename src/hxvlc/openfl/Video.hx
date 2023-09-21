@@ -5,7 +5,6 @@ package hxvlc.openfl;
 #end
 import haxe.io.Path;
 import hxvlc.libvlc.LibVLC;
-import hxvlc.libvlc.Macros;
 import hxvlc.libvlc.Types;
 import lime.app.Event;
 import openfl.display.Bitmap;
