@@ -54,11 +54,11 @@ class FlxVideoBackdrop extends FlxBackdrop
 	 * Call this function to play a video.
 	 *
 	 * @param location The local filesystem path or the media location url.
-	 * @param shouldLoop Whether to repeat the video or not.
+	 * @param loops Whether to repeat the video or not.
 	 *
 	 * @return `true` if the video started playing or `false` if there's an error.
 	 */
-	public function play(location:String, shouldLoop:Bool = false):Bool
+	public function play(location:String, loops:Int = 0):Bool
 	{
 		if (bitmap == null)
 			return false;
@@ -73,9 +73,9 @@ class FlxVideoBackdrop extends FlxBackdrop
 		}
 
 		if (FileSystem.exists(Sys.getCwd() + location))
-			return bitmap.play(Sys.getCwd() + location, shouldLoop);
+			return bitmap.play(Sys.getCwd() + location, loops);
 
-		return bitmap.play(location, shouldLoop);
+		return bitmap.play(location, loops);
 	}
 
 	/**
