@@ -315,7 +315,8 @@ class Video extends Bitmap
 		else
 			return false;
 
-		LibVLC.media_add_option(mediaItem, repeat == -1 ? "input-repeat=65535" : "input-repeat=" + repeat);
+		// 65535 is the maximum `unsigned int` size.
+		LibVLC.media_add_option(mediaItem, (repeat < 0 || repeat > 65535) ? "input-repeat=65535" : "input-repeat=" + repeat);
 
 		if (mediaPlayer != null)
 			LibVLC.media_player_set_media(mediaPlayer, mediaItem);
