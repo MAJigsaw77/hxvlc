@@ -315,7 +315,7 @@ class Video extends Bitmap
 		else
 			return false;
 
-		// 65535 is the maximum `unsigned int` size.
+		// 65535 is the maximum `unsigned short` size.
 		LibVLC.media_add_option(mediaItem, (repeat < 0 || repeat > 65535) ? "input-repeat=65535" : "input-repeat=" + repeat);
 
 		if (mediaPlayer != null)
