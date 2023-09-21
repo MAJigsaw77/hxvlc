@@ -48,7 +48,7 @@ class FlxVideoSprite extends FlxSprite
 	 * Call this function to play a video.
 	 *
 	 * @param location The local filesystem path or the media location url.
-	 * @param repeat Whether to repeat the video or not.
+	 * @param repeat The number of times the video should repeat itself.
 	 *
 	 * @return `true` if the video started playing or `false` if there's an error.
 	 */
