@@ -13,7 +13,6 @@ import openfl.display.BitmapData;
 import openfl.display3D.textures.RectangleTexture;
 import openfl.Lib;
 
-@:headerInclude('vlc/vlc.h')
 #if android
 @:headerInclude('android/log.h')
 #end
