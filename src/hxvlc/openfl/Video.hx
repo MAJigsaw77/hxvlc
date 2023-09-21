@@ -237,10 +237,12 @@ class Video extends Bitmap
 
 	/**
 	 * Initializes a Video object.
+	 *
+	 * @param smoothing Whether or not the video is smoothed when scaled.
 	 */
-	public function new():Void
+	public function new(smoothing:Bool = true):Void
 	{
-		super(bitmapData, AUTO, true);
+		super(bitmapData, AUTO, smoothing);
 
 		for (i in 0...7)
 			events[i] = false;
@@ -557,6 +559,11 @@ class Video extends Bitmap
 		}
 	}
 
+	@:noCompletion private override function set_bitmapData(value:BitmapData):BitmapData
+	{
+		return __bitmapData = value;
+	}
+
 	// Internal Methods
 	@:noCompletion private function checkEvents():Void
 	{
@@ -606,7 +613,6 @@ class Video extends Bitmap
 
 			texture = Lib.current.stage.context3D.createRectangleTexture(videoWidth, videoHeight, BGRA, true);
 			bitmapData = BitmapData.fromTexture(texture);
-			smoothing = true;
 
 			onFormatSetup.dispatch();
 		});
