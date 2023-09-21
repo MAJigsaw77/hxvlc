@@ -302,11 +302,11 @@ class Video extends Bitmap
 	 * Call this function to play a video.
 	 *
 	 * @param location The local filesystem path or the media location url.
-	 * @param loops The number of times the video should loop.
+	 * @param repeat The number of times the video should repeat itself.
 	 *
 	 * @return `true` if the video started playing or `false` if there's an error.
 	 */
-	public function play(location:String, loops:Int = 0):Bool
+	public function play(location:String, repeat:Int = 0):Bool
 	{
 		if (location != null && location.indexOf('://') != -1)
 			mediaItem = LibVLC.media_new_location(instance, location);
@@ -315,7 +315,7 @@ class Video extends Bitmap
 		else
 			return false;
 
-		LibVLC.media_add_option(mediaItem, loops == -1 ? "input-repeat=65535" : "input-repeat=" + loops);
+		LibVLC.media_add_option(mediaItem, repeat == -1 ? "input-repeat=65535" : "input-repeat=" + repeat);
 
 		if (mediaPlayer != null)
 			LibVLC.media_player_set_media(mediaPlayer, mediaItem);

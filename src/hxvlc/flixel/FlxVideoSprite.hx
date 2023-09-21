@@ -48,11 +48,11 @@ class FlxVideoSprite extends FlxSprite
 	 * Call this function to play a video.
 	 *
 	 * @param location The local filesystem path or the media location url.
-	 * @param loops Whether to repeat the video or not.
+	 * @param repeat Whether to repeat the video or not.
 	 *
 	 * @return `true` if the video started playing or `false` if there's an error.
 	 */
-	public function play(location:String, loops:Int = 0):Bool
+	public function play(location:String, repeat:Int = 0):Bool
 	{
 		if (bitmap == null)
 			return false;
@@ -67,9 +67,9 @@ class FlxVideoSprite extends FlxSprite
 		}
 
 		if (FileSystem.exists(Sys.getCwd() + location))
-			return bitmap.play(Sys.getCwd() + location, loops);
+			return bitmap.play(Sys.getCwd() + location, repeat);
 
-		return bitmap.play(location, loops);
+		return bitmap.play(location, repeat);
 	}
 
 	/**
