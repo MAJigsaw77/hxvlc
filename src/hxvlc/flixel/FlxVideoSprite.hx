@@ -13,7 +13,7 @@ import sys.FileSystem;
 class FlxVideoSprite extends FlxSprite
 {
 	/**
-	 * The Video Bitmap.
+	 * The video bitmap.
 	 */
 	public var bitmap(default, null):Video;
 
@@ -29,7 +29,7 @@ class FlxVideoSprite extends FlxSprite
 
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
-		bitmap = new Video();
+		bitmap = new Video(false);
 		bitmap.alpha = 0;
 		#if FLX_SOUND_SYSTEM
 		bitmap.onOpening.add(function()

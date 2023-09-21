@@ -18,7 +18,7 @@ import sys.FileSystem;
 class FlxVideoBackdrop extends FlxBackdrop
 {
 	/**
-	 * The Video Bitmap.
+	 * The video bitmap.
 	 */
 	public var bitmap(default, null):Video;
 
@@ -35,7 +35,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
-		bitmap = new Video();
+		bitmap = new Video(false);
 		bitmap.alpha = 0;
 		#if FLX_SOUND_SYSTEM
 		bitmap.onOpening.add(function()
