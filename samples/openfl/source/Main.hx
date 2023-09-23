@@ -55,7 +55,7 @@ class Main extends Sprite
 		#end
 			
 		
-		video.play(Sys.getCwd() + path);
+		video.play(Sys.getCwd() + path, 2);
 	}
 
 	private inline function stage_onEnterFrame(event:Event):Void
