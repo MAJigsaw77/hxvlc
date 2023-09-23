@@ -28,6 +28,8 @@
 		<haxelib name="hxvlc" if="desktop || android" />
 	</section>
 
+	<haxelib name="extension-androidtools" if="android" />
+
 	<!--Libraries Settings-->
 
 	<haxedef name="HXVLC_LOGGING" if="debug" />
