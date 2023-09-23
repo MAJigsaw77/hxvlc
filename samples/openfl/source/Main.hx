@@ -7,6 +7,7 @@ import android.widget.Toast;
 import haxe.io.Path;
 import haxe.Exception;
 import hxvlc.openfl.Video;
+import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.utils.Assets;
@@ -53,7 +54,8 @@ class Main extends Sprite
 		catch (e:Exception)
 			Toast.makeText(e.message, Toast.LENGTH_LONG);
 		#end
-			
+
+		addChild(new FPS(10, 10, 0xFFFFFFFF));
 		
 		video.play(Sys.getCwd() + path, 2);
 	}
