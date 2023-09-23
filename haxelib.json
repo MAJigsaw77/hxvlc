@@ -6,6 +6,7 @@
 		"cpp",
 		"haxe",
 		"openfl",
+		"vlc",
 		"libvlc",
 		"haxeflixel"
 	],
