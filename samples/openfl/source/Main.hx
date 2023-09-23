@@ -26,12 +26,14 @@ class Main extends Sprite
 		#end
 
 		video = new Video();
+		video.onOpening.add(function()
+		{
+			stage.addEventListener(Event.ACTIVATE, stage_onActivate);
+			stage.addEventListener(Event.DEACTIVATE, stage_onDeactivate);
+		});
 		video.onEndReached.add(video.dispose);
+		video.onFormatSetup.add(() -> stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame));
 		addChild(video);
-
-		stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
-		stage.addEventListener(Event.ACTIVATE, stage_onActivate);
-		stage.addEventListener(Event.DEACTIVATE, stage_onDeactivate);
 
 		final path:String = 'assets/video.mp4';
 
@@ -56,7 +58,7 @@ class Main extends Sprite
 		video.play(Sys.getCwd() + path);
 	}
 
-	private function stage_onEnterFrame(event:Event):Void
+	private inline function stage_onEnterFrame(event:Event):Void
 	{
 		final aspectRatio:Float = video.videoWidth / video.videoHeight;
 
@@ -77,12 +79,12 @@ class Main extends Sprite
 		video.y = (stage.stageHeight - video.height) / 2;
 	}
 
-	private function stage_onActivate(event:Event):Void
+	private inline function stage_onActivate(event:Event):Void
 	{
 		video.resume();
 	}
 
-	private function stage_onDeactivate(event:Event):Void
+	private inline function stage_onDeactivate(event:Event):Void
 	{
 		video.pause();
 	}
