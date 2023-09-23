@@ -1,8 +1,17 @@
 package;
 
+#if android
+import android.content.Context;
+import android.widget.Toast;
+#end
+import haxe.io.Path;
+import haxe.Exception;
+import hxvlc.openfl.Video;
 import openfl.display.Sprite;
 import openfl.events.Event;
-import hxvlc.openfl.Video;
+import openfl.utils.Assets;
+import sys.io.File;
+import sys.FileSystem;
 
 class Main extends Sprite
 {
@@ -12,6 +21,10 @@ class Main extends Sprite
 	{
 		super();
 
+		#if android
+		Sys.setCwd(Path.addTrailingSlash(Context.getExternalFilesDir()));
+		#end
+
 		video = new Video();
 		video.onEndReached.add(video.dispose);
 		addChild(video);
@@ -20,11 +33,27 @@ class Main extends Sprite
 		stage.addEventListener(Event.ACTIVATE, stage_onActivate);
 		stage.addEventListener(Event.DEACTIVATE, stage_onDeactivate);
 
+		final path:String = 'assets/video.mp4';
+
 		#if android
-		video.play('https://github.com/MAJigsaw77/hxvlc/raw/main/samples/openfl/assets/video.mp4');
-		#else
-		video.play(Sys.getCwd() + 'assets/video.mp4');
+		try
+		{
+			if (!FileSystem.exists(Path.directory(path)))
+			{
+				FileSystem.createDirectory(Path.directory(path));
+
+				File.saveBytes(path, Assets.getBytes(path));
+			}
+			else if (!FileSystem.exists(path))
+				File.saveBytes(path, Assets.getBytes(path));
+				
+		}
+		catch (e:Exception)
+			Toast.makeText(e.message, Toast.LENGTH_LONG);
 		#end
+			
+		
+		video.play(Sys.getCwd() + path);
 	}
 
 	private function stage_onEnterFrame(event:Event):Void
