@@ -1,13 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<project xmlns="http://lime.openfl.org/project/1.0.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://lime.openfl.org/project/1.0.4 http://lime.openfl.org/xsd/project-1.0.4.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xmlns="http://lime.openfl.org/project/1.0.4"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://lime.openfl.org/project/1.0.4 http://lime.openfl.org/xsd/project-1.0.4.xsd">
 
 	<!--Application Settings-->
 
-	<app title="hxVLC Sample (Flixel)" file="Test" main="Main" version="0.0.1" company="MAJigsaw77" path="export" preloader="flixel.system.FlxPreloader" />
+	<meta title="hxVLC Sample (Flixel)" packageName="com.majigsaw77.hxvlc" package="com.majigsaw77.hxvlc" version="0.0.1" company="MAJigsaw77" />
+
+	<app file="Sample" main="Main" path="export" preloader="flixel.system.FlxPreloader" />
 
 	<!--Window Settings-->
 
-	<window orientation="landscape" width="1280" height="720" fps="60" background="#FF00FF" hardware="true" vsync="false" fullscreen="false" resizable="true" />
+	<window orientation="landscape" width="1280" height="720" fps="60" background="#FFA500" hardware="true" vsync="false" fullscreen="false" resizable="true" />
 
 	<window allow-high-dpi="true" unless="web" />
 	
@@ -15,8 +20,9 @@
 
 	<!--Path Settings-->
 
-	<source path="source" />
 	<assets path="assets" />
+
+	<source path="source" />
 
 	<!--Libraries-->
 
@@ -26,13 +32,20 @@
 		<haxelib name="hxvlc" if="desktop || android" />
 	</section>
 
+	<haxelib name="extension-androidtools" if="android" />
+
 	<!--Libraries Settings-->
 
 	<haxedef name="FLX_NO_MOUSE" if="mobile" />
 	<haxedef name="FLX_NO_KEYBOARD" if="mobile" />
 	<haxedef name="FLX_NO_TOUCH" if="desktop" />
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
+
 	<haxedef name="HXVLC_LOGGING" if="debug" />
+
+	<!--DPI Awareness-->
+
+	<haxedef name="openfl_dpi_aware" unless="web" />
 
 	<!--Full Dead Code Elimination-->
 
@@ -49,5 +62,4 @@
 			<android target-sdk-version="29" if="${lime &lt; 8.1.0}" />
 		</config>
 	</section>
-
 </project>
