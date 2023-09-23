@@ -1,9 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<project xmlns="http://lime.openfl.org/project/1.0.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://lime.openfl.org/project/1.0.4 http://lime.openfl.org/xsd/project-1.0.4.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xmlns="http://lime.openfl.org/project/1.0.4"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://lime.openfl.org/project/1.0.4 http://lime.openfl.org/xsd/project-1.0.4.xsd">
 
 	<!--Application Settings-->
 
-	<app title="hxVLC Sample (OpenFL)" file="Test" main="Main" version="0.0.1" company="MAJigsaw77" path="export" />
+	<meta title="hxVLC Sample (OpenFL)" packageName="com.majigsaw77.hxvlc" package="com.majigsaw77.hxvlc" version="0.0.1" company="MAJigsaw77" />
+
+	<app file="Sample" main="Main" path="export" />
 
 	<!--Window Settings-->
 
@@ -11,8 +16,9 @@
 
 	<!--Path Settings-->
 
-	<source path="source" />
 	<assets path="assets" />
+
+	<source path="source" />
 
 	<!--Libraries-->
 
@@ -41,5 +47,4 @@
 			<android target-sdk-version="29" if="${lime &lt; 8.1.0}" />
 		</config>
 	</section>
-
 </project>
