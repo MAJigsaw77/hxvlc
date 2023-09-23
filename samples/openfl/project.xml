@@ -36,7 +36,7 @@
 
 	<!--DPI Awareness-->
 
-	<haxedef name="openfl_dpi_aware" unless="web" />
+	<haxedef name="openfl_dpi_aware" />
 
 	<!--Full Dead Code Elimination-->
 
