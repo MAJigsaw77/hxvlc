@@ -1,7 +1,7 @@
 package hxvlc.flixel;
 
 #if flixel
-#if (!flixel_addons && macro)
+#if !flixel_addons
 #error 'Your project must use flixel-addons in order to use this class.'
 #end
 import flixel.addons.display.FlxBackdrop;
