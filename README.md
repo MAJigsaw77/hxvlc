@@ -1,3 +1,5 @@
+![](https://github.com/MAJigsaw77/hxvlc/blob/main/logo.png)
+
 # hxvlc
 
 ![](https://img.shields.io/github/repo-size/MAJigsaw77/hxvlc) ![](https://badgen.net/github/open-issues/MAJigsaw77/hxvlc) ![](https://badgen.net/badge/license/MIT/green)
