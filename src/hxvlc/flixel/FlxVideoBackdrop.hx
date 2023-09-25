@@ -40,13 +40,13 @@ class FlxVideoBackdrop extends FlxBackdrop
 		#if FLX_SOUND_SYSTEM
 		bitmap.onOpening.add(function()
 		{
-			bitmap.mute = FlxG.sound.muted;
-
 			bitmap.volume = Math.floor(FlxG.sound.volume * 100);
+			bitmap.mute = FlxG.sound.muted;
 		});
 		#end
 		bitmap.onFormatSetup.add(() -> loadGraphic(bitmap.bitmapData));
-		FlxG.stage.addChild(bitmap);
+
+		FlxG.game.addChild(bitmap);
 	}
 
 	/**
@@ -114,15 +114,28 @@ class FlxVideoBackdrop extends FlxBackdrop
 	}
 
 	// Overrides
-	public override function update(elapsed:Float):Void
+	public override function destroy():Void
 	{
-		#if FLX_SOUND_SYSTEM
-		bitmap.mute = FlxG.sound.muted;
+		if (FlxG.autoPause)
+		{
+			if (FlxG.signals.focusGained.has(resume))
+				FlxG.signals.focusGained.remove(resume);
 
-		bitmap.volume = Math.floor(FlxG.sound.volume * 100);
-		#end
+			if (FlxG.signals.focusLost.has(pause))
+				FlxG.signals.focusLost.remove(pause);
+		}
 
-		super.update(elapsed);
+		super.destroy();
+
+		if (bitmap != null)
+		{
+			bitmap.dispose();
+
+			if (FlxG.game.contains(bitmap))
+				FlxG.game.removeChild(bitmap);
+
+			bitmap = null;
+		}
 	}
 
 	public override function kill():Void
@@ -141,28 +154,14 @@ class FlxVideoBackdrop extends FlxBackdrop
 			bitmap.resume();
 	}
 
-	public override function destroy():Void
+	public override function update(elapsed:Float):Void
 	{
-		if (FlxG.autoPause)
-		{
-			if (FlxG.signals.focusGained.has(resume))
-				FlxG.signals.focusGained.remove(resume);
+		#if FLX_SOUND_SYSTEM
+		bitmap.volume = Math.floor(FlxG.sound.volume * 100);
+		bitmap.mute = FlxG.sound.muted;
+		#end
 
-			if (FlxG.signals.focusLost.has(pause))
-				FlxG.signals.focusLost.remove(pause);
-		}
-
-		super.destroy();
-
-		if (bitmap != null)
-		{
-			bitmap.dispose();
-
-			if (FlxG.stage.contains(bitmap))
-				FlxG.stage.removeChild(bitmap);
-
-			bitmap = null;
-		}
+		super.update(elapsed);
 	}
 }
 #end
