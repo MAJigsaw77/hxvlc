@@ -31,7 +31,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 	 */
 	public function new(repeatAxes:FlxAxes = XY, spacingX:Float = 0, spacingY:Float = 0):Void
 	{
-		super(repeatAxes, spacingX, spacingY);
+		super(null, repeatAxes, spacingX, spacingY);
 
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
