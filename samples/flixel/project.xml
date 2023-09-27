@@ -10,6 +10,10 @@
 
 	<app file="Sample" main="Main" path="export" preloader="flixel.system.FlxPreloader" />
 
+	<!--Icon Settings -->
+	
+	<icon path="icon.png" />
+
 	<!--Window Settings-->
 
 	<window orientation="landscape" width="1280" height="720" fps="60" background="#FFA500" hardware="true" vsync="false" fullscreen="false" resizable="true" />

@@ -10,6 +10,10 @@
 
 	<app file="Sample" main="Main" path="export" />
 
+	<!--Icon Settings -->
+	
+	<icon path="icon.png" />
+
 	<!--Window Settings-->
 
 	<window allow-high-dpi="true" background="#FFA500" fps="60" />
