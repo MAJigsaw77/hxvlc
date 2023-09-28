@@ -34,12 +34,11 @@ class Main extends Sprite
 		});
 		video.onEndReached.add(function()
 		{
+			stage.removeEventListener(Event.ACTIVATE, stage_onActivate);
+			stage.removeEventListener(Event.DEACTIVATE, stage_onDeactivate);
 			stage.removeEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
 
 			video.dispose();
-
-			stage.removeEventListener(Event.ACTIVATE, stage_onActivate);
-			stage.removeEventListener(Event.DEACTIVATE, stage_onDeactivate);
 		});
 		video.onFormatSetup.add(() -> stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame));
 		addChild(video);
@@ -63,7 +62,9 @@ class Main extends Sprite
 			Toast.makeText(e.message, Toast.LENGTH_LONG);
 		#end
 
-		addChild(new FPS(10, 10, 0xFFFFFFFF));
+		var overlay:FPS = new FPS(10, 10, 0xFFFFFFFF);
+		overlay.scaleX = overlay.scaleY = stage.window.scale;
+		addChild(overlay);
 		
 		video.play(Sys.getCwd() + path, 2);
 	}
