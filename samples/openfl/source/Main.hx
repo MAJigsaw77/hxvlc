@@ -32,7 +32,15 @@ class Main extends Sprite
 			stage.addEventListener(Event.ACTIVATE, stage_onActivate);
 			stage.addEventListener(Event.DEACTIVATE, stage_onDeactivate);
 		});
-		video.onEndReached.add(video.dispose);
+		video.onEndReached.add(function()
+		{
+			stage.removeEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
+
+			video.dispose();
+
+			stage.removeEventListener(Event.ACTIVATE, stage_onActivate);
+			stage.removeEventListener(Event.DEACTIVATE, stage_onDeactivate);
+		});
 		video.onFormatSetup.add(() -> stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame));
 		addChild(video);
 
