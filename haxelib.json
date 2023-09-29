@@ -1,8 +1,8 @@
 {
-	"name":"hxvlc",
-	"url":"https://github.com/MAJigsaw77/hxvlc",
-	"license":"MIT",
-	"tags":[
+	"name": "hxvlc",
+	"url": "https://github.com/MAJigsaw77/hxvlc",
+	"license": "MIT",
+	"tags": [
 		"cpp",
 		"haxe",
 		"openfl",
@@ -10,16 +10,16 @@
 		"libvlc",
 		"haxeflixel"
 	],
-	"description":"A Haxe/OpenFL library for video playback using LibVLC.",
-	"version":"1.0.0",
-	"releasenote":"First Release.",
-	"contributors":[
+	"description": "A Haxe/OpenFL library for video playback using LibVLC.",
+	"version": "1.0.0",
+	"releasenote": "First Release.",
+	"contributors": [
 		"MAJigsaw77"
 	],
-	"dependencies":{
-		"hxcpp":"",
-		"lime":"",
-		"openfl":""
+	"dependencies": {
+		"hxcpp": "",
+		"lime": "",
+		"openfl": ""
 	},
-	"classPath":"src"
+	"classPath": "src"
 }
