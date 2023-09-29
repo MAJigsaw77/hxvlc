@@ -6,7 +6,7 @@
 
 	<!--Application Settings-->
 
-	<meta title="hxVLC Sample (OpenFL)" packageName="com.majigsaw77.hxvlc" package="com.majigsaw77.hxvlc" version="0.0.1" company="MAJigsaw77" />
+	<meta title="hxVLC Sample (OpenFL)" packageName="com.majigsaw77.hxvlc.openfl" package="com.majigsaw77.hxvlc.openfl" version="0.0.1" company="MAJigsaw77" />
 
 	<app file="Sample" main="Main" path="export" />
 

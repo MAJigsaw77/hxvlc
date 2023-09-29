@@ -3,6 +3,7 @@ package;
 #if android
 import android.content.Context;
 #end
+import flixel.FlxG;
 import flixel.FlxGame;
 import haxe.io.Path;
 import openfl.display.FPS;
@@ -20,8 +21,6 @@ class Main extends Sprite
 
 		addChild(new FlxGame(1280, 720, PlayState));
 
-		var overlay:FPS = new FPS(10, 10, 0xFFFFFFFF);
-		overlay.scaleX = overlay.scaleY = stage.window.scale;
-		addChild(overlay);
+		addChild(new FPS(10, 10, 0xFFFFFFFF));
 	}
 }

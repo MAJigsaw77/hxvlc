@@ -62,9 +62,7 @@ class Main extends Sprite
 			Toast.makeText(e.message, Toast.LENGTH_LONG);
 		#end
 
-		var overlay:FPS = new FPS(10, 10, 0xFFFFFFFF);
-		overlay.scaleX = overlay.scaleY = stage.window.scale;
-		addChild(overlay);
+		addChild(new FPS(10, 10, 0xFFFFFFFF));
 		
 		video.play(Sys.getCwd() + path, 2);
 	}

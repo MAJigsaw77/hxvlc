@@ -37,7 +37,7 @@ class PlayState extends FlxState
 
 		var video:FlxVideo = new FlxVideo();
 		video.onEndReached.add(video.dispose);
-		video.play(path);
+		video.play(path, 2);
 
 		super.create();
 	}
