@@ -3,7 +3,6 @@ package hxvlc.openfl;
 #if (!cpp && !(desktop || android))
 #error 'The current target platform isn\'t supported by hxvlc.'
 #end
-import haxe.io.Path;
 import hxvlc.libvlc.LibVLC;
 import hxvlc.libvlc.Types;
 import lime.app.Event;
@@ -11,6 +10,8 @@ import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.RectangleTexture;
 import openfl.Lib;
+
+using haxe.io.Path;
 
 #if android
 @:headerInclude('android/log.h')
@@ -311,8 +312,8 @@ class Video extends Bitmap
 	{
 		if (location != null && location.indexOf('://') != -1)
 			mediaItem = LibVLC.media_new_location(instance, location);
-		else if (location != null)
-			mediaItem = LibVLC.media_new_path(instance, #if windows Path.normalize(location).split('/').join('\\') #else Path.normalize(location) #end);
+		else if (location != null && location.isAbsolute())
+			mediaItem = LibVLC.media_new_path(instance, #if windows location.normalize().split('/').join('\\') #else location.normalize() #end);
 		else
 			return false;
 
