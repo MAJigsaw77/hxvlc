@@ -27,26 +27,18 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
     	<haxelib name="hxvlc" if="desktop || android" />
     </section>
     ```
+3. ***Linux users only***, in order to build a application with this library, you need to install `libvlc` and `libvlccore` from your distro's package manager.
 
-    **Optional** Defines.
-    ```xml
-    <haxedef name="HXVLC_LOGGING" if="debug" />
-    ```
-3. **Well done!**
+    * [Debian](https://debian.org) based distributions:
+        ```bash
+        sudo apt-get install libvlc-dev libvlccore-dev 
+        ```
 
-## Linux Libs Instructions
-
-In order to build a application with the library on **Linux**, you **have to install** `libvlc` and `libvlccore` from your distro's package manager.
-
-* [Debian](https://debian.org) based distributions:
-    ```bash
-    sudo apt-get install libvlc-dev libvlccore-dev 
-    ```
-
-* [Arch](https://archlinux.org) based distributions:
-    ```bash
-    sudo pacman -S vlc 
-    ```
+    * [Arch](https://archlinux.org) based distributions:
+        ```bash
+        sudo pacman -S vlc 
+        ```
+4. **Well done!**
 
 ## Usage Examples
 
@@ -58,7 +50,7 @@ Check out the [Samples Folder](samples/) for examples on how to use this library
 
 ![](https://raw.githubusercontent.com/videolan/vlc/master/share/icons/256x256/vlc-xmas.png)
 
-[**LibVLC**](https://www.videolan.org/vlc/libvlc.html) is the engine of **VLC** released under the **LGPLv2 License** (or later). Check [VideoLAN.org](https://www.videolan.org/legal.html) for more information.
+**LibVLC** is the engine of **VLC** released under the **LGPL2.1 License**. Check [VideoLAN.org](https://www.videolan.org/legal.html) for more information.
 
 ## Credits
 
