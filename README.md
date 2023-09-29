@@ -13,7 +13,7 @@ A Haxe/[OpenFL](https://www.openfl.org) library for video playback using [LibVLC
 - [x] Linux **(x86_64 only)**.
 - [x] Android **(arm64, armv7a, x86 and x86_64 only)**.
 
-These platforms need be to compiled to C++ using [Lime](https://lime.openfl.org) in order to work.
+These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org) in order to work.
 
 ## Instructions
 
