@@ -3,10 +3,8 @@ package;
 #if android
 import android.content.Context;
 #end
-import flixel.FlxG;
 import flixel.FlxGame;
 import haxe.io.Path;
-import openfl.display.FPS;
 import openfl.display.Sprite;
 
 class Main extends Sprite
@@ -20,7 +18,5 @@ class Main extends Sprite
 		#end
 
 		addChild(new FlxGame(1280, 720, PlayState));
-
-		addChild(new FPS(10, 10, 0xFFFFFFFF));
 	}
 }

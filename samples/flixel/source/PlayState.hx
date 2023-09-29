@@ -3,9 +3,11 @@ package;
 #if android
 import android.widget.Toast;
 #end
+import flixel.FlxG;
 import flixel.FlxState;
 import haxe.Exception;
 import hxvlc.flixel.FlxVideo;
+import openfl.display.FPS;
 import openfl.utils.Assets;
 import sys.io.File;
 import sys.FileSystem;
@@ -16,6 +18,8 @@ class PlayState extends FlxState
 {
 	override function create():Void
 	{
+		FlxG.game.addChild(new FPS(10, 10, 0xFFFFFFFF));
+
 		final path:String = 'assets/video.mp4';
 
 		#if android
@@ -35,10 +39,10 @@ class PlayState extends FlxState
 			Toast.makeText(e.message, Toast.LENGTH_LONG);
 		#end
 
+		super.create();
+
 		var video:FlxVideo = new FlxVideo();
 		video.onEndReached.add(video.dispose);
 		video.play(path, 2);
-
-		super.create();
 	}
 }
