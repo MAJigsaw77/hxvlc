@@ -39,10 +39,10 @@ class PlayState extends FlxState
 			Toast.makeText(e.message, Toast.LENGTH_LONG);
 		#end
 
-		super.create();
-
 		var video:FlxVideo = new FlxVideo();
 		video.onEndReached.add(video.dispose);
 		video.play(path, 2);
+
+		super.create();
 	}
 }
