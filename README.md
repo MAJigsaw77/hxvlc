@@ -27,7 +27,7 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
     	<haxelib name="hxvlc" if="desktop || android" />
     </section>
     ```
-3. ***Linux users only***, in order to build a application with this library, you need to install `libvlc` and `libvlccore` from your distro's package manager.
+3. ***Linux users only***, you need to install `libvlc` and `libvlccore` from your distro's package manager.
 
     * [Debian](https://debian.org) based distributions:
         ```bash
