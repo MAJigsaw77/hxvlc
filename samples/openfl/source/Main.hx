@@ -14,6 +14,8 @@ import openfl.utils.Assets;
 import sys.io.File;
 import sys.FileSystem;
 
+using haxe.io.Path;
+
 class Main extends Sprite
 {
 	private var video:Video;
@@ -48,9 +50,9 @@ class Main extends Sprite
 		#if android
 		try
 		{
-			if (!FileSystem.exists(Path.directory(path)))
+			if (!FileSystem.exists(path.directory()))
 			{
-				FileSystem.createDirectory(Path.directory(path));
+				FileSystem.createDirectory(path.directory());
 
 				File.saveBytes(path, Assets.getBytes(path));
 			}
