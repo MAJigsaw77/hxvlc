@@ -29,7 +29,11 @@ class FlxVideoBackdrop extends FlxBackdrop
 	 * @param spacingX Amount of spacing between tiles on the X axis.
 	 * @param spacingY Amount of spacing between tiles on the Y axis.
 	 */
+	#if (flixel_addons >= "3.2.1")
 	public function new(repeatAxes = XY, spacingX = 0.0, spacingY = 0.0):Void
+	#else
+	public function new(repeatAxes = XY, spacingX = 0, spacingY = 0):Void
+	#end
 	{
 		super(repeatAxes, spacingX, spacingY);
 
