@@ -16,5 +16,10 @@
 	"contributors": [
 		"MAJigsaw77"
 	],
+	"dependencies": {
+		"hxcpp": "",
+		"lime": "",
+		"openfl": ""
+	},
 	"classPath": "source"
 }
