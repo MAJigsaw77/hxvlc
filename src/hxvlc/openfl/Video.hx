@@ -227,7 +227,7 @@ class Video extends Bitmap
 
 	@:noCompletion private var oldTime:Float = 0;
 	@:noCompletion private var deltaTime:Float = 0;
-	@:noCompletion private var events:Array<Bool> = [for (i in 0...7) false];
+	@:noCompletion private var events:Array<Bool> = [];
 	@:noCompletion private var texture:RectangleTexture;
 	@:noCompletion private var pixels:cpp.RawPointer<cpp.UInt8>;
 	@:noCompletion private var instance:cpp.RawPointer<LibVLC_Instance_T>;
@@ -243,6 +243,10 @@ class Video extends Bitmap
 	public function new(smoothing:Bool = true):Void
 	{
 		super(bitmapData, AUTO, smoothing);
+
+		events.resize(7);
+		for (i in 0...events.length)
+			events[i] = false;
 
 		onOpening = new Event<Void->Void>();
 		onPlaying = new Event<Void->Void>();
