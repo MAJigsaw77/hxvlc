@@ -35,39 +35,106 @@ extern class LibVLC_Event_T {}
 @:native('libvlc_log_t')
 extern class LibVLC_Log_T {}
 
-enum abstract LibVLC_Event_E(Int) from Int to Int
+/**
+ * Event types.
+ */
+extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 {
-	var LibVLC_MediaPlayerMediaChanged = 256;
-	var LibVLC_MediaPlayerNothingSpecial = 257;
-	var LibVLC_MediaPlayerOpening = 258;
-	var LibVLC_MediaPlayerBuffering = 259;
-	var LibVLC_MediaPlayerPlaying = 260;
-	var LibVLC_MediaPlayerPaused = 261;
-	var LibVLC_MediaPlayerStopped = 262;
-	var LibVLC_MediaPlayerForward = 263;
-	var LibVLC_MediaPlayerBackward = 264;
-	var LibVLC_MediaPlayerEndReached = 265;
-	var LibVLC_MediaPlayerEncounteredError = 266;
-	var LibVLC_MediaPlayerTimeChanged = 267;
-	var LibVLC_MediaPlayerPositionChanged = 268;
-	var LibVLC_MediaPlayerSeekableChanged = 269;
-	var LibVLC_MediaPlayerPausableChanged = 270;
-	var LibVLC_MediaPlayerTitleChanged = 271;
-	var LibVLC_MediaPlayerSnapshotTaken = 272;
-	var LibVLC_MediaPlayerLengthChanged = 273;
-	var LibVLC_MediaPlayerVout = 274;
-	var LibVLC_MediaPlayerScrambledChanged = 275;
-	var LibVLC_MediaPlayerESAdded = 276;
-	var LibVLC_MediaPlayerESDeleted = 277;
-	var LibVLC_MediaPlayerESSelected = 278;
-	var LibVLC_MediaPlayerCorked = 279;
-	var LibVLC_MediaPlayerUncorked = 280;
-	var LibVLC_MediaPlayerMuted = 281;
-	var LibVLC_MediaPlayerUnmuted = 282;
-	var LibVLC_MediaPlayerAudioVolume = 283;
-	var LibVLC_MediaPlayerAudioDevice = 284;
-	var LibVLC_MediaPlayerChapterChanged = 285;
+	@:native('libvlc_MediaPlayerMediaChanged')
+	var LibVLC_MediaPlayerMediaChanged;
+
+	@:native('libvlc_MediaPlayerNothingSpecial')
+	var LibVLC_MediaPlayerNothingSpecial;
+
+	@:native('libvlc_MediaPlayerOpening')
+	var LibVLC_MediaPlayerOpening;
+
+	@:native('libvlc_MediaPlayerBuffering')
+	var LibVLC_MediaPlayerBuffering;
+
+	@:native('libvlc_MediaPlayerPlaying')
+	var LibVLC_MediaPlayerPlaying;
+
+	@:native('libvlc_MediaPlayerPaused')
+	var LibVLC_MediaPlayerPaused;
+
+	@:native('libvlc_MediaPlayerStopped')
+	var LibVLC_MediaPlayerStopped;
+
+	@:native('libvlc_MediaPlayerForward')
+	var LibVLC_MediaPlayerForward;
+
+	@:native('libvlc_MediaPlayerBackward')
+	var LibVLC_MediaPlayerBackward;
+
+	@:native('libvlc_MediaPlayerEndReached')
+	var LibVLC_MediaPlayerEndReached;
+
+	@:native('libvlc_MediaPlayerEncounteredError')
+	var LibVLC_MediaPlayerEncounteredError;
+
+	@:native('libvlc_MediaPlayerTimeChanged')
+	var LibVLC_MediaPlayerTimeChanged;
+
+	@:native('libvlc_MediaPlayerPositionChanged')
+	var LibVLC_MediaPlayerPositionChanged;
+
+	@:native('libvlc_MediaPlayerSeekableChanged')
+	var LibVLC_MediaPlayerSeekableChanged;
+
+	@:native('libvlc_MediaPlayerPausableChanged')
+	var LibVLC_MediaPlayerPausableChanged;
+
+	@:native('libvlc_MediaPlayerTitleChanged')
+	var LibVLC_MediaPlayerTitleChanged;
+
+	@:native('libvlc_MediaPlayerSnapshotTaken')
+	var LibVLC_MediaPlayerSnapshotTaken;
+
+	@:native('libvlc_MediaPlayerLengthChanged')
+	var LibVLC_MediaPlayerLengthChanged;
+
+	@:native('libvlc_MediaPlayerVout')
+	var LibVLC_MediaPlayerVout;
+
+	@:native('libvlc_MediaPlayerScrambledChanged')
+	var LibVLC_MediaPlayerScrambledChanged;
+
+	@:native('libvlc_MediaPlayerESAdded')
+	var LibVLC_MediaPlayerESAdded;
+
+	@:native('libvlc_MediaPlayerESDeleted')
+	var LibVLC_MediaPlayerESDeleted;
+
+	@:native('libvlc_MediaPlayerESSelected')
+	var LibVLC_MediaPlayerESSelected;
+
+	@:native('libvlc_MediaPlayerCorked')
+	var LibVLC_MediaPlayerCorked;
+
+	@:native('libvlc_MediaPlayerUncorked')
+	var LibVLC_MediaPlayerUncorked;
+
+	@:native('libvlc_MediaPlayerMuted')
+	var LibVLC_MediaPlayerMuted;
+
+	@:native('libvlc_MediaPlayerUnmuted')
+	var LibVLC_MediaPlayerUnmuted;
+
+	@:native('libvlc_MediaPlayerAudioVolume')
+	var LibVLC_MediaPlayerAudioVolume;
+
+	@:native('libvlc_MediaPlayerAudioDevice')
+	var LibVLC_MediaPlayerAudioDevice;
+
+	@:native('libvlc_MediaPlayerChapterChanged')
+	var LibVLC_MediaPlayerChapterChanged;
 }
+
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include('vlc/vlc.h')
+@:native('libvlc_event_e')
+extern class LibVLC_Event_E_Impl {}
 
 typedef LibVLC_Callback_T = cpp.Callable<(p_event:cpp.RawConstPointer<LibVLC_Event_T>, p_data:cpp.RawPointer<cpp.Void>) -> Void>;
 
