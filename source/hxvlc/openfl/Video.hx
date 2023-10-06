@@ -213,7 +213,7 @@ class Video extends Bitmap
 	/**
 	 * An event that is dispatched when the video encountered an error.
 	 */
-	public var onEncounteredError(default, null):Event<Void->Void>;
+	public var onEncounteredError(default, null):Event<String->Void>;
 
 	/**
 	 * An event that is dispatched when the media is changed.
@@ -253,7 +253,7 @@ class Video extends Bitmap
 		onStopped = new Event<Void->Void>();
 		onPaused = new Event<Void->Void>();
 		onEndReached = new Event<Void->Void>();
-		onEncounteredError = new Event<Void->Void>();
+		onEncounteredError = new Event<String->Void>();
 		onMediaChanged = new Event<Void->Void>();
 		onFormatSetup = new Event<Void->Void>();
 
@@ -669,7 +669,7 @@ class Video extends Bitmap
 		{
 			events[5] = false;
 
-			onEncounteredError.dispatch();
+			onEncounteredError.dispatch(cast(LibVLC.errmsg(), String));
 		}
 
 		if (events[6])
