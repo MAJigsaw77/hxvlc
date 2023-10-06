@@ -10,14 +10,14 @@ import hxvlc.libvlc.Types;
 @:unreflective
 extern class LibVLC
 {
-	@:native('libvlc_errmsg')
-	static function errmsg():cpp.ConstCharStar;
-
 	@:native('libvlc_new')
 	static function create(argc:Int, argv:cpp.ConstCharStar):cpp.RawPointer<LibVLC_Instance_T>;
 
 	@:native('libvlc_release')
 	static function release(p_instance:cpp.RawPointer<LibVLC_Instance_T>):Void;
+
+	@:native('libvlc_errmsg')
+	static function errmsg():cpp.ConstCharStar;
 
 	@:native('libvlc_get_version')
 	static function get_version():cpp.ConstCharStar;
@@ -47,9 +47,6 @@ extern class LibVLC
 
 	@:native('libvlc_media_release')
 	static function media_release(p_md:cpp.RawPointer<LibVLC_Media_T>):Void;
-
-	@:native('libvlc_media_event_manager')
-	static function media_event_manager(p_md:cpp.RawPointer<LibVLC_Media_T>):cpp.RawPointer<LibVLC_EventManager_T>;
 
 	@:native('libvlc_media_get_duration')
 	static function media_get_duration(p_md:cpp.RawPointer<LibVLC_Media_T>):cpp.Int64;
