@@ -134,7 +134,7 @@ extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
 @:native('libvlc_event_e')
-extern class LibVLC_Event_E_Impl {}
+private extern class LibVLC_Event_E_Impl {}
 
 typedef LibVLC_Callback_T = cpp.Callable<(p_event:cpp.RawConstPointer<LibVLC_Event_T>, p_data:cpp.RawPointer<cpp.Void>) -> Void>;
 
