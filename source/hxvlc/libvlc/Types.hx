@@ -129,6 +129,9 @@ extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 
 	@:native('libvlc_MediaPlayerChapterChanged')
 	var LibVLC_MediaPlayerChapterChanged;
+
+	@:to extern public inline function toInt():Int
+		return untyped this;
 }
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
