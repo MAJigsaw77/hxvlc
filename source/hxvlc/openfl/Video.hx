@@ -16,6 +16,7 @@ using haxe.io.Path;
 #if android
 @:headerInclude('android/log.h')
 #end
+@:headerInclude('assert.h')
 @:headerInclude('stdint.h')
 @:headerInclude('stdio.h')
 @:cppNamespaceCode('
@@ -47,7 +48,17 @@ static void *lock(void *data, void **p_pixels)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(data);
 	(*p_pixels) = self->pixels;
-	return NULL; // picture identifier, not needed here
+	return NULL; /* picture identifier, not needed here */
+}
+
+static void unlock(void *data, void *id, void *const *p_pixels)
+{
+	assert(id == NULL); /* picture identifier, not needed here */
+}
+
+static void display(void *data, void *id)
+{
+	assert(id == NULL); /* picture identifier, not needed here */
 }
 
 static void callbacks(const libvlc_event_t *event, void *data)
@@ -341,7 +352,7 @@ class Video extends Bitmap
 		}
 
 		LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('NULL'));
-		LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('lock'), untyped __cpp__('NULL'), untyped __cpp__('NULL'), untyped __cpp__('this'));
+		LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('lock'), untyped __cpp__('unlock'), untyped __cpp__('display'), untyped __cpp__('this'));
 
 		return LibVLC.media_player_play(mediaPlayer) == 0;
 	}
