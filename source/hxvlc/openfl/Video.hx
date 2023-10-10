@@ -267,7 +267,7 @@ class Video extends Bitmap
 
 		#if (windows || mac)
 		untyped __cpp__('const char *args[] = {
-			"--ignore-config",
+			"--reset-config",
 			"--intf=dummy",
 			"--text-renderer=dummy",
 			"--no-video-title-show",
@@ -281,7 +281,6 @@ class Video extends Bitmap
 		};');
 		#else
 		untyped __cpp__('const char *args[] = {
-			"--ignore-config",
 			"--intf=dummy",
 			"--text-renderer=dummy",
 			"--no-video-title-show",
