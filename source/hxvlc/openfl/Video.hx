@@ -281,6 +281,7 @@ class Video extends Bitmap
 			"--reset-config",
 			"--intf=dummy",
 			"--text-renderer=dummy",
+			"--no-audio",
 			"--no-video-title-show",
 			"--no-snapshot-preview",
 			"--no-stats",
@@ -294,6 +295,7 @@ class Video extends Bitmap
 		untyped __cpp__('const char *args[] = {
 			"--intf=dummy",
 			"--text-renderer=dummy",
+			"--no-audio",
 			"--no-video-title-show",
 			"--no-snapshot-preview",
 			"--no-stats",
