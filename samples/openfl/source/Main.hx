@@ -6,7 +6,6 @@ import android.widget.Toast;
 #end
 import haxe.io.Path;
 import haxe.Exception;
-import hxvlc.libvlc.LibVLC;
 import hxvlc.openfl.Video;
 import openfl.display.FPS;
 import openfl.display.Sprite;
@@ -34,12 +33,6 @@ class Main extends Sprite
 		{
 			stage.addEventListener(Event.ACTIVATE, stage_onActivate);
 			stage.addEventListener(Event.DEACTIVATE, stage_onDeactivate);
-
-			#if android
-			Toast.makeText(cast(LibVLC.get_version(), String), Toast.LENGTH_LONG);
-			#else
-			Sys.println(cast(LibVLC.get_version(), String));
-			#end
 		});
 		video.onEndReached.add(function()
 		{
