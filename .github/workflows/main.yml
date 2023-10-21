@@ -86,7 +86,7 @@ jobs:
         uses: actions/setup-java@main
         with:
           java-version: '11'
-          distribution: 'oracle'
+          distribution: 'temurin'
 
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
