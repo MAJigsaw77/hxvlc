@@ -77,18 +77,8 @@ class FlxVideo extends Video
 	{
 		if (autoResize)
 		{
-			final aspectRatio:Float = FlxG.width / FlxG.height;
-
-			if (FlxG.stage.stageWidth / FlxG.stage.stageHeight > aspectRatio)
-			{
-				width = FlxG.stage.stageHeight * aspectRatio;
-				height = FlxG.stage.stageHeight;
-			}
-			else
-			{
-				width = FlxG.stage.stageWidth;
-				height = FlxG.stage.stageWidth * (1 / aspectRatio);
-			}
+			width = FlxG.scaleMode.gameSize.x;
+			height = FlxG.scaleMode.gameSize.y;
 		}
 
 		#if FLX_SOUND_SYSTEM
