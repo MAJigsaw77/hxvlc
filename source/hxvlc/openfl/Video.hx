@@ -272,11 +272,11 @@ class Video extends Bitmap
 		Sys.putEnv('VLC_DATA_PATH', '/system/usr/share');
 		#end
 
-		#if mac // This needs to be set as MacOS libvlc can't set the plugins path automatically.
+		#if macos // This needs to be set as MacOS libvlc can't set the plugins path automatically.
 		Sys.putEnv('VLC_PLUGIN_PATH', '${Sys.programPath().directory()}/plugins');
 		#end
 
-		#if (windows || mac)
+		#if (windows || macos)
 		untyped __cpp__('const char *args[] = {
 			"--reset-config",
 			"--intf=dummy",
