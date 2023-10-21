@@ -65,7 +65,7 @@ jobs:
           path: samples/${{matrix.sample}}/export/macos/bin
           if-no-files-found: warn
 
-      - name: Upload Artifact Windows
+      - name: Upload Artifact Linux
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@main
         with:
@@ -86,7 +86,7 @@ jobs:
         uses: actions/setup-java@main
         with:
           java-version: '11'
-          distribution: 'temurin'
+          distribution: 'oracle'
 
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
