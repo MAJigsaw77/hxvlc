@@ -63,8 +63,6 @@ class Main extends Sprite
 		catch (e:Exception)
 			Toast.makeText(e.message, Toast.LENGTH_LONG);
 		#end
-
-		addChild(new FPS(10, 10, 0xFFFFFFFF));
 		
 		video.play(Sys.getCwd() + path, 2);
 	}

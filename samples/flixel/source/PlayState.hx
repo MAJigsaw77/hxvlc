@@ -9,7 +9,6 @@ import haxe.Exception;
 import hxvlc.flixel.FlxVideo;
 import hxvlc.flixel.FlxVideoBackdrop;
 import hxvlc.flixel.FlxVideoSprite;
-import openfl.display.FPS;
 import openfl.utils.Assets;
 import sys.io.File;
 import sys.FileSystem;
@@ -20,8 +19,6 @@ class PlayState extends FlxState
 {
 	override function create():Void
 	{
-		FlxG.game.addChild(new FPS(10, 10, 0xFFFFFFFF));
-
 		final path:String = 'assets/video.mp4';
 
 		#if android
