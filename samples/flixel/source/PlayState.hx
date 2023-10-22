@@ -43,9 +43,5 @@ class PlayState extends FlxState
 		video.play(path, 2);
 
 		super.create();
-
-		#if android
-		Toast.makeText('${FlxG.stage.window.scale} | ${Math.min(FlxG.stage.stageWidth / FlxG.width, FlxG.stage.stageHeight / FlxG.height)}', Toast.LENGTH_LONG);
-		#end
 	}
 }
