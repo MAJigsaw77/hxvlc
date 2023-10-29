@@ -268,11 +268,11 @@ class Video extends Bitmap
 		onMediaChanged = new Event<Void->Void>();
 		onFormatSetup = new Event<Void->Void>();
 
-		#if android // This needs to be set as libvlcjni sets this on its source files (they aren't used here).
+		#if android
 		Sys.putEnv('VLC_DATA_PATH', '/system/usr/share');
 		#end
 
-		#if macos // This needs to be set as MacOS libvlc can't set the plugins path automatically.
+		#if macos
 		Sys.putEnv('VLC_PLUGIN_PATH', '${Sys.programPath().directory()}/plugins');
 		#end
 
@@ -695,7 +695,6 @@ class Video extends Bitmap
 
 			if (bitmapData != null && texture != null)
 			{
-				// Don't dispose the bitmapData if isn't necessary...
 				if (bitmapData.width != videoWidth && bitmapData.height != videoHeight)
 				{
 					bitmapData.dispose();
