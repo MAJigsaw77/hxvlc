@@ -272,11 +272,9 @@ class Video extends Bitmap
 		Sys.putEnv('VLC_DATA_PATH', '/system/usr/share');
 		#end
 
-		#if macos
-		Sys.putEnv('VLC_PLUGIN_PATH', '${Sys.programPath().directory()}/plugins');
-		#end
-
 		#if (windows || macos)
+		Sys.putEnv('VLC_PLUGIN_PATH', '${Sys.programPath().directory()}/plugins');
+
 		untyped __cpp__('const char *args[] = {
 			"--reset-config",
 			"--intf=dummy",
