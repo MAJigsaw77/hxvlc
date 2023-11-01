@@ -276,6 +276,7 @@ class Video extends Bitmap
 		Sys.putEnv('VLC_PLUGIN_PATH', '${Sys.programPath().directory()}/plugins');
 
 		untyped __cpp__('const char *args[] = {
+			"--drop-late-frames",
 			"--reset-config",
 			"--intf=dummy",
 			"--text-renderer=dummy",
@@ -290,6 +291,7 @@ class Video extends Bitmap
 		};');
 		#else
 		untyped __cpp__('const char *args[] = {
+			"--drop-late-frames",
 			"--intf=dummy",
 			"--text-renderer=dummy",
 			"--no-video-title-show",
