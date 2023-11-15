@@ -22,6 +22,8 @@
 		<ndll name="vlc" dir="project/vlc/lib" />
 	</section>
 
+	<sample path="samples" />
+
 	<source path="source" />
 
 </extension>
