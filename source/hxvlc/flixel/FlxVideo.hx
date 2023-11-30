@@ -34,7 +34,7 @@ class FlxVideo extends Video
 		FlxG.addChildBelowMouse(this);
 	}
 
-	public override function play(location:String, repeat:Int = 0):Bool
+	public override function load(location:String, repeat:Int = 0):Bool
 	{
 		if (FlxG.autoPause)
 		{
@@ -48,9 +48,9 @@ class FlxVideo extends Video
 		FlxG.stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 
 		if (FileSystem.exists(Sys.getCwd() + location))
-			return super.play(Sys.getCwd() + location, repeat);
+			return super.load(Sys.getCwd() + location, repeat);
 
-		return super.play(location, repeat);
+		return super.load(location, repeat);
 	}
 
 	public override function dispose():Void
