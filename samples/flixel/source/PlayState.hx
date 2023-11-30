@@ -3,7 +3,6 @@ package;
 #if android
 import android.widget.Toast;
 #end
-import flixel.util.FlxTimer;
 import flixel.FlxG;
 import flixel.FlxState;
 import haxe.Exception;
@@ -41,12 +40,7 @@ class PlayState extends FlxState
 
 		var video:FlxVideo = new FlxVideo();
 		video.onEndReached.add(video.dispose);
-		video.load(path, 2);
-
-		new FlxTimer().start(0.001, function(tmr:FlxTimer):Void
-		{
-			video.play();
-		});
+		video.play(path, 2);
 
 		super.create();
 	}
