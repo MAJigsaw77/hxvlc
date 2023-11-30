@@ -55,14 +55,11 @@ class FlxVideo extends Video
 
 	public override function dispose():Void
 	{
-		if (FlxG.autoPause)
-		{
-			if (FlxG.signals.focusGained.has(resume))
-				FlxG.signals.focusGained.remove(resume);
+		if (FlxG.signals.focusGained.has(resume))
+			FlxG.signals.focusGained.remove(resume);
 
-			if (FlxG.signals.focusLost.has(pause))
-				FlxG.signals.focusLost.remove(pause);
-		}
+		if (FlxG.signals.focusLost.has(pause))
+			FlxG.signals.focusLost.remove(pause);
 
 		if (FlxG.stage.hasEventListener(Event.ENTER_FRAME))
 			FlxG.stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
