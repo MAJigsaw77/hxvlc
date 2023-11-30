@@ -319,7 +319,7 @@ class Video extends Bitmap
 	 *
 	 * @return `true` if the video loaded successfully or `false` if there's an error.
 	 */
-	public function load(location:String, repeat:Int = 0):Void
+	public function load(location:String, repeat:Int = 0):Bool
 	{
 		if (location != null && location.indexOf('://') != -1)
 			mediaItem = LibVLC.media_new_location(instance, location);
