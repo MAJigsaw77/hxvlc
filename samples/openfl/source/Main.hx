@@ -11,6 +11,7 @@ import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.utils.Assets;
+import openfl.Lib;
 import sys.io.File;
 import sys.FileSystem;
 
@@ -23,6 +24,8 @@ class Main extends Sprite
 	public function new():Void
 	{
 		super();
+
+		Lib.current.stage.frameRate = Lib.application.window?.displayMode.refreshRate;
 
 		#if android
 		Sys.setCwd(Path.addTrailingSlash(Context.getExternalFilesDir()));
