@@ -43,7 +43,6 @@ class Main extends Sprite
 			video.dispose();
 		});
 		video.onFormatSetup.add(() -> stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame));
-		addChild(video);
 
 		final path:String = 'assets/video.mp4';
 
@@ -64,7 +63,10 @@ class Main extends Sprite
 			Toast.makeText(e.message, Toast.LENGTH_LONG);
 		#end
 		
-		video.play(Sys.getCwd() + path, 2);
+		video.load(Sys.getCwd() + path, 2);
+		addChild(video);
+
+		video.play();
 	}
 
 	private inline function stage_onEnterFrame(event:Event):Void
