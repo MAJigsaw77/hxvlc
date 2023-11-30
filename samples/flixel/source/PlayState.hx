@@ -11,6 +11,7 @@ import hxvlc.flixel.FlxVideo;
 import hxvlc.flixel.FlxVideoBackdrop;
 import hxvlc.flixel.FlxVideoSprite;
 import openfl.utils.Assets;
+import openfl.Lib;
 import sys.io.File;
 import sys.FileSystem;
 
@@ -20,6 +21,8 @@ class PlayState extends FlxState
 {
 	override function create():Void
 	{
+		FlxG.stage.frameRate = Lib.application.window?.displayMode.refreshRate;
+
 		final path:String = 'assets/video.mp4';
 
 		#if android
