@@ -316,6 +316,8 @@ class Video extends Bitmap
 	 *
 	 * @param location The local filesystem path or the media location url.
 	 * @param repeat The number of times the video should repeat itself.
+	 *
+	 * @return `true` if the video loaded successfully or `false` if there's an error.
 	 */
 	public function load(location:String, repeat:Int = 0):Void
 	{
