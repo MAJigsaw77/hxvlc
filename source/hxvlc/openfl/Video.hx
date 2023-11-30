@@ -327,7 +327,7 @@ class Video extends Bitmap
 			return false;
 
 		// 65535 is the maximum `unsigned short` size.
-		LibVLC.media_add_option(mediaItem, repeat > 65535 ? "input-repeat=65535" : "input-repeat=" + repeat);
+		LibVLC.media_add_option(mediaItem, "input-repeat=" + Math.min(repeat, 65535));
 
 		if (mediaPlayer == null)
 			mediaPlayer = LibVLC.media_player_new_from_media(mediaItem);
@@ -351,6 +351,8 @@ class Video extends Bitmap
 
 		LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('NULL'));
 		LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('lock'), untyped __cpp__('unlock'), untyped __cpp__('display'), untyped __cpp__('this'));
+
+		return true;
 	}
 
 	/**
