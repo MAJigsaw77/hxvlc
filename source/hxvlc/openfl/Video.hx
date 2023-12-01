@@ -274,25 +274,37 @@ class Video extends Bitmap
 
 		#if (windows || macos)
 		Sys.putEnv('VLC_PLUGIN_PATH', '${Sys.programPath().directory()}/plugins');
+
+		untyped __cpp__('const char *args[] = {
+			"--drop-late-frames",
+			"--reset-config",
+			"--intf=dummy",
+			"--text-renderer=dummy",
+			"--no-video-title-show",
+			"--no-snapshot-preview",
+			"--no-stats",
+			"--no-spu",
+			"--no-interact",
+			"--no-osd",
+			"--no-lua",
+			"--reset-plugins-cache"
+		};');
+		#else
+		untyped __cpp__('const char *args[] = {
+			"--drop-late-frames",
+			"--intf=dummy",
+			"--text-renderer=dummy",
+			"--no-video-title-show",
+			"--no-snapshot-preview",
+			"--no-stats",
+			"--no-spu",
+			"--no-interact",
+			"--no-osd",
+			"--no-lua"
+		};');
 		#end
 
-		final args:Array<cpp.ConstCharStar> = [];
-		args.push("--drop-late-frames");
-		args.push("--intf=dummy");
-		args.push("--text-renderer=dummy");
-		args.push("--no-video-title-show");
-		args.push("--no-snapshot-preview");
-		args.push("--no-stats");
-		args.push("--no-spu");
-		args.push("--no-interact");
-		args.push("--no-osd");
-		args.push("--no-lua");
-		#if (windows || macos)
-		args.push("--reset-config");
-		args.push("--reset-plugins-cache");
-		#end
-
-		instance = LibVLC.create(args.length, cpp.Pointer.ofArray(args).value);
+		instance = LibVLC.create(untyped __cpp__('sizeof(args) / sizeof(*args)'), untyped __cpp__('args'));
 
 		#if HXVLC_LOGGING
 		LibVLC.log_set(instance, untyped __cpp__('logging'), untyped __cpp__('NULL'));
