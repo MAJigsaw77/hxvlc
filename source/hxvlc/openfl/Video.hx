@@ -292,7 +292,7 @@ class Video extends Bitmap
 		args.push("--reset-plugins-cache");
 		#end
 
-		instance = LibVLC.create(args.length, cpp.Pointer.ofArray(args).raw);
+		instance = LibVLC.create(args.length, cpp.Pointer.ofArray(args).value);
 
 		#if HXVLC_LOGGING
 		LibVLC.log_set(instance, untyped __cpp__('logging'), untyped __cpp__('NULL'));
