@@ -3,6 +3,7 @@ package;
 #if android
 import android.widget.Toast;
 #end
+import flixel.util.FlxTimer;
 import flixel.FlxG;
 import flixel.FlxState;
 import haxe.Exception;
@@ -10,6 +11,7 @@ import hxvlc.flixel.FlxVideo;
 import hxvlc.flixel.FlxVideoBackdrop;
 import hxvlc.flixel.FlxVideoSprite;
 import openfl.utils.Assets;
+import openfl.Lib;
 import sys.io.File;
 import sys.FileSystem;
 
@@ -19,6 +21,8 @@ class PlayState extends FlxState
 {
 	override function create():Void
 	{
+		FlxG.stage.frameRate = Lib.application.window?.displayMode.refreshRate;
+
 		final path:String = 'assets/video.mp4';
 
 		#if android
@@ -40,7 +44,12 @@ class PlayState extends FlxState
 
 		var video:FlxVideo = new FlxVideo();
 		video.onEndReached.add(video.dispose);
-		video.play(path, 2);
+		video.load(path, 2);
+
+		new FlxTimer().start(0.001, function(tmr:FlxTimer):Void
+		{
+			video.play();
+		});
 
 		super.create();
 	}

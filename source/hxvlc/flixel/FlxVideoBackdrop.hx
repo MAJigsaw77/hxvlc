@@ -54,14 +54,14 @@ class FlxVideoBackdrop extends FlxBackdrop
 	}
 
 	/**
-	 * Call this function to play a video.
+	 * Call this function to load a video.
 	 *
 	 * @param location The local filesystem path or the media location url.
 	 * @param repeat The number of times the video should repeat itself.
 	 *
-	 * @return `true` if the video started playing or `false` if there's an error.
+	 * @return `true` if the video loaded successfully or `false` if there's an error.
 	 */
-	public function play(location:String, repeat:Int = 0):Bool
+	public function load(location:String, repeat:Int = 0):Bool
 	{
 		if (bitmap == null)
 			return false;
@@ -76,9 +76,22 @@ class FlxVideoBackdrop extends FlxBackdrop
 		}
 
 		if (FileSystem.exists(Sys.getCwd() + location))
-			return bitmap.play(Sys.getCwd() + location, repeat);
+			return bitmap.load(Sys.getCwd() + location, repeat);
 
-		return bitmap.play(location, repeat);
+		return bitmap.load(location, repeat);
+	}
+
+	/**
+	 * Call this function to play a video.
+	 *
+	 * @return `true` if the video started playing or `false` if there's an error.
+	 */
+	public function play():Bool
+	{
+		if (bitmap == null)
+			return false;
+
+		return bitmap.play();
 	}
 
 	/**
@@ -120,14 +133,11 @@ class FlxVideoBackdrop extends FlxBackdrop
 	// Overrides
 	public override function destroy():Void
 	{
-		if (FlxG.autoPause)
-		{
-			if (FlxG.signals.focusGained.has(resume))
-				FlxG.signals.focusGained.remove(resume);
+		if (FlxG.signals.focusGained.has(resume))
+			FlxG.signals.focusGained.remove(resume);
 
-			if (FlxG.signals.focusLost.has(pause))
-				FlxG.signals.focusLost.remove(pause);
-		}
+		if (FlxG.signals.focusLost.has(pause))
+			FlxG.signals.focusLost.remove(pause);
 
 		super.destroy();
 

@@ -11,6 +11,7 @@ import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.utils.Assets;
+import openfl.Lib;
 import sys.io.File;
 import sys.FileSystem;
 
@@ -23,6 +24,8 @@ class Main extends Sprite
 	public function new():Void
 	{
 		super();
+
+		Lib.current.stage.frameRate = Lib.application.window?.displayMode.refreshRate;
 
 		#if android
 		Sys.setCwd(Path.addTrailingSlash(Context.getExternalFilesDir()));
@@ -43,7 +46,6 @@ class Main extends Sprite
 			video.dispose();
 		});
 		video.onFormatSetup.add(() -> stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame));
-		addChild(video);
 
 		final path:String = 'assets/video.mp4';
 
@@ -64,7 +66,10 @@ class Main extends Sprite
 			Toast.makeText(e.message, Toast.LENGTH_LONG);
 		#end
 		
-		video.play(Sys.getCwd() + path, 2);
+		video.load(Sys.getCwd() + path, 2);
+		addChild(video);
+
+		video.play();
 	}
 
 	private inline function stage_onEnterFrame(event:Event):Void
