@@ -274,12 +274,11 @@ class Video extends Bitmap
 
 		#if (windows || macos)
 		Sys.putEnv('VLC_PLUGIN_PATH', '${Sys.programPath().directory()}/plugins');
+		#end
 
 		untyped __cpp__('const char *args[] = {
 			"--drop-late-frames",
-			"--reset-config",
 			"--intf=dummy",
-			"--text-renderer=dummy",
 			"--no-video-title-show",
 			"--no-snapshot-preview",
 			"--no-stats",
@@ -287,22 +286,13 @@ class Video extends Bitmap
 			"--no-interact",
 			"--no-osd",
 			"--no-lua",
-			"--reset-plugins-cache"
+			"-–no-xlib",
+			#if defined(HX_WINDOWS) || defined(HX_MACOS)
+			"--reset-config",
+			"--reset-plugins-cache",
+			#endif
+			"--text-renderer=dummy"
 		};');
-		#else
-		untyped __cpp__('const char *args[] = {
-			"--drop-late-frames",
-			"--intf=dummy",
-			"--text-renderer=dummy",
-			"--no-video-title-show",
-			"--no-snapshot-preview",
-			"--no-stats",
-			"--no-spu",
-			"--no-interact",
-			"--no-osd",
-			"--no-lua"
-		};');
-		#end
 
 		instance = LibVLC.create(untyped __cpp__('sizeof(args) / sizeof(*args)'), untyped __cpp__('args'));
 
