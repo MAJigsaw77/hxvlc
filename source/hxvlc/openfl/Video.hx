@@ -93,7 +93,7 @@ static void callbacks(const libvlc_event_t *event, void *data)
 
 static void logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
-	#ifdef __ANDROID__
+	#if defined(HX_ANDROID)
 	switch (level)
 	{
 		case LIBVLC_DEBUG:
@@ -256,6 +256,7 @@ class Video extends Bitmap
 		super(bitmapData, AUTO, smoothing);
 
 		events.resize(7);
+
 		for (i in 0...events.length)
 			events[i] = false;
 
