@@ -279,14 +279,16 @@ class Video extends Bitmap
 		untyped __cpp__('const char *args[] = {
 			"--drop-late-frames",
 			"--intf=dummy",
-			"--no-video-title-show",
-			"--no-snapshot-preview",
-			"--no-stats",
-			"--no-spu",
 			"--no-interact",
-			"--no-osd",
 			"--no-lua",
+			"--no-osd",
+			"--no-snapshot-preview",
+			"--no-spu",
+			"--no-stats",
+			"--no-video-title-show",
+			#if defined(HX_LINUX)
 			"-–no-xlib",
+			#endif
 			#if defined(HX_WINDOWS) || defined(HX_MACOS)
 			"--reset-config",
 			"--reset-plugins-cache",
