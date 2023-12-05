@@ -23,11 +23,11 @@ extern class LibVLC
 	static function get_version():cpp.ConstCharStar;
 
 	@:native('libvlc_event_attach')
-	static function event_attach(p_event_manager:cpp.RawPointer<LibVLC_EventManager_T>, i_event_type:LibVLC_Event_E, f_callback:LibVLC_Callback_T,
+	static function event_attach(p_event_manager:cpp.RawPointer<LibVLC_EventManager_T>, i_event_type:Int, f_callback:LibVLC_Callback_T,
 		user_data:cpp.RawPointer<cpp.Void>):Int;
 
 	@:native('libvlc_event_detach')
-	static function event_detach(p_event_manager:cpp.RawPointer<LibVLC_EventManager_T>, i_event_type:LibVLC_Event_E, f_callback:LibVLC_Callback_T,
+	static function event_detach(p_event_manager:cpp.RawPointer<LibVLC_EventManager_T>, i_event_type:Int, f_callback:LibVLC_Callback_T,
 		user_data:cpp.RawPointer<cpp.Void>):Void;
 
 	@:native('libvlc_log_unset')
