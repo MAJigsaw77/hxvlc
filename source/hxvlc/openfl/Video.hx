@@ -62,7 +62,7 @@ static void display(void *data, void *id)
 	assert(id == NULL); /* picture identifier, not needed here */
 }
 
-static void callbacks(const struct libvlc_event_t *event, void *data)
+static void callbacks(const libvlc_event_t *event, void *data)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(data);
 
