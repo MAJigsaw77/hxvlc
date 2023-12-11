@@ -39,7 +39,7 @@ static unsigned format_setup(void **data, char *chroma, unsigned *width, unsigne
 	self->events[7] = true;
 
 	if (self->pixels != NULL)
-		delete self->pixels;
+		delete[] self->pixels;
 
 	self->pixels = new uint8_t[formatWidth * formatHeight * 4];
 	return 1;
@@ -59,6 +59,10 @@ static void unlock(void *data, void *id, void *const *p_pixels)
 
 static void display(void *data, void *id)
 {
+	Video_obj *self = reinterpret_cast<Video_obj *>(data);
+
+	self->events[8] = true;
+
 	assert(id == NULL); /* picture identifier, not needed here */
 }
 
@@ -237,8 +241,6 @@ class Video extends Bitmap
 	 */
 	public var onFormatSetup(default, null):Event<Void->Void>;
 
-	@:noCompletion private var oldTime:Float = 0;
-	@:noCompletion private var deltaTime:Float = 0;
 	@:noCompletion private var events:Array<Bool> = [];
 	@:noCompletion private var texture:RectangleTexture;
 	@:noCompletion private var pixels:cpp.RawPointer<cpp.UInt8>;
@@ -256,7 +258,7 @@ class Video extends Bitmap
 	{
 		super(bitmapData, AUTO, smoothing);
 
-		events.resize(7);
+		events.resize(8);
 
 		for (i in 0...events.length)
 			events[i] = false;
@@ -339,13 +341,26 @@ class Video extends Bitmap
 		{
 			eventManager = LibVLC.media_player_event_manager(mediaPlayer);
 
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPlaying, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerStopped, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this'));
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (LibVLC_MediaPlayerOpening)');
+
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPlaying, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (LibVLC_MediaPlayerPlaying)');
+
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerStopped, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (LibVLC_MediaPlayerStopped)');
+
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (LibVLC_MediaPlayerPaused)');
+
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (LibVLC_MediaPlayerEndReached)');
+
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (LibVLC_MediaPlayerEncounteredError)');
+
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (LibVLC_MediaPlayerMediaChanged)');
 		}
 
 		LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('NULL'));
@@ -621,32 +636,6 @@ class Video extends Bitmap
 	// Overrides
 	@:noCompletion private override function __enterFrame(elapsed:Int):Void
 	{
-		checkEvents();
-
-		if (__renderable && isPlaying)
-		{
-			deltaTime += elapsed;
-
-			if (Math.abs(deltaTime - oldTime) >= 1000 / Lib.application.window.displayMode.refreshRate)
-				oldTime = deltaTime;
-			else
-				return;
-
-			if (texture != null && pixels != null)
-				texture.uploadFromByteArray(cpp.Pointer.fromRaw(pixels).toUnmanagedArray(videoWidth * videoHeight * 4), 0);
-
-			__setRenderDirty();
-		}
-	}
-
-	@:noCompletion private override function set_bitmapData(value:BitmapData):BitmapData
-	{
-		return __bitmapData = value;
-	}
-
-	// Internal Methods
-	@:noCompletion private function checkEvents():Void
-	{
 		if (!events.contains(true))
 			return;
 
@@ -719,5 +708,24 @@ class Video extends Bitmap
 
 			onFormatSetup.dispatch();
 		}
+
+
+		if (events[8])
+		{
+			events[8] = false;
+
+			if (__renderable && isPlaying)
+			{
+				if (texture != null && pixels != null)
+					texture.uploadFromByteArray(cpp.Pointer.fromRaw(pixels).toUnmanagedArray(videoWidth * videoHeight * 4), 0);
+
+				__setRenderDirty();
+			}
+		}
+	}
+
+	@:noCompletion private override function set_bitmapData(value:BitmapData):BitmapData
+	{
+		return __bitmapData = value;
 	}
 }
