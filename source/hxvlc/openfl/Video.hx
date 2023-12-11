@@ -60,7 +60,9 @@ static void unlock(void *data, void *id, void *const *p_pixels)
 static void display(void *data, void *id)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(data);
+
 	self->events[8] = true;
+
 	assert(id == NULL); /* picture identifier, not needed here */
 }
 
@@ -634,17 +636,6 @@ class Video extends Bitmap
 	// Overrides
 	@:noCompletion private override function __enterFrame(elapsed:Int):Void
 	{
-		checkEvents();
-	}
-
-	@:noCompletion private override function set_bitmapData(value:BitmapData):BitmapData
-	{
-		return __bitmapData = value;
-	}
-
-	// Internal Methods
-	@:noCompletion private function checkEvents():Void
-	{
 		if (!events.contains(true))
 			return;
 
@@ -731,5 +722,10 @@ class Video extends Bitmap
 				__setRenderDirty();
 			}
 		}
+	}
+
+	@:noCompletion private override function set_bitmapData(value:BitmapData):BitmapData
+	{
+		return __bitmapData = value;
 	}
 }
