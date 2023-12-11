@@ -39,7 +39,7 @@ static unsigned format_setup(void **data, char *chroma, unsigned *width, unsigne
 	self->events[7] = true;
 
 	if (self->pixels != NULL)
-		delete self->pixels;
+		delete[] self->pixels;
 
 	self->pixels = new uint8_t[formatWidth * formatHeight * 4];
 	return 1;
@@ -339,13 +339,26 @@ class Video extends Bitmap
 		{
 			eventManager = LibVLC.media_player_event_manager(mediaPlayer);
 
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPlaying, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerStopped, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this'));
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (LibVLC_MediaPlayerOpening)');
+
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPlaying, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (LibVLC_MediaPlayerPlaying)');
+
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerStopped, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (LibVLC_MediaPlayerStopped)');
+
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (LibVLC_MediaPlayerPaused)');
+
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (LibVLC_MediaPlayerEndReached)');
+
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (LibVLC_MediaPlayerEncounteredError)');
+
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (LibVLC_MediaPlayerMediaChanged)');
 		}
 
 		LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('NULL'));
