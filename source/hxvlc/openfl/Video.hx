@@ -6,6 +6,7 @@ package hxvlc.openfl;
 import hxvlc.libvlc.LibVLC;
 import hxvlc.libvlc.Types;
 import lime.app.Event;
+import lime.utils.Log;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.RectangleTexture;
@@ -298,6 +299,9 @@ class Video extends Bitmap
 		};');
 
 		instance = LibVLC.create(untyped __cpp__('sizeof(args) / sizeof(*args)'), untyped __cpp__('args'));
+
+		if (instance == null)
+			Log.error('Failed to initialize LibVLC, Error: ${cast(LibVLC.errmsg(), String)}');
 
 		#if HXVLC_LOGGING
 		LibVLC.log_set(instance, untyped __cpp__('logging'), untyped __cpp__('NULL'));
