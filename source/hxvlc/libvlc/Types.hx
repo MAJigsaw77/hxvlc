@@ -139,7 +139,7 @@ extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 @:native('libvlc_event_e')
 private extern class LibVLC_Event_E_Impl {}
 
-typedef LibVLC_Callback_T = cpp.Callable<(p_event:cpp.RawConstPointer<LibVLC_Event_T>, p_data:cpp.RawPointer<cpp.Void>) -> Void>;
+typedef LibVLC_Callback_T = cpp.Callable<(p_event:cpp.RawConstPointer<cpp.Struct<LibVLC_Event_T>>, p_data:cpp.RawPointer<cpp.Void>) -> Void>;
 
 typedef LibVLC_Log_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, level:Int, ctx:cpp.RawConstPointer<LibVLC_Log_T>, fmt:cpp.ConstCharStar,
 		args:cpp.VarList) -> Void>;
