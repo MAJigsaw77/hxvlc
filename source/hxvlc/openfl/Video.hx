@@ -59,6 +59,8 @@ static void unlock(void *data, void *id, void *const *p_pixels)
 
 static void display(void *data, void *id)
 {
+	Video_obj *self = reinterpret_cast<Video_obj *>(data);
+	self->events[8] = true;
 	assert(id == NULL); /* picture identifier, not needed here */
 }
 
@@ -237,8 +239,6 @@ class Video extends Bitmap
 	 */
 	public var onFormatSetup(default, null):Event<Void->Void>;
 
-	@:noCompletion private var oldTime:Float = 0;
-	@:noCompletion private var deltaTime:Float = 0;
 	@:noCompletion private var events:Array<Bool> = [];
 	@:noCompletion private var texture:RectangleTexture;
 	@:noCompletion private var pixels:cpp.RawPointer<cpp.UInt8>;
@@ -256,7 +256,7 @@ class Video extends Bitmap
 	{
 		super(bitmapData, AUTO, smoothing);
 
-		events.resize(7);
+		events.resize(8);
 
 		for (i in 0...events.length)
 			events[i] = false;
@@ -635,21 +635,6 @@ class Video extends Bitmap
 	@:noCompletion private override function __enterFrame(elapsed:Int):Void
 	{
 		checkEvents();
-
-		if (__renderable && isPlaying)
-		{
-			deltaTime += elapsed;
-
-			if (Math.abs(deltaTime - oldTime) >= 1000 / Lib.application.window.displayMode.refreshRate)
-				oldTime = deltaTime;
-			else
-				return;
-
-			if (texture != null && pixels != null)
-				texture.uploadFromByteArray(cpp.Pointer.fromRaw(pixels).toUnmanagedArray(videoWidth * videoHeight * 4), 0);
-
-			__setRenderDirty();
-		}
 	}
 
 	@:noCompletion private override function set_bitmapData(value:BitmapData):BitmapData
@@ -731,6 +716,20 @@ class Video extends Bitmap
 			bitmapData = BitmapData.fromTexture(texture);
 
 			onFormatSetup.dispatch();
+		}
+
+
+		if (events[8])
+		{
+			events[8] = false;
+
+			if (__renderable && isPlaying)
+			{
+				if (texture != null && pixels != null)
+					texture.uploadFromByteArray(cpp.Pointer.fromRaw(pixels).toUnmanagedArray(videoWidth * videoHeight * 4), 0);
+
+				__setRenderDirty();
+			}
 		}
 	}
 }
