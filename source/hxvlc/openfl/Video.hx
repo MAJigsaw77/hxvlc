@@ -328,6 +328,9 @@ class Video extends Bitmap
 		else
 			return false;
 
+		if (options == null)
+			options = [];
+
 		for (option in options)
 		{
 			if (option.indexOf('input-repeat=') == -1)
