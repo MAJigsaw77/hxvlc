@@ -3,6 +3,7 @@ package hxvlc.openfl;
 #if (!cpp && !(desktop || android))
 #error 'The current target platform isn\'t supported by hxvlc.'
 #end
+import haxe.Int64;
 import hxvlc.libvlc.LibVLC;
 import hxvlc.libvlc.Types;
 import lime.app.Event;
@@ -133,7 +134,7 @@ class Video extends Bitmap
 	/**
 	 * The video's time in milliseconds.
 	 */
-	public var time(get, set):Int;
+	public var time(get, set):Int64;
 
 	/**
 	 * The video's position as percentage between `0.0` and `1.0`.
@@ -143,12 +144,12 @@ class Video extends Bitmap
 	/**
 	 * The video's length in milliseconds.
 	 */
-	public var length(get, never):Int;
+	public var length(get, never):Int64;
 
 	/**
 	 * The video's duration.
 	 */
-	public var duration(get, never):Int;
+	public var duration(get, never):Int64;
 
 	/**
 	 * The video's media resource locator.
@@ -174,7 +175,7 @@ class Video extends Bitmap
 	/**
 	 * The video's audio delay in microseconds.
 	 */
-	public var delay(get, set):Int;
+	public var delay(get, set):Int64;
 
 	/**
 	 * The video's play rate.
@@ -484,15 +485,15 @@ class Video extends Bitmap
 	}
 
 	// Get & Set Methods
-	@:noCompletion private function get_time():Int
+	@:noCompletion private function get_time():Int64
 	{
 		if (mediaPlayer != null)
-			return cast(LibVLC.media_player_get_time(mediaPlayer), Int);
+			return LibVLC.media_player_get_time(mediaPlayer);
 
 		return -1;
 	}
 
-	@:noCompletion private function set_time(value:Int):Int
+	@:noCompletion private function set_time(value:Int64):Int64
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_set_time(mediaPlayer, value);
@@ -516,18 +517,18 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion private function get_length():Int
+	@:noCompletion private function get_length():Int64
 	{
 		if (mediaPlayer != null)
-			return cast(LibVLC.media_player_get_length(mediaPlayer), Int);
+			return LibVLC.media_player_get_length(mediaPlayer);
 
 		return -1;
 	}
 
-	@:noCompletion private function get_duration():Int
+	@:noCompletion private function get_duration():Int64
 	{
 		if (mediaItem != null)
-			return cast(LibVLC.media_get_duration(mediaItem), Int);
+			return LibVLC.media_get_duration(mediaItem);
 
 		return -1;
 	}
@@ -572,15 +573,15 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion private function get_delay():Int
+	@:noCompletion private function get_delay():Int64
 	{
 		if (mediaPlayer != null)
-			return cast(LibVLC.audio_get_delay(mediaPlayer), Int);
+			return LibVLC.audio_get_delay(mediaPlayer);
 
 		return -1;
 	}
 
-	@:noCompletion private function set_delay(value:Int):Int
+	@:noCompletion private function set_delay(value:Int64):Int64
 	{
 		if (mediaPlayer != null)
 			LibVLC.audio_set_delay(mediaPlayer, value);
