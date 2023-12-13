@@ -9,7 +9,7 @@ import lime.app.Event;
 import lime.utils.Log;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
-import openfl.display3D.textures.RectangleTexture;
+import openfl.display3D.textures.Texture;
 import openfl.Lib;
 
 using haxe.io.Path;
@@ -242,7 +242,7 @@ class Video extends Bitmap
 	public var onFormatSetup(default, null):Event<Void->Void>;
 
 	@:noCompletion private var events:Array<Bool> = [];
-	@:noCompletion private var texture:RectangleTexture;
+	@:noCompletion private var texture:Texture;
 	@:noCompletion private var pixels:cpp.RawPointer<cpp.UInt8>;
 	@:noCompletion private var instance:cpp.RawPointer<LibVLC_Instance_T>;
 	@:noCompletion private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
@@ -702,21 +702,30 @@ class Video extends Bitmap
 		{
 			events[7] = false;
 
+			var mustRecreate:Bool = false;
+			
 			if (bitmapData != null && texture != null)
 			{
 				if (bitmapData.width != videoWidth && bitmapData.height != videoHeight)
 				{
 					bitmapData.dispose();
+
 					texture.dispose();
+
+					mustRecreate = true;
 				}
-				else
-					return;
 			}
+			else
+				mustRecreate = true;
 
-			texture = Lib.current.stage.context3D.createRectangleTexture(videoWidth, videoHeight, BGRA, true);
-			bitmapData = BitmapData.fromTexture(texture);
+			if (mustRecreate)
+			{
+				texture = Lib.current.stage.context3D.createTexture(videoWidth, videoHeight, BGRA, true);
 
-			onFormatSetup.dispatch();
+				bitmapData = BitmapData.fromTexture(texture);
+
+				onFormatSetup.dispatch();
+			}
 		}
 
 
