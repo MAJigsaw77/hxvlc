@@ -315,10 +315,11 @@ class Video extends Bitmap
 	 *
 	 * @param location The local filesystem path or the media location url.
 	 * @param repeat The number of times the video should repeat itself.
+	 * @param options The addition options you can add to LibVLC Media instance.
 	 *
 	 * @return `true` if the video loaded successfully or `false` if there's an error.
 	 */
-	public function load(location:String, repeat:Int = 0):Bool
+	public function load(location:String, repeat:Int = 0, ?options:Array<String>):Bool
 	{
 		if (location != null && location.indexOf('://') != -1)
 			mediaItem = LibVLC.media_new_location(instance, location);
@@ -326,6 +327,12 @@ class Video extends Bitmap
 			mediaItem = LibVLC.media_new_path(instance, #if windows location.normalize().split('/').join('\\') #else location.normalize() #end);
 		else
 			return false;
+
+		for (option in options)
+		{
+			if (option.indexOf('input-repeat=') == -1)
+				LibVLC.media_add_option(mediaItem, option);
+		}
 
 		// 65535 is the maximum `unsigned short` size.
 		LibVLC.media_add_option(mediaItem, "input-repeat=" + Math.min(repeat, 65535));
