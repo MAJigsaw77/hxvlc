@@ -328,13 +328,14 @@ class Video extends Bitmap
 		else
 			return false;
 
-		if (options == null)
-			options = [];
-
-		for (option in options)
+		if (options != null && options.length > 0)
 		{
-			if (option.indexOf('input-repeat=') == -1)
-				LibVLC.media_add_option(mediaItem, option);
+			for (option in options)
+			{
+				// Don't override our repeat function.
+				if (option.indexOf('input-repeat=') == -1)
+					LibVLC.media_add_option(mediaItem, option);
+			}
 		}
 
 		// 65535 is the maximum `unsigned short` size.
