@@ -330,7 +330,11 @@ class Video extends Bitmap
 			return false;
 
 		if (mediaItem == null)
+		{
 			Log.error('Failed to initialize the LibVLC Media, Error: ${cast(LibVLC.errmsg(), String)}');
+
+			return false;
+		}
 
 		if (options != null && options.length > 0)
 		{
@@ -349,6 +353,13 @@ class Video extends Bitmap
 			mediaPlayer = LibVLC.media_player_new_from_media(mediaItem);
 		else
 			LibVLC.media_player_set_media(mediaPlayer, mediaItem);
+
+		if (mediaPlayer == null)
+		{
+			Log.error('Failed to initialize the LibVLC Media Player, Error: ${cast(LibVLC.errmsg(), String)}');
+
+			return false;
+		}
 
 		LibVLC.media_release(mediaItem);
 
