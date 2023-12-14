@@ -28,7 +28,7 @@ class Main extends Sprite
 		Lib.current.stage.frameRate = Lib.application.window?.displayMode.refreshRate;
 
 		#if android
-		Sys.setCwd(Path.addTrailingSlash(Context.getExternalFilesDir()));
+		Sys.setCwd(Path.addTrailingSlash(Context.getObbDir()));
 		#end
 
 		video = new Video();
