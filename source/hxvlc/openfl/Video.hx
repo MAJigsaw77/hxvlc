@@ -294,7 +294,7 @@ class Video extends Bitmap
 			"--no-stats",
 			"--no-video-title-show",
 			#if defined(HX_LINUX)
-			"-–no-xlib",
+			"--no-xlib",
 			#endif
 			#if defined(HX_WINDOWS) || defined(HX_MACOS)
 			"--reset-config",
