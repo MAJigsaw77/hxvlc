@@ -329,13 +329,6 @@ class Video extends Bitmap
 		else
 			return false;
 
-		if (mediaItem == null)
-		{
-			Log.error('Failed to initialize the LibVLC Media, Error: ${cast(LibVLC.errmsg(), String)}');
-
-			return false;
-		}
-
 		if (options != null && options.length > 0)
 		{
 			for (option in options)
