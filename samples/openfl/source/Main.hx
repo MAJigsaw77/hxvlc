@@ -44,6 +44,9 @@ class Main extends Sprite
 			stage.removeEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
 
 			video.dispose();
+
+			if (contains(video))
+				removeChild(video);
 		});
 		video.onFormatSetup.add(() -> stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame));
 
@@ -67,6 +70,7 @@ class Main extends Sprite
 		#end
 		
 		video.load(Sys.getCwd() + path, 2);
+
 		addChild(video);
 
 		video.play();
