@@ -14,7 +14,7 @@ class Main extends Sprite
 		super();
 
 		#if android
-		Sys.setCwd(Path.addTrailingSlash(Context.getExternalFilesDir()));
+		Sys.setCwd(Path.addTrailingSlash(Context.getObbDir()));
 		#end
 
 		addChild(new FlxGame(1280, 720, PlayState));
