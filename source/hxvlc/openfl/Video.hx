@@ -737,7 +737,7 @@ class Video extends Bitmap
 		{
 			events[8] = false;
 
-			if (__renderable && isPlaying)
+			if (__renderable)
 			{
 				if (texture != null && pixels != null)
 					texture.uploadFromByteArray(cpp.Pointer.fromRaw(pixels).toUnmanagedArray(videoWidth * videoHeight * 4), 0);
