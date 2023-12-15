@@ -249,6 +249,11 @@ class Video extends Bitmap
 	 */
 	public var onFormatSetup(default, null):Event<Void->Void>;
 
+	/**
+	 * An event that is dispatched when the video is being displayed.
+	 */
+	public var onDisplay(default, null):Event<Void->Void>;
+
 	@:noCompletion private var events:Array<Bool> = [];
 	@:noCompletion private var texture:Texture;
 	@:noCompletion private var pixels:cpp.RawPointer<cpp.UInt8>;
@@ -279,6 +284,7 @@ class Video extends Bitmap
 		onEncounteredError = new Event<String->Void>();
 		onMediaChanged = new Event<Void->Void>();
 		onFormatSetup = new Event<Void->Void>();
+		onDisplay = new Event<Void->Void>();
 
 		#if android
 		Sys.putEnv('VLC_DATA_PATH', '/system/usr/share');
@@ -737,7 +743,6 @@ class Video extends Bitmap
 			}
 		}
 
-
 		if (events[8])
 		{
 			events[8] = false;
@@ -749,6 +754,8 @@ class Video extends Bitmap
 
 				__setRenderDirty();
 			}
+
+			onDisplay.dispatch();
 		}
 	}
 
