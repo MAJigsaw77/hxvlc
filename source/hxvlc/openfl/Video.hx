@@ -319,7 +319,7 @@ class Video extends Bitmap
 
 		if (instance == null)
 		{
-			final errmsg:String = LibVLC.errmsg();
+			final errmsg:String = cast(LibVLC.errmsg(), String);
 
 			if (errmsg != null && errmsg.length > 0)
 				Log.error('Failed to initialize the LibVLC instance, Error: $errmsg');
