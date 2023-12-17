@@ -8,7 +8,9 @@ import haxe.io.Path;
 import haxe.CallStack;
 import haxe.Exception;
 import haxe.Log;
+import lime.system.System;
 import openfl.display.Sprite;
+import openfl.Lib;
 import sys.io.File;
 import sys.FileSystem;
 
