@@ -303,6 +303,7 @@ class Video extends Bitmap
 			"--no-snapshot-preview",
 			"--no-spu",
 			"--no-stats",
+			"--no-sub-autodetect-file",
 			"--no-video-title-show",
 			#if defined(HX_LINUX)
 			"--no-xlib",
