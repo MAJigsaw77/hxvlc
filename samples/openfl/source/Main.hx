@@ -19,6 +19,7 @@ import sys.io.File;
 import sys.FileSystem;
 
 using haxe.io.Path;
+using StringTools;
 
 class Main extends Sprite
 {
