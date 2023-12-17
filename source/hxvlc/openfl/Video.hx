@@ -43,6 +43,7 @@ static unsigned format_setup(void **data, char *chroma, unsigned *width, unsigne
 		delete[] self->pixels;
 
 	self->pixels = new uint8_t[formatWidth * formatHeight * 4];
+
 	return 1;
 }
 
@@ -714,7 +715,12 @@ class Video extends Bitmap
 		{
 			events[5] = false;
 
-			onEncounteredError.dispatch(cast(LibVLC.errmsg(), String));
+			final errmsg:String = cast(LibVLC.errmsg(), String);
+
+			if (errmsg != null && errmsg.length > 0)
+				onEncounteredError.dispatch(errmsg);
+			else
+				onEncounteredError.dispatch('Could not specify the error');
 		}
 
 		if (events[6])
