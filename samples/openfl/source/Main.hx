@@ -5,8 +5,14 @@ import android.content.Context;
 import android.widget.Toast;
 #end
 import haxe.io.Path;
+import haxe.CallStack;
 import haxe.Exception;
+import haxe.Log;
+#if hl
+import hl.Api;
+#end
 import hxvlc.openfl.Video;
+import lime.system.System;
 import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
@@ -74,6 +80,44 @@ class Main extends Sprite
 		addChild(video);
 
 		video.play();
+	}
+
+	private inline function onCriticalError(error:Dynamic):Void
+	{
+		final log:Array<String> = [Std.isOfType(error, String) ? error : Std.string(error)];
+
+		for (item in CallStack.exceptionStack(true))
+		{
+			switch (item)
+			{
+				case CFunction:
+					log.push('C Function');
+				case Module(m):
+					log.push('Module [$m]');
+				case FilePos(s, file, line, column):
+					log.push('$file [line $line]');
+				case Method(classname, method):
+					log.push('$classname [method $method]');
+				case LocalFunction(name):
+					log.push('Local Function [$name]');
+			}
+		}
+
+		final msg:String = log.join('\n');
+
+		try
+		{
+			if (!FileSystem.exists('errors'))
+				FileSystem.createDirectory('errors');
+
+			File.saveContent('errors/' + Date.now().toString().replace(' ', '-').replace(':', "'") + '.txt', msg);
+		}
+		catch (e:Exception)
+			Log.trace('Couldn\'t save error message "${e.message}"', null);
+
+		Log.trace(msg, null);
+		Lib.application.window.alert(msg, 'Error!');
+		System.exit(1);
 	}
 
 	private inline function stage_onEnterFrame(event:Event):Void
