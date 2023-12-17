@@ -367,25 +367,25 @@ class Video extends Bitmap
 			eventManager = LibVLC.media_player_event_manager(mediaPlayer);
 
 			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (LibVLC_MediaPlayerOpening)');
+				Log.warn('Failed to attach event (${LibVLC.event_type_name(LibVLC_MediaPlayerOpening)})');
 
 			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPlaying, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (LibVLC_MediaPlayerPlaying)');
+				Log.warn('Failed to attach event (${LibVLC.event_type_name(LibVLC_MediaPlayerPlaying)})');
 
 			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerStopped, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (LibVLC_MediaPlayerStopped)');
+				Log.warn('Failed to attach event (${LibVLC.event_type_name(LibVLC_MediaPlayerStopped)})');
 
 			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (LibVLC_MediaPlayerPaused)');
+				Log.warn('Failed to attach event (${LibVLC.event_type_name(LibVLC_MediaPlayerPaused)})');
 
 			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (LibVLC_MediaPlayerEndReached)');
+				Log.warn('Failed to attach event (${LibVLC.event_type_name(LibVLC_MediaPlayerEndReached)})');
 
 			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (LibVLC_MediaPlayerEncounteredError)');
+				Log.warn('Failed to attach event (${LibVLC.event_type_name(LibVLC_MediaPlayerEncounteredError)})');
 
 			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (LibVLC_MediaPlayerMediaChanged)');
+				Log.warn('Failed to attach event (${LibVLC.event_type_name(LibVLC_MediaPlayerMediaChanged)})');
 		}
 
 		LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('NULL'));
