@@ -39,7 +39,6 @@ class FlxVideoSprite extends FlxSprite
 		});
 		#end
 		bitmap.onFormatSetup.add(() -> loadGraphic(bitmap.bitmapData));
-
 		FlxG.game.addChild(bitmap);
 	}
 

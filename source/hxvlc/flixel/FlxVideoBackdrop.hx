@@ -49,7 +49,6 @@ class FlxVideoBackdrop extends FlxBackdrop
 		});
 		#end
 		bitmap.onFormatSetup.add(() -> loadGraphic(bitmap.bitmapData));
-
 		FlxG.game.addChild(bitmap);
 	}
 
