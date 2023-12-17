@@ -29,8 +29,8 @@ static unsigned format_setup(void **data, char *chroma, unsigned *width, unsigne
 	unsigned formatWidth = (*width);
 	unsigned formatHeight = (*height);
 
-	self->videoWidth = formatWidth;
-	self->videoHeight = formatHeight;
+	self->formatWidth = formatWidth;
+	self->formatHeight = formatHeight;
 
 	(*pitches) = formatWidth * 4;
 	(*lines) = formatHeight;
@@ -131,12 +131,12 @@ class Video extends Bitmap
 	/**
 	 * The video format width, in pixels.
 	 */
-	public var videoWidth(default, null):Int = 0;
+	public var formatWidth(default, null):Int = 0;
 
 	/**
 	 * The video format height, in pixels.
 	 */
-	public var videoHeight(default, null):Int = 0;
+	public var formatHeight(default, null):Int = 0;
 
 	/**
 	 * The video's time in milliseconds.
@@ -477,8 +477,8 @@ class Video extends Bitmap
 			texture = null;
 		}
 
-		videoWidth = 0;
-		videoHeight = 0;
+		formatWidth = 0;
+		formatHeight = 0;
 		pixels = null;
 
 		events.splice(0, events.length);
@@ -721,7 +721,7 @@ class Video extends Bitmap
 			
 			if (bitmapData != null && texture != null)
 			{
-				if (bitmapData.width != videoWidth && bitmapData.height != videoHeight)
+				if (bitmapData.width != formatWidth && bitmapData.height != formatHeight)
 				{
 					bitmapData.dispose();
 
@@ -735,7 +735,7 @@ class Video extends Bitmap
 
 			if (mustRecreate)
 			{
-				texture = Lib.current.stage.context3D.createTexture(videoWidth, videoHeight, BGRA, true);
+				texture = Lib.current.stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
 
 				bitmapData = BitmapData.fromTexture(texture);
 
@@ -750,7 +750,7 @@ class Video extends Bitmap
 			if (__renderable)
 			{
 				if (texture != null && pixels != null)
-					texture.uploadFromByteArray(cpp.Pointer.fromRaw(pixels).toUnmanagedArray(videoWidth * videoHeight * 4), 0);
+					texture.uploadFromByteArray(cpp.Pointer.fromRaw(pixels).toUnmanagedArray(formatWidth * formatHeight * 4), 0);
 
 				__setRenderDirty();
 			}
