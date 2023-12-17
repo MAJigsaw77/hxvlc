@@ -8,9 +8,6 @@ import haxe.io.Path;
 import haxe.CallStack;
 import haxe.Exception;
 import haxe.Log;
-#if hl
-import hl.Api;
-#end
 import hxvlc.openfl.Video;
 import lime.system.System;
 import openfl.display.FPS;
@@ -31,11 +28,13 @@ class Main extends Sprite
 	{
 		super();
 
-		Lib.current.stage.frameRate = Lib.application.window?.displayMode.refreshRate;
-
 		#if android
 		Sys.setCwd(Path.addTrailingSlash(Context.getObbDir()));
 		#end
+
+		untyped __global__.__hxcpp_set_critical_error_handler(onCriticalError);
+
+		Lib.current.stage.frameRate = Lib.application.window?.displayMode.refreshRate;
 
 		video = new Video();
 		video.onOpening.add(function()
