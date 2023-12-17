@@ -30,6 +30,9 @@ extern class LibVLC
 	static function event_detach(p_event_manager:cpp.RawPointer<LibVLC_EventManager_T>, i_event_type:Int, f_callback:LibVLC_Callback_T,
 		user_data:cpp.RawPointer<cpp.Void>):Void;
 
+	@:native('libvlc_event_type_name')
+	static function event_type_name(event_type:Int):cpp.ConstCharStar;
+
 	@:native('libvlc_log_unset')
 	static function log_unset(p_instance:cpp.RawPointer<LibVLC_Instance_T>):Void;
 
