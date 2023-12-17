@@ -343,10 +343,13 @@ class Video extends Bitmap
 	 */
 	public function load(location:String, repeat:Int = 0, ?options:Array<String>):Bool
 	{
-		if (location != null && location.indexOf('://') != -1)
-			mediaItem = LibVLC.media_new_location(instance, location);
-		else if (location != null && location.isAbsolute())
-			mediaItem = LibVLC.media_new_path(instance, #if windows location.normalize().split('/').join('\\') #else location.normalize() #end);
+		if (location != null)
+		{
+			if (location.indexOf('://') != -1)
+				mediaItem = LibVLC.media_new_location(instance, location);
+			else
+				mediaItem = LibVLC.media_new_path(instance, #if windows location.normalize().split('/').join('\\') #else location.normalize() #end);
+		}
 		else
 			return false;
 
