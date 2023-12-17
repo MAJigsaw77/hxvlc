@@ -11,7 +11,6 @@ import lime.utils.Log;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.Texture;
-import openfl.geom.Point;
 import openfl.Lib;
 
 using haxe.io.Path;
@@ -138,11 +137,6 @@ class Video extends Bitmap
 	 * The video format height, in pixels.
 	 */
 	public var formatHeight(default, null):Int = 0;
-
-	/**
-	 * The size of the video, expressed as a Point object with the values of the width and height properties.
-	 */
-	public var size(get, never):Point;
 
 	/**
 	 * The video's time in milliseconds.
