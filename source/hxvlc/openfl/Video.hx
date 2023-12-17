@@ -504,20 +504,6 @@ class Video extends Bitmap
 	}
 
 	// Get & Set Methods
-	@:noCompletion private function get_size():Point
-	{
-		if (mediaPlayer != null)
-		{
-			var px:cpp.UInt32 = 0;
-			var py:cpp.UInt32 = 0;
-
-			if (LibVLC.video_get_size(mediaPlayer, 0, px, py) == 0)
-				return new Point(px, py);
-		}
-
-		return new Point(0, 0);
-	}
-
 	@:noCompletion private function get_time():Int64
 	{
 		if (mediaPlayer != null)
