@@ -318,7 +318,14 @@ class Video extends Bitmap
 		instance = LibVLC.create(untyped __cpp__('sizeof(args) / sizeof(*args)'), untyped __cpp__('args'));
 
 		if (instance == null)
-			Log.error('Failed to initialize the LibVLC instance, Error: ${cast(LibVLC.errmsg(), String)}');
+		{
+			final errmsg:String = LibVLC.errmsg();
+
+			if (errmsg != null && errmsg.length > 0)
+				Log.error('Failed to initialize the LibVLC instance, Error: $errmsg');
+			else
+				Log.error('Failed to initialize the LibVLC instance');
+		}
 
 		#if HXVLC_LOGGING
 		LibVLC.log_set(instance, untyped __cpp__('logging'), untyped __cpp__('NULL'));
