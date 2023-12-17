@@ -30,9 +30,6 @@ extern class LibVLC
 	static function event_detach(p_event_manager:cpp.RawPointer<LibVLC_EventManager_T>, i_event_type:Int, f_callback:LibVLC_Callback_T,
 		user_data:cpp.RawPointer<cpp.Void>):Void;
 
-	@:native('libvlc_event_type_name')
-	static function event_type_name(event_type:Int):cpp.ConstCharStar;
-
 	@:native('libvlc_log_unset')
 	static function log_unset(p_instance:cpp.RawPointer<LibVLC_Instance_T>):Void;
 
@@ -120,6 +117,9 @@ extern class LibVLC
 	@:native('libvlc_video_set_callbacks')
 	static function video_set_callbacks(mp:cpp.RawPointer<LibVLC_MediaPlayer_T>, lock:LibVLC_Video_Lock_CB, unlock:LibVLC_Video_Unlock_CB,
 		display:LibVLC_Video_Display_CB, opaque:cpp.RawPointer<cpp.Void>):Void;
+
+	@:native("libvlc_video_get_size")
+	static function video_get_size(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>, num:cpp.UInt32, px:cpp.Star<cpp.UInt32>, py:cpp.Star<cpp.UInt32>):Int;
 
 	@:native('libvlc_audio_get_delay')
 	static function audio_get_delay(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):cpp.Int64;
