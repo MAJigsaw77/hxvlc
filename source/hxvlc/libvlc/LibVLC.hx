@@ -119,7 +119,7 @@ extern class LibVLC
 		display:LibVLC_Video_Display_CB, opaque:cpp.RawPointer<cpp.Void>):Void;
 
 	@:native("libvlc_video_get_size")
-	static function video_get_size(p_mi:LibVLC_MediaPlayer_p, num:cpp.UInt32, px:cpp.Star<cpp.UInt32>, py:cpp.Star<cpp.UInt32>):Int;
+	static function video_get_size(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>, num:cpp.UInt32, px:cpp.Star<cpp.UInt32>, py:cpp.Star<cpp.UInt32>):Int;
 
 	@:native('libvlc_audio_get_delay')
 	static function audio_get_delay(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):cpp.Int64;
