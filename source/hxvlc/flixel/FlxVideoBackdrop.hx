@@ -44,9 +44,9 @@ class FlxVideoBackdrop extends FlxBackdrop
 		#if FLX_SOUND_SYSTEM
 		bitmap.onOpening.add(function()
 		{
-			mute = FlxG.sound.muted;
+			bitmap.mute = FlxG.sound.muted;
 
-			volume = Math.floor(FlxG.sound.volume * 100);
+			bitmap.volume = Math.floor(FlxG.sound.volume * 100);
 		});
 		#end
 		bitmap.onFormatSetup.add(() -> loadGraphic(bitmap.bitmapData));
@@ -172,14 +172,14 @@ class FlxVideoBackdrop extends FlxBackdrop
 	public override function update(elapsed:Float):Void
 	{
 		#if FLX_SOUND_SYSTEM
-		mute = FlxG.sound.muted;
+		bitmap.mute = FlxG.sound.muted;
 
-		if (!mute)
+		if (!bitmap.mute)
 		{
 			final curVolume:Int = Math.floor(FlxG.sound.volume * 100);
 
-			if (volume != curVolume)
-				volume = curVolume;
+			if (bitmap.volume != curVolume)
+				bitmap.volume = curVolume;
 		}
 		#end
 
