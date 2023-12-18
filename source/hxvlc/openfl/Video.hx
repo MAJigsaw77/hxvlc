@@ -119,7 +119,7 @@ static void logging(void *data, int level, const libvlc_log_t *ctx, const char *
 			break;
 	}
 	#else
-	char buffer[512] = { 0 };
+	char buffer[1024] = { 0 };
 
 	strcpy(buffer, fmt);
 
