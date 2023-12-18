@@ -349,7 +349,13 @@ class Video extends Bitmap
 			if (location.indexOf('://') != -1)
 				mediaItem = LibVLC.media_new_location(instance, location);
 			else
-				mediaItem = LibVLC.media_new_path(instance, #if windows location.normalize().split('/').join('\\') #else location.normalize() #end);
+			{
+				#if windows
+				mediaItem = LibVLC.media_new_path(instance, location.normalize().split('/').join('\\'));
+				#else
+				mediaItem = LibVLC.media_new_path(instance, location.normalize());
+				#end
+			}
 		}
 		else
 			return false;
