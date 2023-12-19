@@ -256,7 +256,7 @@ class Video extends Bitmap
 	 */
 	public var onDisplay(default, null):Event<Void->Void>;
 
-	@:noCompletion private var events:Array<Bool> = [];
+	@:noCompletion private var events:Array<Bool>;
 	@:noCompletion private var instance:cpp.RawPointer<LibVLC_Instance_T>;
 	@:noCompletion private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
 	@:noCompletion private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
@@ -272,6 +272,8 @@ class Video extends Bitmap
 	public function new(smoothing:Bool = true):Void
 	{
 		super(bitmapData, AUTO, smoothing);
+
+		events = new Array<Bool>();
 
 		events.resize(8);
 
