@@ -292,10 +292,6 @@ class Video extends Bitmap
 		onFormatSetup = new Event<Void->Void>();
 		onDisplay = new Event<Void->Void>();
 
-		#if HXVLC_LOGGING
-		var initLogging:Bool = false;
-		#end
-
 		if (instance == null)
 		{
 			#if android
@@ -329,25 +325,20 @@ class Video extends Bitmap
 
 			instance = LibVLC.create(untyped __cpp__('sizeof(args) / sizeof(*args)'), untyped __cpp__('args'));
 
+			if (instance == null)
+			{
+				final errmsg:String = cast(LibVLC.errmsg(), String);
+
+				if (errmsg != null && errmsg.length > 0)
+					Log.error('Failed to initialize the LibVLC instance, Error: $errmsg');
+				else
+					Log.error('Failed to initialize the LibVLC instance');
+			}
 			#if HXVLC_LOGGING
-			initLogging = true;
+			else
+				LibVLC.log_set(instance, untyped __cpp__('logging'), untyped __cpp__('NULL'));
 			#end
 		}
-
-		if (instance == null)
-		{
-			final errmsg:String = cast(LibVLC.errmsg(), String);
-
-			if (errmsg != null && errmsg.length > 0)
-				Log.error('Failed to initialize the LibVLC instance, Error: $errmsg');
-			else
-				Log.error('Failed to initialize the LibVLC instance');
-		}
-
-		#if HXVLC_LOGGING
-		if (initLogging)
-			LibVLC.log_set(instance, untyped __cpp__('logging'), untyped __cpp__('NULL'));
-		#end
 	}
 
 	/**
