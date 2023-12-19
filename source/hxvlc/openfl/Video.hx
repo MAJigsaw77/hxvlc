@@ -22,7 +22,7 @@ using haxe.io.Path;
 @:headerInclude('stdint.h')
 @:headerInclude('stdio.h')
 @:cppNamespaceCode('
-static unsigned format_setup(void **data, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
+unsigned format_setup(void **data, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(*data);
 
@@ -47,7 +47,7 @@ static unsigned format_setup(void **data, char *chroma, unsigned *width, unsigne
 	return 1;
 }
 
-static void *lock(void *data, void **p_pixels)
+void *lock(void *data, void **p_pixels)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(data);
 
@@ -56,12 +56,12 @@ static void *lock(void *data, void **p_pixels)
 	return NULL; /* picture identifier, not needed here */
 }
 
-static void unlock(void *data, void *id, void *const *p_pixels)
+void unlock(void *data, void *id, void *const *p_pixels)
 {
 	assert(id == NULL); /* picture identifier, not needed here */
 }
 
-static void display(void *data, void *id)
+void display(void *data, void *id)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(data);
 
@@ -70,7 +70,7 @@ static void display(void *data, void *id)
 	assert(id == NULL); /* picture identifier, not needed here */
 }
 
-static void callbacks(const libvlc_event_t *event, void *data)
+void callbacks(const libvlc_event_t *event, void *data)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(data);
 
@@ -100,7 +100,7 @@ static void callbacks(const libvlc_event_t *event, void *data)
 	}
 }
 
-static void logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
+void logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
 	#if defined(HX_ANDROID)
 	switch (level)
@@ -256,11 +256,13 @@ class Video extends Bitmap
 	 */
 	public var onDisplay(default, null):Event<Void->Void>;
 
-	@:noCompletion private var events:Array<Bool>;
-	@:noCompletion private var instance:cpp.RawPointer<LibVLC_Instance_T>;
+	@:noCompletion private static var instance:cpp.RawPointer<LibVLC_Instance_T>;
+
 	@:noCompletion private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
 	@:noCompletion private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
 	@:noCompletion private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
+
+	@:noCompletion private var events:Array<Bool>;
 	@:noCompletion private var pixels:cpp.RawPointer<cpp.UInt8>;
 	@:noCompletion private var texture:Texture;
 
@@ -290,36 +292,47 @@ class Video extends Bitmap
 		onFormatSetup = new Event<Void->Void>();
 		onDisplay = new Event<Void->Void>();
 
-		#if android
-		Sys.putEnv('VLC_DATA_PATH', '/system/usr/share');
+		#if HXVLC_LOGGING
+		var initLogging:Bool = false;
 		#end
 
-		#if (windows || macos)
-		Sys.putEnv('VLC_PLUGIN_PATH', '${Sys.programPath().directory()}/plugins');
-		#end
+		if (instance == null)
+		{
+			#if android
+			Sys.putEnv('VLC_DATA_PATH', '/system/usr/share');
+			#end
 
-		untyped __cpp__('const char *args[] = {
-			"--drop-late-frames",
-			"--intf=dummy",
-			"--no-interact",
-			"--no-lua",
-			"--no-osd",
-			"--no-snapshot-preview",
-			"--no-spu",
-			"--no-stats",
-			"--no-sub-autodetect-file",
-			"--no-video-title-show",
-			#if defined(HX_LINUX)
-			"--no-xlib",
-			#endif
-			#if defined(HX_WINDOWS) || defined(HX_MACOS)
-			"--reset-config",
-			"--reset-plugins-cache",
-			#endif
-			"--text-renderer=dummy"
-		};');
+			#if (windows || macos)
+			Sys.putEnv('VLC_PLUGIN_PATH', '${Sys.programPath().directory()}/plugins');
+			#end
 
-		instance = LibVLC.create(untyped __cpp__('sizeof(args) / sizeof(*args)'), untyped __cpp__('args'));
+			untyped __cpp__('const char *args[] = {
+				"--drop-late-frames",
+				"--intf=dummy",
+				"--no-interact",
+				"--no-lua",
+				"--no-osd",
+				"--no-snapshot-preview",
+				"--no-spu",
+				"--no-stats",
+				"--no-sub-autodetect-file",
+				"--no-video-title-show",
+				#if defined(HX_LINUX)
+				"--no-xlib",
+				#endif
+				#if defined(HX_WINDOWS) || defined(HX_MACOS)
+				"--reset-config",
+				"--reset-plugins-cache",
+				#endif
+				"--text-renderer=dummy"
+			};');
+
+			instance = LibVLC.create(untyped __cpp__('sizeof(args) / sizeof(*args)'), untyped __cpp__('args'));
+
+			#if HXVLC_LOGGING
+			initLogging = true;
+			#end
+		}
 
 		if (instance == null)
 		{
@@ -332,7 +345,8 @@ class Video extends Bitmap
 		}
 
 		#if HXVLC_LOGGING
-		LibVLC.log_set(instance, untyped __cpp__('logging'), untyped __cpp__('NULL'));
+		if (initLogging)
+			LibVLC.log_set(instance, untyped __cpp__('logging'), untyped __cpp__('NULL'));
 		#end
 	}
 
@@ -347,6 +361,9 @@ class Video extends Bitmap
 	 */
 	public function load(location:String, repeat:Int = 0, ?options:Array<String>):Bool
 	{
+		if (instance == null)
+			return false;
+
 		if (location != null)
 		{
 			if (location.indexOf('://') != -1)
@@ -465,7 +482,7 @@ class Video extends Bitmap
 	}
 
 	/**
-	 * Frees libvlc and the memory that is used to store the Video object.
+	 * Frees the memory that is used to store the Video object.
 	 */
 	public function dispose():Void
 	{
@@ -504,6 +521,16 @@ class Video extends Bitmap
 
 		events.splice(0, events.length);
 
+		eventManager = null;
+		mediaPlayer = null;
+		mediaItem = null;
+	}
+
+	/**
+	 * Frees LibVLC instance.
+	 */
+	public static function disposeInstance():Void
+	{
 		if (instance != null)
 		{
 			#if HXVLC_LOGGING
@@ -512,9 +539,6 @@ class Video extends Bitmap
 			LibVLC.release(instance);
 		}
 
-		eventManager = null;
-		mediaPlayer = null;
-		mediaItem = null;
 		instance = null;
 	}
 
