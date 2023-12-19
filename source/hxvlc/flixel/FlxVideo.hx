@@ -53,7 +53,7 @@ class FlxVideo extends Video
 		return super.load(location, repeat, options);
 	}
 
-	public override function dispose():Void
+	public override function dispose(disposeInstance:Bool = true):Void
 	{
 		if (FlxG.signals.focusGained.has(resume))
 			FlxG.signals.focusGained.remove(resume);
@@ -64,7 +64,7 @@ class FlxVideo extends Video
 		if (FlxG.stage.hasEventListener(Event.ENTER_FRAME))
 			FlxG.stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
 
-		super.dispose();
+		super.dispose(disposeInstance);
 
 		FlxG.removeChild(this);
 	}
