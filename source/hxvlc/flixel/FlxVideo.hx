@@ -24,9 +24,7 @@ class FlxVideo extends Video
 		#if FLX_SOUND_SYSTEM
 		onOpening.add(function()
 		{
-			mute = FlxG.sound.muted;
-
-			volume = Math.floor(FlxG.sound.volume * 100);
+			volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * 100);
 		});
 		#end
 
@@ -79,11 +77,9 @@ class FlxVideo extends Video
 		}
 
 		#if FLX_SOUND_SYSTEM
-		mute = FlxG.sound.muted;
-
 		if (!mute)
 		{
-			final curVolume:Int = Math.floor(FlxG.sound.volume * 100);
+			final curVolume:Int = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * 100);
 
 			if (volume != curVolume)
 				volume = curVolume;
