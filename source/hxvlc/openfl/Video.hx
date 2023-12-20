@@ -355,7 +355,7 @@ class Video extends Bitmap
 		if (instance == null)
 			return false;
 
-		if (location != null)
+		if (location != null && location.length > 0)
 		{
 			if (location.indexOf('://') != -1)
 				mediaItem = LibVLC.media_new_location(instance, location);
