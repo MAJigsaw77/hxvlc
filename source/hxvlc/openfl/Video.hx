@@ -21,6 +21,7 @@ using haxe.io.Path;
 @:headerInclude('assert.h')
 @:headerInclude('stdint.h')
 @:headerInclude('stdio.h')
+@:headerInclude('stdarg.h')
 @:cppNamespaceCode('
 unsigned format_setup(void **data, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
 {
