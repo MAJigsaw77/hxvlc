@@ -3,7 +3,6 @@ package hxvlc.flixel;
 #if flixel
 import flixel.FlxG;
 import hxvlc.openfl.Video;
-import openfl.events.Event;
 import sys.FileSystem;
 
 class FlxVideo extends Video
@@ -45,7 +44,8 @@ class FlxVideo extends Video
 				FlxG.signals.focusLost.add(pause);
 		}
 
-		FlxG.stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		if (!FlxG.signals.postUpdate.has(postUpdate))
+			FlxG.signals.postUpdate.add(postUpdate);
 
 		if (FileSystem.exists(Sys.getCwd() + location))
 			return super.load(Sys.getCwd() + location, repeat, options);
@@ -61,8 +61,8 @@ class FlxVideo extends Video
 		if (FlxG.signals.focusLost.has(pause))
 			FlxG.signals.focusLost.remove(pause);
 
-		if (FlxG.stage.hasEventListener(Event.ENTER_FRAME))
-			FlxG.stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+		if (FlxG.signals.postUpdate.has(postUpdate))
+			FlxG.signals.postUpdate.remove(postUpdate);
 
 		super.dispose();
 
@@ -70,7 +70,7 @@ class FlxVideo extends Video
 	}
 
 	@:noCompletion
-	private function onEnterFrame(e:Event):Void
+	private function postUpdate():Void
 	{
 		if (autoResize)
 		{
