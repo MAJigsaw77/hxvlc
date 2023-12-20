@@ -40,14 +40,9 @@ class FlxVideoBackdrop extends FlxBackdrop
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
 		bitmap = new Video(false);
-		bitmap.alpha = 0;
-		#if FLX_SOUND_SYSTEM
-		bitmap.onOpening.add(function()
-		{
-			bitmap.volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * 100);
-		});
-		#end
 		bitmap.onFormatSetup.add(() -> loadGraphic(bitmap.bitmapData));
+		bitmap.alpha = 0;
+
 		FlxG.game.addChild(bitmap);
 	}
 
