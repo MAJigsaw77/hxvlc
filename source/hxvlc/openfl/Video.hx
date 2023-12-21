@@ -3,6 +3,7 @@ package hxvlc.openfl;
 #if (!cpp && !(desktop || android))
 #error 'The current target platform isn\'t supported by hxvlc.'
 #end
+import haxe.io.Path;
 import haxe.Int64;
 import hxvlc.libvlc.LibVLC;
 import hxvlc.libvlc.Types;
@@ -12,8 +13,6 @@ import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.Texture;
 import openfl.Lib;
-
-using haxe.io.Path;
 
 #if android
 @:headerInclude('android/log.h')
@@ -52,7 +51,8 @@ void *lock(void *data, void **p_pixels)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(data);
 
-	(*p_pixels) = self->pixels;
+	if (self->pixels != NULL)
+		(*p_pixels) = self->pixels;
 
 	return NULL; /* picture identifier, not needed here */
 }
@@ -300,7 +300,7 @@ class Video extends Bitmap
 			#end
 
 			#if (windows || macos)
-			Sys.putEnv('VLC_PLUGIN_PATH', '${Sys.programPath().directory()}/plugins');
+			Sys.putEnv('VLC_PLUGIN_PATH', Path.join([Path.directory(Sys.programPath()), 'plugins']));
 			#end
 
 			untyped __cpp__('const char *args[] = {
@@ -363,9 +363,9 @@ class Video extends Bitmap
 			else
 			{
 				#if windows
-				mediaItem = LibVLC.media_new_path(instance, location.normalize().split('/').join('\\'));
+				mediaItem = LibVLC.media_new_path(instance, Path.normalize(location).split('/').join('\\'));
 				#else
-				mediaItem = LibVLC.media_new_path(instance, location.normalize());
+				mediaItem = LibVLC.media_new_path(instance, Path.normalize(location));
 				#end
 			}
 		}
