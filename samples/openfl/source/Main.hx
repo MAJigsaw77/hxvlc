@@ -18,7 +18,6 @@ import openfl.Lib;
 import sys.io.File;
 import sys.FileSystem;
 
-using haxe.io.Path;
 using StringTools;
 
 class Main extends Sprite
@@ -37,6 +36,10 @@ class Main extends Sprite
 
 		Lib.current.stage.frameRate = Lib.application.window?.displayMode.refreshRate;
 
+		#if android
+		copyFiles();
+		#end
+		
 		video = new Video();
 		video.onOpening.add(function()
 		{
@@ -55,28 +58,7 @@ class Main extends Sprite
 				removeChild(video);
 		});
 		video.onFormatSetup.add(() -> stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame));
-
-		final path:String = 'assets/video.mp4';
-
-		#if android
-		try
-		{
-			if (!FileSystem.exists(path.directory()))
-			{
-				FileSystem.createDirectory(path.directory());
-
-				File.saveBytes(path, Assets.getBytes(path));
-			}
-			else if (!FileSystem.exists(path))
-				File.saveBytes(path, Assets.getBytes(path));
-				
-		}
-		catch (e:Exception)
-			Toast.makeText(e.message, Toast.LENGTH_LONG);
-		#end
-		
-		video.load(Sys.getCwd() + path, 2);
-
+		video.load(Path.join([Sys.getCwd(), 'assets/video.mp4']), 2);
 		addChild(video);
 
 		video.play();
@@ -150,4 +132,26 @@ class Main extends Sprite
 	{
 		video.pause();
 	}
+
+	#if android
+	private inline function copyFiles():Void
+	{
+		try
+		{
+			final path:String = 'assets/video.mp4';
+
+			if (!FileSystem.exists(Path.directory(path)))
+			{
+				FileSystem.createDirectory(Path.directory(path));
+
+				File.saveBytes(path, Assets.getBytes(path));
+			}
+			else if (!FileSystem.exists(path))
+				File.saveBytes(path, Assets.getBytes(path));
+				
+		}
+		catch (e:Exception)
+			Toast.makeText(e.message, Toast.LENGTH_LONG);
+	}
+	#end
 }
