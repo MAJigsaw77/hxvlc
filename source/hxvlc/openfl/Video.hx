@@ -27,14 +27,11 @@ unsigned format_setup(void **data, char *chroma, unsigned *width, unsigned *heig
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(*data);
 
-	unsigned formatWidth = (*width);
-	unsigned formatHeight = (*height);
+	self->formatWidth = (*width);
+	self->formatHeight = (*height);
 
-	self->formatWidth = formatWidth;
-	self->formatHeight = formatHeight;
-
-	(*pitches) = formatWidth * 4;
-	(*lines) = formatHeight;
+	(*pitches) = self->formatWidth * 4;
+	(*lines) = self->formatHeight;
 
 	strcpy(chroma, "RV32");
 
