@@ -9,6 +9,7 @@ import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import haxe.io.Path;
 import hxvlc.openfl.Video;
 import sys.FileSystem;
 
@@ -69,8 +70,8 @@ class FlxVideoBackdrop extends FlxBackdrop
 				FlxG.signals.focusLost.add(pause);
 		}
 
-		if (FileSystem.exists(Sys.getCwd() + location))
-			return bitmap.load(Sys.getCwd() + location, repeat, options);
+		if (FileSystem.exists(Path.join([Sys.getCwd(), location])))
+			return bitmap.load(Path.join([Sys.getCwd(), location]), repeat, options);
 
 		return bitmap.load(location, repeat, options);
 	}
