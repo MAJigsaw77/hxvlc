@@ -787,7 +787,9 @@ class Video extends Bitmap
 
 			if (__renderable)
 			{
-				if (texture != null && (pixels != null && pixels.length == formatWidth * formatHeight * 4))
+				final formatSize:Int = formatWidth * formatHeight * 4;
+
+				if (texture != null && pixels.length == formatSize)
 					texture.uploadFromByteArray(pixels, 0);
 
 				__setRenderDirty();
