@@ -2,6 +2,7 @@ package hxvlc.flixel;
 
 #if flixel
 import flixel.FlxG;
+import haxe.io.Path;
 import hxvlc.openfl.Video;
 import sys.FileSystem;
 
@@ -38,8 +39,8 @@ class FlxVideo extends Video
 		if (!FlxG.signals.postUpdate.has(postUpdate))
 			FlxG.signals.postUpdate.add(postUpdate);
 
-		if (FileSystem.exists(Sys.getCwd() + location))
-			return super.load(Sys.getCwd() + location, repeat, options);
+		if (FileSystem.exists(Path.join([Sys.getCwd(), location])))
+			return super.load(Path.join([Sys.getCwd(), location]), repeat, options);
 
 		return super.load(location, repeat, options);
 	}

@@ -3,6 +3,8 @@ package hxvlc.openfl;
 #if (!cpp && !(desktop || android))
 #error 'The current target platform isn\'t supported by hxvlc.'
 #end
+import haxe.io.BytesData;
+import haxe.io.Path;
 import haxe.Int64;
 import hxvlc.libvlc.LibVLC;
 import hxvlc.libvlc.Types;
@@ -12,8 +14,6 @@ import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.Texture;
 import openfl.Lib;
-
-using haxe.io.Path;
 
 #if android
 @:headerInclude('android/log.h')
@@ -40,11 +40,6 @@ unsigned format_setup(void **data, char *chroma, unsigned *width, unsigned *heig
 
 	self->events[7] = true;
 
-	if (self->pixels != NULL)
-		delete[] self->pixels;
-
-	self->pixels = new uint8_t[formatWidth * formatHeight * 4];
-
 	return 1;
 }
 
@@ -52,7 +47,8 @@ void *lock(void *data, void **p_pixels)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(data);
 
-	(*p_pixels) = self->pixels;
+	if (self->pixels != NULL)
+		(*p_pixels) = &self->pixels[0];
 
 	return NULL; /* picture identifier, not needed here */
 }
@@ -264,7 +260,7 @@ class Video extends Bitmap
 	@:noCompletion private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
 
 	@:noCompletion private var events:Array<Bool>;
-	@:noCompletion private var pixels:cpp.RawPointer<cpp.UInt8>;
+	@:noCompletion private var pixels:BytesData;
 	@:noCompletion private var texture:Texture;
 
 	/**
@@ -276,13 +272,6 @@ class Video extends Bitmap
 	{
 		super(bitmapData, AUTO, smoothing);
 
-		events = new Array<Bool>();
-
-		events.resize(8);
-
-		for (i in 0...events.length)
-			events[i] = false;
-
 		onOpening = new Event<Void->Void>();
 		onPlaying = new Event<Void->Void>();
 		onStopped = new Event<Void->Void>();
@@ -293,6 +282,13 @@ class Video extends Bitmap
 		onFormatSetup = new Event<Void->Void>();
 		onDisplay = new Event<Void->Void>();
 
+		events = new Array<Bool>();
+
+		for (i in 0...8)
+			events[i] = false;
+
+		pixels = new BytesData();
+
 		if (instance == null)
 		{
 			#if android
@@ -300,7 +296,7 @@ class Video extends Bitmap
 			#end
 
 			#if (windows || macos)
-			Sys.putEnv('VLC_PLUGIN_PATH', '${Sys.programPath().directory()}/plugins');
+			Sys.putEnv('VLC_PLUGIN_PATH', Path.join([Path.directory(Sys.programPath()), 'plugins']));
 			#end
 
 			untyped __cpp__('const char *args[] = {
@@ -363,9 +359,9 @@ class Video extends Bitmap
 			else
 			{
 				#if windows
-				mediaItem = LibVLC.media_new_path(instance, location.normalize().split('/').join('\\'));
+				mediaItem = LibVLC.media_new_path(instance, Path.normalize(location).split('/').join('\\'));
 				#else
-				mediaItem = LibVLC.media_new_path(instance, location.normalize());
+				mediaItem = LibVLC.media_new_path(instance, Path.normalize(location));
 				#end
 			}
 		}
@@ -509,7 +505,7 @@ class Video extends Bitmap
 
 		formatWidth = 0;
 		formatHeight = 0;
-		pixels = null;
+		pixels.splice(0, pixels.length);
 
 		events.splice(0, events.length);
 
@@ -777,6 +773,8 @@ class Video extends Bitmap
 
 			if (mustRecreate)
 			{
+				pixels.resize(formatWidth * formatHeight * 4);
+
 				texture = Lib.current.stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
 
 				bitmapData = BitmapData.fromTexture(texture);
@@ -791,8 +789,8 @@ class Video extends Bitmap
 
 			if (__renderable)
 			{
-				if (texture != null && pixels != null)
-					texture.uploadFromByteArray(cpp.Pointer.fromRaw(pixels).toUnmanagedArray(formatWidth * formatHeight * 4), 0);
+				if (texture != null && (pixels != null && pixels.length == formatWidth * formatHeight * 4))
+					texture.uploadFromByteArray(pixels, 0);
 
 				__setRenderDirty();
 			}
