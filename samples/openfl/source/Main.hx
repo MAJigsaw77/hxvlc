@@ -58,9 +58,10 @@ class Main extends Sprite
 				removeChild(video);
 		});
 		video.onFormatSetup.add(() -> stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame));
-		video.load(Path.join([Sys.getCwd(), 'assets/video.mp4']), 2);
 		addChild(video);
 
+		// These must be called after the child is added (Mostly to have events accuracy).
+		video.load(Path.join([Sys.getCwd(), 'assets/video.mp4']), 2);
 		video.play();
 	}
 
@@ -116,7 +117,7 @@ class Main extends Sprite
 		{
 			// stage is taller than video
 			video.width = stage.stageWidth;
-			video.height = stage.stageWidth * (1 / aspectRatio);
+			video.height = stage.stageWidth / aspectRatio;
 		}
 
 		video.x = (stage.stageWidth - video.width) / 2;
