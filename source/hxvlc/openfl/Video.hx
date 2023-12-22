@@ -27,13 +27,13 @@ unsigned format_setup(void **data, char *chroma, unsigned *width, unsigned *heig
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(*data);
 
+	strcpy(chroma, "RV32");
+
 	self->formatWidth = (*width);
 	self->formatHeight = (*height);
 
 	(*pitches) = self->formatWidth * 4;
 	(*lines) = self->formatHeight;
-
-	strcpy(chroma, "RV32");
 
 	self->events[7] = true;
 
@@ -494,17 +494,18 @@ class Video extends Bitmap
 			bitmapData = null;
 		}
 
+		formatWidth = 0;
+		formatHeight = 0;
+
+		events.splice(0, events.length);
+
+		pixels.splice(0, pixels.length);
+
 		if (texture != null)
 		{
 			texture.dispose();
 			texture = null;
 		}
-
-		formatWidth = 0;
-		formatHeight = 0;
-		pixels.splice(0, pixels.length);
-
-		events.splice(0, events.length);
 
 		eventManager = null;
 		mediaPlayer = null;
