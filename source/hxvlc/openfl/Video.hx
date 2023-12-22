@@ -264,7 +264,7 @@ class Video extends Bitmap
 	@:noCompletion private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
 
 	@:noCompletion private var events:Array<Bool>;
-	@:noCompletion private var pixels:cpp.RawPointer<cpp.UInt8>;
+	@:noCompletion private var pixels:cpp.Pointer<cpp.UInt8>;
 	@:noCompletion private var texture:Texture;
 
 	/**
@@ -792,7 +792,7 @@ class Video extends Bitmap
 			if (__renderable)
 			{
 				if (texture != null && pixels != null)
-					texture.uploadFromByteArray(cpp.Pointer.fromRaw(pixels).toUnmanagedArray(formatWidth * formatHeight * 4), 0);
+					texture.uploadFromByteArray(pixels.toUnmanagedArray(formatWidth * formatHeight * 4), 0);
 
 				__setRenderDirty();
 			}
