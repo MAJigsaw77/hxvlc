@@ -1,4 +1,4 @@
-![](https://github.com/MAJigsaw77/hxvlc/blob/main/logo.png)
+![](https://github.com/MAJigsaw77/hxvlc/raw/main/logo.png)
 
 # hxvlc
 
