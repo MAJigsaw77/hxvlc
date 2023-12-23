@@ -31,12 +31,17 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
 
     * [Debian](https://debian.org) based distributions:
         ```bash
-        sudo apt-get install libvlc-dev libvlccore-dev 
+        sudo apt-get install libvlc-dev libvlccore-dev
         ```
 
     * [Arch](https://archlinux.org) based distributions:
         ```bash
-        sudo pacman -S vlc 
+        sudo pacman -S vlc
+        ```
+
+    * [Gentoo](https://www.gentoo.org) based distributions:
+        ```bash
+        sudo emerge media-video/vlc
         ```
 4. **Well done!**
 
