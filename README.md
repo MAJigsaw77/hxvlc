@@ -17,10 +17,15 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
 
 ## Instructions
 
-1. Install the latest stable version of `hxvlc` by running the following haxelib command.
-    ```bash
-    haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git
-    ```
+1. You can install it through `Haxelib`
+   ```bash
+   haxelib install hxvlc
+   ```
+   Or through `Git`, if you want the latest updates
+   ```bash
+   haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git
+   ```
+
 2. Add this code in the **project.xml** file.
     ```xml
     <section if="cpp">
