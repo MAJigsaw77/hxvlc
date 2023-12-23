@@ -8,10 +8,10 @@ A Haxe/[OpenFL](https://www.openfl.org) library for video playback using [LibVLC
 
 ## Supported platforms
 
-- [x] Windows **(x86_64 only)**.
-- [x] MacOS **(x86_64 and arm64 only)**.
-- [x] Linux **(x86_64 only)**.
-- [x] Android **(arm64, armv7a, x86 and x86_64 only)**.
+* Windows **(x86_64 only)**.
+* MacOS **(x86_64 and arm64 only)**.
+* Linux **(x86_64 only)**.
+* Android **(arm64, armv7a, x86 and x86_64 only)**.
 
 These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org) in order to work.
 
@@ -53,7 +53,7 @@ Check out the [Samples Folder](samples/) for examples on how to use this library
 
 **hxvlc** is made available under the **MIT License**. Check [LICENSE](./LICENSE) for more information.
 
-![](https://raw.githubusercontent.com/videolan/vlc/master/share/icons/256x256/vlc-xmas.png)
+![](https://github.com/videolan/vlc/raw/master/share/icons/256x256/vlc-xmas.png)
 
 **LibVLC** is the engine of **VLC** released under the **LGPL2.1 License**. Check [VideoLAN.org](https://www.videolan.org/legal.html) for more information.
 
