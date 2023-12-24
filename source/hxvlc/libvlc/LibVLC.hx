@@ -73,13 +73,16 @@ extern class LibVLC
 	static function media_player_set_pause(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>, do_pause:Int):Void;
 
 	@:native('libvlc_media_player_is_playing')
-	static function media_player_is_playing(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Bool;
+	static function media_player_is_playing(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Int;
 
 	@:native('libvlc_media_player_is_seekable')
-	static function media_player_is_seekable(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Bool;
+	static function media_player_is_seekable(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Int;
 
 	@:native('libvlc_media_player_can_pause')
-	static function media_player_can_pause(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Bool;
+	static function media_player_can_pause(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Int;
+
+	@:native('libvlc_media_player_will_play')
+	static function media_player_will_play(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Int;
 
 	@:native('libvlc_media_player_release')
 	static function media_player_release(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Void;
@@ -97,7 +100,16 @@ extern class LibVLC
 	static function media_player_get_position(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Single;
 
 	@:native('libvlc_media_player_set_position')
-	static function media_player_set_position(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>, f_pos:Single):Int;
+	static function media_player_set_position(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>, f_pos:Single):Void;
+
+	@:native('libvlc_media_player_get_chapter')
+	static function media_player_get_chapter(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Int;
+
+	@:native('libvlc_media_player_set_chapter')
+	static function media_player_set_chapter(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>, i_chapter:Int):Void;
+
+	@:native('libvlc_media_player_get_chapter_count')
+	static function media_player_get_chapter_count(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Int;
 
 	@:native('libvlc_media_player_get_rate')
 	static function media_player_get_rate(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Single;
