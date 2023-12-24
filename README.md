@@ -17,7 +17,9 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
 
 ## Instructions
 
-1. You can install it through `Haxelib`
+1. Install the library.
+
+   You can install it through `Haxelib`
    ```bash
    haxelib install hxvlc
    ```
@@ -26,13 +28,15 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
    haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git
    ```
 
-2. Add this code in the **project.xml** file.
+3. Add this code in the **project.xml** file.
+
     ```xml
     <section if="cpp">
     	<haxelib name="hxvlc" if="desktop || android" />
     </section>
     ```
-3. ***Linux users only***, you need to install `libvlc` and `libvlccore` from your distro's package manager.
+
+5. ***Linux users only***, you need to install `libvlc` and `libvlccore` from your distro's package manager.
 
     * [Debian](https://debian.org) based distributions:
         ```bash
@@ -48,7 +52,8 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
         ```bash
         sudo emerge media-video/vlc
         ```
-4. **Well done!**
+
+6. **Well done!**
 
 ## Usage Examples
 
