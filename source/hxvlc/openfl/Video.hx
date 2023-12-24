@@ -597,7 +597,7 @@ class Video extends Bitmap
 		if (mediaItem != null)
 			return LibVLC.media_player_get_chapter_count(mediaPlayer);
 
-		return null;
+		return -1;
 	}
 
 	@:noCompletion private function get_length():Int64
