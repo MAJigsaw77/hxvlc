@@ -201,6 +201,11 @@ class Video extends Bitmap
 	public var canPause(get, never):Bool;
 
 	/**
+	 * Whether the video is able to play.
+	 */
+	public var willPlay(get, never):Bool;
+
+	/**
 	 * The video's mute status.
 	 */
 	public var mute(get, set):Bool;
@@ -652,7 +657,7 @@ class Video extends Bitmap
 	@:noCompletion private function get_isPlaying():Bool
 	{
 		if (mediaPlayer != null)
-			return LibVLC.media_player_is_playing(mediaPlayer);
+			return LibVLC.media_player_is_playing(mediaPlayer) != 0;
 
 		return false;
 	}
@@ -660,7 +665,7 @@ class Video extends Bitmap
 	@:noCompletion private function get_isSeekable():Bool
 	{
 		if (mediaPlayer != null)
-			return LibVLC.media_player_is_seekable(mediaPlayer);
+			return LibVLC.media_player_is_seekable(mediaPlayer) != 0;
 
 		return false;
 	}
@@ -668,7 +673,15 @@ class Video extends Bitmap
 	@:noCompletion private function get_canPause():Bool
 	{
 		if (mediaPlayer != null)
-			return LibVLC.media_player_can_pause(mediaPlayer);
+			return LibVLC.media_player_can_pause(mediaPlayer) != 0;
+
+		return false;
+	}
+
+	@:noCompletion private function get_willPlay():Bool
+	{
+		if (mediaPlayer != null)
+			return LibVLC.media_player_will_play(mediaPlayer) != 0;
 
 		return false;
 	}
