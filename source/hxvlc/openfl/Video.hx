@@ -145,6 +145,16 @@ class Video extends Bitmap
 	public var position(get, set):Single;
 
 	/**
+	 * The video's chapter.
+	 */
+	public var chapter(get, set):Int;
+
+	/**
+	 * The video's chapter count.
+	 */
+	public var chapterCount(get, never):Int;
+
+	/**
 	 * The video's length in milliseconds.
 	 */
 	public var length(get, never):Int64;
@@ -564,6 +574,30 @@ class Video extends Bitmap
 			LibVLC.media_player_set_position(mediaPlayer, value);
 
 		return value;
+	}
+
+	@:noCompletion private function get_chapter():Int
+	{
+		if (mediaPlayer != null)
+			return LibVLC.media_player_get_chapter(mediaPlayer);
+
+		return -1;
+	}
+
+	@:noCompletion private function set_chapter(value:Int):Int
+	{
+		if (mediaPlayer != null)
+			LibVLC.media_player_set_chapter(mediaPlayer, value);
+
+		return value;
+	}
+
+	@:noCompletion private function get_chapterCount():Int
+	{
+		if (mediaItem != null)
+			return LibVLC.media_player_get_chapter_count(mediaPlayer);
+
+		return null;
 	}
 
 	@:noCompletion private function get_length():Int64
