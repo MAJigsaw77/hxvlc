@@ -329,9 +329,7 @@ class Video extends Bitmap
 				"--reset-config",
 				"--reset-plugins-cache",
 				#endif
-				"--text-renderer=dummy",
-				"--vout=vmem",
-				"--window=dummy"
+				"--text-renderer=dummy"
 			};');
 
 			instance = LibVLC.create(untyped __cpp__('sizeof(args) / sizeof(*args)'), untyped __cpp__('args'));
