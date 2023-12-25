@@ -303,12 +303,10 @@ class Video extends Bitmap
 
 		if (instance == null)
 		{
-			#if android
-			Sys.putEnv('VLC_DATA_PATH', '/system/usr/share');
-			#end
-
 			#if (windows || macos)
 			Sys.putEnv('VLC_PLUGIN_PATH', Path.join([Path.directory(Sys.programPath()), 'plugins']));
+			#elseif linux
+			Sys.putEnv('VLC_PLUGIN_PATH', Path.join([Path.addTrailingSlash(Sys.getEnv('LD_LIBRARY_PATH')), 'vlc/plugins']));
 			#end
 
 			untyped __cpp__('const char *args[] = {
