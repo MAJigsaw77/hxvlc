@@ -315,6 +315,7 @@ class Video extends Bitmap
 				"--drop-late-frames",
 				"--intf=dummy",
 				"--no-interact",
+				"--no-hw-dec",
 				"--no-lua",
 				"--no-osd",
 				"--no-snapshot-preview",
