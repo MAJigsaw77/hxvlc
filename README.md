@@ -37,11 +37,11 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
     </section>
     ```
 
-5. ***Linux users only***, you need to install `libvlc` and `libvlccore` from your distro's package manager.
+5. ***Linux users only***, you need to install [`vlc`](https://www.videolan.org/vlc) from your distro's package manager.
 
     * [Debian](https://debian.org) based distributions:
         ```bash
-        sudo apt-get install libvlc-dev libvlccore-dev
+        sudo apt-get install vlc
         ```
 
     * [Arch](https://archlinux.org) based distributions:
@@ -66,7 +66,7 @@ Check out the [Samples Folder](samples/) for examples on how to use this library
 
 ![](https://github.com/videolan/vlc/raw/master/share/icons/256x256/vlc-xmas.png)
 
-**LibVLC** is the engine of **VLC** released under the **LGPL2.1 License**. Check [VideoLAN.org](https://www.videolan.org/legal.html) for more information.
+**LibVLC** is the engine of **VLC** released under the **LGPL2.1 License**. Check [VideoLAN.org](https://videolan.org/legal.html) for more information.
 
 ## Credits
 
