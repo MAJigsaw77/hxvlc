@@ -35,7 +35,7 @@ unsigned format_setup(void **data, char *chroma, unsigned *width, unsigned *heig
 	(*pitches) = self->formatWidth * 4;
 	(*lines) = self->formatHeight;
 
-	self->events[8] = true;
+	self->events[7] = true;
 
 	return 1;
 }
@@ -59,7 +59,7 @@ void display(void *data, void *id)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(data);
 
-	self->events[9] = true;
+	self->events[8] = true;
 
 	assert(id == NULL); /* picture identifier, not needed here */
 }
@@ -90,9 +90,6 @@ void callbacks(const libvlc_event_t *event, void *data)
 			break;
 		case libvlc_MediaPlayerMediaChanged:
 			self->events[6] = true;
-			break;
-		case libvlc_MediaPlayerChapterChanged:
-			self->events[7] = true;
 			break;
 	}
 }
@@ -259,11 +256,6 @@ class Video extends Bitmap
 	public var onMediaChanged(default, null):Event<Void->Void>;
 
 	/**
-	 * An event that is dispatched when the current chapter of the video changes.
-	 */
-	public var onChapterChanged(default, null):Event<Void->Void>;
-
-	/**
 	 * An event that is dispatched when the format is being initialized.
 	 */
 	public var onFormatSetup(default, null):Event<Void->Void>;
@@ -299,7 +291,6 @@ class Video extends Bitmap
 		onEndReached = new Event<Void->Void>();
 		onEncounteredError = new Event<String->Void>();
 		onMediaChanged = new Event<Void->Void>();
-		onChapterChanged = new Event<Void->Void>();
 		onFormatSetup = new Event<Void->Void>();
 		onDisplay = new Event<Void->Void>();
 
@@ -433,9 +424,6 @@ class Video extends Bitmap
 
 			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
 				Log.warn('Failed to attach event (MediaPlayerMediaChanged)');
-
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerChapterChanged, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (MediaPlayerChapterChanged)');
 		}
 
 		LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('NULL'));
@@ -507,7 +495,6 @@ class Video extends Bitmap
 			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('callbacks'), untyped __cpp__('this'));
 			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('callbacks'), untyped __cpp__('this'));
 			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerChapterChanged, untyped __cpp__('callbacks'), untyped __cpp__('this'));
 		}
 
 		if (mediaPlayer != null)
@@ -813,13 +800,6 @@ class Video extends Bitmap
 		{
 			events[7] = false;
 
-			onChapterChanged.dispatch();
-		}
-
-		if (events[8])
-		{
-			events[8] = false;
-
 			var mustRecreate:Bool = false;
 			
 			if (bitmapData != null && texture != null)
@@ -848,9 +828,9 @@ class Video extends Bitmap
 			}
 		}
 
-		if (events[9])
+		if (events[8])
 		{
-			events[9] = false;
+			events[8] = false;
 
 			if (__renderable)
 			{
