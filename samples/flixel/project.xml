@@ -58,6 +58,10 @@
 
 	<haxedef name="openfl_dpi_aware" unless="web" />
 
+	<!--Undefinitions-->
+
+	<undefine name="openfl-disable-handle-error" if="debug" />
+
 	<!--Full Dead Code Elimination-->
 
 	<haxeflag name="-dce" value="full" />
