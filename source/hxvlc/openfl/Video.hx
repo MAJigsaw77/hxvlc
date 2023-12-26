@@ -23,9 +23,33 @@ import openfl.Lib;
 @:headerInclude('stdint.h')
 @:headerInclude('stdio.h')
 @:cppNamespaceCode('
-unsigned format_setup(void **data, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
+void *lock(void *opaque, void **planes)
 {
-	Video_obj *self = reinterpret_cast<Video_obj *>(*data);
+	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
+
+	if (self->pixels != NULL)
+		(*planes) = &self->pixels[0];
+
+	return NULL; /* picture identifier, not needed here */
+}
+
+void unlock(void *opaque, void *picture, void *const *planes)
+{
+	assert(picture == NULL); /* picture identifier, not needed here */
+}
+
+void display(void *opaque, void *picture)
+{
+	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
+
+	self->events[8] = true;
+
+	assert(picture == NULL); /* picture identifier, not needed here */
+}
+
+unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
+{
+	Video_obj *self = reinterpret_cast<Video_obj *>(*opaque);
 
 	strcpy(chroma, "RV32");
 
@@ -40,35 +64,19 @@ unsigned format_setup(void **data, char *chroma, unsigned *width, unsigned *heig
 	return 1;
 }
 
-void *lock(void *data, void **p_pixels)
+void format_cleanup(void *opaque)
 {
-	Video_obj *self = reinterpret_cast<Video_obj *>(data);
+	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
-	if (self->pixels != NULL)
-		(*p_pixels) = &self->pixels[0];
-
-	return NULL; /* picture identifier, not needed here */
+	self->formatWidth = 0;
+	self->formatHeight = 0;
 }
 
-void unlock(void *data, void *id, void *const *p_pixels)
+void callbacks(const libvlc_event_t *p_event, void *p_data)
 {
-	assert(id == NULL); /* picture identifier, not needed here */
-}
+	Video_obj *self = reinterpret_cast<Video_obj *>(p_data);
 
-void display(void *data, void *id)
-{
-	Video_obj *self = reinterpret_cast<Video_obj *>(data);
-
-	self->events[8] = true;
-
-	assert(id == NULL); /* picture identifier, not needed here */
-}
-
-void callbacks(const libvlc_event_t *event, void *data)
-{
-	Video_obj *self = reinterpret_cast<Video_obj *>(data);
-
-	switch (event->type)
+	switch (p_event->type)
 	{
 		case libvlc_MediaPlayerOpening:
 			self->events[0] = true;
@@ -422,7 +430,7 @@ class Video extends Bitmap
 				Log.warn('Failed to attach event (MediaPlayerMediaChanged)');
 		}
 
-		LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('NULL'));
+		LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('format_cleanup'));
 		LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('lock'), untyped __cpp__('unlock'), untyped __cpp__('display'), untyped __cpp__('this'));
 
 		return true;
@@ -504,9 +512,6 @@ class Video extends Bitmap
 			bitmapData.dispose();
 			bitmapData = null;
 		}
-
-		formatWidth = 0;
-		formatHeight = 0;
 
 		events.splice(0, events.length);
 
