@@ -3,7 +3,6 @@ package hxvlc.openfl;
 #if (!cpp && !(desktop || android))
 #error 'The current target platform isn\'t supported by hxvlc.'
 #end
-import haxe.io.BytesData;
 import haxe.io.Path;
 import haxe.Int64;
 import hxvlc.libvlc.LibVLC;
@@ -28,7 +27,7 @@ static void *lock(void *opaque, void **planes)
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
 	if (self->planes != NULL)
-		(*planes) = &self->planes[0];
+		(*planes) = self->planes;
 
 	return NULL; /* picture identifier, not needed here */
 }
@@ -61,6 +60,11 @@ static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsig
 
 	self->events[7] = true;
 
+	if (self->planes != NULL)
+		delete[] self->planes;
+
+	self->planes = new uint8_t[self->formatWidth * self->formatHeight * 4];
+
 	return 1;
 }
 
@@ -70,6 +74,9 @@ static void format_cleanup(void *opaque)
 
 	self->formatWidth = 0;
 	self->formatHeight = 0;
+
+	if (self->planes != NULL)
+		delete[] self->planes;
 }
 
 static void callbacks(const libvlc_event_t *p_event, void *p_data)
@@ -280,7 +287,7 @@ class Video extends Bitmap
 	@:noCompletion private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
 
 	@:noCompletion private var events:Array<Bool>;
-	@:noCompletion private var planes:BytesData;
+	@:noCompletion private var planes:cpp.RawPointer<cpp.UInt8>;
 	@:noCompletion private var texture:Texture;
 
 	/**
@@ -306,8 +313,6 @@ class Video extends Bitmap
 
 		for (i in 0...8)
 			events[i] = false;
-
-		planes = new BytesData();
 
 		if (instance == null)
 		{
@@ -822,8 +827,6 @@ class Video extends Bitmap
 
 			if (mustRecreate)
 			{
-				planes.resize(formatWidth * formatHeight * 4);
-
 				texture = Lib.current.stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
 
 				bitmapData = BitmapData.fromTexture(texture);
@@ -838,10 +841,8 @@ class Video extends Bitmap
 
 			if (__renderable)
 			{
-				final formatSize:Int = formatWidth * formatHeight * 4;
-
-				if (texture != null && (planes != null && planes.length == formatSize))
-					texture.uploadFromByteArray(planes, 0);
+				if (texture != null && planes != null)
+					texture.uploadFromByteArray(cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4), 0);
 
 				__setRenderDirty();
 			}
