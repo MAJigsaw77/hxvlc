@@ -351,7 +351,7 @@ class Video extends Bitmap
 				#if HXVLC_LOGGING
 				LibVLC.log_set(instance, untyped __cpp__('logging'), untyped __cpp__('NULL'));
 				#else
-				Log.warn('LibVLC logging is being disabled');
+				Log.info('LibVLC logging is being disabled');
 				#end
 			}
 		}
