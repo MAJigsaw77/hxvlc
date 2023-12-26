@@ -523,8 +523,6 @@ class Video extends Bitmap
 
 		events.splice(0, events.length);
 
-		planes.splice(0, planes.length);
-
 		if (texture != null)
 		{
 			texture.dispose();
