@@ -19,8 +19,8 @@
 
 	<section if="iphoneos">
 		<!--TODO: Fix the plugins being add to the asset's manifest-->
-		<assets path="project/vlc/lib/iOS" include="*" />
-		<assets path="project/vlc/plugins/iOS" rename="/plugins" include="*" />
+		<assets path="project/vlc/lib/iOS" rename="lib" include="*" />
+		<assets path="project/vlc/plugins/iOS" rename="plugins" include="*" />
 	</section>
 
 	<section if="android">
