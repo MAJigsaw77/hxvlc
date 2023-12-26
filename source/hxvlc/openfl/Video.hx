@@ -514,7 +514,7 @@ class Video extends Bitmap
 
 		events.splice(0, events.length);
 
-		planes.splice(0, pixels.length);
+		planes.splice(0, planes.length);
 
 		if (texture != null)
 		{
@@ -818,7 +818,7 @@ class Video extends Bitmap
 
 			if (mustRecreate)
 			{
-				pixels.resize(formatWidth * formatHeight * 4);
+				planes.resize(formatWidth * formatHeight * 4);
 
 				texture = Lib.current.stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
 
