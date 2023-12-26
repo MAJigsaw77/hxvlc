@@ -92,7 +92,7 @@ unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsigned *he
 	if (self->planes != NULL)
 		delete[] self->planes;
 
-	self->planes = new uint8_t[self->formatWidth * self->formatHeight * 4];
+	self->planes = new unsigned char[self->formatWidth * self->formatHeight * 4];
 
 	return 1;
 }
