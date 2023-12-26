@@ -12,6 +12,7 @@ A Haxe/[OpenFL](https://www.openfl.org) library for video playback using [LibVLC
 * MacOS **(x86_64 and arm64 only)**.
 * Linux.
 * Android **(arm64, armv7a, x86 and x86_64 only)**.
+* IOS **(arm64 only)**.
 
 These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org) in order to work.
 
@@ -74,4 +75,4 @@ Check out the [Samples Folder](samples/) for examples on how to use this library
 | ------ | ---- | ----------- |
 | ![](https://avatars.githubusercontent.com/u/77043862?s=64) | [MAJigsaw77](https://github.com/MAJigsaw77) | Creator of **hxvlc**.
 | ![](https://avatars.githubusercontent.com/u/1677550?s=64) | [datee](https://github.com/datee) | Creator of [HaxeVLC](https://github.com/datee/HaxeVLC) and [VLC.hx](https://github.com/LogicInteractive/VLC.hx).
-| ![](https://avatars.githubusercontent.com/u/107599365?v=64) | [Jonnycat](https://github.com/JonnycatMeow) | MacOS Support.
+| ![](https://avatars.githubusercontent.com/u/107599365?v=64) | [Jonnycat](https://github.com/JonnycatMeow) | lib Supporter.

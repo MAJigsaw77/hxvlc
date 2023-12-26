@@ -21,6 +21,11 @@
 		<section if="macos">
 			<lib name="${haxelib:hxvlc}/project/vlc/lib/MacOS/libvlc.dylib" />
 			<lib name="${haxelib:hxvlc}/project/vlc/lib/MacOS/libvlccore.dylib" />
+		</section> 
+
+		<section if="iphoneos">
+			<lib name="${haxelib:hxvlc}/project/vlc/lib/IOS/libvlc.dylib" />
+			<lib name="${haxelib:hxvlc}/project/vlc/lib/IOS/libvlccore.dylib" />
 		</section>
 
 		<section if="linux">
