@@ -23,7 +23,7 @@ import openfl.Lib;
 @:headerInclude('stdint.h')
 @:headerInclude('stdio.h')
 @:cppNamespaceCode('
-void *lock(void *opaque, void **planes)
+static void *lock(void *opaque, void **planes)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
@@ -33,12 +33,12 @@ void *lock(void *opaque, void **planes)
 	return NULL; /* picture identifier, not needed here */
 }
 
-void unlock(void *opaque, void *picture, void *const *planes)
+static void unlock(void *opaque, void *picture, void *const *planes)
 {
 	assert(picture == NULL); /* picture identifier, not needed here */
 }
 
-void display(void *opaque, void *picture)
+static void display(void *opaque, void *picture)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
@@ -47,7 +47,7 @@ void display(void *opaque, void *picture)
 	assert(picture == NULL); /* picture identifier, not needed here */
 }
 
-unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
+static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(*opaque);
 
@@ -64,7 +64,7 @@ unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsigned *he
 	return 1;
 }
 
-void format_cleanup(void *opaque)
+static void format_cleanup(void *opaque)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
@@ -72,7 +72,7 @@ void format_cleanup(void *opaque)
 	self->formatHeight = 0;
 }
 
-void callbacks(const libvlc_event_t *p_event, void *p_data)
+static void callbacks(const libvlc_event_t *p_event, void *p_data)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(p_data);
 
@@ -346,10 +346,14 @@ class Video extends Bitmap
 				else
 					Log.error('Failed to initialize the LibVLC instance');
 			}
-			#if HXVLC_LOGGING
 			else
+			{
+				#if HXVLC_LOGGING
 				LibVLC.log_set(instance, untyped __cpp__('logging'), untyped __cpp__('NULL'));
-			#end
+				#else
+				Log.warn('LibVLC logging is being disabled');
+				#end
+			}
 		}
 	}
 
