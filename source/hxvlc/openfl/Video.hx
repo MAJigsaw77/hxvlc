@@ -322,7 +322,6 @@ class Video extends Bitmap
 				"--intf=dummy",
 				"--no-interact",
 				"--no-lua",
-				"--no-osd",
 				"--no-snapshot-preview",
 				"--no-spu",
 				"--no-stats",
