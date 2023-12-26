@@ -34,7 +34,7 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
 
     ```xml
     <section if="cpp">
-    	<haxelib name="hxvlc" if="desktop || android" />
+    	<haxelib name="hxvlc" if="desktop || mobile" />
     </section>
     ```
 
