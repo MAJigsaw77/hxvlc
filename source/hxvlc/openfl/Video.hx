@@ -22,93 +22,6 @@ import openfl.Lib;
 @:headerInclude('stdint.h')
 @:headerInclude('stdio.h')
 @:cppNamespaceCode('
-static void *lock(void *opaque, void **planes)
-{
-	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
-
-	if (self->planes != NULL)
-		(*planes) = self->planes;
-
-	return NULL; /* picture identifier, not needed here */
-}
-
-static void unlock(void *opaque, void *picture, void *const *planes)
-{
-	assert(picture == NULL); /* picture identifier, not needed here */
-}
-
-static void display(void *opaque, void *picture)
-{
-	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
-
-	self->events[8] = true;
-
-	assert(picture == NULL); /* picture identifier, not needed here */
-}
-
-static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
-{
-	Video_obj *self = reinterpret_cast<Video_obj *>(*opaque);
-
-	strcpy(chroma, "RV32");
-
-	self->formatWidth = (*width);
-	self->formatHeight = (*height);
-
-	(*pitches) = self->formatWidth * 4;
-	(*lines) = self->formatHeight;
-
-	self->events[7] = true;
-
-	if (self->planes != NULL)
-		delete[] self->planes;
-
-	self->planes = new uint8_t[self->formatWidth * self->formatHeight * 4];
-
-	return 1;
-}
-
-static void format_cleanup(void *opaque)
-{
-	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
-
-	self->formatWidth = 0;
-	self->formatHeight = 0;
-
-	if (self->planes != NULL)
-		delete[] self->planes;
-}
-
-static void callbacks(const libvlc_event_t *p_event, void *p_data)
-{
-	Video_obj *self = reinterpret_cast<Video_obj *>(p_data);
-
-	switch (p_event->type)
-	{
-		case libvlc_MediaPlayerOpening:
-			self->events[0] = true;
-			break;
-		case libvlc_MediaPlayerPlaying:
-			self->events[1] = true;
-			break;
-		case libvlc_MediaPlayerStopped:
-			self->events[2] = true;
-			break;
-		case libvlc_MediaPlayerPaused:
-			self->events[3] = true;
-			break;
-		case libvlc_MediaPlayerEndReached:
-			self->events[4] = true;
-			break;
-		case libvlc_MediaPlayerEncounteredError:
-			self->events[5] = true;
-			break;
-		case libvlc_MediaPlayerMediaChanged:
-			self->events[6] = true;
-			break;
-	}
-}
-
 static void logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
 	#if defined(HX_ANDROID)
@@ -136,6 +49,93 @@ static void logging(void *data, int level, const libvlc_log_t *ctx, const char *
 
 	vprintf(buffer, args);
 	#endif
+}
+
+void *lock(void *opaque, void **planes)
+{
+	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
+
+	if (self->planes != NULL)
+		(*planes) = self->planes;
+
+	return NULL; /* picture identifier, not needed here */
+}
+
+void unlock(void *opaque, void *picture, void *const *planes)
+{
+	assert(picture == NULL); /* picture identifier, not needed here */
+}
+
+void display(void *opaque, void *picture)
+{
+	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
+
+	self->events[8] = true;
+
+	assert(picture == NULL); /* picture identifier, not needed here */
+}
+
+unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
+{
+	Video_obj *self = reinterpret_cast<Video_obj *>(*opaque);
+
+	strcpy(chroma, "RV32");
+
+	self->formatWidth = (*width);
+	self->formatHeight = (*height);
+
+	(*pitches) = self->formatWidth * 4;
+	(*lines) = self->formatHeight;
+
+	self->events[7] = true;
+
+	if (self->planes != NULL)
+		delete[] self->planes;
+
+	self->planes = new uint8_t[self->formatWidth * self->formatHeight * 4];
+
+	return 1;
+}
+
+void format_cleanup(void *opaque)
+{
+	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
+
+	self->formatWidth = 0;
+	self->formatHeight = 0;
+
+	if (self->planes != NULL)
+		delete[] self->planes;
+}
+
+void callbacks(const libvlc_event_t *p_event, void *p_data)
+{
+	Video_obj *self = reinterpret_cast<Video_obj *>(p_data);
+
+	switch (p_event->type)
+	{
+		case libvlc_MediaPlayerOpening:
+			self->events[0] = true;
+			break;
+		case libvlc_MediaPlayerPlaying:
+			self->events[1] = true;
+			break;
+		case libvlc_MediaPlayerStopped:
+			self->events[2] = true;
+			break;
+		case libvlc_MediaPlayerPaused:
+			self->events[3] = true;
+			break;
+		case libvlc_MediaPlayerEndReached:
+			self->events[4] = true;
+			break;
+		case libvlc_MediaPlayerEncounteredError:
+			self->events[5] = true;
+			break;
+		case libvlc_MediaPlayerMediaChanged:
+			self->events[6] = true;
+			break;
+	}
 }')
 class Video extends Bitmap
 {
