@@ -24,8 +24,8 @@
 		</section> 
 
 		<section if="iphoneos">
-			<lib name="${haxelib:hxvlc}/project/vlc/lib/IOS/libvlc.dylib" />
-			<lib name="${haxelib:hxvlc}/project/vlc/lib/IOS/libvlccore.dylib" />
+			<lib name="${haxelib:hxvlc}/project/vlc/lib/iOS/libvlc.dylib" />
+			<lib name="${haxelib:hxvlc}/project/vlc/lib/iOS/libvlccore.dylib" />
 		</section>
 
 		<section if="linux">
