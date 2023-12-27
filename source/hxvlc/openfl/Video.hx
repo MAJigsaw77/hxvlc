@@ -79,20 +79,23 @@ static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsig
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(*opaque);
 
+	unsigned formatWidth = (*width);
+	unsigned formatHeight = (*height);
+
+	self->formatWidth = formatWidth;
+	self->formatHeight = formatHeight;
+
 	strcpy(chroma, "RV32");
 
-	self->formatWidth = (*width);
-	self->formatHeight = (*height);
-
-	(*pitches) = self->formatWidth * 4;
-	(*lines) = self->formatHeight;
+	(*pitches) = formatWidth * 4;
+	(*lines) = formatHeight;
 
 	self->events[7] = true;
 
 	if (self->planes != NULL)
 		delete[] self->planes;
 
-	self->planes = new unsigned char[self->formatWidth * self->formatHeight * 4];
+	self->planes = new uint8_t[formatWidth * formatHeight * 4];
 
 	return 1;
 }
