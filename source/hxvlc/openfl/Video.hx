@@ -12,6 +12,9 @@ import lime.utils.Log;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.Texture;
+#if linux
+import sys.FileSystem;
+#end
 
 #if android
 @:headerInclude('android/log.h')
@@ -305,6 +308,18 @@ class Video extends Bitmap
 		{
 			#if (windows || macos)
 			Sys.putEnv('VLC_PLUGIN_PATH', Path.join([Path.directory(Sys.programPath()), 'plugins']));
+			#elseif linux
+			var pluginsPath:String = '/usr/local/lib/vlc/plugins';
+			
+			if (FileSystem.exists(pluginsPath) && FileSystem.isDirectory(pluginsPath))
+				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
+			else
+			{
+				pluginsPath = '/usr/lib/vlc/plugins';
+
+				if (FileSystem.exists(pluginsPath) && FileSystem.isDirectory(pluginsPath))
+					Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
+			}
 			#end
 
 			untyped __cpp__('const char *args[] = {
