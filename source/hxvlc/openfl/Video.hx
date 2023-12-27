@@ -824,7 +824,7 @@ class Video extends Bitmap
 				if (stage != null && stage.context3D != null)
 					texture = stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
 				else
-					Log.error('Failed to create video\’s texture');
+					Log.error('Failed to create video\'s texture');
 
 				if (texture != null)
 					bitmapData = BitmapData.fromTexture(texture);
