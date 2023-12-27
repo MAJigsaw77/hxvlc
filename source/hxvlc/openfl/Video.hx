@@ -95,17 +95,6 @@ static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsig
 	return 1;
 }
 
-static void format_cleanup(void *opaque)
-{
-	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
-
-	self->formatWidth = 0;
-	self->formatHeight = 0;
-
-	if (self->planes != NULL)
-		delete[] self->planes;
-}
-
 static void callbacks(const libvlc_event_t *p_event, void *p_data)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(p_data);
@@ -434,7 +423,7 @@ class Video extends Bitmap
 				Log.warn('Failed to attach event (MediaPlayerMediaChanged)');
 		}
 
-		LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('format_cleanup'));
+		LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('NULL'));
 		LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('lock'), untyped __cpp__('unlock'), untyped __cpp__('display'), untyped __cpp__('this'));
 
 		return true;
@@ -517,6 +506,10 @@ class Video extends Bitmap
 			bitmapData = null;
 		}
 
+		formatWidth = 0;
+		formatHeight = 0;
+		planes = null;
+		
 		events.splice(0, events.length);
 
 		if (texture != null)
