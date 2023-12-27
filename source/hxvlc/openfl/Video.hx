@@ -55,7 +55,8 @@ static void *lock(void *opaque, void **planes)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
-	(*planes) = self->planes;
+	if (self->planes != NULL)
+		(*planes) = self->planes;
 
 	return NULL; /* picture identifier, not needed here */
 }
