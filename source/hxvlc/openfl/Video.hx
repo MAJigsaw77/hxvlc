@@ -81,18 +81,21 @@ static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsig
 
 	strcpy(chroma, "RV32");
 
-	self->formatWidth = (*width);
-	self->formatHeight = (*height);
+	unsigned formatWidth = (*width);
+	unsigned formatHeight = (*height);
 
-	(*pitches) = self->formatWidth * 4;
-	(*lines) = self->formatHeight;
+	self->formatWidth = formatWidth;
+	self->formatHeight = formatHeight;
+
+	(*pitches) = formatWidth * 4;
+	(*lines) = formatHeight;
 
 	self->events[7] = true;
 
 	if (self->planes != NULL)
 		delete[] self->planes;
 
-	self->planes = new unsigned char[self->formatWidth * self->formatHeight * 4];
+	self->planes = new unsigned char[formatWidth * formatHeight * 4];
 
 	return 1;
 }
