@@ -494,6 +494,8 @@ class Video extends Bitmap
 			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this'));
 		}
 
+		events.splice(0, events.length);
+
 		if (mediaPlayer != null)
 		{
 			LibVLC.media_player_stop(mediaPlayer);
@@ -506,19 +508,17 @@ class Video extends Bitmap
 			bitmapData = null;
 		}
 
-		formatWidth = 0;
-		formatHeight = 0;
-
-		if (plains != null)
-			untyped __cpp__('delete[] {0}', planes);
-
-		events.splice(0, events.length);
-
 		if (texture != null)
 		{
 			texture.dispose();
 			texture = null;
 		}
+
+		formatWidth = 0;
+		formatHeight = 0;
+
+		if (plains != null)
+			untyped __cpp__('delete[] {0}', planes);
 
 		eventManager = null;
 		mediaPlayer = null;
