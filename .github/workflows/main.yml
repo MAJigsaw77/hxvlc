@@ -24,7 +24,7 @@ jobs:
 
       - name: Installing Dependencies
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get update && sudo apt-get upgrade && sudo apt-get install vlc
+        run: sudo apt-get update && sudo apt-get upgrade && sudo apt-get install libvlc-dev libvlccore-dev vlc-bin
 
       - name: Installing Haxe Libraries
         run: |
