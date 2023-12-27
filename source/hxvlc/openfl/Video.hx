@@ -79,23 +79,20 @@ static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsig
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(*opaque);
 
-	unsigned formatWidth = (*width);
-	unsigned formatHeight = (*height);
-
-	self->formatWidth = formatWidth;
-	self->formatHeight = formatHeight;
-
 	strcpy(chroma, "RV32");
 
-	(*pitches) = formatWidth * 4;
-	(*lines) = formatHeight;
+	self->formatWidth = (*width);
+	self->formatHeight = (*height);
+
+	(*pitches) = self->formatWidth * 4;
+	(*lines) = self->formatHeight;
 
 	self->events[7] = true;
 
 	if (self->planes != NULL)
 		delete[] self->planes;
 
-	self->planes = new uint8_t[formatWidth * formatHeight * 4];
+	self->planes = new unsigned char[self->formatWidth * self->formatHeight * 4];
 
 	return 1;
 }
@@ -826,9 +823,11 @@ class Video extends Bitmap
 
 			if (mustRecreate)
 			{
-				texture = Lib.current.stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
+				if (Lib.current.stage.context3D != null)
+					texture = Lib.current.stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
 
-				bitmapData = BitmapData.fromTexture(texture);
+				if (texture != null)
+					bitmapData = BitmapData.fromTexture(texture);
 
 				onFormatSetup.dispatch();
 			}
