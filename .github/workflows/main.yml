@@ -33,6 +33,7 @@ jobs:
           haxelib install flixel --quiet
           haxelib install flixel-addons --quiet
           haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git ${{github.ref_name}} --quiet
+          haxelib install hxcpp-debug-server
 
       - name: List of installed Haxe Libraries
         run: haxelib list

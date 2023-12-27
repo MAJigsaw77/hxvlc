@@ -39,6 +39,8 @@
 
 	<haxelib name="extension-androidtools" if="android" />
 
+	<haxelib name="hxcpp-debug-server" if="debug" unless="android" />
+
 	<!--Libraries Settings-->
 
 	<haxedef name="FLX_NO_MOUSE" if="mobile" />
