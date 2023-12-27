@@ -508,8 +508,10 @@ class Video extends Bitmap
 
 		formatWidth = 0;
 		formatHeight = 0;
-		planes = null;
-		
+
+		if (plains != null)
+			untyped __cpp__('delete[] {0}', planes):
+
 		events.splice(0, events.length);
 
 		if (texture != null)
