@@ -9,10 +9,14 @@ import haxe.CallStack;
 import haxe.Exception;
 import haxe.Log;
 import hxvlc.openfl.Video;
-import lime.system.System;
+import lime.system.System as LimeSystem;
 import openfl.display.FPS;
 import openfl.display.Sprite;
+import openfl.errors.Error;
+import openfl.events.ErrorEvent;
+import openfl.events.UncaughtErrorEvent;
 import openfl.events.Event;
+import openfl.system.System as OpenFLSystem;
 import openfl.utils.Assets;
 import openfl.Lib;
 import sys.io.File;
@@ -32,7 +36,7 @@ class Main extends Sprite
 		Sys.setCwd(Path.addTrailingSlash(Context.getObbDir()));
 		#end
 
-		untyped __global__.__hxcpp_set_critical_error_handler(onCriticalError);
+		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
 
 		Lib.current.stage.frameRate = Lib.application.window?.displayMode.refreshRate;
 
@@ -65,9 +69,19 @@ class Main extends Sprite
 		video.play();
 	}
 
-	private inline function onCriticalError(error:Dynamic):Void
+	private inline function onUncaughtError(event:UncaughtErrorEvent):Void
 	{
-		final log:Array<String> = [Std.isOfType(error, String) ? error : Std.string(error)];
+		event.preventDefault();
+		event.stopImmediatePropagation();
+
+		final log:Array<String> = [];
+
+		if (Std.isOfType(event.error, Error))
+			log.push(cast(event.error, Error).message);
+		else if (Std.isOfType(event.error, ErrorEvent))
+			log.push(cast(event.error, ErrorEvent).text);
+		else
+			log.push(Std.string(event.error));
 
 		for (item in CallStack.exceptionStack(true))
 		{
@@ -100,7 +114,7 @@ class Main extends Sprite
 
 		Log.trace(msg, null);
 		Lib.application.window.alert(msg, 'Error!');
-		System.exit(1);
+		LimeSystem.exit(1);
 	}
 
 	private inline function stage_onEnterFrame(event:Event):Void
@@ -149,7 +163,8 @@ class Main extends Sprite
 			}
 			else if (!FileSystem.exists(path))
 				File.saveBytes(path, Assets.getBytes(path));
-				
+
+			OpenFLSystem.gc();
 		}
 		catch (e:Exception)
 			Toast.makeText(e.message, Toast.LENGTH_LONG);
