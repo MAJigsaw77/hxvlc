@@ -517,7 +517,7 @@ class Video extends Bitmap
 		formatWidth = 0;
 		formatHeight = 0;
 
-		if (plains != null)
+		if (planes != null)
 			untyped __cpp__('delete[] {0}', planes);
 
 		eventManager = null;
