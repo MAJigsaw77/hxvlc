@@ -34,7 +34,7 @@
 	<haxelib name="flixel-addons" />
 
 	<section if="cpp">
-		<haxelib name="hxvlc" if="desktop || mobile" />
+		<haxelib name="hxvlc" if="desktop || android" />
 	</section>
 
 	<haxelib name="extension-androidtools" if="android" />

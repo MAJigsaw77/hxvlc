@@ -11,7 +11,7 @@
 	</files>
 
 	<target id="haxe">
-		<vflag name="-rpath" value="@executable_path/lib/" if="macos || iphoneos" />
+		<vflag name="-rpath" value="@executable_path/lib/" if="macos" />
 
 		<section if="windows">
 			<lib name="${haxelib:hxvlc}/project/vlc/lib/Windows/libvlc.lib" />
@@ -21,11 +21,6 @@
 		<section if="macos">
 			<lib name="${haxelib:hxvlc}/project/vlc/lib/MacOS/libvlc.dylib" />
 			<lib name="${haxelib:hxvlc}/project/vlc/lib/MacOS/libvlccore.dylib" />
-		</section>
-
-		<section if="iphoneos">
-			<lib name="${haxelib:hxvlc}/project/vlc/lib/iOS/libvlc.dylib" />
-			<lib name="${haxelib:hxvlc}/project/vlc/lib/iOS/libvlccore.dylib" />
 		</section>
 
 		<section if="linux">
