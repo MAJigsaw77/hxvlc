@@ -8,7 +8,6 @@ import haxe.Int64;
 import hxvlc.libvlc.LibVLC;
 import hxvlc.libvlc.Types;
 import lime.app.Event;
-import lime.system.System;
 import lime.utils.Log;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -319,8 +318,6 @@ class Video extends Bitmap
 		{
 			#if (windows || macos)
 			Sys.putEnv('VLC_PLUGIN_PATH', Path.join([Path.directory(Sys.programPath()), 'plugins']));
-			#elseif iphoneos
-			Sys.putEnv('VLC_PLUGIN_PATH', Path.join([Path.addTrailingSlash(System.applicationDirectory), 'plugins']));
 			#end
 
 			untyped __cpp__('const char *args[] = {
