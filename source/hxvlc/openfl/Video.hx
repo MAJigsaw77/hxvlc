@@ -12,7 +12,6 @@ import lime.utils.Log;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.Texture;
-import openfl.Lib;
 
 #if android
 @:headerInclude('android/log.h')
@@ -822,10 +821,10 @@ class Video extends Bitmap
 
 			if (mustRecreate)
 			{
-				if (Lib.current.stage.context3D != null)
-					texture = Lib.current.stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
+				if (stage != null && stage.context3D != null)
+					texture = stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
 				else
-					Log.error('The current stage context3D is null, cannot create video\'s texture');
+					Log.error('The stage context3D is null, cannot create video\'s texture');
 
 				if (texture != null)
 					bitmapData = BitmapData.fromTexture(texture);
