@@ -831,10 +831,16 @@ class Video extends Bitmap
 
 			if (mustRecreate)
 			{
-				if (stage != null && stage.context3D != null)
-					texture = stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
-				else
+				try {
+					if (stage != null && stage.context3D != null)
+						texture = stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
+					else {
+						bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
+						Log.warn('Failed to use texture, resorting to cpu based image');
+					}
+				} catch(e:haxe.Exception) {
 					Log.error('Failed to create video\'s texture');
+				}
 
 				if (texture != null)
 					bitmapData = BitmapData.fromTexture(texture);
@@ -849,8 +855,12 @@ class Video extends Bitmap
 
 			if (__renderable)
 			{
-				if (texture != null && planes != null)
-					texture.uploadFromByteArray(cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4), 0);
+				if (planes != null) {
+					if (texture != null)
+						texture.uploadFromByteArray(cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4), 0);
+					else
+						bitmapData.setPixels(bitmapData.rect, cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4));
+				}
 
 				__setRenderDirty();
 			}
