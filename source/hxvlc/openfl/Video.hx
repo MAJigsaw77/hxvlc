@@ -4,6 +4,7 @@ package hxvlc.openfl;
 #error 'The current target platform isn\'t supported by hxvlc.'
 #end
 import haxe.io.Path;
+import haxe.Exception;
 import haxe.Int64;
 import hxvlc.libvlc.LibVLC;
 import hxvlc.libvlc.Types;
@@ -831,16 +832,19 @@ class Video extends Bitmap
 
 			if (mustRecreate)
 			{
-				try {
+				try
+				{
 					if (stage != null && stage.context3D != null)
 						texture = stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
-					else {
+					else
+					{
+						Log.warn('Failed to use texture, resorting to CPU based image');
+
 						bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
-						Log.warn('Failed to use texture, resorting to cpu based image');
 					}
-				} catch(e:haxe.Exception) {
-					Log.error('Failed to create video\'s texture');
 				}
+				catch(e:Exception)
+					Log.error('Failed to create video\'s texture');
 
 				if (texture != null)
 					bitmapData = BitmapData.fromTexture(texture);
@@ -855,7 +859,8 @@ class Video extends Bitmap
 
 			if (__renderable)
 			{
-				if (planes != null) {
+				if (planes != null)
+				{
 					if (texture != null)
 						texture.uploadFromByteArray(cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4), 0);
 					else
