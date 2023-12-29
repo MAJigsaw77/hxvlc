@@ -815,14 +815,15 @@ class Video extends Bitmap
 			events[7] = false;
 
 			var mustRecreate:Bool = false;
-			
-			if (bitmapData != null && texture != null)
+
+			if (bitmapData != null)
 			{
 				if (bitmapData.width != formatWidth && bitmapData.height != formatHeight)
 				{
 					bitmapData.dispose();
 
-					texture.dispose();
+					if (texture != null)
+						texture.dispose();
 
 					mustRecreate = true;
 				}
