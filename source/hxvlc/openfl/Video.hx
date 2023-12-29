@@ -872,7 +872,7 @@ class Video extends Bitmap
 				{
 					if (texture != null)
 						texture.uploadFromByteArray(cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4), 0);
-					else
+					else if (bitmapData != null)
 						bitmapData.setPixels(bitmapData.rect, cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4));
 				}
 
