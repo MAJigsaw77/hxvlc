@@ -4,6 +4,7 @@ package hxvlc.openfl;
 #error 'The current target platform isn\'t supported by hxvlc.'
 #end
 import haxe.io.Path;
+import haxe.Exception;
 import haxe.Int64;
 import hxvlc.libvlc.LibVLC;
 import hxvlc.libvlc.Types;
@@ -814,14 +815,15 @@ class Video extends Bitmap
 			events[7] = false;
 
 			var mustRecreate:Bool = false;
-			
-			if (bitmapData != null && texture != null)
+
+			if (bitmapData != null)
 			{
 				if (bitmapData.width != formatWidth && bitmapData.height != formatHeight)
 				{
 					bitmapData.dispose();
 
-					texture.dispose();
+					if (texture != null)
+						texture.dispose();
 
 					mustRecreate = true;
 				}
@@ -831,9 +833,18 @@ class Video extends Bitmap
 
 			if (mustRecreate)
 			{
-				if (stage != null && stage.context3D != null)
-					texture = stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
-				else
+				try
+				{
+					if (stage != null && stage.context3D != null)
+						texture = stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
+					else
+					{
+						Log.warn('Failed to use texture, resorting to CPU based image');
+
+						bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
+					}
+				}
+				catch(e:Exception)
 					Log.error('Failed to create video\'s texture');
 
 				if (texture != null)
@@ -849,8 +860,13 @@ class Video extends Bitmap
 
 			if (__renderable)
 			{
-				if (texture != null && planes != null)
-					texture.uploadFromByteArray(cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4), 0);
+				if (planes != null)
+				{
+					if (texture != null)
+						texture.uploadFromByteArray(cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4), 0);
+					else
+						bitmapData.setPixels(bitmapData.rect, cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4));
+				}
 
 				__setRenderDirty();
 			}
