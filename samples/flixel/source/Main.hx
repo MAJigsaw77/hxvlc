@@ -32,7 +32,9 @@ class Main extends Sprite
 
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
 
-		addChild(new FlxGame(1280, 720, PlayState));
+		final refreshRate:Int = Lib.application.window.displayMode.refreshRate;
+
+		addChild(1280, 720, PlayState, refreshRate, refreshRate));
 	}
 
 	private inline function onUncaughtError(event:UncaughtErrorEvent):Void
