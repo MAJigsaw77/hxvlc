@@ -3,6 +3,7 @@ package;
 #if android
 import android.content.Context;
 #end
+import flixel.FlxG;
 import flixel.FlxGame;
 import haxe.io.Path;
 import haxe.CallStack;
