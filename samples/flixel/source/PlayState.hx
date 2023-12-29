@@ -21,8 +21,6 @@ class PlayState extends FlxState
 {
 	override function create():Void
 	{
-		FlxG.stage.frameRate = Lib.application.window?.displayMode.refreshRate;
-
 		final path:String = 'assets/video.mp4';
 
 		#if android
