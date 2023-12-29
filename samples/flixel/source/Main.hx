@@ -34,7 +34,7 @@ class Main extends Sprite
 
 		final refreshRate:Int = Lib.application.window.displayMode.refreshRate;
 
-		addChild(1280, 720, PlayState, refreshRate, refreshRate));
+		addChild(new FlxGame(1280, 720, PlayState, refreshRate, refreshRate));
 
 		FlxG.stage.frameRate = refreshRate;
 	}
