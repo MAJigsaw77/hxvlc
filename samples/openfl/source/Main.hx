@@ -38,7 +38,7 @@ class Main extends Sprite
 
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
 
-		Lib.current.stage.frameRate = Lib.application.window?.displayMode.refreshRate;
+		Lib.current.stage.frameRate = Lib.application.window.displayMode.refreshRate;
 
 		#if android
 		copyFiles();
