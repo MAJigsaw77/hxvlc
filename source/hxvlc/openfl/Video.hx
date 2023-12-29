@@ -305,62 +305,7 @@ class Video extends Bitmap
 		for (i in 0...8)
 			events[i] = false;
 
-		if (instance == null)
-		{
-			#if (windows || macos)
-			Sys.putEnv('VLC_PLUGIN_PATH', Path.join([Path.directory(Sys.programPath()), 'plugins']));
-			#elseif linux
-			var pluginsPath:String = '/usr/local/lib/vlc/plugins';
-			
-			if (FileSystem.exists(pluginsPath) && FileSystem.isDirectory(pluginsPath))
-				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
-			else
-			{
-				pluginsPath = '/usr/lib/vlc/plugins';
-
-				if (FileSystem.exists(pluginsPath) && FileSystem.isDirectory(pluginsPath))
-					Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
-			}
-			#end
-
-			untyped __cpp__('const char *args[] = {
-				"--drop-late-frames",
-				"--intf=dummy",
-				"--no-interact",
-				"--no-lua",
-				"--no-snapshot-preview",
-				"--no-spu",
-				"--no-stats",
-				"--no-sub-autodetect-file",
-				"--no-video-title-show",
-				"--no-xlib",
-				#if defined(HX_WINDOWS) || defined(HX_MACOS)
-				"--reset-config",
-				"--reset-plugins-cache",
-				#endif
-				"--text-renderer=dummy"
-			}');
-
-			instance = LibVLC.create(untyped __cpp__('sizeof(args) / sizeof(*args)'), untyped __cpp__('args'));
-
-			if (instance == null)
-			{
-				final errmsg:String = cast(LibVLC.errmsg(), String);
-
-				if (errmsg != null && errmsg.length > 0)
-					Log.error('Failed to initialize the LibVLC instance, Error: $errmsg');
-				else
-					Log.error('Failed to initialize the LibVLC instance');
-			}
-			else
-			{
-				#if HXVLC_LOGGING
-				LibVLC.log_set(instance, untyped __cpp__('logging'), untyped __cpp__('NULL'));
-				#else
-				Log.info('LibVLC logging is being disabled');
-				#end
-			}
-		}
+		initInstance();
 	}
 
 	/**
@@ -539,6 +484,69 @@ class Video extends Bitmap
 		eventManager = null;
 		mediaPlayer = null;
 		mediaItem = null;
+	}
+
+	/**
+	 * Initialize LibVLC instance.
+	 */
+	public static function initInstance():Void
+	{
+		if (instance == null)
+		{
+			#if (windows || macos)
+			Sys.putEnv('VLC_PLUGIN_PATH', Path.join([Path.directory(Sys.programPath()), 'plugins']));
+			#elseif linux
+			var pluginsPath:String = '/usr/local/lib/vlc/plugins';
+			
+			if (FileSystem.exists(pluginsPath) && FileSystem.isDirectory(pluginsPath))
+				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
+			else
+			{
+				pluginsPath = '/usr/lib/vlc/plugins';
+
+				if (FileSystem.exists(pluginsPath) && FileSystem.isDirectory(pluginsPath))
+					Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
+			}
+			#end
+
+			untyped __cpp__('const char *args[] = {
+				"--drop-late-frames",
+				"--intf=dummy",
+				"--no-interact",
+				"--no-lua",
+				"--no-snapshot-preview",
+				"--no-spu",
+				"--no-stats",
+				"--no-sub-autodetect-file",
+				"--no-video-title-show",
+				"--no-xlib",
+				#if defined(HX_WINDOWS) || defined(HX_MACOS)
+				"--reset-config",
+				"--reset-plugins-cache",
+				#endif
+				"--text-renderer=dummy"
+			}');
+
+			instance = LibVLC.create(untyped __cpp__('sizeof(args) / sizeof(*args)'), untyped __cpp__('args'));
+
+			if (instance == null)
+			{
+				final errmsg:String = cast(LibVLC.errmsg(), String);
+
+				if (errmsg != null && errmsg.length > 0)
+					Log.error('Failed to initialize the LibVLC instance, Error: $errmsg');
+				else
+					Log.error('Failed to initialize the LibVLC instance');
+			}
+			else
+			{
+				#if HXVLC_LOGGING
+				LibVLC.log_set(instance, untyped __cpp__('logging'), untyped __cpp__('NULL'));
+				#else
+				Log.info('LibVLC logging is being disabled');
+				#end
+			}
+		}
 	}
 
 	/**
