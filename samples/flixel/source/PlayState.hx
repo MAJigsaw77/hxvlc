@@ -4,7 +4,6 @@ package;
 import android.widget.Toast;
 #end
 import flixel.util.FlxTimer;
-import flixel.FlxG;
 import flixel.FlxState;
 import haxe.Exception;
 import hxvlc.flixel.FlxVideo;
