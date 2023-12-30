@@ -39,11 +39,9 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
 
 3. ***Linux users only***, you need to install [`vlc`](https://www.videolan.org/vlc) from your distro's package manager.
 
-    * [Debian](https://debian.org) based distributions:
+    * [Debian](https://debian.org)/[Ubuntu](https://ubuntu.com) based distributions:
         ```bash
-        sudo apt-get install libvlc-dev
-        sudo apt-get install libvlccore-dev
-        sudo apt-get install vlc-bin
+        sudo apt-get install libvlc-dev libvlccore-dev vlc-bin
         ```
 
     * [Arch](https://archlinux.org) based distributions:
