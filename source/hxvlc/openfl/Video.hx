@@ -231,6 +231,11 @@ class Video extends Bitmap
 	public var mute(get, set):Bool;
 
 	/**
+	 * The video's role.
+	 */
+	public var role(get, set):Bool;
+
+	/**
 	 * An event that is dispatched when the video is opening.
 	 */
 	public var onOpening(default, null):Event<Void->Void>;
@@ -758,6 +763,22 @@ class Video extends Bitmap
 	{
 		if (mediaPlayer != null)
 			LibVLC.audio_set_mute(mediaPlayer, value ? 1 : 0);
+
+		return value;
+	}
+
+	@:noCompletion private function get_role():UInt
+	{
+		if (mediaPlayer != null)
+			return LibVLC.media_player_get_role(mediaPlayer);
+
+		return 0;
+	}
+
+	@:noCompletion private function set_role(value:UInt):UInt
+	{
+		if (mediaPlayer != null)
+			LibVLC.media_player_set_role(mediaPlayer, value);
 
 		return value;
 	}
