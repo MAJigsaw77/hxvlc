@@ -29,7 +29,7 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
         haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git
         ```
 
-3. Add this code in the **project.xml** file.
+2. Add this code in the **project.xml** file.
 
     ```xml
     <section if="cpp">
@@ -37,7 +37,7 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
     </section>
     ```
 
-5. ***Linux users only***, you need to install [`vlc`](https://www.videolan.org/vlc) from your distro's package manager.
+3. ***Linux users only***, you need to install [`vlc`](https://www.videolan.org/vlc) from your distro's package manager.
 
     * [Debian](https://debian.org) based distributions:
         ```bash
@@ -55,18 +55,19 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
         ```bash
         sudo emerge media-video/vlc
         ```
-6. ***iOS users only***, you need to add the MobileVLCKit framework.
+4. ***iOS users only***, you need to add the MobileVLCKit framework.
 
-    * [Precompiled Framework]
-       (https://download.videolan.org/cocoapods/prod/MobileVLCKit-3.1.0-1773552-3afa138bb6.tar.xz)
-    
-    * [Self Building the Framework]
-     https://github.com/videolan/vlckit/tree/3.1.0
+    * [Precompiled Framework](https://download.videolan.org/cocoapods/prod/MobileVLCKit-3.1.0-1773552-3afa138bb6.tar.xz)
 
-     In your apps .xcodeproj file click on the target named after your app. Navigate to Build Settings and change 'Debug Information Format to 'DWARF'. After that go to 'Build Phases/Link Binary With Libraries' and at the bottom click on the plus sign and click Add Other/Add Files. Locate the path of the MobileVLCKit framework and add it.
-        
+    * [Self Building the Framework](https://github.com/videolan/vlckit/tree/3.1.0)
 
-7. **Well done!**
+   In your apps `.xcodeproj` file click on the target named after your app.
+
+   Navigate to Build Settings and change `Debug Information Format` to `DWARF`. After that go to `Build Phases/Link Binary With Libraries` and at the bottom click on the plus sign and click `Add Other/Add Files`.
+
+   Locate the path of the MobileVLCKit framework and add it.
+
+6. **Well done!**
 
 ## Usage Examples
 
