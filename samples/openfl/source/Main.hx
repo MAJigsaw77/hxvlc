@@ -34,13 +34,15 @@ class Main extends Sprite
 
 		#if android
 		Sys.setCwd(Path.addTrailingSlash(Context.getObbDir()));
+		#elseif ios
+		Sys.setCwd(LimeSystem.documentsDirectory);
 		#end
 
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
 
 		Lib.current.stage.frameRate = Lib.application.window.displayMode.refreshRate;
 
-		#if android
+		#if mobile
 		copyFiles();
 		#end
 		
@@ -148,7 +150,7 @@ class Main extends Sprite
 		video.pause();
 	}
 
-	#if android
+	#if mobile
 	private inline function copyFiles():Void
 	{
 		try
@@ -167,7 +169,11 @@ class Main extends Sprite
 			OpenFLSystem.gc();
 		}
 		catch (e:Exception)
+		{
+			#if android
 			Toast.makeText(e.message, Toast.LENGTH_LONG);
+			#end
+		}
 	}
 	#end
 }

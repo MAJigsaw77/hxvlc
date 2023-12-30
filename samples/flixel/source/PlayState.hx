@@ -9,6 +9,7 @@ import haxe.Exception;
 import hxvlc.flixel.FlxVideo;
 import hxvlc.flixel.FlxVideoBackdrop;
 import hxvlc.flixel.FlxVideoSprite;
+import openfl.system.System;
 import openfl.utils.Assets;
 import openfl.Lib;
 import sys.io.File;
@@ -22,7 +23,7 @@ class PlayState extends FlxState
 	{
 		final path:String = 'assets/video.mp4';
 
-		#if android
+		#if mobile
 		try
 		{
 			if (!FileSystem.exists(path.directory()))
@@ -33,10 +34,15 @@ class PlayState extends FlxState
 			}
 			else if (!FileSystem.exists(path))
 				File.saveBytes(path, Assets.getBytes(path));
-				
+			
+			System.gc();
 		}
 		catch (e:Exception)
+		{
+			#if android
 			Toast.makeText(e.message, Toast.LENGTH_LONG);
+			#end
+		}
 		#end
 
 		var video:FlxVideo = new FlxVideo();

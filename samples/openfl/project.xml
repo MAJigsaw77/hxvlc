@@ -34,7 +34,7 @@
 
 	<haxelib name="extension-androidtools" if="android" />
 
-	<haxelib name="hxcpp-debug-server" if="debug" unless="android" optional="true" />
+	<haxelib name="hxcpp-debug-server" if="debug" unless="mobile" optional="true" />
 
 	<!--Libraries Settings-->
 
