@@ -60,13 +60,13 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
 
     * [Self Building the Framework](https://github.com/videolan/vlckit/tree/3.1.0)
 
-   In your apps `.xcodeproj` file click on the target named after your app.
+   1. In your apps `.xcodeproj` file click on the target named after your app.
 
-   Navigate to Build Settings and change `Debug Information Format` to `DWARF`. After that go to `Build Phases/Link Binary With Libraries` and at the bottom click on the plus sign and click `Add Other/Add Files`.
+   3. Navigate to Build Settings and change `Debug Information Format` to `DWARF`. After that go to `Build Phases/Link Binary With Libraries` and at the bottom click on the plus sign and click `Add Other/Add Files`.
 
-   Locate the path of the MobileVLCKit framework and add it.
+   5. Locate the path of the MobileVLCKit framework and add it.
 
-6. **Well done!**
+5. **Well done!**
 
 ## Usage Examples
 
