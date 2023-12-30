@@ -35,9 +35,6 @@ extern class LibVLC_Event_T {}
 @:native('libvlc_log_t')
 extern class LibVLC_Log_T {}
 
-/**
- * Event types.
- */
 extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 {
 	@:native('libvlc_MediaPlayerMediaChanged')
@@ -151,3 +148,47 @@ typedef LibVLC_Video_Cleanup_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>)
 typedef LibVLC_Video_Lock_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, p_pixels:cpp.RawPointer<cpp.RawPointer<cpp.Void>>) -> cpp.RawPointer<cpp.Void>>;
 typedef LibVLC_Video_Unlock_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, id:cpp.RawPointer<cpp.Void>, p_pixels:cpp.VoidStarConstStar) -> Void>;
 typedef LibVLC_Video_Display_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>, picture:cpp.RawPointer<cpp.Void>) -> Void>;
+
+extern enum abstract LibVLC_Media_Player_Role_T(LibVLC_Media_Player_Role_T_Impl)
+{
+	@:native('libvlc_role_None')
+	var LibVLC_Role_None;
+
+	@:native('libvlc_role_Music')
+	var LibVLC_Role_Music;
+
+	@:native('libvlc_role_Video')
+	var LibVLC_Role_Video;
+
+	@:native('libvlc_role_Communication')
+	var LibVLC_Role_Communication;
+
+	@:native('libvlc_role_Game')
+	var LibVLC_Role_Game;
+
+	@:native('libvlc_role_Notification')
+	var LibVLC_Role_Notification;
+
+	@:native('libvlc_role_Animation')
+	var LibVLC_Role_Animation;
+
+	@:native('libvlc_role_Production')
+	var LibVLC_Role_Production;
+
+	@:native('libvlc_role_Accessibility')
+	var LibVLC_Role_Accessibility;
+
+	@:native('libvlc_role_Test')
+	var LibVLC_Role_Test;
+
+	@:native('libvlc_role_Last')
+	var LibVLC_Role_Last;
+
+	@:to extern public inline function toInt():Int
+		return untyped this;
+}
+
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include('vlc/vlc.h')
+@:native('libvlc_media_player_role_t')
+private extern class LibVLC_Media_Player_Role_T_Impl {}
