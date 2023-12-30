@@ -1,6 +1,6 @@
 package hxvlc.openfl;
 
-#if (!cpp && !(desktop || android))
+#if (!cpp && !(desktop || mobile))
 #error 'The current target platform isn\'t supported by hxvlc.'
 #end
 import haxe.io.Path;
