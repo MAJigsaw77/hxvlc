@@ -65,7 +65,9 @@ static void *lock(void *opaque, void **planes)
 
 static void unlock(void *opaque, void *picture, void *const *planes)
 {
+	#ifdef assert
 	assert(picture == NULL); /* picture identifier, not needed here */
+	#end
 }
 
 static void display(void *opaque, void *picture)
@@ -74,7 +76,9 @@ static void display(void *opaque, void *picture)
 
 	self->events[8] = true;
 
+	#ifdef assert
 	assert(picture == NULL); /* picture identifier, not needed here */
+	#end
 }
 
 static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
