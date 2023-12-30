@@ -233,7 +233,7 @@ class Video extends Bitmap
 	/**
 	 * The video's role.
 	 */
-	public var role(get, set):Bool;
+	public var role(get, set):UInt;
 
 	/**
 	 * An event that is dispatched when the video is opening.
