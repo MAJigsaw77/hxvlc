@@ -54,17 +54,17 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
         ```bash
         sudo emerge media-video/vlc
         ```
-4. ***iOS users only***, you need to add the MobileVLCKit framework.
+4. ***iOS users only***, you need to add the `MobileVLCKit` framework.
 
     * [Precompiled Framework](https://download.videolan.org/cocoapods/prod/MobileVLCKit-3.1.0-1773552-3afa138bb6.tar.xz)
 
-    * [Self Building the Framework](https://github.com/videolan/vlckit/tree/3.1.0)
+    * [Self Building the Framework](https://github.com/videolan/vlckit/tree/3.6.0b10#build)
 
    1. In your apps `.xcodeproj` file click on the target named after your app.
 
    3. Navigate to Build Settings and change `Debug Information Format` to `DWARF`. After that go to `Build Phases/Link Binary With Libraries` and at the bottom click on the plus sign and click `Add Other/Add Files`.
 
-   5. Locate the path of the MobileVLCKit framework and add it.
+   5. Locate the path of the `MobileVLCKit` framework and add it.
 
 5. **Well done!**
 
