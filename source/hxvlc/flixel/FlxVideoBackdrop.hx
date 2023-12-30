@@ -10,6 +10,7 @@ import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import haxe.io.Path;
+import hxvlc.libvlc.Types;
 import hxvlc.openfl.Video;
 import sys.FileSystem;
 
@@ -41,6 +42,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
 		bitmap = new Video(false);
+		bitmap.onOpening.add(() -> bitmap.role = LibVLC_Role_Game);
 		bitmap.onFormatSetup.add(() -> loadGraphic(bitmap.bitmapData));
 		bitmap.alpha = 0;
 
