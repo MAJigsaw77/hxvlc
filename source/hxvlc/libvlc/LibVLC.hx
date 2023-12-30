@@ -153,4 +153,10 @@ extern class LibVLC
 
 	@:native('libvlc_audio_set_channel')
 	static function audio_set_channel(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>, channel:Int):Int;
+
+	@:native('libvlc_media_player_get_role')
+	static function media_player_get_role(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Int;
+
+	@:native('libvlc_media_player_set_role')
+	static function media_player_set_role(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>, role:cpp.UInt32):Int;
 }
