@@ -9,12 +9,11 @@ import haxe.io.Path;
 import haxe.CallStack;
 import haxe.Exception;
 import haxe.Log;
-import lime.system.System as LimeSystem;
+import lime.system.System;
 import openfl.display.Sprite;
 import openfl.errors.Error;
 import openfl.events.ErrorEvent;
 import openfl.events.UncaughtErrorEvent;
-import openfl.system.System as OpenFLSystem;
 import openfl.Lib;
 import sys.io.File;
 import sys.FileSystem;
@@ -29,6 +28,8 @@ class Main extends Sprite
 
 		#if android
 		Sys.setCwd(Path.addTrailingSlash(Context.getObbDir()));
+		#elseif ios
+		Sys.setCwd(System.documentsDirectory);
 		#end
 
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
@@ -85,6 +86,6 @@ class Main extends Sprite
 
 		Log.trace(msg, null);
 		Lib.application.window.alert(msg, 'Error!');
-		LimeSystem.exit(1);
+		System.exit(1);
 	}
 }
