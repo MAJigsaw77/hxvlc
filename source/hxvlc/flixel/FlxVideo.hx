@@ -3,6 +3,7 @@ package hxvlc.flixel;
 #if flixel
 import flixel.FlxG;
 import haxe.io.Path;
+import hxvlc.libvlc.Types;
 import hxvlc.openfl.Video;
 import sys.FileSystem;
 
@@ -21,6 +22,8 @@ class FlxVideo extends Video
 	public function new(smoothing:Bool = true):Void
 	{
 		super(smoothing);
+
+		onOpening.add(() -> role = LibVLC_Role_Game);
 
 		FlxG.addChildBelowMouse(this);
 	}
