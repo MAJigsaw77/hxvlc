@@ -33,7 +33,7 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
 
     ```xml
     <section if="cpp">
-    	<haxelib name="hxvlc" if="desktop || android" />
+    	<haxelib name="hxvlc" if="desktop || mobile" />
     </section>
     ```
 
@@ -55,8 +55,18 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
         ```bash
         sudo emerge media-video/vlc
         ```
+6. ***iOS users only***, you need to add the MobileVLCKit framework.
 
-6. **Well done!**
+    * [Precompiled Framework]
+       (https://download.videolan.org/cocoapods/prod/MobileVLCKit-3.1.0-1773552-3afa138bb6.tar.xz)
+    
+    * [Self Building the Framework]:
+     https://github.com/videolan/vlckit/tree/3.1.0
+
+     In your apps .xcodeproj file click on the target named after your app. Navigate to Build Settings and change 'Debug Information Format to 'DWARF'. After that go to 'Build Phases/Link Binary With Libraries' and at the bottom click on the plus sign and click Add Other/Add Files. Locate the path of the MobileVLCKit framework and add it.
+        
+
+7. **Well done!**
 
 ## Usage Examples
 
@@ -77,3 +87,4 @@ Check out the [Samples Folder](samples/) for examples on how to use this library
 | ![](https://avatars.githubusercontent.com/u/77043862?s=64) | [MAJigsaw77](https://github.com/MAJigsaw77) | Creator of **hxvlc**.
 | ![](https://avatars.githubusercontent.com/u/1677550?s=64) | [datee](https://github.com/datee) | Creator of [HaxeVLC](https://github.com/datee/HaxeVLC) and [VLC.hx](https://github.com/LogicInteractive/VLC.hx).
 | ![](https://avatars.githubusercontent.com/u/107599365?v=64) | [Jonnycat](https://github.com/JonnycatMeow) | Libs Guy.
+| ![](https://avatars.githubusercontent.com/u/107599365?v=64) | [FutureDorito](https://github.com/FutureDorito) | iOS Support Helper.
