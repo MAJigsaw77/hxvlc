@@ -56,7 +56,7 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
         ```
 4. ***iOS users only***, you need to add the `MobileVLCKit` framework.
 
-    * [The Precompiled Framework](https://download.videolan.org/cocoapods/prod/MobileVLCKit-3.5.1-34408b84-e9eceaed.tar.xz) or [Build it on your own](https://github.com/videolan/vlckit/tree/3.6.0b10#build)
+    * [The Precompiled Framework](https://download.videolan.org/cocoapods/prod/MobileVLCKit-3.5.1-34408b84-e9eceaed.tar.xz) or [Build it on your own](https://github.com/videolan/vlckit/tree/3.6.0b10#build).
 
     * In your apps `.xcodeproj` file click on the target named after your app.
 
