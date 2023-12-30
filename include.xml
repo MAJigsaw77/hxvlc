@@ -17,12 +17,6 @@
 		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" include="*" />
 	</section> 
 
-	<section if="iphoneos">
-		<!--TODO: Fix the plugins being add to the asset's manifest-->
-		<assets path="project/vlc/lib/iOS" rename="lib" include="*" />
-		<assets path="project/vlc/plugins/iOS" rename="plugins" include="*" />
-	</section>
-
 	<section if="android">
 		<ndll name="c++_shared" dir="project/vlc/lib" />
 		<ndll name="vlc" dir="project/vlc/lib" />
