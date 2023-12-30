@@ -67,7 +67,7 @@ static void unlock(void *opaque, void *picture, void *const *planes)
 {
 	#ifdef assert
 	assert(picture == NULL); /* picture identifier, not needed here */
-	#end
+	#endif
 }
 
 static void display(void *opaque, void *picture)
@@ -78,7 +78,7 @@ static void display(void *opaque, void *picture)
 
 	#ifdef assert
 	assert(picture == NULL); /* picture identifier, not needed here */
-	#end
+	#endif
 }
 
 static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
