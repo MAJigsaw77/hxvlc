@@ -23,21 +23,19 @@
 	</section>
 
 	<section if="ios">
-		<dependency name="AudioToolbox.framework" />
-		<dependency name="AVFoundation.framework" />
+		<dependency path="project/vlc/frameworks/MobileVLCKit.framework" />
+
 		<dependency name="CFNetwork.framework" />
 		<dependency name="CoreFoundation.framework" />
-		<dependency name="CoreGraphics.framework" />
 		<dependency name="CoreMedia.framework" />
 		<dependency name="CoreText.framework" />
 		<dependency name="CoreVideo.framework" />
-		<dependency name="Foundation.framework" />
+
 		<dependency name="libbz2.tbd" />
 		<dependency name="libc++.tbd" />
 		<dependency name="libiconv.tbd" />
 		<dependency name="libxml2.tbd" />
-		<dependency name="OpenGLES.framework" />
-		<dependency name="QuartzCore.framework" />
+
 		<dependency name="Security.framework" />
 		<dependency name="VideoToolbox.framework" />
 		<dependency name="CoreImage.framework" />
