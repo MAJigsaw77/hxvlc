@@ -51,10 +51,6 @@ class Main extends Sprite
 		{
 			stage.addEventListener(Event.ACTIVATE, stage_onActivate);
 			stage.addEventListener(Event.DEACTIVATE, stage_onDeactivate);
-
-			#if android
-			Toast.makeText('Size: ${video.size.toString()}', Toast.LENGTH_LONG);
-			#end
 		});
 		video.onEndReached.add(function()
 		{
