@@ -585,8 +585,8 @@ class Video extends Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			var px:Int = 0;
-			var py:Int = 0;
+			var px:cpp.UInt32 = 0;
+			var py:cpp.UInt32 = 0;
 
 			if (LibVLC.video_get_size(mediaPlayer, 0, cpp.RawPointer.addressOf(px), cpp.RawPointer.addressOf(py)) == 0)
 				return new Point(px, py);
