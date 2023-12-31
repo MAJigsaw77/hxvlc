@@ -13,6 +13,7 @@ import lime.utils.Log;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.Texture;
+import openfl.geom.Point;
 #if linux
 import sys.FileSystem;
 #end
@@ -143,6 +144,11 @@ class Video extends Bitmap
 	 * The video format height, in pixels.
 	 */
 	public var formatHeight(default, null):Int = 0;
+
+	/**
+	 * The size of the video, expressed as a Point object with the values of the width and height properties.
+	 */
+	public var size(get, never):Point;
 
 	/**
 	 * The video's time in milliseconds.
@@ -350,23 +356,6 @@ class Video extends Bitmap
 		if (mediaPlayer == null)
 			mediaPlayer = LibVLC.media_player_new(instance);
 
-		if (options != null && options.length > 0)
-		{
-			for (option in options)
-			{
-				// Don't override our repeat function.
-				if (option.indexOf('input-repeat=') == -1)
-					LibVLC.media_add_option(mediaItem, option);
-			}
-		}
-
-		// 65535 is the maximum `unsigned short` size.
-		LibVLC.media_add_option(mediaItem, "input-repeat=" + Math.min(repeat, 65535));
-
-		LibVLC.media_player_set_media(mediaPlayer, mediaItem);
-
-		LibVLC.media_release(mediaItem);
-
 		if (eventManager == null && mediaPlayer != null)
 		{
 			eventManager = LibVLC.media_player_event_manager(mediaPlayer);
@@ -392,6 +381,23 @@ class Video extends Bitmap
 			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
 				Log.warn('Failed to attach event (MediaPlayerMediaChanged)');
 		}
+
+		if (options != null && options.length > 0)
+		{
+			for (option in options)
+			{
+				// Don't override our repeat function.
+				if (option.indexOf('input-repeat=') == -1)
+					LibVLC.media_add_option(mediaItem, option);
+			}
+		}
+
+		// 65535 is the maximum `unsigned short` size.
+		LibVLC.media_add_option(mediaItem, "input-repeat=" + Math.min(repeat, 65535));
+
+		LibVLC.media_player_set_media(mediaPlayer, mediaItem);
+
+		LibVLC.media_release(mediaItem);
 
 		LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('NULL'));
 		LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('lock'), untyped __cpp__('unlock'), untyped __cpp__('display'), untyped __cpp__('this'));
@@ -575,6 +581,20 @@ class Video extends Bitmap
 	}
 
 	// Get & Set Methods
+	@:noCompletion private function get_size():Point
+	{
+		if (mediaPlayer != null)
+		{
+			var px:cpp.UInt32 = 0;
+			var py:cpp.UInt32 = 0;
+
+			if (LibVLC.video_get_size(mediaPlayer, 0, cpp.RawPointer.addressOf(px), cpp.RawPointer.addressOf(py)) == 0)
+				return new Point(px, py);
+		}
+
+		return new Point(0, 0);
+	}
+
 	@:noCompletion private function get_time():Int64
 	{
 		if (mediaPlayer != null)
