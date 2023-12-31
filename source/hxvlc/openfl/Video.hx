@@ -877,7 +877,7 @@ class Video extends Bitmap
 						bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
 					}
 				}
-				catch(e:Exception)
+				catch (e:Exception)
 					Log.error('Failed to create video\'s texture');
 
 				if (texture != null)
