@@ -69,6 +69,10 @@ class Main extends Sprite
 		// These must be called after the child is added (Mostly to have events accuracy).
 		video.load(Path.join([Sys.getCwd(), 'assets/video.mp4']), 2);
 		video.play();
+
+		#if android
+		Toast.makeText('Size: ${video.size.toString()}', Toast.LENGTH_LONG);
+		#end
 	}
 
 	private inline function onUncaughtError(event:UncaughtErrorEvent):Void
