@@ -830,10 +830,7 @@ class Video extends Bitmap
 
 			final errmsg:String = cast(LibVLC.errmsg(), String);
 
-			if (errmsg != null && errmsg.length > 0)
-				onEncounteredError.dispatch(errmsg);
-			else
-				onEncounteredError.dispatch('Could not specify the error');
+			onEncounteredError.dispatch(errmsg != null && errmsg.length > 0 ? errmsg : 'Could not specify the error');
 		}
 
 		if (events[6])
