@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for video playback using LibVLC.",
-	"version": "1.0.2",
-	"releasenote": "Fixed crashes and added some new futures.",
+	"version": "1.1.0",
+	"releasenote": "Added iOS support and made some improvements.",
 	"contributors": [
 		"MAJigsaw77"
 	],
