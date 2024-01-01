@@ -13,7 +13,6 @@ import lime.utils.Log;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.Texture;
-import openfl.geom.Point;
 #if linux
 import sys.FileSystem;
 #end
@@ -146,9 +145,9 @@ class Video extends Bitmap
 	public var formatHeight(default, null):Int = 0;
 
 	/**
-	 * The size of the video, expressed as a Point object with the values of the width and height properties.
+	 * The size of the video, expressed as a object with the values of the width and height properties.
 	 */
-	public var size(get, never):Point;
+	public var size(get, never):Size;
 
 	/**
 	 * The video's time in milliseconds.
@@ -581,7 +580,7 @@ class Video extends Bitmap
 	}
 
 	// Get & Set Methods
-	@:noCompletion private function get_size():Point
+	@:noCompletion private function get_size():Size
 	{
 		if (mediaPlayer != null)
 		{
@@ -589,10 +588,10 @@ class Video extends Bitmap
 			var py:cpp.UInt32 = 0;
 
 			if (LibVLC.video_get_size(mediaPlayer, 0, cpp.RawPointer.addressOf(px), cpp.RawPointer.addressOf(py)) == 0)
-				return new Point(px, py);
+				return {x: px, y: py};
 		}
 
-		return new Point(0, 0);
+		return {x: 0, y: 0};
 	}
 
 	@:noCompletion private function get_time():Int64
@@ -929,4 +928,10 @@ class Video extends Bitmap
 	{
 		return __bitmapData = value;
 	}
+}
+
+typedef Size =
+{
+	var x:UInt;
+	var y:UInt;
 }
