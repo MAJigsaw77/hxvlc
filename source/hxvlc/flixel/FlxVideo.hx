@@ -34,7 +34,7 @@ class FlxVideo extends Video
 		FlxG.addChildBelowMouse(this);
 	}
 
-	public override function load(location:String, repeat:Int = 0, ?options:Array<String>):Bool
+	public override function load(location:String, repeat:UInt = 0, ?options:Array<String>):Bool
 	{
 		if (FlxG.autoPause)
 		{

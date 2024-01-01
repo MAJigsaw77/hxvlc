@@ -326,7 +326,7 @@ class Video extends Bitmap
 	 *
 	 * @return `true` if the video loaded successfully or `false` if there's an error.
 	 */
-	public function load(location:String, repeat:Int = 0, ?options:Array<String>):Bool
+	public function load(location:String, repeat:UInt = 0, ?options:Array<String>):Bool
 	{
 		if (instance == null)
 			return false;

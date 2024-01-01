@@ -48,7 +48,7 @@ class FlxVideoSprite extends FlxSprite
 	 *
 	 * @return `true` if the video loaded successfully or `false` if there's an error.
 	 */
-	public function load(location:String, repeat:Int = 0, ?options:Array<String>):Bool
+	public function load(location:String, repeat:UInt = 0, ?options:Array<String>):Bool
 	{
 		if (bitmap == null)
 			return false;
