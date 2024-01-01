@@ -42,5 +42,22 @@
 			<lib name="${haxelib:hxvlc}/project/vlc/lib/Android/libvlc-x86.so" if="HXCPP_X86" />
 			<lib name="${haxelib:hxvlc}/project/vlc/lib/Android/libvlc-x86_64.so" if="HXCPP_X86_64" />
 		</section>
+
+		<section if="iphoneos || iphonesim">
+			<vflag name="-framework" value="MobileVLCKit" />
+			<vflag name="-framework" value="CFNetwork" />
+			<vflag name="-framework" value="CoreFoundation" />
+			<vflag name="-framework" value="CoreMedia" />
+			<vflag name="-framework" value="CoreText" />
+			<vflag name="-framework" value="CoreVideo" />
+			<vflag name="-framework" value="Security" />
+			<vflag name="-framework" value="VideoToolbox" />
+			<vflag name="-framework" value="CoreImage" />
+
+			<lib name="-lbz2" />
+			<lib name="-lc++" />
+			<lib name="-liconv" />
+			<lib name="-lxml2" />
+		</section>
 	</target>
 </xml>
