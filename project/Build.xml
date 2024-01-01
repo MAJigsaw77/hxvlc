@@ -6,16 +6,12 @@
 		<section unless="linux || iphoneos || iphonesim">
 			<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" />
 		</section>
-
-		<compilerflag value="-F${haxelib:hxvlc}/project/vlc/frameworks" if="iphoneos || iphonesim" />
 	</files>
 
 	<files id="__main__">
 		<section unless="linux || iphoneos || iphonesim">
 			<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" />
 		</section>
-
-		<compilerflag value="-F${haxelib:hxvlc}/project/vlc/frameworks" if="iphoneos || iphonesim" />
 	</files>
 
 	<target id="haxe">
@@ -57,7 +53,6 @@
 			<vflag name="-framework" value="CoreImage" />
 
 			<lib name="-lbz2" />
-			<lib name="-lc++" />
 			<lib name="-liconv" />
 			<lib name="-lxml2" />
 		</section>
