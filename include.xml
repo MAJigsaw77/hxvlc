@@ -23,7 +23,7 @@
 	</section>
 
 	<section if="ios">
-		<dependency path="project/vlc/frameworks/MobileVLCKit.framework" />
+		<dependency path="project/vlc/frameworks/MobileVLCKit.xcframework" />
 
 		<dependency name="CFNetwork.framework" />
 		<dependency name="CoreFoundation.framework" />
