@@ -23,8 +23,6 @@
 	</section>
 
 	<section if="ios">
-		<dependency path="project/vlc/frameworks/MobileVLCKit.xcframework" />
-
 		<dependency name="CFNetwork.framework" />
 		<dependency name="CoreFoundation.framework" />
 		<dependency name="CoreMedia.framework" />
@@ -32,7 +30,6 @@
 		<dependency name="CoreVideo.framework" />
 
 		<dependency name="libbz2.tbd" />
-		<dependency name="libc++.tbd" />
 		<dependency name="libiconv.tbd" />
 		<dependency name="libxml2.tbd" />
 
