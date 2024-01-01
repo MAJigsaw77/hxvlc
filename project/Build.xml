@@ -3,11 +3,11 @@
 	<pragma once="true" />
 
 	<files id="haxe">
-		<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" unless="linux" />
+		<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" unless="linux || iphoneos || iphonesim" />
 	</files>
 
 	<files id="__main__">
-		<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" unless="linux" />
+		<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" unless="linux || iphoneos || iphonesim" />
 	</files>
 
 	<target id="haxe">
