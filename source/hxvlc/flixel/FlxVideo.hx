@@ -23,7 +23,13 @@ class FlxVideo extends Video
 	{
 		super(smoothing);
 
-		onOpening.add(() -> role = LibVLC_Role_Game);
+		onOpening.add(function()
+		{
+			role = LibVLC_Role_Game;
+
+			if (!FlxG.signals.postUpdate.has(postUpdate))
+				FlxG.signals.postUpdate.add(postUpdate);
+		});
 
 		FlxG.addChildBelowMouse(this);
 	}
@@ -38,9 +44,6 @@ class FlxVideo extends Video
 			if (!FlxG.signals.focusLost.has(pause))
 				FlxG.signals.focusLost.add(pause);
 		}
-
-		if (!FlxG.signals.postUpdate.has(postUpdate))
-			FlxG.signals.postUpdate.add(postUpdate);
 
 		if (FileSystem.exists(Path.join([Sys.getCwd(), location])))
 			return super.load(Path.join([Sys.getCwd(), location]), repeat, options);
