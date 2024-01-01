@@ -44,6 +44,8 @@
 		</section>
 
 		<section if="iphoneos || iphonesim">
+			<vflag name="-F" value="${haxelib:hxvlc}/project/vlc/frameworks" />
+
 			<vflag name="-framework" value="MobileVLCKit" />
 			<vflag name="-framework" value="CFNetwork" />
 			<vflag name="-framework" value="CoreFoundation" />
