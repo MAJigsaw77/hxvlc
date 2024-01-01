@@ -351,7 +351,7 @@ class Video extends Bitmap
 		{
 			mediaPlayer = LibVLC.media_player_new(instance);
 
-			if (eventManager == null && mediaPlayer != null)
+			if (eventManager == null)
 			{
 				eventManager = LibVLC.media_player_event_manager(mediaPlayer);
 
