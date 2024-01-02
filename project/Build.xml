@@ -51,7 +51,6 @@
 
 			<lib name="-lbz2" />
 			<lib name="-liconv" />
-			<lib name="-lxml2" />
 		</section>
 	</target>
 </xml>

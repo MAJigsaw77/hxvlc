@@ -28,14 +28,12 @@
 		<dependency name="CoreMedia.framework" />
 		<dependency name="CoreText.framework" />
 		<dependency name="CoreVideo.framework" />
-
-		<dependency name="libbz2.tbd" />
-		<dependency name="libiconv.tbd" />
-		<dependency name="libxml2.tbd" />
-
 		<dependency name="Security.framework" />
 		<dependency name="VideoToolbox.framework" />
 		<dependency name="CoreImage.framework" />
+
+		<dependency name="libbz2.tbd" />
+		<dependency name="libiconv.tbd" />
 	</section>
 
 	<sample path="samples" />
