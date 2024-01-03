@@ -3,6 +3,7 @@ package hxvlc.openfl;
 #if (!cpp && !(desktop || mobile))
 #error 'The current target platform isn\'t supported by hxvlc.'
 #end
+import haxe.io.BytesData;
 import haxe.io.Path;
 import haxe.Exception;
 import haxe.Int64;
@@ -891,10 +892,12 @@ class Video extends Bitmap
 			{
 				if (planes != null)
 				{
+					final planesData:BytesData = cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4);
+
 					if (texture != null)
-						texture.uploadFromByteArray(cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4), 0);
+						texture.uploadFromByteArray(planesData, 0);
 					else if (bitmapData != null)
-						bitmapData.setPixels(bitmapData.rect, cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4));
+						bitmapData.setPixels(bitmapData.rect, planesData);
 				}
 
 				__setRenderDirty();
