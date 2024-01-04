@@ -2,6 +2,7 @@ package;
 
 #if android
 import android.content.Context;
+import android.os.Build;
 import android.widget.Toast;
 #end
 import haxe.io.Path;
@@ -33,7 +34,10 @@ class Main extends Sprite
 		super();
 
 		#if android
-		Sys.setCwd(Path.addTrailingSlash(Context.getObbDir()));
+		if (VERSION.SDK_INT > 30)
+			Sys.setCwd(Path.addTrailingSlash(Context.getObbDir()));
+		else
+			Sys.setCwd(Path.addTrailingSlash(Context.getExternalFilesDir()));
 		#elseif ios
 		Sys.setCwd(LimeSystem.documentsDirectory);
 		#end
