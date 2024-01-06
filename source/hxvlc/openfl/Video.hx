@@ -519,6 +519,7 @@ class Video extends Bitmap
 			#end
 
 			var args:cpp.StdVectorConstCharStar = cpp.StdVectorConstCharStar.create();
+
 			args.push_back("--drop-late-frames");
 			args.push_back("--intf=dummy");
 			args.push_back("--no-interact");
@@ -535,7 +536,7 @@ class Video extends Bitmap
 			#end
 			args.push_back("--text-renderer=dummy");
 
-			instance = LibVLC.create(args.size(), untyped __cpp__('{0}', args.data()));
+			instance = LibVLC.create(args.size(), untyped args.data());
 
 			if (instance == null)
 			{
