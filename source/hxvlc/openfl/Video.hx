@@ -518,25 +518,24 @@ class Video extends Bitmap
 			}
 			#end
 
-			untyped __cpp__('const char *args[] = {
-				"--drop-late-frames",
-				"--intf=dummy",
-				"--no-interact",
-				"--no-lua",
-				"--no-snapshot-preview",
-				"--no-spu",
-				"--no-stats",
-				"--no-sub-autodetect-file",
-				"--no-video-title-show",
-				"--no-xlib",
-				#if defined(HX_WINDOWS) || defined(HX_MACOS)
-				"--reset-config",
-				"--reset-plugins-cache",
-				#endif
-				"--text-renderer=dummy"
-			}');
+			var args:cpp.StdVectorConstCharStar = cpp.StdVectorConstCharStar.create();
+			args.push_back("--drop-late-frames");
+			args.push_back("--intf=dummy");
+			args.push_back("--no-interact");
+			args.push_back("--no-lua");
+			args.push_back("--no-snapshot-preview");
+			args.push_back("--no-spu");
+			args.push_back("--no-stats");
+			args.push_back("--no-sub-autodetect-file");
+			args.push_back("--no-video-title-show");
+			args.push_back("--no-xlib");
+			#if (windows || macos)
+			args.push_back("--reset-config");
+			args.push_back("--reset-plugins-cache");
+			#end
+			args.push_back("--text-renderer=dummy");
 
-			instance = LibVLC.create(untyped __cpp__('sizeof(args) / sizeof(*args)'), untyped __cpp__('args'));
+			instance = LibVLC.create(args.size(), untyped __cpp__('{0}', args.data()));
 
 			if (instance == null)
 			{
