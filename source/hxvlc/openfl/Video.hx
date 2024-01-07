@@ -484,8 +484,7 @@ class Video extends Bitmap
 			texture = null;
 		}
 
-		formatWidth = 0;
-		formatHeight = 0;
+		formatWidth = formatHeight = 0;
 
 		if (planes != null)
 			untyped __cpp__('delete[] {0}', planes);
@@ -497,8 +496,10 @@ class Video extends Bitmap
 
 	/**
 	 * Initialize LibVLC instance.
+	 *
+	 * @return `true` if the instance created successfully or `false` if there's an error.
 	 */
-	public static function initInstance():Void
+	public static function initInstance():Bool
 	{
 		if (instance == null)
 		{
@@ -546,6 +547,8 @@ class Video extends Bitmap
 					Log.error('Failed to initialize the LibVLC instance, Error: $errmsg');
 				else
 					Log.error('Failed to initialize the LibVLC instance');
+
+				return false;
 			}
 			else
 			{
@@ -556,6 +559,8 @@ class Video extends Bitmap
 				#end
 			}
 		}
+
+		return true;
 	}
 
 	/**
