@@ -379,14 +379,14 @@ class Video extends Bitmap
 			}
 		}
 
-		if (options != null && options.length > 0)
+		if (options == null)
+			options = new Array<String>();
+
+		for (option in options)
 		{
-			for (option in options)
-			{
-				// Don't override our repeat function.
-				if (option.indexOf('input-repeat=') == -1)
-					LibVLC.media_add_option(mediaItem, option);
-			}
+			// Don't override our repeat function.
+			if (option.indexOf('input-repeat=') == -1)
+				LibVLC.media_add_option(mediaItem, option);
 		}
 
 		LibVLC.media_add_option(mediaItem, "input-repeat=" + Math.min(repeat, 65535));
@@ -506,7 +506,7 @@ class Video extends Bitmap
 			Sys.putEnv('VLC_PLUGIN_PATH', Path.join([Path.directory(Sys.programPath()), 'plugins']));
 			#elseif linux
 			var pluginsPath:String = '/usr/local/lib/vlc/plugins';
-			
+
 			if (FileSystem.exists(pluginsPath) && FileSystem.isDirectory(pluginsPath))
 				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
 			else
