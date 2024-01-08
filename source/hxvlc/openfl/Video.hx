@@ -9,6 +9,7 @@ import haxe.Exception;
 import haxe.Int64;
 import hxvlc.libvlc.LibVLC;
 import hxvlc.libvlc.Types;
+import hxvlc.util.Define;
 import lime.app.Event;
 import lime.utils.Log;
 import openfl.display.Bitmap;
@@ -536,6 +537,7 @@ class Video extends Bitmap
 			args.push_back("--reset-plugins-cache");
 			#end
 			args.push_back("--text-renderer=dummy");
+			args.push_back("--verbose=" + Define.getDefineInt('HXVLC_VERBOSE', -1));
 
 			instance = LibVLC.create(args.size(), untyped args.data());
 
