@@ -537,7 +537,7 @@ class Video extends Bitmap
 			args.push_back("--reset-plugins-cache");
 			#end
 			args.push_back("--text-renderer=dummy");
-			args.push_back("--verbose=" + Define.getDefineInt('HXVLC_VERBOSE', -1));
+			args.push_back("--verbose=" + Define.getDefineInt('HXVLC_VERBOSE', 0));
 
 			instance = LibVLC.create(args.size(), untyped args.data());
 
