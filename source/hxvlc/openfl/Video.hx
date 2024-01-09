@@ -524,8 +524,6 @@ class Video extends Bitmap
 
 			args.push_back("--drop-late-frames");
 			args.push_back("--intf=dummy");
-			args.push_back("--file-caching=" + Define.getDefineInt('HXVLC_FILE_CACHING', 1000));
-			args.push_back("--network-caching=" + Define.getDefineInt('HXVLC_NETWORK_CACHING', 1000));
 			args.push_back("--no-interact");
 			args.push_back("--no-lua");
 			args.push_back("--no-snapshot-preview");
