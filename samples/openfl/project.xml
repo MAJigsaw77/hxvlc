@@ -43,10 +43,10 @@
 		<haxedef name="HXCPP_STACK_LINE" />
 		<haxedef name="HXCPP_STACK_TRACE" />
 	</section>
-							
+
 	<section if="debug">
-	<haxedef name="HXVLC_VERBOSE" value="2" />
-	<haxedef name="HXVLC_LOGGING" />
+		<haxedef name="HXVLC_VERBOSE" value="2" />
+		<haxedef name="HXVLC_LOGGING" />
 	</section>
 
 	<!--DPI Awareness-->
