@@ -45,6 +45,8 @@
 	</section>
 
 	<section if="debug">
+		<!--These defines are mostly for testing (aren't required to be used)-->
+		<haxedef name="HXVLC_FILE_CACHING" value="500" />
 		<haxedef name="HXVLC_VERBOSE" value="2" />
 		<haxedef name="HXVLC_LOGGING" />
 	</section>
