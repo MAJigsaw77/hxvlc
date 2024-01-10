@@ -388,7 +388,7 @@ class Video extends Bitmap
 		for (option in options)
 		{
 			// Don't override our repeat function.
-			if (option.contains('input-repeat='))
+			if (!option.contains('input-repeat='))
 				LibVLC.media_add_option(mediaItem, option);
 		}
 
