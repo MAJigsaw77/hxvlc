@@ -23,6 +23,10 @@
 	</section>
 
 	<section if="ios">
+		<config>
+			<ios linker-flags="-ObjC"/>
+		</config>
+
 		<dependency name="CFNetwork.framework" />
 		<dependency name="CoreFoundation.framework" />
 		<dependency name="CoreMedia.framework" />
