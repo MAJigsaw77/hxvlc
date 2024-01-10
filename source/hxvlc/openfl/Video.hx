@@ -19,6 +19,8 @@ import openfl.display3D.textures.Texture;
 import sys.FileSystem;
 #end
 
+using StringTools;
+
 #if android
 @:headerInclude('android/log.h')
 #end
@@ -335,7 +337,7 @@ class Video extends Bitmap
 
 		if (location != null && location.length > 0)
 		{
-			if (location.indexOf('://') != -1)
+			if (location.contains('://'))
 				mediaItem = LibVLC.media_new_location(instance, location);
 			else
 			{
@@ -386,7 +388,7 @@ class Video extends Bitmap
 		for (option in options)
 		{
 			// Don't override our repeat function.
-			if (option.indexOf('input-repeat=') == -1)
+			if (option.contains('input-repeat='))
 				LibVLC.media_add_option(mediaItem, option);
 		}
 
@@ -507,17 +509,12 @@ class Video extends Bitmap
 			#if (windows || macos)
 			Sys.putEnv('VLC_PLUGIN_PATH', Path.join([Path.directory(Sys.programPath()), 'plugins']));
 			#elseif linux
-			var pluginsPath:String = '/usr/local/lib/vlc/plugins';
+			final pluginsPath:String = '/usr/local/lib/vlc/plugins';
 
 			if (FileSystem.exists(pluginsPath) && FileSystem.isDirectory(pluginsPath))
 				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
-			else
-			{
-				pluginsPath = '/usr/lib/vlc/plugins';
-
-				if (FileSystem.exists(pluginsPath) && FileSystem.isDirectory(pluginsPath))
-					Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
-			}
+			else if (FileSystem.exists(pluginsPath.replace('local/')) && FileSystem.isDirectory(pluginsPath.replace('local/')))
+				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath.replace('local/'));
 			#end
 
 			var args:cpp.StdVectorConstCharStar = cpp.StdVectorConstCharStar.create();
