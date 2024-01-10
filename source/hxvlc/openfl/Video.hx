@@ -513,8 +513,8 @@ class Video extends Bitmap
 
 			if (FileSystem.exists(pluginsPath) && FileSystem.isDirectory(pluginsPath))
 				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
-			else if (FileSystem.exists(pluginsPath.replace('local/')) && FileSystem.isDirectory(pluginsPath.replace('local/')))
-				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath.replace('local/'));
+			else if (FileSystem.exists(pluginsPath.replace('local/', '')) && FileSystem.isDirectory(pluginsPath.replace('local/', '')))
+				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath.replace('local/', ''));
 			#end
 
 			var args:cpp.StdVectorConstCharStar = cpp.StdVectorConstCharStar.create();
