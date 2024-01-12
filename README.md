@@ -42,7 +42,7 @@ These platforms needs be to compiled to C++ using [Lime](https://lime.openfl.org
 
     * [Debian](https://debian.org) based distributions:
         ```bash
-        sudo apt-get install libvlc-dev libvlccore-dev vlc-bin
+        sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc
         ```
 
     * [Arch](https://archlinux.org) based distributions:
