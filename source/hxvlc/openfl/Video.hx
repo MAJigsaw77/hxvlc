@@ -517,7 +517,7 @@ class Video extends Bitmap
 				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath.replace('local/', ''));
 			#end
 
-			var args:cpp.StdVectorConstCharStar = cpp.StdVectorConstCharStar.create();
+			var args:cpp.StdVectorConstCharStar = cpp.StdVectorConstCharStar.alloc();
 
 			args.push_back("--drop-late-frames");
 			args.push_back("--intf=dummy");
@@ -536,7 +536,7 @@ class Video extends Bitmap
 			args.push_back("--text-renderer=dummy");
 			args.push_back("--verbose=" + Define.getDefineInt('HXVLC_VERBOSE', 0));
 
-			instance = LibVLC.create(args.size(), untyped args.data());
+			instance = LibVLC.alloc(args.size(), untyped args.data());
 
 			if (instance == null)
 			{

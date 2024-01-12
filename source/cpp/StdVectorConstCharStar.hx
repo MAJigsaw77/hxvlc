@@ -7,7 +7,7 @@ package cpp;
 extern class StdVectorConstCharStar
 {
 	@:native('std::vector<const char *>')
-	static function create():StdVectorConstCharStar;
+	static function alloc():StdVectorConstCharStar;
 
 	function at(index:Int):ConstCharStar;
 	function back():ConstCharStar;
