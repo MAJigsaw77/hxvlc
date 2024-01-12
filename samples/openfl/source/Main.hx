@@ -46,6 +46,10 @@ class Main extends Sprite
 
 		Lib.current.stage.frameRate = Lib.application.window.displayMode.refreshRate;
 
+		#if linux
+		Lib.current.stage.frameRate = 60;
+		#end
+
 		#if mobile
 		copyFiles();
 		#end
