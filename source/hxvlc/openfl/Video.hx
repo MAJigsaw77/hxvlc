@@ -532,6 +532,12 @@ class Video extends Bitmap
 			#if (windows || macos)
 			args.push_back("--reset-config");
 			args.push_back("--reset-plugins-cache");
+			#elseif linux
+			final pluginsPath:String = Sys.getEnv('VLC_PLUGIN_PATH');
+
+			// Needs testing.
+			if (pluginsPath != null && pluginsPath.length > 0)
+				args.push_back("--reset-plugins-cache");
 			#end
 			args.push_back("--text-renderer=dummy");
 			args.push_back("--verbose=" + Define.getDefineInt('HXVLC_VERBOSE', 0));
