@@ -38,7 +38,7 @@ class Main extends Sprite
 
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
 
-		final refreshRate:Int = Lib.application.window.displayMode.refreshRate;
+		var refreshRate:Int = Lib.application.window.displayMode.refreshRate;
 
 		#if linux
 		refreshRate = 60;
