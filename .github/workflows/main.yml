@@ -32,7 +32,7 @@ jobs:
           haxelib install openfl --quiet
           haxelib install flixel --quiet
           haxelib install flixel-addons --quiet
-          haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git ${{github.ref_name}} --quiet
+          haxelib dev hxvlc .
 
       - name: List of installed Haxe Libraries
         run: haxelib list
@@ -99,7 +99,7 @@ jobs:
           haxelib install openfl --quiet
           haxelib install flixel --quiet
           haxelib install flixel-addons --quiet
-          haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git ${{github.ref_name}} --quiet
+          haxelib dev hxvlc .
           haxelib git extension-androidtools https://github.com/MAJigsaw77/extension-androidtools.git --quiet
 
       - name: Setup Git hxcpp
