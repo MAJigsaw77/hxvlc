@@ -28,6 +28,7 @@ jobs:
 
       - name: Installing Haxe Libraries
         run: |
+          haxelib install hxcpp --quiet
           haxelib install lime --quiet
           haxelib install openfl --quiet
           haxelib install flixel --quiet
