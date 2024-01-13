@@ -105,9 +105,7 @@ jobs:
       - name: Setup Git hxcpp
         run: |
           haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp.git --quiet
-          cd $(haxelib libpath hxcpp)/tools/hxcpp
-          haxe compile.hxml
-          cd ${{github.workspace}}
+          haxelib run lime rebuild hxcpp
 
       - name: List of installed Haxe Libraries
         run: haxelib list
