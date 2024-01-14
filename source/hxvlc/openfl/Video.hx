@@ -102,57 +102,57 @@ static void callbacks(const libvlc_event_t *p_event, void *p_data)
 class Video extends Bitmap
 {
 	/**
-	 * The video format width, in pixels.
+	 * The format width, in pixels.
 	 */
 	public var formatWidth(default, null):Int = 0;
 
 	/**
-	 * The video format height, in pixels.
+	 * The format height, in pixels.
 	 */
 	public var formatHeight(default, null):Int = 0;
 
 	/**
-	 * The video's time in milliseconds.
+	 * The media player's time in milliseconds.
 	 */
 	public var time(get, set):Int64;
 
 	/**
-	 * The video's position as percentage between `0.0` and `1.0`.
+	 * The media player's position as percentage between `0.0` and `1.0`.
 	 */
 	public var position(get, set):Single;
 
 	/**
-	 * The video's chapter.
+	 * The media player's chapter.
 	 */
 	public var chapter(get, set):Int;
 
 	/**
-	 * The video's chapter count.
+	 * The media player's chapter count.
 	 */
 	public var chapterCount(get, never):Int;
 
 	/**
-	 * The video's length in milliseconds.
+	 * The media player's length in milliseconds.
 	 */
 	public var length(get, never):Int64;
 
 	/**
-	 * The video's duration.
+	 * The media's duration.
 	 */
 	public var duration(get, never):Int64;
 
 	/**
-	 * The video's media resource locator.
+	 * The media resource locator.
 	 */
 	public var mrl(get, never):String;
 
 	/**
-	 * The video's audio volume in percents (0 = mute, 100 = nominal / 0dB).
+	 * The audio volume in percents (0 = mute, 100 = nominal / 0dB).
 	 */
 	public var volume(get, set):Int;
 
 	/**
-	 * The video's audio channel.
+	 * The audio channel.
 	 *
 	 * - [Stereo] = 1
 	 * - [RStereo] = 2
@@ -163,72 +163,72 @@ class Video extends Bitmap
 	public var channel(get, set):Int;
 
 	/**
-	 * The video's audio delay in microseconds.
+	 * The audio delay in microseconds.
 	 */
 	public var delay(get, set):Int64;
 
 	/**
-	 * The video's play rate.
+	 * The media player's play rate.
 	 */
 	public var rate(get, set):Single;
 
 	/**
-	 * Whether the video is playing or not.
+	 * Whether the media player is playing or not.
 	 */
 	public var isPlaying(get, never):Bool;
 
 	/**
-	 * Whether the video is seekable or not.
+	 * Whether the media player is seekable or not.
 	 */
 	public var isSeekable(get, never):Bool;
 
 	/**
-	 * Whether the video can be paused or not.
+	 * Whether the media player can be paused or not.
 	 */
 	public var canPause(get, never):Bool;
 
 	/**
-	 * Whether the video is able to play.
+	 * Whether the media player is able to play.
 	 */
 	public var willPlay(get, never):Bool;
 
 	/**
-	 * The video's mute status.
+	 * The audio's mute status.
 	 */
 	public var mute(get, set):Bool;
 
 	/**
-	 * The video's role.
+	 * The media player's role.
 	 */
 	public var role(get, set):UInt;
 
 	/**
-	 * An event that is dispatched when the video is opening.
+	 * An event that is dispatched when the media player is opening.
 	 */
 	public var onOpening(default, null):Event<Void->Void>;
 
 	/**
-	 * An event that is dispatched when the video is playing.
+	 * An event that is dispatched when the media player is playing.
 	 */
 	public var onPlaying(default, null):Event<Void->Void>;
 
 	/**
-	 * An event that is dispatched when the video stopped.
+	 * An event that is dispatched when the media player stopped.
 	 */
 	public var onStopped(default, null):Event<Void->Void>;
 
 	/**
-	 * An event that is dispatched when the video is paused.
+	 * An event that is dispatched when the media player is paused.
 	 */
 	public var onPaused(default, null):Event<Void->Void>;
 
 	/**
-	 * An event that is dispatched when the video reached the end.
+	 * An event that is dispatched when the media player reached the end.
 	 */
 	public var onEndReached(default, null):Event<Void->Void>;
 
 	/**
-	 * An event that is dispatched when the video encountered an error.
+	 * An event that is dispatched when the media player encountered an error.
 	 */
 	public var onEncounteredError(default, null):Event<String->Void>;
 
@@ -243,7 +243,7 @@ class Video extends Bitmap
 	public var onFormatSetup(default, null):Event<Void->Void>;
 
 	/**
-	 * An event that is dispatched when the video is being displayed.
+	 * An event that is dispatched when the media is being displayed.
 	 */
 	public var onDisplay(default, null):Event<Void->Void>;
 
@@ -258,7 +258,7 @@ class Video extends Bitmap
 	/**
 	 * Initializes a Video object.
 	 *
-	 * @param smoothing Whether or not the video is smoothed when scaled.
+	 * @param smoothing Whether or not the object is smoothed when scaled.
 	 */
 	public function new(smoothing:Bool = true):Void
 	{
@@ -283,13 +283,13 @@ class Video extends Bitmap
 	}
 
 	/**
-	 * Call this function to load a video.
+	 * Call this function to load a media.
 	 *
 	 * @param location The local filesystem path or the media location url.
-	 * @param repeat The number of times the video should repeat itself.
+	 * @param repeat The number of times the media should repeat itself.
 	 * @param options The additional options you can add to the LibVLC Media instance.
 	 *
-	 * @return `true` if the video loaded successfully or `false` if there's an error.
+	 * @return `true` if the media loaded successfully or `false` if there's an error.
 	 */
 	public function load(location:String, repeat:UInt = 0, ?options:Array<String>):Bool
 	{
@@ -364,9 +364,9 @@ class Video extends Bitmap
 	}
 
 	/**
-	 * Call this function to play a video.
+	 * Call this function to play a media player.
 	 *
-	 * @return `true` if the video started playing or `false` if there's an error.
+	 * @return `true` if the media player started playing or `false` if there's an error.
 	 */
 	public function play():Bool
 	{
@@ -377,7 +377,7 @@ class Video extends Bitmap
 	}
 
 	/**
-	 * Call this function to stop the video.
+	 * Call this function to stop the media player.
 	 */
 	public function stop():Void
 	{
@@ -386,7 +386,7 @@ class Video extends Bitmap
 	}
 
 	/**
-	 * Call this function to pause the video.
+	 * Call this function to pause the media player.
 	 */
 	public function pause():Void
 	{
@@ -395,7 +395,7 @@ class Video extends Bitmap
 	}
 
 	/**
-	 * Call this function to resume the video.
+	 * Call this function to resume the media player.
 	 */
 	public function resume():Void
 	{
@@ -404,7 +404,7 @@ class Video extends Bitmap
 	}
 
 	/**
-	 * Call this function to toggle the pause of the video.
+	 * Call this function to toggle the pause of the media player.
 	 */
 	public function togglePaused():Void
 	{
