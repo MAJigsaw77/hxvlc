@@ -48,9 +48,6 @@
 			<vflag name="-framework" value="Security" />
 			<vflag name="-framework" value="VideoToolbox" />
 			<vflag name="-framework" value="CoreImage" />
-
-			<lib name="-lbz2" />
-			<lib name="-liconv" />
 		</section>
 	</target>
 </xml>
