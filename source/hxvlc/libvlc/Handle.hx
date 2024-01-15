@@ -90,7 +90,6 @@ class Handle
 			#elseif linux
 			final pluginsPath:String = Sys.getEnv('VLC_PLUGIN_PATH');
 
-			// Needs testing.
 			if (pluginsPath != null && pluginsPath.length > 0)
 				args.push_back("--reset-plugins-cache");
 			#end
