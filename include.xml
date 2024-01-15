@@ -34,8 +34,6 @@
 
 		<dependency name="libbz2.tbd" />
 		<dependency name="libiconv.tbd" />
-
-		<template path="templates" />
 	</section>
 
 	<sample path="samples" />
