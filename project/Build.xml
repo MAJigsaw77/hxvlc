@@ -9,7 +9,7 @@
 	</files>
 
 	<files id="__main__">
-		<section unless="linux || iphoneos || iphonesim">
+		<section unless="linux">
 			<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" />
 		</section>
 	</files>
