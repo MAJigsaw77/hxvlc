@@ -13,8 +13,8 @@
 
 	<section if="mac">
 		<!--TODO: Fix the plugins being add to the asset's manifest-->
-		<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" include="*" />
-		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" include="*" />
+		<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" include="*" type="template" />
+		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" include="*" type="template" />
 	</section>
 
 	<section if="android">
