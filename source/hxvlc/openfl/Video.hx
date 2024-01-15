@@ -19,6 +19,7 @@ import openfl.display3D.textures.Texture;
 using StringTools;
 
 @:headerInclude('assert.h')
+@:headerInclude('stdio.h')
 @:cppNamespaceCode('
 static void *lock(void *opaque, void **planes)
 {
