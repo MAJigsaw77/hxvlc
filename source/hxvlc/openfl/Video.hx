@@ -342,6 +342,9 @@ class Video extends Bitmap
 				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerMediaChanged)');
 			}
+
+			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('NULL'));
+			LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('lock'), untyped __cpp__('unlock'), untyped __cpp__('display'), untyped __cpp__('this'));
 		}
 
 		if (options == null)
@@ -357,9 +360,6 @@ class Video extends Bitmap
 		LibVLC.media_add_option(mediaItem, "input-repeat=" + Math.min(repeat, 65535));
 		LibVLC.media_player_set_media(mediaPlayer, mediaItem);
 		LibVLC.media_release(mediaItem);
-
-		LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('NULL'));
-		LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('lock'), untyped __cpp__('unlock'), untyped __cpp__('display'), untyped __cpp__('this'));
 
 		return true;
 	}
