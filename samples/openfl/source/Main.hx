@@ -73,7 +73,7 @@ class Main extends Sprite
 		addChild(video);
 
 		// These must be called after the child is added (Mostly to have events accuracy).
-		video.load(Path.join([Sys.getCwd(), 'assets/video.mp4']), 2);
+		video.load(Path.join([Sys.getCwd(), 'assets/video.mp4']), 2, [':no-video']);
 		video.play();
 	}
 
