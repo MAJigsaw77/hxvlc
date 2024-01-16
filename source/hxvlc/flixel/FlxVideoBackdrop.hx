@@ -36,16 +36,14 @@ class FlxVideoBackdrop extends FlxBackdrop
 	#else
 	public function new(repeatAxes = XY, spacingX = 0, spacingY = 0):Void
 	#end
+
 	{
 		super(repeatAxes, spacingX, spacingY);
-
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
-
 		bitmap = new Video(false);
 		bitmap.onOpening.add(() -> bitmap.role = LibVLC_Role_Game);
 		bitmap.onFormatSetup.add(() -> loadGraphic(bitmap.bitmapData));
 		bitmap.alpha = 0;
-
 		FlxG.game.addChild(bitmap);
 	}
 

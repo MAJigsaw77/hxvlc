@@ -1,4 +1,6 @@
 package cpp;
 
 @:native('void *const *')
-extern class VoidStarConstStar {}
+extern class VoidStarConstStar
+{
+}
