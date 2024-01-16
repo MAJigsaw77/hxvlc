@@ -3,9 +3,7 @@ package hxvlc.libvlc;
 #if !cpp
 #error 'LibVLC supports only C++ target platforms.'
 #end
-class Types
-{
-}
+class Types {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
@@ -13,9 +11,7 @@ class Types
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
 @:native('libvlc_instance_t')
-extern class LibVLC_Instance_T
-{
-}
+extern class LibVLC_Instance_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
@@ -23,9 +19,7 @@ extern class LibVLC_Instance_T
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
 @:native('libvlc_media_t')
-extern class LibVLC_Media_T
-{
-}
+extern class LibVLC_Media_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
@@ -33,9 +27,7 @@ extern class LibVLC_Media_T
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
 @:native('libvlc_media_player_t')
-extern class LibVLC_MediaPlayer_T
-{
-}
+extern class LibVLC_MediaPlayer_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
@@ -43,9 +35,7 @@ extern class LibVLC_MediaPlayer_T
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
 @:native('libvlc_event_manager_t')
-extern class LibVLC_EventManager_T
-{
-}
+extern class LibVLC_EventManager_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
@@ -53,9 +43,7 @@ extern class LibVLC_EventManager_T
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
 @:native('libvlc_event_t')
-extern class LibVLC_Event_T
-{
-}
+extern class LibVLC_Event_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
@@ -63,9 +51,7 @@ extern class LibVLC_Event_T
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
 @:native('libvlc_log_t')
-extern class LibVLC_Log_T
-{
-}
+extern class LibVLC_Log_T {}
 
 extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 {
@@ -169,9 +155,7 @@ extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
 @:native('libvlc_event_e')
-private extern class LibVLC_Event_E_Impl
-{
-}
+private extern class LibVLC_Event_E_Impl {}
 
 typedef LibVLC_Callback_T = cpp.Callable<(p_event:cpp.RawConstPointer<LibVLC_Event_T>, p_data:cpp.RawPointer<cpp.Void>) -> Void>;
 
@@ -231,6 +215,4 @@ extern enum abstract LibVLC_Media_Player_Role_T(LibVLC_Media_Player_Role_T_Impl)
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
 @:native('libvlc_media_player_role_t')
-private extern class LibVLC_Media_Player_Role_T_Impl
-{
-}
+private extern class LibVLC_Media_Player_Role_T_Impl {}
