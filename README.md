@@ -4,7 +4,7 @@
 
 ![](https://img.shields.io/github/repo-size/MAJigsaw77/hxvlc) ![](https://badgen.net/github/open-issues/MAJigsaw77/hxvlc) ![](https://badgen.net/badge/license/MIT/green)
 
-A Haxe/[OpenFL](https://www.openfl.org) library for video playback using [LibVLC](https://www.videolan.org/vlc/libvlc.html).
+A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback using [LibVLC](https://www.videolan.org/vlc/libvlc.html).
 
 ## Supported platforms
 
