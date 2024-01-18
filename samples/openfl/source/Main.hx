@@ -62,7 +62,9 @@ class Main extends Sprite
 		{
 			stage.removeEventListener(Event.ACTIVATE, stage_onActivate);
 			stage.removeEventListener(Event.DEACTIVATE, stage_onDeactivate);
-			stage.removeEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
+
+			if (stage.hasEventListener(Event.ENTER_FRAME))
+				stage.removeEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
 
 			video.dispose();
 
