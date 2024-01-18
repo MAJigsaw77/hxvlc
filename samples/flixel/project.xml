@@ -10,6 +10,10 @@
 
 	<app file="Sample" main="Main" path="export" preloader="flixel.system.FlxPreloader" />
 
+	<!--Architecture Settings-->
+
+	<architecture excude="armv7" if="android" />
+
 	<!--Icon Settings -->
 	
 	<icon path="icon.png" />
