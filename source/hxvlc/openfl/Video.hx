@@ -343,8 +343,8 @@ class Video extends Bitmap
 					Log.warn('Failed to attach event (MediaPlayerMediaChanged)');
 			}
 
-			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('NULL'));
 			LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('lock'), untyped __cpp__('unlock'), untyped __cpp__('display'), untyped __cpp__('this'));
+			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('NULL'));
 		}
 
 		if (options == null)
