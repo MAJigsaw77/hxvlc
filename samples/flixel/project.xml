@@ -12,7 +12,7 @@
 
 	<!--Architecture Settings-->
 
-	<architecture excude="armv7" if="android" />
+	<architecture exclude="armv7" if="android" />
 
 	<!--Icon Settings -->
 	
