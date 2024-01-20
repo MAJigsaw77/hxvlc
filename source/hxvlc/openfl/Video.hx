@@ -297,6 +297,9 @@ class Video extends Bitmap
 		if (Handle.instance == null)
 			return false;
 
+		if (options == null)
+			options = new Array<String>();
+
 		if (location != null && location.length > 0)
 		{
 			if (location.contains('://'))
@@ -347,15 +350,8 @@ class Video extends Bitmap
 			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('NULL'));
 		}
 
-		if (options == null)
-			options = new Array<String>();
-
 		for (option in options)
-		{
-			// Don't override our repeat function.
-			if (!option.contains('input-repeat='))
-				LibVLC.media_add_option(mediaItem, option);
-		}
+			LibVLC.media_add_option(mediaItem, option);
 
 		LibVLC.media_add_option(mediaItem, "input-repeat=" + Math.min(repeat, 65535));
 		LibVLC.media_player_set_media(mediaPlayer, mediaItem);
