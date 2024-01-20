@@ -99,7 +99,9 @@ class Handle
 				args.push_back("--reset-plugins-cache");
 			#end
 			args.push_back("--text-renderer=dummy");
+			#if HXVLC_VERBOSE
 			args.push_back("--verbose=" + Define.getDefineInt('HXVLC_VERBOSE', 0));
+			#end
 
 			for (option in options)
 				args.push_back(option);
