@@ -50,7 +50,7 @@ class Handle
 	/**
 	 * The instance of LibVLC that is used globally.
 	 */
-	public static var instance:cpp.RawPointer<LibVLC_Instance_T>;
+	public static var instance(default, null):cpp.RawPointer<LibVLC_Instance_T>;
 
 	/**
 	 * Initialize LibVLC instance.
@@ -99,9 +99,7 @@ class Handle
 				args.push_back("--reset-plugins-cache");
 			#end
 			args.push_back("--text-renderer=dummy");
-			#if HXVLC_VERBOSE
 			args.push_back("--verbose=" + Define.getDefineInt('HXVLC_VERBOSE', 0));
-			#end
 
 			for (option in options)
 				args.push_back(option);
