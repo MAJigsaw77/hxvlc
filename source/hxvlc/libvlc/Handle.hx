@@ -55,12 +55,17 @@ class Handle
 	/**
 	 * Initialize LibVLC instance.
 	 *
+	 * @param options The additional options you can add to the LibVLC instance.
+	 *
 	 * @return `true` if the instance created successfully or `false` if there's an error.
 	 */
-	public static function initInstance():Bool
+	public static function initInstance(?options:Array<String>):Bool
 	{
 		if (instance == null)
 		{
+			if (options == null)
+				options = new Array<String>();
+
 			#if (windows || macos)
 			Sys.putEnv('VLC_PLUGIN_PATH', Path.join([Path.directory(Sys.programPath()), 'plugins']));
 			#elseif linux
@@ -95,6 +100,9 @@ class Handle
 			#end
 			args.push_back("--text-renderer=dummy");
 			args.push_back("--verbose=" + Define.getDefineInt('HXVLC_VERBOSE', 0));
+
+			for (option in options)
+				args.push_back(option);
 
 			instance = LibVLC.alloc(args.size(), untyped args.data());
 
