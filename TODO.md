@@ -2,4 +2,5 @@
   - We need to figure out how to build [this](https://code.videolan.org/b1ue/vlc.js) and done!
 - [ ] [HashLink](https://hashlink.haxe.org/) Support.
   - We only need to figure out how to make extern's bindings.
-- [] Fix the plugins being add to the assets manifest on MacOS.
+- [ ] Fix the plugins being add to the assets manifest on MacOS.
+- [ ] Lua playlist scripts support.
