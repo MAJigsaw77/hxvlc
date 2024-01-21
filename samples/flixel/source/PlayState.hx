@@ -47,7 +47,7 @@ class PlayState extends FlxState
 
 		var video:FlxVideo = new FlxVideo();
 		video.onEndReached.add(video.dispose);
-		video.load(path, 2);
+		video.load(path);
 
 		new FlxTimer().start(0.001, function(tmr:FlxTimer):Void
 		{
