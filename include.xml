@@ -12,7 +12,6 @@
 	</section>
 
 	<section if="mac">
-		<!--TODO: Fix the plugins being add to the asset's manifest-->
 		<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" include="*" />
 		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" include="*" />
 	</section>
