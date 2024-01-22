@@ -53,13 +53,13 @@ class Handle
 	public static var instance(default, null):cpp.RawPointer<LibVLC_Instance_T>;
 
 	/**
-	 * Initialize LibVLC instance.
+	 * Initialize the LibVLC instance.
 	 *
 	 * @param options The additional options you can add to the LibVLC instance.
 	 *
 	 * @return `true` if the instance created successfully or `false` if there's an error.
 	 */
-	public static function initInstance(?options:Array<String>):Bool
+	public static function init(?options:Array<String>):Bool
 	{
 		if (instance == null)
 		{
@@ -135,9 +135,9 @@ class Handle
 	}
 
 	/**
-	 * Frees LibVLC instance.
+	 * Frees the LibVLC instance.
 	 */
-	public static function disposeInstance():Void
+	public static function dispose():Void
 	{
 		if (instance != null)
 		{
