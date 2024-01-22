@@ -15,6 +15,8 @@ import lime.utils.Log;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.Texture;
+import openfl.events.Event as OpenFLEvent;
+import openfl.Lib;
 
 using StringTools;
 
@@ -280,6 +282,8 @@ class Video extends Bitmap
 		for (i in 0...8)
 			events[i] = false;
 
+		Lib.current.addEventListener(OpenFLEvent.ENTER_FRAME, this_onEnterFrame);
+
 		Handle.initInstance();
 	}
 
@@ -426,6 +430,8 @@ class Video extends Bitmap
 		}
 
 		events.splice(0, events.length);
+
+		Lib.current.removeEventListener(OpenFLEvent.ENTER_FRAME, this_onEnterFrame);
 
 		if (mediaPlayer != null)
 		{
@@ -664,8 +670,8 @@ class Video extends Bitmap
 		return value;
 	}
 
-	// Overrides
-	@:noCompletion private override function __enterFrame(deltaTime:Int):Void
+	// Private Methods
+	@:noCompletion private function this_onEnterFrame(event:OpenFLEvent):Void
 	{
 		if (!events.contains(true))
 			return;
@@ -786,6 +792,12 @@ class Video extends Bitmap
 
 			onDisplay.dispatch();
 		}
+	}
+
+	// Overrides
+	@:noCompletion private override function __enterFrame(deltaTime:Int):Void
+	{
+		// We override this to make it do nothing.
 	}
 
 	@:noCompletion private override function set_bitmapData(value:BitmapData):BitmapData
