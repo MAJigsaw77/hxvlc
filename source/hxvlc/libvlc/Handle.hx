@@ -155,7 +155,7 @@ class Handle
 	 * @param options The additional options you can add to the LibVLC instance.
 	 * @param finishCallback A callback that is called after it finishes loading
 	 */
-	public static function initAsync(?options:Array<String>, ?finishCallback:Bool->Void)
+	public static function initAsync(?options:Array<String>, ?finishCallback:Bool->Void):Void
 	{
 		if (loadingInstance)
 			return;
@@ -163,12 +163,14 @@ class Handle
 		#if (target.threaded)
 		Thread.create(function()
 		{
-			var ok:Bool = init(options);
+			final ok:Bool = init(options);
+
 			if (finishCallback != null)
 				finishCallback(ok);
 		});
 		#else
-		var ok:Bool = init(options);
+		final ok:Bool = init(options);
+
 		if (finishCallback != null)
 			finishCallback(ok);
 		#end
