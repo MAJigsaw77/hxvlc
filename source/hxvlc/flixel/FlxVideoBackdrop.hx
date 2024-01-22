@@ -32,18 +32,21 @@ class FlxVideoBackdrop extends FlxBackdrop
 	 * @param spacingY Amount of spacing between tiles on the Y axis.
 	 */
 	#if (flixel_addons >= "3.2.1")
-	public function new(repeatAxes = XY, spacingX = 0.0, spacingY = 0.0):Void
+ 	public function new(repeatAxes = XY, spacingX = 0.0, spacingY = 0.0):Void
+	{
 	#else
 	public function new(repeatAxes = XY, spacingX = 0, spacingY = 0):Void
-	#end
-
 	{
+	#end
 		super(repeatAxes, spacingX, spacingY);
+
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
+
 		bitmap = new Video(false);
 		bitmap.onOpening.add(() -> bitmap.role = LibVLC_Role_Game);
 		bitmap.onFormatSetup.add(() -> loadGraphic(bitmap.bitmapData));
 		bitmap.alpha = 0;
+
 		FlxG.game.addChild(bitmap);
 	}
 
