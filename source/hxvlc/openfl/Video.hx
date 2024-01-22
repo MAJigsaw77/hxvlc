@@ -283,12 +283,11 @@ class Video extends Bitmap
 	 * Call this function to load a media.
 	 *
 	 * @param location The local filesystem path or the media location url.
-	 * @param repeat The number of times the media should repeat itself.
 	 * @param options The additional options you can add to the LibVLC Media instance.
 	 *
 	 * @return `true` if the media loaded successfully or `false` if there's an error.
 	 */
-	public function load(location:String, repeat:UInt = 0, ?options:Array<String>):Bool
+	public function load(location:String, ?options:Array<String>):Bool
 	{
 		if (Handle.instance == null)
 			return false;
@@ -351,9 +350,7 @@ class Video extends Bitmap
 		for (option in options)
 			LibVLC.media_add_option(mediaItem, option);
 
-		LibVLC.media_add_option(mediaItem, "input-repeat=" + Math.min(repeat, 65535));
 		LibVLC.media_player_set_media(mediaPlayer, mediaItem);
-		LibVLC.media_release(mediaItem);
 
 		return true;
 	}
@@ -430,6 +427,9 @@ class Video extends Bitmap
 			LibVLC.media_player_stop(mediaPlayer);
 			LibVLC.media_player_release(mediaPlayer);
 		}
+
+		if (mediaItem != null)
+			LibVLC.media_release(mediaItem);
 
 		if (bitmapData != null)
 		{
