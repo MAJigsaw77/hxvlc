@@ -10,12 +10,12 @@ import haxe.Int64;
 import hxvlc.libvlc.Handle;
 import hxvlc.libvlc.LibVLC;
 import hxvlc.libvlc.Types;
-import lime.app.Event;
+import lime.app.Event as Dispatcher;
 import lime.utils.Log;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.Texture;
-import openfl.events.Event as OpenFLEvent;
+import openfl.events.Event;
 import openfl.Lib;
 
 using StringTools;
@@ -208,47 +208,47 @@ class Video extends Bitmap
 	/**
 	 * An event that is dispatched when the media player is opening.
 	 */
-	public var onOpening(default, null):Event<Void->Void>;
+	public var onOpening(default, null):Dispatcher<Void->Void>;
 
 	/**
 	 * An event that is dispatched when the media player is playing.
 	 */
-	public var onPlaying(default, null):Event<Void->Void>;
+	public var onPlaying(default, null):Dispatcher<Void->Void>;
 
 	/**
 	 * An event that is dispatched when the media player stopped.
 	 */
-	public var onStopped(default, null):Event<Void->Void>;
+	public var onStopped(default, null):Dispatcher<Void->Void>;
 
 	/**
 	 * An event that is dispatched when the media player is paused.
 	 */
-	public var onPaused(default, null):Event<Void->Void>;
+	public var onPaused(default, null):Dispatcher<Void->Void>;
 
 	/**
 	 * An event that is dispatched when the media player reached the end.
 	 */
-	public var onEndReached(default, null):Event<Void->Void>;
+	public var onEndReached(default, null):Dispatcher<Void->Void>;
 
 	/**
 	 * An event that is dispatched when the media player encountered an error.
 	 */
-	public var onEncounteredError(default, null):Event<String->Void>;
+	public var onEncounteredError(default, null):Dispatcher<String->Void>;
 
 	/**
 	 * An event that is dispatched when the media is changed.
 	 */
-	public var onMediaChanged(default, null):Event<Void->Void>;
+	public var onMediaChanged(default, null):Dispatcher<Void->Void>;
 
 	/**
 	 * An event that is dispatched when the format is being initialized.
 	 */
-	public var onFormatSetup(default, null):Event<Void->Void>;
+	public var onFormatSetup(default, null):Dispatcher<Void->Void>;
 
 	/**
 	 * An event that is dispatched when the media is being displayed.
 	 */
-	public var onDisplay(default, null):Event<Void->Void>;
+	public var onDisplay(default, null):Dispatcher<Void->Void>;
 
 	@:noCompletion private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
 	@:noCompletion private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
@@ -267,15 +267,15 @@ class Video extends Bitmap
 	{
 		super(bitmapData, AUTO, smoothing);
 
-		onOpening = new Event<Void->Void>();
-		onPlaying = new Event<Void->Void>();
-		onStopped = new Event<Void->Void>();
-		onPaused = new Event<Void->Void>();
-		onEndReached = new Event<Void->Void>();
-		onEncounteredError = new Event<String->Void>();
-		onMediaChanged = new Event<Void->Void>();
-		onFormatSetup = new Event<Void->Void>();
-		onDisplay = new Event<Void->Void>();
+		onOpening = new Dispatcher<Void->Void>();
+		onPlaying = new Dispatcher<Void->Void>();
+		onStopped = new Dispatcher<Void->Void>();
+		onPaused = new Dispatcher<Void->Void>();
+		onEndReached = new Dispatcher<Void->Void>();
+		onEncounteredError = new Dispatcher<String->Void>();
+		onMediaChanged = new Dispatcher<Void->Void>();
+		onFormatSetup = new Dispatcher<Void->Void>();
+		onDisplay = new Dispatcher<Void->Void>();
 
 		events = new Array<Bool>();
 
@@ -322,7 +322,7 @@ class Video extends Bitmap
 		{
 			mediaPlayer = LibVLC.media_player_new(Handle.instance);
 
-			Lib.current.addEventListener(OpenFLEvent.ENTER_FRAME, this_onEnterFrame);
+			Lib.current.addEventListener(Event.ENTER_FRAME, this_onEnterFrame);
 
 			if (eventManager == null)
 			{
@@ -431,7 +431,7 @@ class Video extends Bitmap
 
 		events.splice(0, events.length);
 
-		Lib.current.removeEventListener(OpenFLEvent.ENTER_FRAME, this_onEnterFrame);
+		Lib.current.removeEventListener(Event.ENTER_FRAME, this_onEnterFrame);
 
 		if (mediaPlayer != null)
 		{
@@ -671,7 +671,7 @@ class Video extends Bitmap
 	}
 
 	// Private Methods
-	@:noCompletion private function this_onEnterFrame(event:OpenFLEvent):Void
+	@:noCompletion private function this_onEnterFrame(event:Event):Void
 	{
 		if (!events.contains(true))
 			return;
