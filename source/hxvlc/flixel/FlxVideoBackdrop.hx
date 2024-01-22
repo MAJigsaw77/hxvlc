@@ -51,12 +51,11 @@ class FlxVideoBackdrop extends FlxBackdrop
 	 * Call this function to load a video.
 	 *
 	 * @param location The local filesystem path or the media location url.
-	 * @param repeat The number of times the video should repeat itself.
 	 * @param options The additional options you can add to the LibVLC Media instance.
 	 *
 	 * @return `true` if the video loaded successfully or `false` if there's an error.
 	 */
-	public function load(location:String, repeat:UInt = 0, ?options:Array<String>):Bool
+	public function load(location:String, ?options:Array<String>):Bool
 	{
 		if (bitmap == null)
 			return false;
@@ -71,9 +70,9 @@ class FlxVideoBackdrop extends FlxBackdrop
 		}
 
 		if (FileSystem.exists(Path.join([Sys.getCwd(), location])))
-			return bitmap.load(Path.join([Sys.getCwd(), location]), repeat, options);
+			return bitmap.load(Path.join([Sys.getCwd(), location]), options);
 
-		return bitmap.load(location, repeat, options);
+		return bitmap.load(location, options);
 	}
 
 	/**
