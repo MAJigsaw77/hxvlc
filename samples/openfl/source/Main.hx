@@ -71,11 +71,13 @@ class Main extends Sprite
 			if (contains(video))
 				removeChild(video);
 		});
-		video.onFormatSetup.add(() -> stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame));
+		video.onFormatSetup.add(function()
+		{
+			stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
+		});
+		video.load(Path.join([Sys.getCwd(), 'assets/video.mp4']));
 		addChild(video);
 
-		// These must be called after the child is added (Mostly to have events accuracy).
-		video.load(Path.join([Sys.getCwd(), 'assets/video.mp4']));
 		video.play();
 	}
 
