@@ -253,7 +253,7 @@ class Video extends Bitmap
 	@:noCompletion private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
 	@:noCompletion private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
 
-	@:noCompletion private var events:Array<Bool> = [false, false, false, false, false, false, false, false];
+	@:noCompletion private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false];
 	@:noCompletion private var planes:cpp.RawPointer<cpp.UInt8>;
 	@:noCompletion private var texture:Texture;
 
