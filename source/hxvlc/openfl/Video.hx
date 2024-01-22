@@ -282,8 +282,6 @@ class Video extends Bitmap
 		for (i in 0...8)
 			events[i] = false;
 
-		Lib.current.addEventListener(OpenFLEvent.ENTER_FRAME, this_onEnterFrame);
-
 		Handle.initInstance();
 	}
 
@@ -323,6 +321,8 @@ class Video extends Bitmap
 		if (mediaPlayer == null)
 		{
 			mediaPlayer = LibVLC.media_player_new(Handle.instance);
+
+			Lib.current.addEventListener(OpenFLEvent.ENTER_FRAME, this_onEnterFrame);
 
 			if (eventManager == null)
 			{
