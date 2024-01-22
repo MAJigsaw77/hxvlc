@@ -5,6 +5,9 @@ import hxvlc.libvlc.LibVLC;
 import hxvlc.libvlc.Types;
 import hxvlc.util.Define;
 import lime.utils.Log;
+#if (target.threaded)
+import sys.thread.Thread;
+#end
 #if linux
 import sys.FileSystem;
 #end
@@ -45,12 +48,15 @@ static void logging(void *data, int level, const libvlc_log_t *ctx, const char *
 	vprintf(buffer, args);
 	#endif
 }')
+@:allow(hxvlc.openfl.Video)
 class Handle
 {
 	/**
 	 * The instance of LibVLC that is used globally.
 	 */
 	public static var instance(default, null):cpp.RawPointer<LibVLC_Instance_T>;
+
+	@:noCompletion private static var loadingInstance:Bool = false;
 
 	/**
 	 * Initialize the LibVLC instance.
@@ -61,6 +67,11 @@ class Handle
 	 */
 	public static function init(?options:Array<String>):Bool
 	{
+		if (loadingInstance)
+			return false;
+
+		loadingInstance = true;
+
 		if (instance == null)
 		{
 			if (options == null)
@@ -119,6 +130,8 @@ class Handle
 				else
 					Log.error('Failed to initialize the LibVLC instance');
 
+				loadingInstance = false;
+
 				return false;
 			}
 			else
@@ -131,7 +144,34 @@ class Handle
 			}
 		}
 
+		loadingInstance = false;
+
 		return true;
+	}
+
+	/**
+	 * Initialize the LibVLC instance asynchronously.
+	 *
+	 * @param options The additional options you can add to the LibVLC instance.
+	 * @param finishCallback A callback that is called after it finishes loading
+	 */
+	public static function initAsync(?options:Array<String>, ?finishCallback:Bool->Void)
+	{
+		if (loadingInstance)
+			return;
+
+		#if (target.threaded)
+		Thread.create(function()
+		{
+			var ok:Bool = init(options);
+			if (finishCallback != null)
+				finishCallback(ok);
+		});
+		#else
+		var ok:Bool = init(options);
+		if (finishCallback != null)
+			finishCallback(ok);
+		#end
 	}
 
 	/**

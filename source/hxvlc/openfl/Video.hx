@@ -101,6 +101,7 @@ static void callbacks(const libvlc_event_t *p_event, void *p_data)
 			break;
 	}
 }')
+@:access(hxvlc.libvlc.Handle)
 class Video extends Bitmap
 {
 	/**
@@ -275,6 +276,9 @@ class Video extends Bitmap
 		onMediaChanged = new Event<Void->Void>();
 		onFormatSetup = new Event<Void->Void>();
 		onDisplay = new Event<Void->Void>();
+
+		while (Handle.loadingInstance)
+			Sys.sleep(0.05);
 
 		Handle.init();
 	}
