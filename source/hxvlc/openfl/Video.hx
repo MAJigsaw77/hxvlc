@@ -795,11 +795,6 @@ class Video extends Bitmap
 	}
 
 	// Overrides
-	@:noCompletion private override function __enterFrame(deltaTime:Int):Void
-	{
-		// We override this to make it do nothing.
-	}
-
 	@:noCompletion private override function set_bitmapData(value:BitmapData):BitmapData
 	{
 		return __bitmapData = value;
