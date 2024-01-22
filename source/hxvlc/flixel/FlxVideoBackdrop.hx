@@ -34,10 +34,6 @@ class FlxVideoBackdrop extends FlxBackdrop
 	#if (flixel_addons >= "3.2.1")
  	public function new(repeatAxes = XY, spacingX = 0.0, spacingY = 0.0):Void
 	{
-	#else
-	public function new(repeatAxes = XY, spacingX = 0, spacingY = 0):Void
-	{
-	#end
 		super(repeatAxes, spacingX, spacingY);
 
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
@@ -49,6 +45,21 @@ class FlxVideoBackdrop extends FlxBackdrop
 
 		FlxG.game.addChild(bitmap);
 	}
+	#else
+	public function new(repeatAxes = XY, spacingX = 0, spacingY = 0):Void
+	{
+		super(repeatAxes, spacingX, spacingY);
+
+		makeGraphic(1, 1, FlxColor.TRANSPARENT);
+
+		bitmap = new Video(false);
+		bitmap.onOpening.add(() -> bitmap.role = LibVLC_Role_Game);
+		bitmap.onFormatSetup.add(() -> loadGraphic(bitmap.bitmapData));
+		bitmap.alpha = 0;
+
+		FlxG.game.addChild(bitmap);
+	}
+	#end
 
 	/**
 	 * Call this function to load a video.
