@@ -282,7 +282,7 @@ class Video extends Bitmap
 		for (i in 0...8)
 			events[i] = false;
 
-		Handle.initInstance();
+		Handle.init();
 	}
 
 	/**
