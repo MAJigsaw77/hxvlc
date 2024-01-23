@@ -58,7 +58,7 @@ class Handle
 	@:noCompletion private static var loadingInstance:Bool = false;
 
 	/**
-	 * Initialize the LibVLC instance.
+	 * Initialize the LibVLC instance if isn't already.
 	 *
 	 * @param options The additional options you can add to the LibVLC instance.
 	 *
@@ -148,18 +148,18 @@ class Handle
 		return true;
 	}
 
+	#if (target.threaded)
 	/**
-	 * Initialize the LibVLC instance asynchronously.
+	 * Initialize the LibVLC instance asynchronously if isn't already.
 	 *
 	 * @param options The additional options you can add to the LibVLC instance.
-	 * @param finishCallback A callback that is called after it finishes loading
+	 * @param finishCallback A callback that is called after it finishes loading.
 	 */
 	public static function initAsync(?options:Array<String>, ?finishCallback:Bool->Void):Void
 	{
 		if (loadingInstance)
 			return;
 
-		#if (target.threaded)
 		Thread.create(function()
 		{
 			final ok:Bool = init(options);
@@ -167,13 +167,8 @@ class Handle
 			if (finishCallback != null)
 				finishCallback(ok);
 		});
-		#else
-		final ok:Bool = init(options);
-
-		if (finishCallback != null)
-			finishCallback(ok);
-		#end
 	}
+	#end
 
 	/**
 	 * Frees the LibVLC instance.
