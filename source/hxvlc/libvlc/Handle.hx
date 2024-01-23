@@ -160,12 +160,12 @@ class Handle
 		if (loadingInstance)
 			return;
 
-		Thread.create(function()
+		Thread.create(function():Void
 		{
-			final ok:Bool = init(options);
+			final success:Bool = init(options);
 
 			if (finishCallback != null)
-				finishCallback(ok);
+				finishCallback(success);
 		});
 	}
 	#end
