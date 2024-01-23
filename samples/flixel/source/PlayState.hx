@@ -45,13 +45,19 @@ class PlayState extends FlxState
 		}
 		#end
 
-		var video:FlxVideo = new FlxVideo();
-		video.onEndReached.add(video.dispose);
-		video.load(path);
-
-		new FlxTimer().start(0.001, function(tmr:FlxTimer):Void
+		Handle.initAsync(['--video-filter=sepia', '--sepia-intensity=200'], function(success:Bool):Void
 		{
-			video.play();
+			if (!success)
+				return;
+
+			var video:FlxVideo = new FlxVideo();
+			video.onEndReached.add(video.dispose);
+			video.load(path);
+
+			new FlxTimer().start(0.001, function(tmr:FlxTimer):Void
+			{
+				video.play();
+			});
 		});
 
 		super.create();
