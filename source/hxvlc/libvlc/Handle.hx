@@ -48,7 +48,6 @@ static void logging(void *data, int level, const libvlc_log_t *ctx, const char *
 	vprintf(buffer, args);
 	#endif
 }')
-@:allow(hxvlc.openfl.Video)
 class Handle
 {
 	/**
