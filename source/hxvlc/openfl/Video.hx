@@ -22,7 +22,7 @@ using StringTools;
 @:headerInclude('assert.h')
 @:headerInclude('stdio.h')
 @:cppNamespaceCode('
-static void *lock(void *opaque, void **planes)
+void *lock(void *opaque, void **planes)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
@@ -32,14 +32,14 @@ static void *lock(void *opaque, void **planes)
 	return NULL; /* picture identifier, not needed here */
 }
 
-static void unlock(void *opaque, void *picture, void *const *planes)
+void unlock(void *opaque, void *picture, void *const *planes)
 {
 	#ifdef assert
 	assert(picture == NULL); /* picture identifier, not needed here */
 	#endif
 }
 
-static void display(void *opaque, void *picture)
+void display(void *opaque, void *picture)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
@@ -50,7 +50,7 @@ static void display(void *opaque, void *picture)
 	#endif
 }
 
-static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
+unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(*opaque);
 
@@ -72,7 +72,7 @@ static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsig
 	return 1;
 }
 
-static void callbacks(const libvlc_event_t *p_event, void *p_data)
+void callbacks(const libvlc_event_t *p_event, void *p_data)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(p_data);
 
