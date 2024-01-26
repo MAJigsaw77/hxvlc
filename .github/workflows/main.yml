@@ -22,12 +22,6 @@ jobs:
         uses: actions/checkout@main
         with:
           submodules: true
-          
-      - name: Set up MinGW
-        if: matrix.os == 'windows-latest'
-        uses: egor-tensin/setup-mingw@v2
-        with:
-          platform: x64
 
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
@@ -52,7 +46,7 @@ jobs:
 
       - name: Building Windows
         if: matrix.os == 'windows-latest'
-        run: cd samples/${{matrix.sample}} && haxelib run lime build windows -debug -D HXCPP_MINGW
+        run: cd samples/${{matrix.sample}} && haxelib run lime build windows -debug
 
       - name: Building MacOS
         if: matrix.os == 'macos-latest'
