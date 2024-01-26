@@ -22,7 +22,7 @@ using StringTools;
 @:cppNamespaceCode('
 static void logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
-	#if defined(HX_ANDROID)
+	#ifdef __ANDROID__
 	switch (level)
 	{
 		case LIBVLC_DEBUG:
@@ -37,15 +37,18 @@ static void logging(void *data, int level, const libvlc_log_t *ctx, const char *
 		case LIBVLC_ERROR:
 			__android_log_vprint(ANDROID_LOG_ERROR, "HXVLC", fmt, args);
 			break;
+		default:
+			__android_log_vprint(ANDROID_LOG_VERBOSE, "HXVLC", fmt, args);
+			break;
 	}
 	#else
-	char buffer[1024] = { 0 };
+	char message[512] = { 0 };
 
-	strcpy(buffer, fmt);
+	strcpy(message, fmt);
 
-	strcat(buffer, "\\n");
+	strcat(message, "\\n");
 
-	vprintf(buffer, args);
+	vprintf(message, args);
 	#endif
 }')
 class Handle
