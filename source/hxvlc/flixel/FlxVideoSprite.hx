@@ -44,8 +44,7 @@ class FlxVideoSprite extends FlxSprite
 	 *
 	 * @param location The local filesystem path or the media location url.
 	 * @param repeat The number of times the video should repeat itself.
-	 * @param options The additional options you can add to the LibVLC Media instance.
-	 *
+	 * @param options The additional options you can add to the LibVLC Medi
 	 * @return `true` if the video loaded successfully or `false` if there's an error.
 	 */
 	public function load(location:String, ?options:Array<String>):Bool
