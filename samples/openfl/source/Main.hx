@@ -75,7 +75,7 @@ class Main extends Sprite
 		{
 			stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
 		});
-		video.load(Assets.getBytes('assets/video.mp4'));
+		video.load(Assets.getBytes('assets/video.mp4'), [':sout-all', ':sout-keep']);
 		addChild(video);
 
 		video.play();
