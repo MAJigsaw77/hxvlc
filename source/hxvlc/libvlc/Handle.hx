@@ -65,7 +65,7 @@ class Handle
 	 *
 	 * @param options The additional options you can add to the LibVLC instance.
 	 *
-	 * @return `true` if the instance created successfully or `false` if there's an error of the instance is still loading.
+	 * @return `true` if the instance created successfully or `false` if there's an error or the instance is still loading.
 	 */
 	public static function init(?options:Array<String>):Bool
 	{
@@ -90,7 +90,7 @@ class Handle
 				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath.replace('local/', ''));
 			#end
 
-			var args:cpp.StdVectorConstCharStar = cpp.StdVectorConstCharStar.alloc();
+			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
 
 			args.push_back("--drop-late-frames");
 			args.push_back("--intf=dummy");
