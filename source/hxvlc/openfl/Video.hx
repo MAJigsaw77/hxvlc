@@ -380,11 +380,11 @@ class Video extends Bitmap
 				#if (!windows || (windows && HXCPP_MINGW))
 				final data:BytesData = cast(location, Bytes).getData();
 
-				videoData = cpp.Pointer.ofArray(data).raw;
-				videoSize = data.length;
+				videoData = untyped __cpp__('new unsigned char[{0}]', data.length);
 
-				Log.info(data.length > 0 ? 'The file isn\'t empty.' : 'The file is empty');
-				Log.info('The file size is ${data.length}.');
+				untyped __cpp__('memcpy({0}, {1}, {2}', videoData, cpp.Pointer.ofArray(data).raw, data.length);
+
+				videoSize = data.length;
 
 				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('open'), untyped __cpp__('read'), untyped __cpp__('seek'),
 					untyped __cpp__('close'), untyped __cpp__('this'));
