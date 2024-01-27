@@ -46,7 +46,7 @@ class PlayState extends FlxState
 		}
 		#end
 
-		Handle.initAsync(['--video-filter=sepia', '--sepia-intensity=200'], function(success:Bool):Void
+		Handle.initAsync(['--video-filter=sepia', '--sepia-intensity=153'], function(success:Bool):Void
 		{
 			if (!success)
 				return;
