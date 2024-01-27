@@ -64,14 +64,6 @@ static int seek(void *opaque, uint64_t offset)
 
 	return 0;
 }
-
-static void close(void *opaque)
-{
-	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
-
-	if (self->videoData != NULL)
-		delete[] self->videoData;
-}
 #endif
 
 static void *lock(void *opaque, void **planes)
@@ -516,7 +508,12 @@ class Video extends Bitmap
 		}
 
 		if (mediaItem != null)
+		{
 			LibVLC.media_release(mediaItem);
+
+			if (videoData != null)
+				untyped __cpp__('delete[] {0}', videoData);
+		}
 
 		if (bitmapData != null)
 		{
