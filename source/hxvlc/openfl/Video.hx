@@ -308,7 +308,7 @@ class Video extends Bitmap
 
 	#if (!windows || (windows && HXCPP_MINGW))
 	@:noCompletion private var videoData:cpp.RawPointer<cpp.UInt8>;
-	@:noCompletion private var videoSize:cpp.SizeT = 0;
+	@:noCompletion private var videoSize:cpp.UInt64 = 0;
 	#end
 
 	@:noCompletion private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false];

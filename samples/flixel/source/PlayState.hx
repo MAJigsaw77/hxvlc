@@ -24,7 +24,7 @@ class PlayState extends FlxState
 	{
 		final path:String = 'assets/video.mp4';
 
-		#if mobile
+		/*#if mobile
 		try
 		{
 			if (!FileSystem.exists(path.directory()))
@@ -44,7 +44,7 @@ class PlayState extends FlxState
 			Toast.makeText(e.message, Toast.LENGTH_LONG);
 			#end
 		}
-		#end
+		#end*/
 
 		Handle.initAsync(['--video-filter=sepia', '--sepia-intensity=153'], function(success:Bool):Void
 		{
@@ -53,7 +53,7 @@ class PlayState extends FlxState
 
 			var video:FlxVideo = new FlxVideo();
 			video.onEndReached.add(video.dispose);
-			video.load(path, [':input-repeat=2']);
+			video.load(Assets.getBytes(path), [':input-repeat=2']);
 
 			new FlxTimer().start(0.001, function(tmr:FlxTimer):Void
 			{

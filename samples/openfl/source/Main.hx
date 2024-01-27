@@ -51,7 +51,7 @@ class Main extends Sprite
 		#if mobile
 		copyFiles();
 		#end
-		
+
 		video = new Video();
 		video.onOpening.add(function()
 		{
