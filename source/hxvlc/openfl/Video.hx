@@ -29,7 +29,7 @@ static int open(void *opaque, void **datap, uint64_t *sizep)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
-	(*datap) = self->videoData;
+	(*datap) = opaque;
 	(*sizep) = self->videoSize;
 
 	return 0;
