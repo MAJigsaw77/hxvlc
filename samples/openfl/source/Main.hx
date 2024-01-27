@@ -48,9 +48,9 @@ class Main extends Sprite
 		Lib.current.stage.frameRate = Lib.application.window.displayMode.refreshRate;
 		#end
 
-		#if mobile
+		/*#if mobile
 		copyFiles();
-		#end
+		#end*/
 
 		video = new Video();
 		video.onOpening.add(function()
@@ -75,7 +75,7 @@ class Main extends Sprite
 		{
 			stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
 		});
-		video.load(Path.join([Sys.getCwd(), 'assets/video.mp4']));
+		video.load(Assets.getBytes('assets/video.mp4'));
 		addChild(video);
 
 		video.play();
