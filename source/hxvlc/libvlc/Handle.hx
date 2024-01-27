@@ -65,7 +65,7 @@ class Handle
 	 *
 	 * @param options The additional options you can add to the LibVLC instance.
 	 *
-	 * @return `true` if the instance created successfully or `false` if there's an error.
+	 * @return `true` if the instance created successfully or `false` if there's an error of the instance is still loading.
 	 */
 	public static function init(?options:Array<String>):Bool
 	{
