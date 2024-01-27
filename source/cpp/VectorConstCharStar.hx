@@ -4,10 +4,10 @@ package cpp;
 @:unreflective
 @:structAccess
 @:native('std::vector<const char *>')
-extern class StdVectorConstCharStar
+extern class VectorConstCharStar
 {
 	@:native('std::vector<const char *>')
-	static function alloc():StdVectorConstCharStar;
+	static function alloc():VectorConstCharStar;
 
 	function at(index:Int):ConstCharStar;
 	function back():ConstCharStar;

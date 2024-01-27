@@ -90,7 +90,7 @@ class Handle
 				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath.replace('local/', ''));
 			#end
 
-			var args:cpp.StdVectorConstCharStar = cpp.StdVectorConstCharStar.alloc();
+			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
 
 			args.push_back("--drop-late-frames");
 			args.push_back("--intf=dummy");
