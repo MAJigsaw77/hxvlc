@@ -387,7 +387,7 @@ class Video extends Bitmap
 				videoSize = data.length;
 
 				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('open'), untyped __cpp__('read'), untyped __cpp__('seek'),
-					untyped __cpp__('close'), untyped __cpp__('this'));
+					untyped __cpp__('NULL'), untyped __cpp__('this'));
 				#else
 				return false;
 				#end
