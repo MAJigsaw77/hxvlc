@@ -303,7 +303,7 @@ class Video extends Bitmap
 	@:noCompletion private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
 	@:noCompletion private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
 
-	#if (!windows || (windows && HXCPP_MINGW))
+	#if (!windows || HXCPP_MINGW)
 	@:noCompletion private var videoData:cpp.RawPointer<cpp.UInt8>;
 	@:noCompletion private var videoOffset:cpp.UInt64;
 	@:noCompletion private var videoSize:cpp.UInt64;
@@ -375,7 +375,7 @@ class Video extends Bitmap
 			}
 			else if ((location is Bytes))
 			{
-				#if (!windows || (windows && HXCPP_MINGW))
+				#if (!windows || HXCPP_MINGW)
 				final data:BytesData = cast(location, Bytes).getData();
 
 				videoData = cpp.Pointer.ofArray(data).raw;
@@ -383,7 +383,7 @@ class Video extends Bitmap
 				videoSize = data.length;
 
 				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('open'), untyped __cpp__('read'), untyped __cpp__('seek'),
-					untyped __cpp__('NULL'), untyped __cpp__('this'));
+					null, untyped __cpp__('this'));
 				#else
 				return false;
 				#end
@@ -427,7 +427,7 @@ class Video extends Bitmap
 			}
 
 			LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('lock'), untyped __cpp__('unlock'), untyped __cpp__('display'), untyped __cpp__('this'));
-			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), untyped __cpp__('NULL'));
+			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), null);
 		}
 
 		for (option in options)
@@ -515,7 +515,7 @@ class Video extends Bitmap
 		{
 			LibVLC.media_release(mediaItem);
 
-			#if (!windows || (windows && HXCPP_MINGW))
+			#if (!windows || HXCPP_MINGW)
 			if (videoData != null)
 				untyped __cpp__('delete[] {0}', videoData);
 

@@ -139,7 +139,7 @@ class Handle
 			else
 			{
 				#if HXVLC_LOGGING
-				LibVLC.log_set(instance, untyped __cpp__('logging'), untyped __cpp__('NULL'));
+				LibVLC.log_set(instance, untyped __cpp__('logging'), null);
 				#else
 				Log.info('LibVLC logging is being disabled');
 				#end
