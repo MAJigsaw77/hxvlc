@@ -9,6 +9,7 @@ import haxe.io.Path;
 import haxe.CallStack;
 import haxe.Exception;
 import haxe.Log;
+import hxvlc.libvlc.Handle;
 import hxvlc.openfl.Video;
 import lime.system.System as LimeSystem;
 import openfl.display.FPS;
@@ -51,6 +52,8 @@ class Main extends Sprite
 		/*#if mobile
 		copyFiles();
 		#end*/
+
+		Handle.init(['--video-filter=sepia', '--sepia-intensity=150']);
 
 		video = new Video();
 		video.onOpening.add(function()
