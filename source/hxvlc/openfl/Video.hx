@@ -515,7 +515,7 @@ class Video extends Bitmap
 			if (videoData != null)
 				untyped __cpp__('delete[] {0}', videoData);
 
-			videoOffset = 0
+			videoOffset = 0;
 			videoSize = 0;
 			#end
 		}
