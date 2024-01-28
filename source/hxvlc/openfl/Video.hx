@@ -30,6 +30,7 @@ static int open(void *opaque, void **datap, uint64_t *sizep)
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
 	(*datap) = opaque;
+
 	(*sizep) = self->videoSize;
 
 	return 0;
@@ -42,14 +43,15 @@ static ssize_t read(void *opaque, unsigned char *buf, size_t len)
 	if (self->videoSize == 0)
 		return 0;
 
-	size_t copySize = len < self->videoSize ? len : self->videoSize;
+	uint64_t remaining = (self->videoSize - self->videoOffset);
 
-	memcpy(buf, self->videoData, copySize);
+	uint64_t toRead = len < remaining ? len : remaining;
 
-	self->videoData += copySize;
-	self->videoSize -= copySize;
+	memcpy(buf, &videoInfo->buffer[videoInfo->offset], (size_t) toRead);
 
-	return copySize;
+	self->videoOffset += toRead;
+
+	return (ssize_t) toRead;
 }
 
 static int seek(void *opaque, uint64_t offset)
@@ -59,8 +61,7 @@ static int seek(void *opaque, uint64_t offset)
 	if (offset > self->videoSize)
 		return -1;
 
-	self->videoData += offset;
-	self->videoSize -= offset;
+	self->videoOffset = offset;
 
 	return 0;
 }
@@ -300,7 +301,8 @@ class Video extends Bitmap
 
 	#if (!windows || (windows && HXCPP_MINGW))
 	@:noCompletion private var videoData:cpp.RawPointer<cpp.UInt8>;
-	@:noCompletion private var videoSize:cpp.UInt64 = 0;
+	@:noCompletion private var videoOffset:cpp.UInt64;
+	@:noCompletion private var videoSize:cpp.UInt64;
 	#end
 
 	@:noCompletion private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false];
@@ -372,12 +374,8 @@ class Video extends Bitmap
 				#if (!windows || (windows && HXCPP_MINGW))
 				final data:BytesData = cast(location, Bytes).getData();
 
-				// videoData = untyped __cpp__('new unsigned char[{0}]', data.length);
-
-				// untyped __cpp__('memcpy({0}, {1}, {2})', videoData, cpp.Pointer.ofArray(data).raw, data.length);
-
 				videoData = cpp.Pointer.ofArray(data).raw;
-
+				videoOffset = 0
 				videoSize = data.length;
 
 				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('open'), untyped __cpp__('read'), untyped __cpp__('seek'),
@@ -513,8 +511,13 @@ class Video extends Bitmap
 		{
 			LibVLC.media_release(mediaItem);
 
+			#if (!windows || (windows && HXCPP_MINGW))
 			if (videoData != null)
 				untyped __cpp__('delete[] {0}', videoData);
+
+			videoOffset = 0
+			videoSize = 0;
+			#end
 		}
 
 		if (bitmapData != null)
