@@ -46,20 +46,20 @@ class PlayState extends FlxState
 		}
 		#end*/
 
-		// Handle.initAsync(['--video-filter=sepia', '--sepia-intensity=153'], function(success:Bool):Void
-		// {
-			// if (!success)
-				// return;
+		Handle.initAsync(['--video-filter=sepia', '--sepia-intensity=150'], function(success:Bool):Void
+		{
+			if (!success)
+				return;
 
 			var video:FlxVideo = new FlxVideo();
 			video.onEndReached.add(video.dispose);
-			video.load(Assets.getBytes(path));
+			video.load(Assets.getBytes(path), [':input-repeat=2']);
 
 			new FlxTimer().start(0.001, function(tmr:FlxTimer):Void
 			{
 				video.play();
 			});
-		// });
+		});
 
 		super.create();
 	}
