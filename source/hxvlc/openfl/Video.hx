@@ -375,7 +375,7 @@ class Video extends Bitmap
 				final data:BytesData = cast(location, Bytes).getData();
 
 				videoData = cpp.Pointer.ofArray(data).raw;
-				videoOffset = 0
+				videoOffset = 0;
 				videoSize = data.length;
 
 				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('open'), untyped __cpp__('read'), untyped __cpp__('seek'),
