@@ -372,9 +372,11 @@ class Video extends Bitmap
 				#if (!windows || (windows && HXCPP_MINGW))
 				final data:BytesData = cast(location, Bytes).getData();
 
-				videoData = untyped __cpp__('new unsigned char[{0}]', data.length);
+				// videoData = untyped __cpp__('new unsigned char[{0}]', data.length);
 
-				untyped __cpp__('memcpy({0}, {1}, {2})', videoData, cpp.Pointer.ofArray(data).raw, data.length);
+				// untyped __cpp__('memcpy({0}, {1}, {2})', videoData, cpp.Pointer.ofArray(data).raw, data.length);
+
+				videoData = cpp.Pointer.ofArray(data).raw;
 
 				videoSize = data.length;
 
