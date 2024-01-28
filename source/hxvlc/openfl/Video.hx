@@ -341,7 +341,7 @@ class Video extends Bitmap
 	/**
 	 * Call this function to load a media.
 	 *
-	 * @param location The local filesystem path, the media location url or the bytes for the bitstream input (bitstream input isn't working with msvc compiler).
+	 * @param location The local filesystem path or the media location url or the bitstream input.
 	 * @param options The additional options you can add to the LibVLC Media instance.
 	 *
 	 * @return `true` if the media loaded successfully or `false` if there's an error.

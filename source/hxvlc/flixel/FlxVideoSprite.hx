@@ -44,7 +44,7 @@ class FlxVideoSprite extends FlxSprite
 	/**
 	 * Call this function to load a video.
 	 *
-	 * @param location The local filesystem path or the media location url.
+	 * @param location The local filesystem path or the media location url or the bitstream input.
 	 * @param repeat The number of times the video should repeat itself.
 	 * @param options The additional options you can add to the LibVLC Medi
 	 * @return `true` if the video loaded successfully or `false` if there's an error.

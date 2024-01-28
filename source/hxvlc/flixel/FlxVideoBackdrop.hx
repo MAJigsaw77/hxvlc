@@ -66,7 +66,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 	/**
 	 * Call this function to load a video.
 	 *
-	 * @param location The local filesystem path or the media location url.
+	 * @param location The local filesystem path or the media location url or the bitstream input.
 	 * @param options The additional options you can add to the LibVLC Media instance.
 	 *
 	 * @return `true` if the video loaded successfully or `false` if there's an error.
