@@ -9,7 +9,6 @@ import haxe.io.Path;
 import haxe.CallStack;
 import haxe.Exception;
 import haxe.Log;
-import hxvlc.libvlc.Handle;
 import hxvlc.openfl.Video;
 import lime.system.System as LimeSystem;
 import openfl.display.FPS;
@@ -20,7 +19,6 @@ import openfl.events.UncaughtErrorEvent;
 import openfl.events.Event;
 import openfl.system.System as OpenFLSystem;
 import openfl.utils.Assets;
-import openfl.utils.ByteArray;
 import openfl.Lib;
 import sys.io.File;
 import sys.FileSystem;
@@ -50,12 +48,10 @@ class Main extends Sprite
 		Lib.current.stage.frameRate = Lib.application.window.displayMode.refreshRate;
 		#end
 
-		/*#if mobile
+		#if mobile
 		copyFiles();
-		#end*/
-
-		Handle.init(['--video-filter=sepia', '--sepia-intensity=150']);
-
+		#end
+		
 		video = new Video();
 		video.onOpening.add(function()
 		{
@@ -79,13 +75,10 @@ class Main extends Sprite
 		{
 			stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
 		});
+		video.load(Path.join([Sys.getCwd(), 'assets/video.mp4']));
 		addChild(video);
 
-		Assets.loadBytes('assets/video.mp4').onComplete(function(bytes:ByteArray):Void
-		{
-			video.load(bytes);
-			video.play();
-		});
+		video.play();
 	}
 
 	private inline function onUncaughtError(event:UncaughtErrorEvent):Void
