@@ -47,8 +47,11 @@ class FlxVideo extends Video
 				FlxG.signals.focusLost.add(pause);
 		}
 
-		if (FileSystem.exists(Path.join([Sys.getCwd(), location])))
-			return super.load(Path.join([Sys.getCwd(), location]), options);
+		if (!(location is Bytes))
+		{
+			if (FileSystem.exists(Path.join([Sys.getCwd(), location])))
+				return super.load(Path.join([Sys.getCwd(), location]), options);
+		}
 
 		return super.load(location, options);
 	}

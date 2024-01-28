@@ -63,8 +63,11 @@ class FlxVideoSprite extends FlxSprite
 				FlxG.signals.focusLost.add(pause);
 		}
 
-		if (FileSystem.exists(Path.join([Sys.getCwd(), location])))
-			return bitmap.load(Path.join([Sys.getCwd(), location]), options);
+		if (!(location is Bytes))
+		{
+			if (FileSystem.exists(Path.join([Sys.getCwd(), location])))
+				return bitmap.load(Path.join([Sys.getCwd(), location]), options);
+		}
 
 		return bitmap.load(location, options);
 	}
