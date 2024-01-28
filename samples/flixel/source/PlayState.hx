@@ -12,6 +12,7 @@ import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.libvlc.Handle;
 import openfl.system.System;
 import openfl.utils.Assets;
+import openfl.utils.ByteArray;
 import openfl.Lib;
 import sys.io.File;
 import sys.FileSystem;
@@ -46,14 +47,14 @@ class PlayState extends FlxState
 		}
 		#end*/
 
-		Handle.initAsync(['--video-filter=sepia', '--sepia-intensity=150'], function(success:Bool):Void
-		{
-			if (!success)
-				return;
+		Handle.init(['--video-filter=sepia', '--sepia-intensity=150']);
 
-			var video:FlxVideo = new FlxVideo();
-			video.onEndReached.add(video.dispose);
-			video.load(Assets.getBytes(path), [':input-repeat=2']);
+		var video:FlxVideo = new FlxVideo();
+		video.onEndReached.add(video.dispose);
+
+		Assets.loadBytes('assets/video.mp4').onComplete(function(bytes:ByteArray):Void
+		{
+			video.load(bytes, [':input-repeat=2']);
 
 			new FlxTimer().start(0.001, function(tmr:FlxTimer):Void
 			{
