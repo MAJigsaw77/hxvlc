@@ -40,14 +40,18 @@ static ssize_t read(void *opaque, unsigned char *buf, size_t len)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
-	if (self->videoSize == 0)
+	if (self->videoData == NULL)
+		return -1;
+
+	if (self->videoOffset >= self->videoSize)
 		return 0;
 
-	uint64_t remaining = (self->videoSize - self->videoOffset);
+	uint64_t toRead = len < (self->videoSize - self->videoOffset) ? len : (self->videoSize - self->videoOffset);
 
-	uint64_t toRead = len < remaining ? len : remaining;
+	if (self->videoOffset > self->videoSize - toRead)
+		return -1;
 
-	memcpy(buf, &videoInfo->buffer[videoInfo->offset], (size_t) toRead);
+	memcpy(buf, &self->videoData[self->videoOffset], (size_t) toRead);
 
 	self->videoOffset += toRead;
 
