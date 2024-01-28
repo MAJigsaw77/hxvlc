@@ -20,6 +20,7 @@ import openfl.events.UncaughtErrorEvent;
 import openfl.events.Event;
 import openfl.system.System as OpenFLSystem;
 import openfl.utils.Assets;
+import openfl.utils.ByteArray;
 import openfl.Lib;
 import sys.io.File;
 import sys.FileSystem;
@@ -78,10 +79,13 @@ class Main extends Sprite
 		{
 			stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
 		});
-		video.load(Assets.getBytes('assets/video.mp4'));
 		addChild(video);
 
-		video.play();
+		Assets.loadBytes('assets/video.mp4').onComplete(function(bytes:ByteArray):Void
+		{
+			video.load(bytes);
+			video.play();
+		});
 	}
 
 	private inline function onUncaughtError(event:UncaughtErrorEvent):Void
