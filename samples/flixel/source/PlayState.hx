@@ -46,10 +46,10 @@ class PlayState extends FlxState
 		}
 		#end*/
 
-		Handle.initAsync(['--video-filter=sepia', '--sepia-intensity=153'], function(success:Bool):Void
-		{
-			if (!success)
-				return;
+		// Handle.initAsync(['--video-filter=sepia', '--sepia-intensity=153'], function(success:Bool):Void
+		// {
+			// if (!success)
+				// return;
 
 			var video:FlxVideo = new FlxVideo();
 			video.onEndReached.add(video.dispose);
@@ -59,7 +59,7 @@ class PlayState extends FlxState
 			{
 				video.play();
 			});
-		});
+		// });
 
 		super.create();
 	}
