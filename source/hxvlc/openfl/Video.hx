@@ -3,6 +3,7 @@ package hxvlc.openfl;
 #if (!cpp && !(desktop || mobile))
 #error 'The current target platform isn\'t supported by hxvlc.'
 #end
+import haxe.io.Bytes;
 import haxe.io.BytesData;
 import haxe.io.Path;
 import haxe.Exception;
@@ -10,6 +11,7 @@ import haxe.Int64;
 import hxvlc.libvlc.Handle;
 import hxvlc.libvlc.LibVLC;
 import hxvlc.libvlc.Types;
+import hxvlc.util.OneOfTwo;
 import lime.app.Event;
 import lime.utils.Log;
 import openfl.display.Bitmap;
@@ -22,6 +24,53 @@ using StringTools;
 @:headerInclude('assert.h')
 @:headerInclude('stdio.h')
 @:cppNamespaceCode('
+#ifndef _MSC_VER
+static int open(void *opaque, void **datap, uint64_t *sizep)
+{
+	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
+
+	(*datap) = opaque;
+
+	(*sizep) = self->videoSize;
+
+	return 0;
+}
+
+static ssize_t read(void *opaque, unsigned char *buf, size_t len)
+{
+	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
+
+	if (self->videoData == NULL)
+		return -1;
+
+	if (self->videoOffset >= self->videoSize)
+		return 0;
+
+	uint64_t toRead = len < (self->videoSize - self->videoOffset) ? len : (self->videoSize - self->videoOffset);
+
+	if (self->videoOffset > self->videoSize - toRead)
+		return -1;
+
+	memcpy(buf, &self->videoData[self->videoOffset], (size_t) toRead);
+
+	self->videoOffset += toRead;
+
+	return (ssize_t) toRead;
+}
+
+static int seek(void *opaque, uint64_t offset)
+{
+	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
+
+	if (offset > self->videoSize)
+		return -1;
+
+	self->videoOffset = offset;
+
+	return 0;
+}
+#endif
+
 static void *lock(void *opaque, void **planes)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
@@ -254,6 +303,12 @@ class Video extends Bitmap
 	@:noCompletion private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
 	@:noCompletion private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
 
+	#if (!windows || (windows && HXCPP_MINGW))
+	@:noCompletion private var videoData:cpp.RawPointer<cpp.UInt8>;
+	@:noCompletion private var videoOffset:cpp.UInt64;
+	@:noCompletion private var videoSize:cpp.UInt64;
+	#end
+
 	@:noCompletion private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false];
 	@:noCompletion private var planes:cpp.RawPointer<cpp.UInt8>;
 	@:noCompletion private var texture:Texture;
@@ -286,12 +341,12 @@ class Video extends Bitmap
 	/**
 	 * Call this function to load a media.
 	 *
-	 * @param location The local filesystem path or the media location url.
+	 * @param location The local filesystem path, the media location url or the bytes for the bitstream input (bitstream input isn't working with msvc compiler).
 	 * @param options The additional options you can add to the LibVLC Media instance.
 	 *
 	 * @return `true` if the media loaded successfully or `false` if there's an error.
 	 */
-	public function load(location:String, ?options:Array<String>):Bool
+	public function load(location:OneOfTwo<String, Bytes>, ?options:Array<String>):Bool
 	{
 		if (Handle.instance == null)
 			return false;
@@ -299,18 +354,42 @@ class Video extends Bitmap
 		if (options == null)
 			options = new Array<String>();
 
-		if (location != null && location.length > 0)
+		if (location != null)
 		{
-			if (location.contains('://'))
-				mediaItem = LibVLC.media_new_location(Handle.instance, location);
-			else
+			if ((location is String))
 			{
-				#if windows
-				mediaItem = LibVLC.media_new_path(Handle.instance, Path.normalize(location).split('/').join('\\'));
+				final location:String = cast(location, String);
+
+				if (location.contains('://'))
+					mediaItem = LibVLC.media_new_location(Handle.instance, location);
+				else if (location.length > 0)
+				{
+					#if windows
+					mediaItem = LibVLC.media_new_path(Handle.instance, Path.normalize(location).split('/').join('\\'));
+					#else
+					mediaItem = LibVLC.media_new_path(Handle.instance, Path.normalize(location));
+					#end
+				}
+				else
+					return false;
+			}
+			else if ((location is Bytes))
+			{
+				#if (!windows || (windows && HXCPP_MINGW))
+				final data:BytesData = cast(location, Bytes).getData();
+
+				videoData = cpp.Pointer.ofArray(data).raw;
+				videoOffset = 0;
+				videoSize = data.length;
+
+				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('open'), untyped __cpp__('read'), untyped __cpp__('seek'),
+					untyped __cpp__('NULL'), untyped __cpp__('this'));
 				#else
-				mediaItem = LibVLC.media_new_path(Handle.instance, Path.normalize(location));
+				return false;
 				#end
 			}
+			else
+				return false;
 		}
 		else
 			return false;
@@ -433,7 +512,17 @@ class Video extends Bitmap
 		}
 
 		if (mediaItem != null)
+		{
 			LibVLC.media_release(mediaItem);
+
+			#if (!windows || (windows && HXCPP_MINGW))
+			if (videoData != null)
+				untyped __cpp__('delete[] {0}', videoData);
+
+			videoOffset = 0;
+			videoSize = 0;
+			#end
+		}
 
 		if (bitmapData != null)
 		{
