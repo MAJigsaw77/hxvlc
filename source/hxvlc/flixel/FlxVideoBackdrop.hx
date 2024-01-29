@@ -22,6 +22,11 @@ import sys.FileSystem;
 class FlxVideoBackdrop extends FlxBackdrop
 {
 	/**
+	 * Whether flixel should automatically change the volume according to the flixel sound system current volume.
+	 */
+	public var autoVolumeHandle:Bool = true;
+
+	/**
 	 * The video bitmap.
 	 */
 	public var bitmap(default, null):Video;
@@ -184,7 +189,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 	public override function update(elapsed:Float):Void
 	{
 		#if FLX_SOUND_SYSTEM
-		if (!bitmap.mute)
+		if (autoVolumeHandle && !bitmap.mute)
 		{
 			final curVolume:Int = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * 100);
 

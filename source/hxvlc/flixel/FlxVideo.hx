@@ -17,6 +17,11 @@ class FlxVideo extends Video
 	public var autoResize:Bool = true;
 
 	/**
+	 * Whether flixel should automatically change the volume according to the flixel sound system current volume.
+	 */
+	public var autoVolumeHandle:Bool = true;
+
+	/**
 	 * Initializes a FlxVideo object.
 	 *
 	 * @param smoothing Whether or not the video is smoothed when scaled.
@@ -82,7 +87,7 @@ class FlxVideo extends Video
 		}
 
 		#if FLX_SOUND_SYSTEM
-		if (!mute)
+		if (autoVolumeHandle && !mute)
 		{
 			final curVolume:Int = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * 100);
 
