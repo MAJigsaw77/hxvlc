@@ -4,3 +4,4 @@
   - We only need to figure out how to make extern's bindings.
 - [ ] Fix the plugins being add to the assets manifest on MacOS.
 - [ ] Lua playlist scripts support.
+- [ ] Fix iOS vlc headers being used from both the framework and this lib's ones.
