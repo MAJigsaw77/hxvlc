@@ -431,7 +431,10 @@ class Video extends Bitmap
 		}
 
 		for (option in options)
-			LibVLC.media_add_option(mediaItem, option);
+		{
+			if (option != null)
+				LibVLC.media_add_option(mediaItem, option);
+		}
 
 		LibVLC.media_player_set_media(mediaPlayer, mediaItem);
 

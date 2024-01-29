@@ -119,7 +119,10 @@ class Handle
 			#end
 
 			for (option in options)
-				args.push_back(option);
+			{
+				if (option != null)
+					args.push_back(option);
+			}
 
 			instance = LibVLC.alloc(args.size(), untyped args.data());
 
