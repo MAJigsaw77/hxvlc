@@ -385,6 +385,8 @@ class Video extends Bitmap
 				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('open'), untyped __cpp__('read'), untyped __cpp__('seek'), null,
 					untyped __cpp__('this'));
 				#else
+				Log.warn('Failed to use bitstream input, this doesn\'t work when using MSVC compiler on Windows, use MinGW compiler instead.');
+
 				return false;
 				#end
 			}
