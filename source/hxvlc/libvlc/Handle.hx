@@ -58,7 +58,10 @@ class Handle
 	 */
 	public static var instance(default, null):cpp.RawPointer<LibVLC_Instance_T>;
 
-	@:noCompletion private static var loadingInstance:Bool = false;
+	/**
+	 * Whether the instance is still loading or not.
+	 */
+	public static var loading(default, null):Bool = false;
 
 	/**
 	 * Initialize the LibVLC instance if isn't already.
@@ -69,10 +72,10 @@ class Handle
 	 */
 	public static function init(?options:Array<String>):Bool
 	{
-		if (loadingInstance)
+		if (loading)
 			return false;
 
-		loadingInstance = true;
+		loading = true;
 
 		if (instance == null)
 		{
@@ -135,7 +138,7 @@ class Handle
 				else
 					Log.error('Failed to initialize the LibVLC instance');
 
-				loadingInstance = false;
+				loading = false;
 
 				return false;
 			}
@@ -149,7 +152,7 @@ class Handle
 			}
 		}
 
-		loadingInstance = false;
+		loading = false;
 
 		return true;
 	}
@@ -163,7 +166,7 @@ class Handle
 	 */
 	public static function initAsync(?options:Array<String>, ?finishCallback:Bool->Void):Void
 	{
-		if (loadingInstance)
+		if (loading)
 			return;
 
 		Thread.create(function():Void
