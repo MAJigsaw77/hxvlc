@@ -295,15 +295,15 @@ class Video extends Bitmap
 	 */
 	public var onDisplay(default, null):Event<Void->Void>;
 
-	@:noCompletion private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
-	@:noCompletion private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
-	@:noCompletion private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
-
 	#if (!windows || HXCPP_MINGW)
 	@:noCompletion private var mediaData:cpp.RawPointer<cpp.UInt8>;
 	@:noCompletion private var mediaOffset:cpp.UInt64;
 	@:noCompletion private var mediaSize:cpp.UInt64;
 	#end
+
+	@:noCompletion private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
+	@:noCompletion private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
+	@:noCompletion private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
 
 	@:noCompletion private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false];
 	@:noCompletion private var planes:cpp.RawPointer<cpp.UInt8>;
@@ -374,7 +374,10 @@ class Video extends Bitmap
 				#if (!windows || HXCPP_MINGW)
 				final data:BytesData = cast(location, Bytes).getData();
 
-				mediaData = cpp.Pointer.ofArray(data).raw;
+				mediaData = untyped __cpp__('new unsigned char[{0}]', data.length);
+					
+				untyped __cpp__('memcpy({0}, {1}, {2})', mediaData, cpp.Pointer.ofArray(data).raw, data.length):
+
 				mediaOffset = 0;
 				mediaSize = data.length;
 
