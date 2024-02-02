@@ -295,7 +295,7 @@ class Video extends Bitmap
 	 */
 	public var onDisplay(default, null):Event<Void->Void>;
 
-	#if (!windows || (mingw || HXCPP_MINGW))
+	#if !windows
 	@:noCompletion private var mediaData:cpp.RawPointer<cpp.UInt8>;
 	@:noCompletion private var mediaOffset:cpp.UInt64;
 	@:noCompletion private var mediaSize:cpp.UInt64;
@@ -371,7 +371,7 @@ class Video extends Bitmap
 			}
 			else if ((location is Bytes))
 			{
-				#if (!windows || (mingw || HXCPP_MINGW))
+				#if !windows
 				final data:BytesData = cast(location, Bytes).getData();
 
 				mediaData = untyped __cpp__('new unsigned char[{0}]', data.length);
@@ -519,7 +519,7 @@ class Video extends Bitmap
 		{
 			LibVLC.media_release(mediaItem);
 
-			#if (!windows || (mingw || HXCPP_MINGW))
+			#if !windows
 			if (mediaData != null)
 				untyped __cpp__('delete[] {0}', mediaData);
 
