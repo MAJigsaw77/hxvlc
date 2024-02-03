@@ -4,6 +4,7 @@ package;
 import android.widget.Toast;
 #end
 import flixel.util.FlxTimer;
+import flixel.FlxG;
 import flixel.FlxState;
 import haxe.Exception;
 import hxvlc.flixel.FlxVideo;
@@ -33,7 +34,7 @@ class PlayState extends FlxState
 			video.updateHitbox();
 			video.screenCenter();
 		});
-		video.bitmap.onEndReached.add(video.dispose);
+		video.bitmap.onEndReached.add(video.destroy);
 		video.load('assets/video.mp4', [':input-repeat=2']);
 		add(video);
 
