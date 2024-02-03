@@ -20,7 +20,7 @@
 
 	<!--Window Settings-->
 
-	<window orientation="landscape" width="1280" height="720" fps="60" background="#FFA500" hardware="true" vsync="false" fullscreen="false" resizable="true" />
+	<window orientation="landscape" width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false" fullscreen="false" resizable="true" />
 
 	<window allow-high-dpi="true" unless="web" />
 	

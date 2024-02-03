@@ -5,7 +5,6 @@ package hxvlc.flixel;
 #error 'Your project must use flixel-addons in order to use this class.'
 #end
 import flixel.addons.display.FlxBackdrop;
-import hxvlc.util.OneOfThree;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 import flixel.FlxG;
@@ -14,6 +13,7 @@ import haxe.io.Bytes;
 import haxe.io.Path;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Video;
+import hxvlc.util.OneOfThree;
 import sys.FileSystem;
 
 /**

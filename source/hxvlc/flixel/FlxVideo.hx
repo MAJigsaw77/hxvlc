@@ -1,12 +1,12 @@
 package hxvlc.flixel;
 
 #if flixel
-import hxvlc.util.OneOfThree;
 import flixel.FlxG;
 import haxe.io.Bytes;
 import haxe.io.Path;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Video;
+import hxvlc.util.OneOfThree;
 import sys.FileSystem;
 
 class FlxVideo extends Video

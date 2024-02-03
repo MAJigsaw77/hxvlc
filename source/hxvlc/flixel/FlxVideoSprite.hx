@@ -1,7 +1,6 @@
 package hxvlc.flixel;
 
 #if flixel
-import hxvlc.util.OneOfThree;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -9,6 +8,7 @@ import haxe.io.Bytes;
 import haxe.io.Path;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Video;
+import hxvlc.util.OneOfThree;
 import sys.FileSystem;
 
 /**
