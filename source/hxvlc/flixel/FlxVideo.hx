@@ -1,11 +1,11 @@
 package hxvlc.flixel;
 
 #if flixel
-import hxvlc.util.OneOfTwo;
+import hxvlc.util.OneOfThree;
 import flixel.FlxG;
 import haxe.io.Bytes;
 import haxe.io.Path;
-import hxvlc.libvlc.Types;
+import hxvlc.externs.Types;
 import hxvlc.openfl.Video;
 import sys.FileSystem;
 
@@ -41,7 +41,7 @@ class FlxVideo extends Video
 		FlxG.addChildBelowMouse(this);
 	}
 
-	public override function load(location:OneOfTwo<String, Int, Bytes>, ?options:Array<String>):Bool
+	public override function load(location:OneOfThree<String, Int, Bytes>, ?options:Array<String>):Bool
 	{
 		if (FlxG.autoPause)
 		{

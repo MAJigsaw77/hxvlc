@@ -1,13 +1,13 @@
 package hxvlc.flixel;
 
 #if flixel
-import hxvlc.util.OneOfTwo;
+import hxvlc.util.OneOfThree;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import haxe.io.Bytes;
 import haxe.io.Path;
-import hxvlc.libvlc.Types;
+import hxvlc.externs.Types;
 import hxvlc.openfl.Video;
 import sys.FileSystem;
 
@@ -54,7 +54,7 @@ class FlxVideoSprite extends FlxSprite
 	 *
 	 * @return `true` if the video loaded successfully or `false` if there's an error.
 	 */
-	public function load(location:OneOfTwo<String, Int, Bytes>, ?options:Array<String>):Bool
+	public function load(location:OneOfThree<String, Int, Bytes>, ?options:Array<String>):Bool
 	{
 		if (bitmap == null)
 			return false;

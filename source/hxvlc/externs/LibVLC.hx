@@ -3,7 +3,7 @@ package hxvlc.libvlc;
 #if !cpp
 #error 'LibVLC supports only C++ target platforms.'
 #end
-import hxvlc.libvlc.Types;
+import hxvlc.externs.Types;
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')

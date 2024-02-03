@@ -8,10 +8,10 @@ import haxe.io.BytesData;
 import haxe.io.Path;
 import haxe.Exception;
 import haxe.Int64;
-import hxvlc.libvlc.Handle;
-import hxvlc.libvlc.LibVLC;
-import hxvlc.libvlc.Types;
-import hxvlc.util.OneOfTwo;
+import hxvlc.util.Handle;
+import hxvlc.externs.LibVLC;
+import hxvlc.externs.Types;
+import hxvlc.util.OneOfThree;
 import lime.app.Event;
 import lime.utils.Log;
 import openfl.display.Bitmap;
@@ -342,7 +342,7 @@ class Video extends Bitmap
 	 *
 	 * @return `true` if the media loaded successfully or `false` if there's an error.
 	 */
-	public function load(location:OneOfTwo<String, Int, Bytes>, ?options:Array<String>):Bool
+	public function load(location:OneOfThree<String, Int, Bytes>, ?options:Array<String>):Bool
 	{
 		if (Handle.instance == null)
 			return false;

@@ -1,8 +1,8 @@
 package hxvlc.libvlc;
 
 import haxe.io.Path;
-import hxvlc.libvlc.LibVLC;
-import hxvlc.libvlc.Types;
+import hxvlc.externs.LibVLC;
+import hxvlc.externs.Types;
 import hxvlc.util.Define;
 import lime.utils.Log;
 #if (target.threaded)
