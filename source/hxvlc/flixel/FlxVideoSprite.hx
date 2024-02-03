@@ -49,12 +49,12 @@ class FlxVideoSprite extends FlxSprite
 	/**
 	 * Call this function to load a video.
 	 *
-	 * @param location The local filesystem path or the media location url or the bitstream input.
-	 * @param repeat The number of times the video should repeat itself.
-	 * @param options The additional options you can add to the LibVLC Medi
+	 * @param location The local filesystem path or the media location url or the id of a open file descriptor or the bitstream input.
+	 * @param options The additional options you can add to the LibVLC Media.
+	 *
 	 * @return `true` if the video loaded successfully or `false` if there's an error.
 	 */
-	public function load(location:OneOfTwo<String, Bytes>, ?options:Array<String>):Bool
+	public function load(location:OneOfTwo<String, Int, Bytes>, ?options:Array<String>):Bool
 	{
 		if (bitmap == null)
 			return false;
@@ -68,7 +68,7 @@ class FlxVideoSprite extends FlxSprite
 				FlxG.signals.focusLost.add(pause);
 		}
 
-		if (!(location is Bytes))
+		if (!(location is Int) && !(location is Bytes))
 		{
 			if (FileSystem.exists(Path.join([Sys.getCwd(), location])))
 				return bitmap.load(Path.join([Sys.getCwd(), location]), options);

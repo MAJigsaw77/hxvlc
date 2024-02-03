@@ -41,7 +41,7 @@ class FlxVideo extends Video
 		FlxG.addChildBelowMouse(this);
 	}
 
-	public override function load(location:OneOfTwo<String, Bytes>, ?options:Array<String>):Bool
+	public override function load(location:OneOfTwo<String, Int, Bytes>, ?options:Array<String>):Bool
 	{
 		if (FlxG.autoPause)
 		{
@@ -52,7 +52,7 @@ class FlxVideo extends Video
 				FlxG.signals.focusLost.add(pause);
 		}
 
-		if (!(location is Bytes))
+		if (!(location is Int) && !(location is Bytes))
 		{
 			if (FileSystem.exists(Path.join([Sys.getCwd(), location])))
 				return super.load(Path.join([Sys.getCwd(), location]), options);
