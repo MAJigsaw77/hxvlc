@@ -5,14 +5,14 @@ package hxvlc.flixel;
 #error 'Your project must use flixel-addons in order to use this class.'
 #end
 import flixel.addons.display.FlxBackdrop;
-import hxvlc.util.OneOfTwo;
+import hxvlc.util.OneOfThree;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import haxe.io.Bytes;
 import haxe.io.Path;
-import hxvlc.libvlc.Types;
+import hxvlc.externs.Types;
 import hxvlc.openfl.Video;
 import sys.FileSystem;
 
@@ -71,12 +71,12 @@ class FlxVideoBackdrop extends FlxBackdrop
 	/**
 	 * Call this function to load a video.
 	 *
-	 * @param location The local filesystem path or the media location url or the bitstream input.
+	 * @param location The local filesystem path or the media location url or the id of a open file descriptor or the bitstream input.
 	 * @param options The additional options you can add to the LibVLC Media instance.
 	 *
 	 * @return `true` if the video loaded successfully or `false` if there's an error.
 	 */
-	public function load(location:OneOfTwo<String, Bytes>, ?options:Array<String>):Bool
+	public function load(location:OneOfThree<String, Int, Bytes>, ?options:Array<String>):Bool
 	{
 		if (bitmap == null)
 			return false;
@@ -90,7 +90,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 				FlxG.signals.focusLost.add(pause);
 		}
 
-		if (!(location is Bytes))
+		if (!(location is Int) && !(location is Bytes))
 		{
 			if (FileSystem.exists(Path.join([Sys.getCwd(), location])))
 				return bitmap.load(Path.join([Sys.getCwd(), location]), options);

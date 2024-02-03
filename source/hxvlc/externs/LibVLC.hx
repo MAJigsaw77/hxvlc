@@ -1,9 +1,9 @@
-package hxvlc.libvlc;
+package hxvlc.externs;
 
 #if !cpp
 #error 'LibVLC supports only C++ target platforms.'
 #end
-import hxvlc.libvlc.Types;
+import hxvlc.externs.Types;
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
@@ -44,6 +44,9 @@ extern class LibVLC
 
 	@:native('libvlc_media_new_path')
 	static function media_new_path(p_instance:cpp.RawPointer<LibVLC_Instance_T>, path:cpp.ConstCharStar):cpp.RawPointer<LibVLC_Media_T>;
+
+	@:native('libvlc_media_new_fd')
+	static function media_new_fd(p_instance:cpp.RawPointer<LibVLC_Instance_T>, fd:Int):cpp.RawPointer<LibVLC_Media_T>;
 
 	#if !windows
 	@:native('libvlc_media_new_callbacks')
