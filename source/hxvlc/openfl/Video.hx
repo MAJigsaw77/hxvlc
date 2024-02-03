@@ -841,8 +841,8 @@ class Video extends Bitmap
 			{
 				try
 				{
-					if (stage != null && stage.context3D != null)
-						texture = stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
+					if (Lib.current.stage != null && Lib.current.stage.context3D != null)
+						texture = Lib.current.stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
 					else
 					{
 						Log.warn('Failed to use texture, resorting to CPU based image');
