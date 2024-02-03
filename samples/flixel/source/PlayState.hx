@@ -22,20 +22,45 @@ class PlayState extends FlxState
 {
 	override function create():Void
 	{
-		final path:String = 'assets/video.mp4';
-
 		#if mobile
+		copyFiles();
+		#end
+
+		var video:FlxVideoSprite = new FlxVideoSprite(0, 0);
+		video.bitmap.onFormatSetup.add(function():Void
+		{
+			video.setGraphicSize(FlxG.width, FlxG.height);
+			video.updateHitbox();
+			video.screenCenter();
+		});
+		video.bitmap.onEndReached.add(video.dispose);
+		video.load('assets/video.mp4', [':input-repeat=2']);
+		add(video);
+
+		new FlxTimer().start(0.001, function(tmr:FlxTimer):Void
+		{
+			video.play();
+		});
+
+		super.create();
+	}
+
+	#if mobile
+	private inline function copyFiles():Void
+	{
 		try
 		{
-			if (!FileSystem.exists(path.directory()))
+			final path:String = 'assets/video.mp4';
+
+			if (!FileSystem.exists(Path.directory(path)))
 			{
-				FileSystem.createDirectory(path.directory());
+				FileSystem.createDirectory(Path.directory(path));
 
 				File.saveBytes(path, Assets.getBytes(path));
 			}
 			else if (!FileSystem.exists(path))
 				File.saveBytes(path, Assets.getBytes(path));
-			
+
 			System.gc();
 		}
 		catch (e:Exception)
@@ -44,23 +69,6 @@ class PlayState extends FlxState
 			Toast.makeText(e.message, Toast.LENGTH_LONG);
 			#end
 		}
-		#end
-
-		Handle.initAsync(['--video-filter=sepia', '--sepia-intensity=153'], function(success:Bool):Void
-		{
-			if (!success)
-				return;
-
-			var video:FlxVideo = new FlxVideo();
-			video.onEndReached.add(video.dispose);
-			video.load(path, [':input-repeat=2']);
-
-			new FlxTimer().start(0.001, function(tmr:FlxTimer):Void
-			{
-				video.play();
-			});
-		});
-
-		super.create();
 	}
+	#end
 }
