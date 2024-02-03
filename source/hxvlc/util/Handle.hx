@@ -1,4 +1,4 @@
-package hxvlc.libvlc;
+package hxvlc.util;
 
 import haxe.io.Path;
 import hxvlc.externs.LibVLC;

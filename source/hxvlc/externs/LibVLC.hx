@@ -1,4 +1,4 @@
-package hxvlc.libvlc;
+package hxvlc.externs;
 
 #if !cpp
 #error 'LibVLC supports only C++ target platforms.'
