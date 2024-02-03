@@ -337,12 +337,12 @@ class Video extends Bitmap
 	/**
 	 * Call this function to load a media.
 	 *
-	 * @param location The local filesystem path or the media location url or the bitstream input.
+	 * @param location The local filesystem path or the media location url or the id of a open file descriptor or the bitstream input.
 	 * @param options The additional options you can add to the LibVLC Media instance.
 	 *
 	 * @return `true` if the media loaded successfully or `false` if there's an error.
 	 */
-	public function load(location:OneOfTwo<String, Bytes>, ?options:Array<String>):Bool
+	public function load(location:OneOfTwo<String, Int, Bytes>, ?options:Array<String>):Bool
 	{
 		if (Handle.instance == null)
 			return false;
@@ -369,9 +369,17 @@ class Video extends Bitmap
 				else
 					return false;
 			}
+			else if ((location is Int))
+			{
+				mediaItem = LibVLC.media_new_fd(Handle.instance, cast(location, Int));
+			}
 			else if ((location is Bytes))
 			{
-				#if !windows
+				#if windows
+				Log.warn('Failed to use bitstream input, this doesn\'t work when compiling on Windows.');
+
+				return false;
+				#else
 				final data:BytesData = cast(location, Bytes).getData();
 
 				mediaData = untyped __cpp__('new unsigned char[{0}]', data.length);
@@ -380,13 +388,8 @@ class Video extends Bitmap
 
 				mediaOffset = 0;
 				mediaSize = data.length;
-
 				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('open'), untyped __cpp__('read'), untyped __cpp__('seek'), null,
 					untyped __cpp__('this'));
-				#else
-				Log.warn('Failed to use bitstream input, this doesn\'t work when compiling on Windows.');
-
-				return false;
 				#end
 			}
 			else
@@ -443,7 +446,7 @@ class Video extends Bitmap
 	}
 
 	/**
-	 * Call this function to play a media player.
+	 * Call this function to initiate playback with the media player.
 	 *
 	 * @return `true` if the media player started playing or `false` if there's an error.
 	 */
