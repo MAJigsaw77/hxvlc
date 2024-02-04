@@ -295,7 +295,7 @@ class Video extends Bitmap
 	 */
 	public var onDisplay(default, null):Event<Void->Void>;
 
-	#if !windows
+	#if (mingw || !windows)
 	@:noCompletion private var mediaData:cpp.RawPointer<cpp.UInt8>;
 	@:noCompletion private var mediaOffset:cpp.UInt64;
 	@:noCompletion private var mediaSize:cpp.UInt64;
@@ -522,7 +522,7 @@ class Video extends Bitmap
 		{
 			LibVLC.media_release(mediaItem);
 
-			#if !windows
+			#if (mingw || !windows)
 			if (mediaData != null)
 				untyped __cpp__('delete[] {0}', mediaData);
 
