@@ -376,7 +376,7 @@ class Video extends Bitmap
 			else if ((location is Bytes))
 			{
 				#if (!mingw && windows)
-				Log.warn('Failed to use bitstream input, this doesn\'t work when compiling on Windows.');
+				Log.warn('Failed to use bitstream input, this doesn\'t work when compiling on Windows with MSVC compiler, use MinGW compiler instead.');
 
 				return false;
 				#else
