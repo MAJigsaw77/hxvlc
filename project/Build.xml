@@ -18,8 +18,8 @@
 		<vflag name="-rpath" value="@executable_path/lib/" if="macos" />
 
 		<section if="windows">
-			<lib name="${haxelib:hxvlc}/project/vlc/lib/Windows/libvlc.lib" />
-			<lib name="${haxelib:hxvlc}/project/vlc/lib/Windows/libvlccore.lib" />
+			<lib name="${haxelib:hxvlc}/project/vlc/lib/Windows/libvlc.lib" if="HXCPP_M64" />
+			<lib name="${haxelib:hxvlc}/project/vlc/lib/Windows/libvlccore.lib" if="HXCPP_M64" />
 		</section>
 
 		<section if="macos">
