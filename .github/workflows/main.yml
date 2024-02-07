@@ -110,9 +110,7 @@ jobs:
           haxelib install extension-androidtools --quiet
 
       - name: Setup Git hxcpp
-        run: |
-          haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp.git --quiet
-          haxelib run lime rebuild hxcpp
+        run: haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp.git --quiet && haxelib run lime rebuild hxcpp
 
       - name: List of installed Haxe Libraries
         run: haxelib list
