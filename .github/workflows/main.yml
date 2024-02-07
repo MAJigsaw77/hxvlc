@@ -107,7 +107,7 @@ jobs:
           haxelib install flixel --quiet
           haxelib install flixel-addons --quiet
           haxelib dev hxvlc .
-          haxelib git extension-androidtools https://github.com/MAJigsaw77/extension-androidtools.git --quiet
+          haxelib install extension-androidtools --quiet
 
       - name: Setup Git hxcpp
         run: |
