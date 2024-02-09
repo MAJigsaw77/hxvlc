@@ -402,11 +402,11 @@ class Video extends Bitmap
 		{
 			mediaPlayer = LibVLC.media_player_new(Handle.instance);
 
+			Lib.current.addEventListener(openfl.events.Event.ENTER_FRAME, this_onEnterFrame);
+
 			if (eventManager == null)
 			{
 				eventManager = LibVLC.media_player_event_manager(mediaPlayer);
-
-				Lib.current.addEventListener(openfl.events.Event.ENTER_FRAME, this_onEnterFrame);
 
 				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerOpening)');
@@ -508,14 +508,14 @@ class Video extends Bitmap
 			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('callbacks'), untyped __cpp__('this'));
 			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('callbacks'), untyped __cpp__('this'));
 			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-
-			Lib.current.removeEventListener(openfl.events.Event.ENTER_FRAME, this_onEnterFrame);
 		}
 
 		if (mediaPlayer != null)
 		{
 			LibVLC.media_player_stop(mediaPlayer);
 			LibVLC.media_player_release(mediaPlayer);
+
+			Lib.current.removeEventListener(openfl.events.Event.ENTER_FRAME, this_onEnterFrame);
 		}
 
 		if (mediaItem != null)
