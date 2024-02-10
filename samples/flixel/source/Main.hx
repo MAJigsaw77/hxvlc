@@ -11,6 +11,7 @@ import haxe.CallStack;
 import haxe.Exception;
 import haxe.Log;
 import lime.system.System;
+import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.errors.Error;
 import openfl.events.ErrorEvent;
