@@ -4,6 +4,7 @@ package;
 import android.content.Context;
 import android.os.Build;
 #end
+import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxGame;
 import haxe.io.Path;
