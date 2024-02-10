@@ -23,6 +23,8 @@ using StringTools;
 
 class Main extends Sprite
 {
+	public static var fps:FPS;
+
 	public function new():Void
 	{
 		super();
@@ -38,15 +40,14 @@ class Main extends Sprite
 
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
 
-		var refreshRate:Int = Lib.application.window.displayMode.refreshRate;
+		FlxG.signals.gameResized.add(onResizeGame);
 
-		#if linux
-		refreshRate = 60;
-		#end
+		final refreshRate:Int = #if linux 60 #else Lib.application.window.displayMode.refreshRate #end;
 
 		addChild(new FlxGame(1280, 720, PlayState, refreshRate, refreshRate));
 
-		FlxG.stage.frameRate = refreshRate;
+		fps = new FPS(10, 10, FlxColor.LIME);
+		FlxG.game.addChild(fps);
 	}
 
 	private inline function onUncaughtError(event:UncaughtErrorEvent):Void
@@ -95,5 +96,13 @@ class Main extends Sprite
 		Log.trace(msg, null);
 		Lib.application.window.alert(msg, 'Error!');
 		System.exit(1);
+	}
+
+	private inline function onResizeGame(width:Int, height:Int):Void
+	{
+		final scale:Float = Math.min(FlxG.stage.stageWidth / FlxG.width, FlxG.stage.stageHeight / FlxG.height);
+
+		if (fps != null)
+			fps.scaleX = fps.scaleY = (scale > 1 ? scale : 1);
 	}
 }
