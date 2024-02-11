@@ -48,7 +48,7 @@ class Main extends Sprite
 
 		addChild(new FlxGame(1280, 720, PlayState, refreshRate, refreshRate));
 
-		fps = new FPS(10, 10, FlxColor.LIME);
+		fps = new FPS(10, 10, FlxColor.GREEN);
 		FlxG.game.addChild(fps);
 	}
 
