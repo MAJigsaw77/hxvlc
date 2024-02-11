@@ -160,14 +160,19 @@ class Video extends Bitmap
 	public var formatHeight(default, null):Int = 0;
 
 	/**
+	 * The media resource locator.
+	 */
+	public var mrl(get, never):String;
+
+	/**
 	 * The media's duration.
 	 */
 	public var duration(get, never):Int64;
 
 	/**
-	 * The media resource locator.
+	 * Whether the media player is playing or not.
 	 */
-	public var mrl(get, never):String;
+	public var isPlaying(get, never):Bool;
 
 	/**
 	 * The media player's length in milliseconds.
@@ -241,11 +246,6 @@ class Video extends Bitmap
 	 * The audio delay in microseconds.
 	 */
 	public var delay(get, set):Int64;
-
-	/**
-	 * Whether the media player is playing or not.
-	 */
-	public var isPlaying(get, never):Bool;
 
 	/**
 	 * The media player's role.
@@ -556,6 +556,14 @@ class Video extends Bitmap
 	}
 
 	// Get & Set Methods
+	@:noCompletion private function get_mrl():String
+	{
+		if (mediaItem != null)
+			return cast(LibVLC.media_get_mrl(mediaItem), String);
+
+		return null;
+	}
+
 	@:noCompletion private function get_duration():Int64
 	{
 		if (mediaItem != null)
@@ -564,12 +572,12 @@ class Video extends Bitmap
 		return -1;
 	}
 
-	@:noCompletion private function get_mrl():String
+	@:noCompletion private function get_isPlaying():Bool
 	{
-		if (mediaItem != null)
-			return cast(LibVLC.media_get_mrl(mediaItem), String);
+		if (mediaPlayer != null)
+			return LibVLC.media_player_is_playing(mediaPlayer) != 0;
 
-		return null;
+		return false;
 	}
 
 	@:noCompletion private function get_length():Int64
@@ -661,14 +669,6 @@ class Video extends Bitmap
 		}
 
 		return value;
-	}
-
-	@:noCompletion private function get_isPlaying():Bool
-	{
-		if (mediaPlayer != null)
-			return LibVLC.media_player_is_playing(mediaPlayer) != 0;
-
-		return false;
 	}
 
 	@:noCompletion private function get_isSeekable():Bool
