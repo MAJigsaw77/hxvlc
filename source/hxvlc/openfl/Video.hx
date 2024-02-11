@@ -878,17 +878,14 @@ class Video extends Bitmap
 		{
 			events[8] = false;
 
-			if (__renderable)
+			if (__renderable && planes != null)
 			{
-				if (planes != null)
-				{
-					final planesData:BytesData = cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4);
+				final planesData:BytesData = cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4);
 
-					if (texture != null)
-						texture.uploadFromByteArray(planesData, 0);
-					else if (bitmapData != null)
-						bitmapData.setPixels(bitmapData.rect, planesData);
-				}
+				if (texture != null)
+					texture.uploadFromByteArray(planesData, 0);
+				else if (bitmapData != null && bitmapData.image != null)
+					bitmapData.setPixels(bitmapData.rect, planesData);
 
 				__setRenderDirty();
 			}
