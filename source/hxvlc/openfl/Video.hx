@@ -21,6 +21,11 @@ import openfl.Lib;
 
 using StringTools;
 
+/**
+ * This class represents a video player that utilizes libVLC to play videos.
+ *
+ * It extends a Bitmap object to provide a seamless integration with existing display objects.
+ */
 @:headerInclude('assert.h')
 @:headerInclude('stdio.h')
 @:cppNamespaceCode('
