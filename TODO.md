@@ -1,7 +1,5 @@
 - [ ] [WebAssembly](https://webassembly.org) Support.
   - We need to figure out how to build [this](https://code.videolan.org/b1ue/vlc.js) and done!
-- [ ] [HashLink](https://hashlink.haxe.org/) Support.
-  - We only need to figure out how to make extern's bindings.
 - [ ] Fix the plugins being add to the assets manifest on MacOS.
 - [ ] Lua playlist scripts support.
-- [ ] Fix iOS vlc headers being used from both the framework and this lib's ones.
+- [ ] Fix iOS libVLC headers being used from both the framework and this lib's ones.
