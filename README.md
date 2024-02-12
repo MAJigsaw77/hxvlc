@@ -15,7 +15,7 @@ A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback usin
 * iOS **(arm64 and simulator only)**.
 
 > [!CAUTION]
-> These platforms needs be to compiled with `C++` using [Lime](https://lime.openfl.org) in order to work.
+> These platforms needs be to compiled targeting `C++` (not Hashlink or Neko) using [Lime](https://lime.openfl.org) in order to work.
 
 ## Instructions
 
