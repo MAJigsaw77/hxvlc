@@ -10,7 +10,7 @@
 		"libvlc",
 		"haxeflixel"
 	],
-	"description": "A Haxe/OpenFL library for @:native video playback using LibVLC.",
+	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
 	"version": "1.2.0",
 	"releasenote": "Improvements and some tiny API changes.",
 	"contributors": [
