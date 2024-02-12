@@ -223,6 +223,13 @@ class Video extends Bitmap
 
 	/**
 	 * The audio's mute status.
+	 *
+	 * @warning This function does not always work. If there is no active audio
+	 * playback stream, the mute status might not be available. If digital
+	 * pass-through (S/PDIF, HDMI...) is in use, muting may be unapplicable. Also
+	 * some audio output plugins do not support muting at all.
+
+	 * @note To force silent playback, disable all audio tracks. This is more efficient and reliable than mute.
 	 */
 	public var mute(get, set):Bool;
 
