@@ -228,7 +228,7 @@ class Video extends Bitmap
 	 * playback stream, the mute status might not be available. If digital
 	 * pass-through (S/PDIF, HDMI...) is in use, muting may be unapplicable. Also
 	 * some audio output plugins do not support muting at all.
-
+	 *
 	 * @note To force silent playback, disable all audio tracks. This is more efficient and reliable than mute.
 	 */
 	public var mute(get, set):Bool;
@@ -305,18 +305,33 @@ class Video extends Bitmap
 	public var onDisplay(default, null):Event<Void->Void>;
 
 	#if (mingw || !windows)
-	@:noCompletion private var mediaData:cpp.RawPointer<cpp.UInt8>;
-	@:noCompletion private var mediaOffset:cpp.UInt64;
-	@:noCompletion private var mediaSize:cpp.UInt64;
+	@:noCompletion
+	private var mediaData:cpp.RawPointer<cpp.UInt8>;
+
+	@:noCompletion
+	private var mediaOffset:cpp.UInt64;
+
+	@:noCompletion
+	private var mediaSize:cpp.UInt64;
 	#end
 
-	@:noCompletion private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
-	@:noCompletion private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
-	@:noCompletion private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
+	@:noCompletion
+	private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
 
-	@:noCompletion private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false];
-	@:noCompletion private var planes:cpp.RawPointer<cpp.UInt8>;
-	@:noCompletion private var texture:Texture;
+	@:noCompletion
+	private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
+
+	@:noCompletion
+	private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
+
+	@:noCompletion
+	private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false];
+
+	@:noCompletion
+	private var planes:cpp.RawPointer<cpp.UInt8>;
+
+	@:noCompletion
+	private var texture:Texture;
 
 	/**
 	 * Initializes a Video object.
@@ -563,7 +578,8 @@ class Video extends Bitmap
 	}
 
 	// Get & Set Methods
-	@:noCompletion private function get_mrl():String
+	@:noCompletion
+	private function get_mrl():String
 	{
 		if (mediaItem != null)
 			return cast(LibVLC.media_get_mrl(mediaItem), String);
@@ -571,7 +587,8 @@ class Video extends Bitmap
 		return null;
 	}
 
-	@:noCompletion private function get_duration():Int64
+	@:noCompletion
+	private function get_duration():Int64
 	{
 		if (mediaItem != null)
 			return LibVLC.media_get_duration(mediaItem);
@@ -579,7 +596,8 @@ class Video extends Bitmap
 		return -1;
 	}
 
-	@:noCompletion private function get_isPlaying():Bool
+	@:noCompletion
+	private function get_isPlaying():Bool
 	{
 		if (mediaPlayer != null)
 			return LibVLC.media_player_is_playing(mediaPlayer) != 0;
@@ -587,7 +605,8 @@ class Video extends Bitmap
 		return false;
 	}
 
-	@:noCompletion private function get_length():Int64
+	@:noCompletion
+	private function get_length():Int64
 	{
 		if (mediaPlayer != null)
 			return LibVLC.media_player_get_length(mediaPlayer);
@@ -595,7 +614,8 @@ class Video extends Bitmap
 		return -1;
 	}
 
-	@:noCompletion private function get_time():Int64
+	@:noCompletion
+	private function get_time():Int64
 	{
 		if (mediaPlayer != null)
 			return LibVLC.media_player_get_time(mediaPlayer);
@@ -603,7 +623,8 @@ class Video extends Bitmap
 		return -1;
 	}
 
-	@:noCompletion private function set_time(value:Int64):Int64
+	@:noCompletion
+	private function set_time(value:Int64):Int64
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_set_time(mediaPlayer, value);
@@ -611,7 +632,8 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion private function get_position():Single
+	@:noCompletion
+	private function get_position():Single
 	{
 		if (mediaPlayer != null)
 			return LibVLC.media_player_get_position(mediaPlayer);
@@ -619,7 +641,8 @@ class Video extends Bitmap
 		return -1;
 	}
 
-	@:noCompletion private function set_position(value:Single):Single
+	@:noCompletion
+	private function set_position(value:Single):Single
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_set_position(mediaPlayer, value);
@@ -627,7 +650,8 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion private function get_chapter():Int
+	@:noCompletion
+	private function get_chapter():Int
 	{
 		if (mediaPlayer != null)
 			return LibVLC.media_player_get_chapter(mediaPlayer);
@@ -635,7 +659,8 @@ class Video extends Bitmap
 		return -1;
 	}
 
-	@:noCompletion private function set_chapter(value:Int):Int
+	@:noCompletion
+	private function set_chapter(value:Int):Int
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_set_chapter(mediaPlayer, value);
@@ -643,7 +668,8 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion private function get_chapterCount():Int
+	@:noCompletion
+	private function get_chapterCount():Int
 	{
 		if (mediaItem != null)
 			return LibVLC.media_player_get_chapter_count(mediaPlayer);
@@ -651,7 +677,8 @@ class Video extends Bitmap
 		return -1;
 	}
 
-	@:noCompletion private function get_willPlay():Bool
+	@:noCompletion
+	private function get_willPlay():Bool
 	{
 		if (mediaPlayer != null)
 			return LibVLC.media_player_will_play(mediaPlayer) != 0;
@@ -659,7 +686,8 @@ class Video extends Bitmap
 		return false;
 	}
 
-	@:noCompletion private function get_rate():Single
+	@:noCompletion
+	private function get_rate():Single
 	{
 		if (mediaPlayer != null)
 			return LibVLC.media_player_get_rate(mediaPlayer);
@@ -667,7 +695,8 @@ class Video extends Bitmap
 		return -1;
 	}
 
-	@:noCompletion private function set_rate(value:Single):Single
+	@:noCompletion
+	private function set_rate(value:Single):Single
 	{
 		if (mediaPlayer != null)
 		{
@@ -678,7 +707,8 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion private function get_isSeekable():Bool
+	@:noCompletion
+	private function get_isSeekable():Bool
 	{
 		if (mediaPlayer != null)
 			return LibVLC.media_player_is_seekable(mediaPlayer) != 0;
@@ -686,7 +716,8 @@ class Video extends Bitmap
 		return false;
 	}
 
-	@:noCompletion private function get_canPause():Bool
+	@:noCompletion
+	private function get_canPause():Bool
 	{
 		if (mediaPlayer != null)
 			return LibVLC.media_player_can_pause(mediaPlayer) != 0;
@@ -694,7 +725,8 @@ class Video extends Bitmap
 		return false;
 	}
 
-	@:noCompletion private function get_mute():Bool
+	@:noCompletion
+	private function get_mute():Bool
 	{
 		if (mediaPlayer != null)
 			return LibVLC.audio_get_mute(mediaPlayer) > 0;
@@ -702,7 +734,8 @@ class Video extends Bitmap
 		return false;
 	}
 
-	@:noCompletion private function set_mute(value:Bool):Bool
+	@:noCompletion
+	private function set_mute(value:Bool):Bool
 	{
 		if (mediaPlayer != null)
 			LibVLC.audio_set_mute(mediaPlayer, value ? 1 : 0);
@@ -710,7 +743,8 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion private function get_volume():Int
+	@:noCompletion
+	private function get_volume():Int
 	{
 		if (mediaPlayer != null)
 			return LibVLC.audio_get_volume(mediaPlayer);
@@ -718,7 +752,8 @@ class Video extends Bitmap
 		return 0;
 	}
 
-	@:noCompletion private function set_volume(value:Int):Int
+	@:noCompletion
+	private function set_volume(value:Int):Int
 	{
 		if (mediaPlayer != null)
 		{
@@ -729,7 +764,8 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion private function get_channel():Int
+	@:noCompletion
+	private function get_channel():Int
 	{
 		if (mediaPlayer != null)
 			return LibVLC.audio_get_channel(mediaPlayer);
@@ -737,7 +773,8 @@ class Video extends Bitmap
 		return -1;
 	}
 
-	@:noCompletion private function set_channel(value:Int):Int
+	@:noCompletion
+	private function set_channel(value:Int):Int
 	{
 		if (mediaPlayer != null)
 			LibVLC.audio_set_channel(mediaPlayer, value);
@@ -745,7 +782,8 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion private function get_delay():Int64
+	@:noCompletion
+	private function get_delay():Int64
 	{
 		if (mediaPlayer != null)
 			return LibVLC.audio_get_delay(mediaPlayer);
@@ -753,7 +791,8 @@ class Video extends Bitmap
 		return -1;
 	}
 
-	@:noCompletion private function set_delay(value:Int64):Int64
+	@:noCompletion
+	private function set_delay(value:Int64):Int64
 	{
 		if (mediaPlayer != null)
 			LibVLC.audio_set_delay(mediaPlayer, value);
@@ -761,7 +800,8 @@ class Video extends Bitmap
 		return value;
 	}
 
-	@:noCompletion private function get_role():UInt
+	@:noCompletion
+	private function get_role():UInt
 	{
 		if (mediaPlayer != null)
 			return LibVLC.media_player_get_role(mediaPlayer);
@@ -769,7 +809,8 @@ class Video extends Bitmap
 		return 0;
 	}
 
-	@:noCompletion private function set_role(value:UInt):UInt
+	@:noCompletion
+	private function set_role(value:UInt):UInt
 	{
 		if (mediaPlayer != null)
 		{
@@ -781,7 +822,8 @@ class Video extends Bitmap
 	}
 
 	// Private Methods
-	@:noCompletion private function this_onEnterFrame(event:openfl.events.Event):Void
+	@:noCompletion
+	private function this_onEnterFrame(event:openfl.events.Event):Void
 	{
 		if (!events.contains(true))
 			return;
@@ -902,7 +944,8 @@ class Video extends Bitmap
 	}
 
 	// Overrides
-	@:noCompletion private override function set_bitmapData(value:BitmapData):BitmapData
+	@:noCompletion
+	private override function set_bitmapData(value:BitmapData):BitmapData
 	{
 		return __bitmapData = value;
 	}
