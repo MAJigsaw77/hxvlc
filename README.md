@@ -80,4 +80,4 @@ Check out the [Samples Folder](samples/) for examples on how to use this library
 
 ![](https://images.videolan.org/images/goodies/Cone-Video-small.png)
 
-**libVLC** is an embeddable engine for 3rd party applications and frameworks released under the **LGPL2.1 License**. Check [VideoLAN.org](https://videolan.org/legal.html) for more information.
+**libVLC** is an embeddable engine for 3rd party applications and frameworks released under the **LGPLv2 (or later) License**. Check [VideoLAN.org](https://videolan.org/legal.html) for more information.
