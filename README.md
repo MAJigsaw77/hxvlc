@@ -4,7 +4,7 @@
 
 ![](https://img.shields.io/github/repo-size/MAJigsaw77/hxvlc) ![](https://badgen.net/github/open-issues/MAJigsaw77/hxvlc) ![](https://badgen.net/badge/license/MIT/green)
 
-A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback using [LibVLC](https://www.videolan.org/vlc/libvlc.html).
+A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback using [libVLC](https://www.videolan.org/vlc/libvlc.html).
 
 ## Supported platforms
 
@@ -14,7 +14,8 @@ A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback usin
 * Android **(arm64, armv7a, x86 and x86_64 only)**.
 * iOS **(arm64 and simulator only)**.
 
-These platforms needs be to compiled with C++ using [Lime](https://lime.openfl.org) in order to work.
+> [!CAUTION]
+> These platforms needs be to compiled with `C++` using [Lime](https://lime.openfl.org) in order to work.
 
 ## Instructions
 
@@ -79,4 +80,4 @@ Check out the [Samples Folder](samples/) for examples on how to use this library
 
 ![](https://images.videolan.org/images/goodies/Cone-Video-small.png)
 
-**LibVLC** is the engine of **VLC** released under the **LGPL2.1 License**. Check [VideoLAN.org](https://videolan.org/legal.html) for more information.
+**libVLC** is an embeddable engine for 3rd party applications and frameworks released under the **LGPL2.1 License**. Check [VideoLAN.org](https://videolan.org/legal.html) for more information.
