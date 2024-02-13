@@ -6,52 +6,58 @@ package hxvlc.externs;
 class Types {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
 #if ios
+@:objc
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
+@:include('vlc/vlc.h')
 @:native('libvlc_instance_t')
 extern class LibVLC_Instance_T {}
 
 typedef LibVLC_Time_T = cpp.Int64;
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
 #if ios
+@:objc
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
+@:include('vlc/vlc.h')
 @:native('libvlc_media_t')
 extern class LibVLC_Media_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
 #if ios
+@:objc
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
+@:include('vlc/vlc.h')
 @:native('libvlc_media_player_t')
 extern class LibVLC_MediaPlayer_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
 #if ios
+@:objc
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
+@:include('vlc/vlc.h')
 @:native('libvlc_event_manager_t')
 extern class LibVLC_EventManager_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
 #if ios
+@:objc
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
+@:include('vlc/vlc.h')
 @:native('libvlc_event_t')
 extern class LibVLC_Event_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
 #if ios
+@:objc
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
+@:include('vlc/vlc.h')
 @:native('libvlc_log_t')
 extern class LibVLC_Log_T {}
 
@@ -152,10 +158,11 @@ extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 }
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
 #if ios
+@:objc
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
+@:include('vlc/vlc.h')
 @:native('libvlc_event_e')
 private extern class LibVLC_Event_E_Impl {}
 
@@ -221,9 +228,10 @@ extern enum abstract LibVLC_Media_Player_Role_T(LibVLC_Media_Player_Role_T_Impl)
 }
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
 #if ios
+@:objc
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
+@:include('vlc/vlc.h')
 @:native('libvlc_media_player_role_t')
 private extern class LibVLC_Media_Player_Role_T_Impl {}
