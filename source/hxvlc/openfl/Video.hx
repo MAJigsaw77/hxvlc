@@ -83,13 +83,6 @@ static void *lock(void *opaque, void **planes)
 	return NULL; /* picture identifier, not needed here */
 }
 
-static void unlock(void *opaque, void *picture, void *const *planes)
-{
-	#ifdef assert
-	assert(picture == NULL); /* picture identifier, not needed here */
-	#endif
-}
-
 static void display(void *opaque, void *picture)
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
@@ -459,7 +452,7 @@ class Video extends Bitmap
 					Log.warn('Failed to attach event (MediaPlayerMediaChanged)');
 			}
 
-			LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('lock'), untyped __cpp__('unlock'), untyped __cpp__('display'), untyped __cpp__('this'));
+			LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('lock'), null, untyped __cpp__('display'), untyped __cpp__('this'));
 			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), null);
 		}
 
