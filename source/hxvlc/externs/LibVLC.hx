@@ -124,6 +124,12 @@ extern class LibVLC
 	@:native('libvlc_media_player_get_chapter_count')
 	static function media_player_get_chapter_count(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Int;
 
+	@:native('libvlc_media_player_previous_chapter')
+	static function media_player_previous_chapter(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Void;
+
+	@:native('libvlc_media_player_next_chapter')
+	static function media_player_next_chapter(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Void;
+
 	@:native('libvlc_media_player_get_rate')
 	static function media_player_get_rate(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Single;
 
