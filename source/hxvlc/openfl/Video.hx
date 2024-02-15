@@ -237,6 +237,16 @@ class Video extends Bitmap
 	public var volume(get, set):Int;
 
 	/**
+	 * Get the number of available audio tracks.
+	 */
+	public var trackCount(get, never):Int;
+
+	/**
+	 * The media player's audio track.
+	 */
+	public var track(get, set):Int;
+
+	/**
 	 * The audio channel.
 	 *
 	 * - [Stereo] = 1
@@ -775,6 +785,36 @@ class Video extends Bitmap
 		{
 			if (LibVLC.audio_set_volume(mediaPlayer, value) == -1)
 				Log.warn('The volume is out of range');
+		}
+
+		return value;
+	}
+
+	@:noCompletion
+	private function get_trackCount():Int
+	{
+		if (mediaItem != null)
+			return LibVLC.audio_get_track_count(mediaPlayer);
+
+		return -1;
+	}
+
+	@:noCompletion
+	private function get_track():Int
+	{
+		if (mediaPlayer != null)
+			return LibVLC.audio_get_track(mediaPlayer);
+
+		return -1;
+	}
+
+	@:noCompletion
+	private function set_track(value:Int):Int
+	{
+		if (mediaPlayer != null)
+		{
+			if (LibVLC.audio_set_track(mediaPlayer, value) == -1)
+				Log.warn('Failed to set audio track');
 		}
 
 		return value;
