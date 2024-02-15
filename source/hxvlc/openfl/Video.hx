@@ -517,6 +517,24 @@ class Video extends Bitmap
 	}
 
 	/**
+	 * Call this function to set the previous chapter (if applicable).
+	 */
+	public function previousChapter():Void
+	{
+		if (mediaPlayer != null)
+			LibVLC.media_player_previous_chapter(mediaPlayer);
+	}
+
+	/**
+	 * Call this function to set the next chapter (if applicable).
+	 */
+	public function nextChapter():Void
+	{
+		if (mediaPlayer != null)
+			LibVLC.media_player_next_chapter(mediaPlayer);
+	}
+
+	/**
 	 * Frees the memory that is used to store the Video object.
 	 */
 	public function dispose():Void
