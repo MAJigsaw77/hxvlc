@@ -161,6 +161,15 @@ extern class LibVLC
 	@:native('libvlc_audio_set_volume')
 	static function audio_set_volume(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>, i_volume:Int):Int;
 
+	@:native('libvlc_audio_get_track_count')
+	static function audio_get_track_count(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Int;
+
+	@:native('libvlc_audio_get_track')
+	static function audio_get_track(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Int;
+
+	@:native('libvlc_audio_set_track')
+	static function audio_set_track(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>, i_track:Int):Int;
+
 	@:native('libvlc_audio_get_mute')
 	static function audio_get_mute(p_mi:cpp.RawPointer<LibVLC_MediaPlayer_T>):Int;
 
