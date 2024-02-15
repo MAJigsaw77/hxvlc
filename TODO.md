@@ -3,3 +3,4 @@
 - [ ] Fix the plugins being add to the assets manifest on MacOS.
 - [ ] Lua playlist scripts support.
 - [ ] Fix iOS libVLC headers being used from both the framework and this lib's ones.
+- [ ] Adding the ability to change audio/video tracks.
