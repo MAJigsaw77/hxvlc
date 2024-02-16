@@ -564,9 +564,10 @@ class Video extends Bitmap
 		{
 			LibVLC.media_player_stop(mediaPlayer);
 			LibVLC.media_player_release(mediaPlayer);
-
-			Lib.current.removeEventListener(openfl.events.Event.ENTER_FRAME, this_onEnterFrame);
 		}
+
+		if (Lib.current.hasEventListener(openfl.events.Event.ENTER_FRAME))
+			Lib.current.removeEventListener(openfl.events.Event.ENTER_FRAME, this_onEnterFrame);
 
 		if (mediaItem != null)
 		{
