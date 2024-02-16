@@ -190,12 +190,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 	{
 		#if FLX_SOUND_SYSTEM
 		if (autoVolumeHandle)
-		{
-			final curVolume:Int = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * 100);
-
-			if (bitmap.volume != curVolume)
-				bitmap.volume = curVolume;
-		}
+			bitmap.volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * 100);
 		#end
 
 		super.update(elapsed);
