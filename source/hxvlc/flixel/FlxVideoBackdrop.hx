@@ -189,7 +189,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 	public override function update(elapsed:Float):Void
 	{
 		#if FLX_SOUND_SYSTEM
-		if (autoVolumeHandle && !bitmap.mute)
+		if (autoVolumeHandle)
 		{
 			final curVolume:Int = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * 100);
 

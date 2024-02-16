@@ -87,7 +87,7 @@ class FlxVideo extends Video
 		}
 
 		#if FLX_SOUND_SYSTEM
-		if (autoVolumeHandle && !mute)
+		if (autoVolumeHandle)
 		{
 			final curVolume:Int = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * 100);
 
