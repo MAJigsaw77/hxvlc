@@ -7,7 +7,6 @@ import haxe.io.Path;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Video;
 import hxvlc.util.OneOfThree;
-import openfl.events.Event;
 import sys.FileSystem;
 
 class FlxVideo extends Video
@@ -35,7 +34,8 @@ class FlxVideo extends Video
 		{
 			role = LibVLC_Role_Game;
 
-			FlxG.stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			if (!FlxG.signals.postUpdate.has(postUpdate))
+				FlxG.signals.postUpdate.add(postUpdate);
 		});
 
 		FlxG.addChildBelowMouse(this);
@@ -69,8 +69,8 @@ class FlxVideo extends Video
 		if (FlxG.signals.focusLost.has(pause))
 			FlxG.signals.focusLost.remove(pause);
 
-		if (FlxG.stage.hasEventListener(Event.ENTER_FRAME))
-			FlxG.stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+		if (FlxG.signals.postUpdate.has(postUpdate))
+			FlxG.signals.postUpdate.remove(postUpdate);
 
 		super.dispose();
 
@@ -78,7 +78,7 @@ class FlxVideo extends Video
 	}
 
 	@:noCompletion
-	private function onEnterFrame(event:Event):Void
+	private function postUpdate():Void
 	{
 		if (autoResize)
 		{
