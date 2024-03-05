@@ -10,7 +10,7 @@ jobs:
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.4
+          haxe-version: latest
 
       - name: Installing Libraries
         run: |
