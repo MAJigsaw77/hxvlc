@@ -5,7 +5,6 @@ import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import haxe.io.Bytes;
-import haxe.io.Path;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Video;
 import hxvlc.util.OneOfThree;
@@ -70,8 +69,8 @@ class FlxVideoSprite extends FlxSprite
 
 		if (!(location is Int) && !(location is Bytes))
 		{
-			if (FileSystem.exists(Path.join([Sys.getCwd(), location])))
-				return bitmap.load(Path.join([Sys.getCwd(), location]), options);
+			if (FileSystem.exists(FileSystem.absolutePath(location)))
+				return bitmap.load(FileSystem.absolutePath(location), options);
 		}
 
 		return bitmap.load(location, options);
