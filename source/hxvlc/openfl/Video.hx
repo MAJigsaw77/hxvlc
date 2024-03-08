@@ -26,7 +26,6 @@ using StringTools;
  *
  * It extends a Bitmap object to provide a seamless integration with existing display objects.
  */
-@:headerInclude('assert.h')
 @:headerInclude('stdio.h')
 @:cppNamespaceCode('
 #ifndef _MSC_VER
@@ -88,10 +87,6 @@ static void display(void *opaque, void *picture)
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
 	self->events[8] = true;
-
-	#ifdef assert
-	assert(picture == NULL); /* picture identifier, not needed here */
-	#endif
 }
 
 static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
