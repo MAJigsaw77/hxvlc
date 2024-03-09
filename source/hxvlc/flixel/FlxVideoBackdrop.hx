@@ -21,6 +21,11 @@ import sys.FileSystem;
 class FlxVideoBackdrop extends FlxBackdrop
 {
 	/**
+	 * Whether the video should automatically be paused when focus is lost or not.
+	 */
+	public var autoPause:Bool = FlxG.autoPause;
+
+	/**
 	 * Whether flixel should automatically change the volume according to the flixel sound system current volume.
 	 */
 	public var autoVolumeHandle:Bool = true;
@@ -80,7 +85,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 		if (bitmap == null)
 			return false;
 
-		if (FlxG.autoPause)
+		if (autoPause)
 		{
 			if (!FlxG.signals.focusGained.has(resume))
 				FlxG.signals.focusGained.add(resume);

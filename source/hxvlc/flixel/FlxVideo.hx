@@ -11,6 +11,11 @@ import sys.FileSystem;
 class FlxVideo extends Video
 {
 	/**
+	 * Whether the video should automatically be paused when focus is lost or not.
+	 */
+	public var autoPause:Bool = FlxG.autoPause;
+
+	/**
 	 * Whether you want the video to automatically be resized.
 	 */
 	public var autoResize:Bool = true;
@@ -42,7 +47,7 @@ class FlxVideo extends Video
 
 	public override function load(location:OneOfThree<String, Int, Bytes>, ?options:Array<String>):Bool
 	{
-		if (FlxG.autoPause)
+		if (autoPause)
 		{
 			if (!FlxG.signals.focusGained.has(resume))
 				FlxG.signals.focusGained.add(resume);
