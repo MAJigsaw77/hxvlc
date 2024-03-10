@@ -28,6 +28,7 @@ class PlayState extends FlxState
 		#end
 
 		var video:FlxVideoSprite = new FlxVideoSprite(0, 0);
+		video.antialiasing = true;
 		video.bitmap.onFormatSetup.add(function():Void
 		{
 			video.setGraphicSize(FlxG.width, FlxG.height);
