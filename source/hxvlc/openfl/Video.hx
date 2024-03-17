@@ -577,6 +577,10 @@ class Video extends Bitmap
 			#end
 		}
 
+		eventManager = null;
+		mediaPlayer = null;
+		mediaItem = null;
+
 		if (bitmapData != null)
 		{
 			bitmapData.dispose();
@@ -593,10 +597,6 @@ class Video extends Bitmap
 
 		if (planes != null)
 			untyped __cpp__('delete[] {0}', planes);
-
-		eventManager = null;
-		mediaPlayer = null;
-		mediaItem = null;
 	}
 
 	// Get & Set Methods
