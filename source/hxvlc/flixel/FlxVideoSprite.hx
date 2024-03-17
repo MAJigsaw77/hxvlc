@@ -186,7 +186,7 @@ class FlxVideoSprite extends FlxSprite
 	}
 
 	@:noCompletion
-	private function set_antialiasing(value:Bool):Bool
+	private override function set_antialiasing(value:Bool):Bool
 	{
 		if (bitmap != null)
 			bitmap.smoothing = value;
