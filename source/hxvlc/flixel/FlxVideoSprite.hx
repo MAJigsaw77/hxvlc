@@ -44,7 +44,7 @@ class FlxVideoSprite extends FlxSprite
 
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
-		bitmap = new Video(false);
+		bitmap = new Video(antialiasing);
 		bitmap.onOpening.add(() -> bitmap.role = LibVLC_Role_Game);
 		bitmap.onFormatSetup.add(() -> loadGraphic(bitmap.bitmapData));
 		bitmap.alpha = 0;
@@ -183,6 +183,15 @@ class FlxVideoSprite extends FlxSprite
 		#end
 
 		super.update(elapsed);
+	}
+
+	@:noCompletion
+	private function set_antialiasing(value:Bool):Bool
+	{
+		if (bitmap != null)
+			bitmap.smoothing = value;
+
+		return antialiasing = value;
 	}
 }
 #end
