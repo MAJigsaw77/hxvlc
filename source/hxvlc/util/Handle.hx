@@ -190,8 +190,8 @@ class Handle
 			LibVLC.log_unset(instance);
 			#end
 			LibVLC.release(instance);
-		}
 
-		instance = null;
+			instance = null;
+		}
 	}
 }
