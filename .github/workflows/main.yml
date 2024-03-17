@@ -46,15 +46,15 @@ jobs:
 
       - name: Building Windows
         if: matrix.os == 'windows-latest'
-        run: cd samples/${{matrix.sample}} && haxelib run lime build windows -debug
+        run: cd samples/${{matrix.sample}} && haxelib run lime build windows
 
       - name: Building MacOS
         if: matrix.os == 'macos-latest'
-        run: cd samples/${{matrix.sample}} && haxelib run lime build mac -debug
+        run: cd samples/${{matrix.sample}} && haxelib run lime build mac
 
       - name: Building Linux
         if: matrix.os == 'ubuntu-latest'
-        run: cd samples/${{matrix.sample}} && haxelib run lime build linux -debug
+        run: cd samples/${{matrix.sample}} && haxelib run lime build linux
 
       - name: Upload Artifact Windows
         if: matrix.os == 'windows-latest'
@@ -124,7 +124,7 @@ jobs:
           haxelib run lime config ANDROID_SETUP true
 
       - name: Building
-        run: cd samples/${{matrix.sample}} && haxelib run lime build android -debug
+        run: cd samples/${{matrix.sample}} && haxelib run lime build android
 
       - name: Upload Artifact
         uses: actions/upload-artifact@main
