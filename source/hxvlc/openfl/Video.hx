@@ -570,7 +570,11 @@ class Video extends Bitmap
 
 			#if (mingw || !windows)
 			if (mediaData != null)
+			{
 				untyped __cpp__('delete[] {0}', mediaData);
+
+				mediaData = null;
+			}
 
 			mediaOffset = 0;
 			mediaSize = 0;
@@ -596,7 +600,11 @@ class Video extends Bitmap
 		formatWidth = formatHeight = 0;
 
 		if (planes != null)
+		{
 			untyped __cpp__('delete[] {0}', planes);
+
+			planes = null;
+		}
 	}
 
 	// Get & Set Methods
