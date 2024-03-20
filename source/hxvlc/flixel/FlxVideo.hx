@@ -1,6 +1,7 @@
 package hxvlc.flixel;
 
 #if flixel
+import flixel.util.FlxAxes;
 import flixel.FlxG;
 import haxe.io.Bytes;
 import hxvlc.externs.Types;
@@ -18,9 +19,11 @@ class FlxVideo extends Video
 	public var autoPause:Bool = FlxG.autoPause;
 
 	/**
-	 * Whether you want the video to automatically be resized.
+	 * Determines the automatic resizing behavior for the video.
+	 *
+	 * WARNING: Must be set before loading a video if you want to set it to `NONE`.
 	 */
-	public var autoResize:Bool = true;
+	public var autoResizeMode:FlxAxes = FlxAxes.XY;
 
 	/**
 	 * Whether flixel should automatically change the volume according to the flixel sound system current volume.
@@ -86,10 +89,10 @@ class FlxVideo extends Video
 	@:noCompletion
 	private function postUpdate():Void
 	{
-		if (autoResize)
+		if (autoResizeMode.x || autoResizeMode.y)
 		{
-			width = FlxG.scaleMode.gameSize.x;
-			height = FlxG.scaleMode.gameSize.y;
+			width = autoResizeMode.x ? FlxG.scaleMode.gameSize.x : formatWidth;
+			height = autoResizeMode.y ? FlxG.scaleMode.gameSize.y : formatHeight;
 		}
 
 		#if FLX_SOUND_SYSTEM
