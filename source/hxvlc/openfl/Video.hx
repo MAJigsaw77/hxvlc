@@ -322,10 +322,10 @@ class Video extends Bitmap
 	private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
 
 	@:noCompletion
-	private var mediaPlayer:cpp.RawPointer<LibVLC_MediaPlayer_T>;
+	private var mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>;
 
 	@:noCompletion
-	private var eventManager:cpp.RawPointer<LibVLC_EventManager_T>;
+	private var eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>;
 
 	@:noCompletion
 	private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false];

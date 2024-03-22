@@ -32,7 +32,7 @@ extern class LibVLC_Media_T {}
 #end
 @:include('vlc/vlc.h')
 @:native('libvlc_media_player_t')
-extern class LibVLC_MediaPlayer_T {}
+extern class LibVLC_Media_Player_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 #if ios
@@ -41,7 +41,7 @@ extern class LibVLC_MediaPlayer_T {}
 #end
 @:include('vlc/vlc.h')
 @:native('libvlc_event_manager_t')
-extern class LibVLC_EventManager_T {}
+extern class LibVLC_Event_Manager_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 #if ios
