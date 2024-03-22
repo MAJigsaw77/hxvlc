@@ -611,8 +611,13 @@ class Video extends Bitmap
 	@:noCompletion
 	private function get_mrl():String
 	{
-		if (mediaItem != null)
-			return cast(LibVLC.media_get_mrl(mediaItem), String);
+		if (mediaPlayer != null)
+		{
+			final curMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			
+			if (curMediaItem != null)
+				return cast(LibVLC.media_get_mrl(curMediaItem), String);
+		}
 
 		return null;
 	}
@@ -620,8 +625,13 @@ class Video extends Bitmap
 	@:noCompletion
 	private function get_duration():Int64
 	{
-		if (mediaItem != null)
-			return LibVLC.media_get_duration(mediaItem);
+		if (mediaPlayer != null)
+		{
+			final curMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			
+			if (curMediaItem != null)
+				return LibVLC.media_get_duration(curMediaItem);
+		}
 
 		return -1;
 	}
