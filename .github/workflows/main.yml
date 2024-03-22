@@ -53,14 +53,14 @@ jobs:
         run: |
           cd samples/${{matrix.sample}}
           haxelib run lime build mac -debug
-          tar -zcvf macBuild-${{matrix.sample}}.tar.gz export/macos/bin
+          tar -zcvf build.tar.gz export/macos/bin
 
       - name: Building Linux
         if: matrix.os == 'ubuntu-latest'
         run: |
           cd samples/${{matrix.sample}}
           haxelib run lime build linux -debug
-          tar -zcvf linuxBuild-${{matrix.sample}}.tar.gz export/linux/bin
+          tar -zcvf build.tar.gz export/linux/bin
 
       - name: Upload Artifact Windows
         if: matrix.os == 'windows-latest'
@@ -75,7 +75,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: macBuild-${{matrix.sample}}
-          path: macBuild-${{matrix.sample}}.tar.gz
+          path: samples/${{matrix.sample}}/build.tar.gz
           if-no-files-found: warn
 
       - name: Upload Artifact Linux
@@ -83,7 +83,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: linuxBuild-${{matrix.sample}}
-          path: linuxBuild-${{matrix.sample}}.tar.gz
+          path: samples/${{matrix.sample}}/build.tar.gz
           if-no-files-found: warn
 
   Android:
