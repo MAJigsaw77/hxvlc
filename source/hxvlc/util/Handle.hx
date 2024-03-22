@@ -95,6 +95,9 @@ class Handle
 
 			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
 
+			#if android
+			args.push_back("--aout=opensles");
+			#end
 			args.push_back("--drop-late-frames");
 			args.push_back("--intf=dummy");
 			args.push_back("--no-interact");
