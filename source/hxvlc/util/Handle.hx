@@ -1,6 +1,10 @@
 package hxvlc.util;
 
+#if (!cpp && !(desktop || mobile))
+#error 'The current target platform isn\'t supported by hxvlc.'
+#end
 import haxe.io.Path;
+import haxe.Exception;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.Define;
@@ -8,9 +12,7 @@ import lime.utils.Log;
 #if (target.threaded)
 import sys.thread.Thread;
 #end
-#if linux
 import sys.FileSystem;
-#end
 
 using StringTools;
 
@@ -87,14 +89,28 @@ class Handle
 			#elseif linux
 			final pluginsPath:String = '/usr/local/lib/vlc/plugins';
 
-			if (FileSystem.exists(pluginsPath) && FileSystem.isDirectory(pluginsPath))
+			if (FileSystem.exists(pluginsPath))
 				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
-			else if (FileSystem.exists(pluginsPath.replace('local/', '')) && FileSystem.isDirectory(pluginsPath.replace('local/', '')))
+			else if (FileSystem.exists(pluginsPath.replace('local/', '')))
 				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath.replace('local/', ''));
 			#end
 
-			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
+			#if android
+			final homePath:String = FileSystem.absolutePath('app_hxvlc');
 
+			try
+			{
+				if (!FileSystem.exists(homePath))
+					FileSystem.createDirectory(homePath);
+			}
+			catch (e:Exception)
+				Log.warn('Failed to create the LibVLC HOME directory "$homePath"');
+
+			if (FileSystem.exists(homePath))
+				Sys.putEnv('HOME', homePath);
+			#end
+
+			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
 			args.push_back("--drop-late-frames");
 			args.push_back("--intf=dummy");
 			args.push_back("--no-interact");
@@ -146,8 +162,6 @@ class Handle
 			{
 				#if HXVLC_LOGGING
 				LibVLC.log_set(instance, untyped __cpp__('logging'), null);
-				#else
-				Log.info('LibVLC logging is being disabled');
 				#end
 			}
 		}
