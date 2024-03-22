@@ -31,6 +31,15 @@ extern class LibVLC_Media_T {}
 @:include('MobileVLCKit/MobileVLCKit.h')
 #end
 @:include('vlc/vlc.h')
+@:native('libvlc_media_list_t')
+extern class LibVLC_Media_List_T {}
+
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+#if ios
+@:objc
+@:include('MobileVLCKit/MobileVLCKit.h')
+#end
+@:include('vlc/vlc.h')
 @:native('libvlc_media_player_t')
 extern class LibVLC_MediaPlayer_T {}
 
