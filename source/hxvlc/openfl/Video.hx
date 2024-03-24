@@ -386,7 +386,10 @@ class Video extends Bitmap
 				if (location.contains('://'))
 					mediaItem = LibVLC.media_new_location(Handle.instance, location);
 				else if (location.length > 0)
-					mediaItem = LibVLC.media_new_path(Handle.instance, #if windows Path.normalize(location).split('/').join('\\') #else Path.normalize(location) #end);
+				{
+					mediaItem = LibVLC.media_new_path(Handle.instance,
+						#if windows Path.normalize(location).split('/').join('\\') #else Path.normalize(location) #end);
+				}
 				else
 					return false;
 			}
@@ -602,13 +605,14 @@ class Video extends Bitmap
 	}
 
 	// Get & Set Methods
+
 	@:noCompletion
 	private function get_mrl():String
 	{
 		if (mediaPlayer != null)
 		{
 			final curMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
-			
+
 			if (curMediaItem != null)
 				return cast(LibVLC.media_get_mrl(curMediaItem), String);
 		}
@@ -622,7 +626,7 @@ class Video extends Bitmap
 		if (mediaPlayer != null)
 		{
 			final curMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
-			
+
 			if (curMediaItem != null)
 				return LibVLC.media_get_duration(curMediaItem);
 		}
@@ -886,6 +890,7 @@ class Video extends Bitmap
 	}
 
 	// Private Methods
+
 	@:noCompletion
 	private function this_onEnterFrame(event:openfl.events.Event):Void
 	{
@@ -1008,6 +1013,7 @@ class Video extends Bitmap
 	}
 
 	// Overrides
+
 	@:noCompletion
 	private override function set_bitmapData(value:BitmapData):BitmapData
 	{
