@@ -95,20 +95,20 @@ class Handle
 				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath.replace('local/', ''));
 			#end
 
-			#if android
-			final homePath:String = FileSystem.absolutePath('app_hxvlc');
+			// #if android
+			// final homePath:String = FileSystem.absolutePath('app_hxvlc');
 
-			try
-			{
-				if (!FileSystem.exists(homePath))
-					FileSystem.createDirectory(homePath);
-			}
-			catch (e:Exception)
-				Log.warn('Failed to create the LibVLC HOME directory "$homePath"');
+			// try
+			// {
+				// if (!FileSystem.exists(homePath))
+					// FileSystem.createDirectory(homePath);
+			// }
+			// catch (e:Exception)
+				// Log.warn('Failed to create the LibVLC HOME directory "$homePath"');
 
-			if (FileSystem.exists(homePath))
-				Sys.putEnv('HOME', homePath);
-			#end
+			// if (FileSystem.exists(homePath))
+				// Sys.putEnv('HOME', homePath);
+			// #end
 
 			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
 			args.push_back("--drop-late-frames");
