@@ -386,13 +386,7 @@ class Video extends Bitmap
 				if (location.contains('://'))
 					mediaItem = LibVLC.media_new_location(Handle.instance, location);
 				else if (location.length > 0)
-				{
-					#if windows
-					mediaItem = LibVLC.media_new_path(Handle.instance, Path.normalize(location).split('/').join('\\'));
-					#else
-					mediaItem = LibVLC.media_new_path(Handle.instance, Path.normalize(location));
-					#end
-				}
+					mediaItem = LibVLC.media_new_path(Handle.instance, #if windows Path.normalize(location).split('/').join('\\') #else Path.normalize(location) #end);
 				else
 					return false;
 			}
@@ -410,7 +404,7 @@ class Video extends Bitmap
 				final data:BytesData = cast(location, Bytes).getData();
 
 				mediaData = untyped __cpp__('new unsigned char[{0}]', data.length);
-					
+
 				untyped __cpp__('memcpy({0}, {1}, {2})', mediaData, cpp.Pointer.ofArray(data).raw, data.length);
 
 				mediaOffset = 0;
