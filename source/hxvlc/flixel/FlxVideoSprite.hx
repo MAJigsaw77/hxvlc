@@ -49,7 +49,7 @@ class FlxVideoSprite extends FlxSprite
 		bitmap.onFormatSetup.add(() -> loadGraphic(bitmap.bitmapData));
 		bitmap.alpha = 0;
 
-		FlxG.stage.addChild(bitmap);
+		FlxG.game.addChild(bitmap);
 	}
 
 	/**
@@ -147,8 +147,8 @@ class FlxVideoSprite extends FlxSprite
 		{
 			bitmap.dispose();
 
-			if (FlxG.stage.contains(bitmap))
-				FlxG.stage.removeChild(bitmap);
+			if (FlxG.game.contains(bitmap))
+				FlxG.game.removeChild(bitmap);
 
 			bitmap = null;
 		}
