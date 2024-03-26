@@ -408,7 +408,7 @@ class Video extends Bitmap
 
 				mediaData = untyped __cpp__('new unsigned char[{0}]', data.length);
 
-				untyped __cpp__('memcpy({0}, {1}, {2})', mediaData, cpp.Pointer.ofArray(data).raw, data.length);
+				cpp.Stdlib.nativeMemcpy(cast mediaData, cast cpp.Pointer.ofArray(data).constRaw, data.length);
 
 				mediaOffset = 0;
 				mediaSize = data.length;
