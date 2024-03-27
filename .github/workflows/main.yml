@@ -114,7 +114,7 @@ jobs:
           haxelib install flixel --quiet
           haxelib install flixel-addons --quiet
           haxelib dev hxvlc .
-          haxelib install extension-androidtools --quiet
+          haxelib install extension-androidtools --quiet --skip-dependencies
 
       - name: Setup Git hxcpp
         run: haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp.git --quiet && haxelib run lime rebuild hxcpp
