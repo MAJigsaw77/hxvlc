@@ -215,6 +215,15 @@ class Video extends Bitmap
 	public var canPause(get, never):Bool;
 
 	/**
+	 * Selects an audio output module.
+	 *
+	 * @note Any change will take be effect only after playback is stopped and restarted.
+	 *
+	 * Audio output cannot be changed while playing.
+	 */
+	public var output(never, set):String;
+	
+	/**
 	 * The audio's mute status.
 	 *
 	 * WARNING: This function does not always work. If there is no active audio
@@ -761,6 +770,18 @@ class Video extends Bitmap
 			return LibVLC.media_player_can_pause(mediaPlayer) != 0;
 
 		return false;
+	}
+
+	@:noCompletion
+	private function set_output(value:String):String
+	{
+		if (mediaPlayer != null)
+		{
+			if (LibVLC.audio_output_set(mediaPlayer, value) != 0)
+				Log.warn('Failed to set audio output module');
+		}
+
+		return value;
 	}
 
 	@:noCompletion
