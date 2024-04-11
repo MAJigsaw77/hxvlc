@@ -35,6 +35,21 @@ extern class LibVLC_Media_T {}
 extern class LibVLC_Media_Player_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include('vlc/vlc.h')
+@:unreflective
+@:structAccess
+@:native('libvlc_audio_output_t')
+extern class LibVLC_Audio_Output_T
+{
+	@:native('libvlc_audio_output_t')
+	static function alloc():LibVLC_Audio_Output_T;
+
+	var psz_name:cpp.CharStar;
+	var psz_description:cpp.CharStar;
+	var p_next:cpp.RawPointer<LibVLC_Audio_Output_T>;
+}
+
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 #if ios
 @:objc
 @:include('MobileVLCKit/MobileVLCKit.h')
