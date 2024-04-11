@@ -149,6 +149,15 @@ extern class LibVLC
 	static function video_set_callbacks(mp:cpp.RawPointer<LibVLC_Media_Player_T>, lock:LibVLC_Video_Lock_CB, unlock:LibVLC_Video_Unlock_CB,
 		display:LibVLC_Video_Display_CB, opaque:cpp.RawPointer<cpp.Void>):Void;
 
+	@:native('libvlc_audio_output_list_get')
+	static function audio_output_list_get(p_instance:cpp.RawPointer<LibVLC_Instance_T>):cpp.RawPointer<LibVLC_Audio_Output_T>;
+
+	@:native('libvlc_audio_output_list_release')
+	static function audio_output_list_release(p_list:cpp.RawPointer<LibVLC_Audio_Output_T>):Void;
+
+	@:native('libvlc_audio_output_set')
+	static function audio_output_set(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, psz_name:cpp.ConstCharStar):Int;
+
 	@:native('libvlc_audio_get_delay')
 	static function audio_get_delay(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):cpp.Int64;
 
