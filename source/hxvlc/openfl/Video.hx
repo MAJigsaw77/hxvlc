@@ -316,6 +316,9 @@ class Video extends Bitmap
 	 */
 	public var onDisplay(default, null):Event<Void->Void>;
 
+	@:noCompletion
+	private var audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T>;
+
 	#if (mingw || !windows)
 	@:noCompletion
 	private var mediaData:cpp.RawPointer<cpp.UInt8>;
@@ -368,6 +371,8 @@ class Video extends Bitmap
 			Sys.sleep(0.05);
 
 		Handle.init();
+
+		audioOutput = LibVLC.audio_output_list_get(Handle.instance);
 	}
 
 	/**
@@ -587,9 +592,13 @@ class Video extends Bitmap
 			#end
 		}
 
+		if (audioOutput != null)
+			LibVLC.audio_output_list_release(audioOutput);
+
 		eventManager = null;
 		mediaPlayer = null;
 		mediaItem = null;
+		audioOutput = null;
 
 		if (bitmapData != null)
 		{
