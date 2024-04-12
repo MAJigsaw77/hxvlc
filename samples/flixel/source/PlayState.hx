@@ -3,7 +3,6 @@ package;
 #if android
 import android.widget.Toast;
 #end
-import flixel.text.FlxText;
 import flixel.util.FlxTimer;
 import flixel.FlxG;
 import flixel.FlxState;
@@ -39,10 +38,6 @@ class PlayState extends FlxState
 		video.bitmap.onEndReached.add(video.destroy);
 		video.load('assets/video.mp4', [':input-repeat=2']);
 		add(video);
-
-		var outputModules:FlxText = new FlxText(0, 0, 0, video.bitmap.outputModules.toString(), 24);
-		outputModules.antialiasing = true;
-		add(outputModules);
 
 		new FlxTimer().start(0.001, function(tmr:FlxTimer):Void
 		{
