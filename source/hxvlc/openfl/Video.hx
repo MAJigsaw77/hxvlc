@@ -215,6 +215,20 @@ class Video extends Bitmap
 	public var canPause(get, never):Bool;
 
 	/**
+	 * Gets the list of available audio output modules.
+	 */
+	public var outputModules(get, never):Array<String>;
+
+	/**
+	 * Selects an audio output module.
+	 *
+	 * @note Any change will take be effect only after playback is stopped and restarted.
+	 *
+	 * Audio output cannot be changed while playing.
+	 */
+	public var output(never, set):String;
+	
+	/**
 	 * The audio's mute status.
 	 *
 	 * WARNING: This function does not always work. If there is no active audio
@@ -307,6 +321,9 @@ class Video extends Bitmap
 	 */
 	public var onDisplay(default, null):Event<Void->Void>;
 
+	@:noCompletion
+	private var audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T>;
+
 	#if (mingw || !windows)
 	@:noCompletion
 	private var mediaData:cpp.RawPointer<cpp.UInt8>;
@@ -359,6 +376,8 @@ class Video extends Bitmap
 			Sys.sleep(0.05);
 
 		Handle.init();
+
+		audioOutput = LibVLC.audio_output_list_get(Handle.instance);
 	}
 
 	/**
@@ -578,9 +597,13 @@ class Video extends Bitmap
 			#end
 		}
 
+		if (audioOutput != null)
+			LibVLC.audio_output_list_release(audioOutput);
+
 		eventManager = null;
 		mediaPlayer = null;
 		mediaItem = null;
+		audioOutput = null;
 
 		if (bitmapData != null)
 		{
@@ -761,6 +784,40 @@ class Video extends Bitmap
 			return LibVLC.media_player_can_pause(mediaPlayer) != 0;
 
 		return false;
+	}
+
+	@:noCompletion
+	private function get_outputModules():Array<String>
+	{
+		var modules:Array<String> = null;
+		
+		if (audioOutput != null)
+		{
+			modules = [];
+
+			var temp:cpp.RawPointer<LibVLC_Audio_Output_T> = audioOutput;
+
+			while (temp != null)
+			{
+				modules.push(temp[0].psz_name);
+
+				temp = temp[0].p_next;
+			}
+		}
+
+		return modules;
+	}
+
+	@:noCompletion
+	private function set_output(value:String):String
+	{
+		if (mediaPlayer != null)
+		{
+			if (LibVLC.audio_output_set(mediaPlayer, value) != 0)
+				Log.warn('Failed to set audio output module');
+		}
+
+		return value;
 	}
 
 	@:noCompletion
