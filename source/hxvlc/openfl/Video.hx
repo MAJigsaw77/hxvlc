@@ -797,11 +797,15 @@ class Video extends Bitmap
 
 			var temp:cpp.RawPointer<LibVLC_Audio_Output_T> = audioOutput;
 
+			var i:Int = 0;
+
 			while (temp != null)
 			{
-				modules.push(temp.psz_name);
+				modules.push(temp[i].psz_name);
 
 				temp = temp.p_next;
+
+				i++;
 			}
 		}
 
