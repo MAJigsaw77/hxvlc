@@ -215,6 +215,11 @@ class Video extends Bitmap
 	public var canPause(get, never):Bool;
 
 	/**
+	 * Gets the list of available audio output modules.
+	 */
+	public var outputModules(get, never):Array<String>;
+
+	/**
 	 * Selects an audio output module.
 	 *
 	 * @note Any change will take be effect only after playback is stopped and restarted.
@@ -779,6 +784,28 @@ class Video extends Bitmap
 			return LibVLC.media_player_can_pause(mediaPlayer) != 0;
 
 		return false;
+	}
+
+	@:noCompletion
+	private function get_outputModules():Array<String>
+	{
+		var modules:Array<String> = null;
+		
+		if (audioOutput != null)
+		{
+			modules = [];
+
+			var temp:cpp.RawPointer<LibVLC_Audio_Output_T> = audioOutput;
+
+			while (temp != null)
+			{
+				modules.push(temp.psz_name);
+
+				temp = temp.p_next;
+			}
+		}
+
+		return modules;
 	}
 
 	@:noCompletion
