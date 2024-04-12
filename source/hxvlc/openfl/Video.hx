@@ -1031,19 +1031,20 @@ class Video extends Bitmap
 				try
 				{
 					if (Lib.current.stage != null && Lib.current.stage.context3D != null)
+					{
 						texture = Lib.current.stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
+
+						bitmapData = BitmapData.fromTexture(texture);
+					}
 					else
 					{
-						Log.warn('Failed to use texture, resorting to CPU based image');
+						Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
 
 						bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
 					}
 				}
 				catch (e:Exception)
-					Log.error('Failed to create video\'s texture');
-
-				if (texture != null)
-					bitmapData = BitmapData.fromTexture(texture);
+					Log.error('Failed to create video\'s texture: ${e.message}');
 
 				onFormatSetup.dispatch();
 			}
