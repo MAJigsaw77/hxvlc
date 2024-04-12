@@ -3,6 +3,7 @@ package;
 #if android
 import android.widget.Toast;
 #end
+import flixel.text.FlxText;
 import flixel.util.FlxTimer;
 import flixel.FlxG;
 import flixel.FlxState;
