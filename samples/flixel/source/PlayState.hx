@@ -40,7 +40,7 @@ class PlayState extends FlxState
 		video.load('assets/video.mp4', [':input-repeat=2']);
 		add(video);
 
-		var outputModules:FlxText = new FlxText(0, 0, 0, video.bitmap.outputModules, 24);
+		var outputModules:FlxText = new FlxText(0, 0, 0, video.bitmap.outputModules.toString(), 24);
 		outputModules.antialiasing = true;
 		add(outputModules);
 
