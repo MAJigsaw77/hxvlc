@@ -13,7 +13,10 @@ import haxe.io.Bytes;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Video;
 import hxvlc.util.OneOfThree;
+import lime.utils.Log;
 import sys.FileSystem;
+
+using StringTools;
 
 /**
  * `FlxVideoBackdrop` is made for showing infinitely scrolling video backgrounds using FlxBackdrop.
@@ -96,10 +99,23 @@ class FlxVideoBackdrop extends FlxBackdrop
 				FlxG.signals.focusLost.add(pause);
 		}
 
-		if (!(location is Int) && !(location is Bytes))
+		if (!(location is Int) && !(location is Bytes) && (location is String))
 		{
-			if (FileSystem.exists(FileSystem.absolutePath(location)))
-				return bitmap.load(FileSystem.absolutePath(location), options);
+			final location:String = cast(location, String);
+
+			if (!location.contains('://'))
+			{
+				final absolutePath:String = FileSystem.absolutePath(location);
+
+				if (FileSystem.exists(absolutePath))
+					return bitmap.load(absolutePath, options);
+				else
+				{
+					Log.warn('Unable to find the file at location "$absolutePath".');
+
+					return false;
+				}
+			}
 		}
 
 		return bitmap.load(location, options);

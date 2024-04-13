@@ -7,7 +7,10 @@ import haxe.io.Bytes;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Video;
 import hxvlc.util.OneOfThree;
+import lime.utils.Log;
 import sys.FileSystem;
+
+using StringTools;
 
 class FlxVideo extends Video
 {
@@ -61,10 +64,23 @@ class FlxVideo extends Video
 				FlxG.signals.focusLost.add(pause);
 		}
 
-		if (!(location is Int) && !(location is Bytes))
+		if (!(location is Int) && !(location is Bytes) && (location is String))
 		{
-			if (FileSystem.exists(FileSystem.absolutePath(location)))
-				return super.load(FileSystem.absolutePath(location), options);
+			final location:String = cast(location, String);
+
+			if (!location.contains('://'))
+			{
+				final absolutePath:String = FileSystem.absolutePath(location);
+
+				if (FileSystem.exists(absolutePath))
+					return super.load(absolutePath, options);
+				else
+				{
+					Log.warn('Unable to find the file at location "$absolutePath".');
+
+					return false;
+				}
+			}
 		}
 
 		return super.load(location, options);
