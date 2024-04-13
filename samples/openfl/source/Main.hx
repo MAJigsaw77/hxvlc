@@ -53,12 +53,12 @@ class Main extends Sprite
 		#end
 		
 		video = new Video();
-		video.onOpening.add(function()
+		video.onOpening.add(function():Void
 		{
 			stage.addEventListener(Event.ACTIVATE, stage_onActivate);
 			stage.addEventListener(Event.DEACTIVATE, stage_onDeactivate);
 		});
-		video.onEndReached.add(function()
+		video.onEndReached.add(function():Void
 		{
 			stage.removeEventListener(Event.ACTIVATE, stage_onActivate);
 			stage.removeEventListener(Event.DEACTIVATE, stage_onDeactivate);
@@ -71,7 +71,7 @@ class Main extends Sprite
 			if (contains(video))
 				removeChild(video);
 		});
-		video.onFormatSetup.add(function()
+		video.onFormatSetup.add(function():Void
 		{
 			stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
 		});

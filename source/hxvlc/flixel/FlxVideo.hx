@@ -39,7 +39,7 @@ class FlxVideo extends Video
 	{
 		super(smoothing);
 
-		onOpening.add(function()
+		onOpening.add(function():Void
 		{
 			role = LibVLC_Role_Game;
 
