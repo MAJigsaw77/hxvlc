@@ -31,17 +31,23 @@ using StringTools;
 #ifndef _MSC_VER
 static int open(void *opaque, void **datap, uint64_t *sizep)
 {
+	hx::SetTopOfStack((int *)0, true);
+
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
 	(*datap) = opaque;
 
 	(*sizep) = self->mediaSize;
 
+	hx::SetTopOfStack((int *)0, true);
+
 	return 0;
 }
 
 static ssize_t read(void *opaque, unsigned char *buf, size_t len)
 {
+	hx::SetTopOfStack((int *)0, true);
+
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
 	if (self->mediaOffset >= self->mediaSize)
@@ -56,11 +62,15 @@ static ssize_t read(void *opaque, unsigned char *buf, size_t len)
 
 	self->mediaOffset += toRead;
 
+	hx::SetTopOfStack((int *)0, true);
+
 	return (ssize_t) toRead;
 }
 
 static int seek(void *opaque, uint64_t offset)
 {
+	hx::SetTopOfStack((int *)0, true);
+
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
 	if (offset > self->mediaSize)
@@ -68,29 +78,41 @@ static int seek(void *opaque, uint64_t offset)
 
 	self->mediaOffset = offset;
 
+	hx::SetTopOfStack((int *)0, true);
+
 	return 0;
 }
 #endif
 
 static void *lock(void *opaque, void **planes)
 {
+	hx::SetTopOfStack((int *)0, true);
+
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
 	if (self->planes != NULL)
 		(*planes) = self->planes;
 
-	return NULL; /* picture identifier, not needed here */
+	hx::SetTopOfStack((int *)0, true);
+
+	return NULL;
 }
 
 static void display(void *opaque, void *picture)
 {
-	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
+	hx::SetTopOfStack((int *)0, true);
 
+	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
+ 
 	self->events[8] = true;
+
+	hx::SetTopOfStack((int *)0, true);
 }
 
 static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
 {
+	hx::SetTopOfStack((int *)0, true);
+
 	Video_obj *self = reinterpret_cast<Video_obj *>(*opaque);
 
 	strcpy(chroma, "RV32");
@@ -108,11 +130,15 @@ static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsig
 
 	self->planes = new unsigned char[self->formatWidth * self->formatHeight * 4];
 
+	hx::SetTopOfStack((int *)0, true);
+
 	return 1;
 }
 
 static void callbacks(const libvlc_event_t *p_event, void *p_data)
 {
+	hx::SetTopOfStack((int *)0, true);
+
 	Video_obj *self = reinterpret_cast<Video_obj *>(p_data);
 
 	switch (p_event->type)
@@ -139,6 +165,8 @@ static void callbacks(const libvlc_event_t *p_event, void *p_data)
 			self->events[6] = true;
 			break;
 	}
+
+	hx::SetTopOfStack((int *)0, true);
 }')
 class Video extends Bitmap
 {
