@@ -9,9 +9,7 @@ import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.Define;
 import lime.utils.Log;
-#if (target.threaded)
 import sys.thread.Thread;
-#end
 import sys.FileSystem;
 
 using StringTools;
@@ -156,7 +154,6 @@ class Handle
 		return true;
 	}
 
-	#if (target.threaded)
 	/**
 	 * Initialize the LibVLC instance asynchronously if isn't already.
 	 *
@@ -176,7 +173,6 @@ class Handle
 				finishCallback(success);
 		});
 	}
-	#end
 
 	/**
 	 * Frees the LibVLC instance.
