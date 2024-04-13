@@ -31,7 +31,7 @@ using StringTools;
 #ifndef _MSC_VER
 static int open(void *opaque, void **datap, uint64_t *sizep)
 {
-	hx::SetTopOfStack((int *)0, true);
+	hx::SetTopOfStack((int *)99, true);
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
@@ -46,7 +46,7 @@ static int open(void *opaque, void **datap, uint64_t *sizep)
 
 static ssize_t read(void *opaque, unsigned char *buf, size_t len)
 {
-	hx::SetTopOfStack((int *)0, true);
+	hx::SetTopOfStack((int *)99, true);
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
@@ -69,7 +69,7 @@ static ssize_t read(void *opaque, unsigned char *buf, size_t len)
 
 static int seek(void *opaque, uint64_t offset)
 {
-	hx::SetTopOfStack((int *)0, true);
+	hx::SetTopOfStack((int *)99, true);
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
@@ -86,7 +86,7 @@ static int seek(void *opaque, uint64_t offset)
 
 static void *lock(void *opaque, void **planes)
 {
-	hx::SetTopOfStack((int *)0, true);
+	hx::SetTopOfStack((int *)99, true);
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
@@ -100,7 +100,7 @@ static void *lock(void *opaque, void **planes)
 
 static void display(void *opaque, void *picture)
 {
-	hx::SetTopOfStack((int *)0, true);
+	hx::SetTopOfStack((int *)99, true);
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
  
@@ -111,7 +111,7 @@ static void display(void *opaque, void *picture)
 
 static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
 {
-	hx::SetTopOfStack((int *)0, true);
+	hx::SetTopOfStack((int *)99, true);
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(*opaque);
 
@@ -137,7 +137,7 @@ static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsig
 
 static void callbacks(const libvlc_event_t *p_event, void *p_data)
 {
-	hx::SetTopOfStack((int *)0, true);
+	hx::SetTopOfStack((int *)99, true);
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(p_data);
 
