@@ -77,7 +77,7 @@ class FlxVideoSprite extends FlxSprite
 				FlxG.signals.focusLost.add(pause);
 		}
 
-		if (!(location is Int) && !(location is Bytes) && (location is String))
+		if (location != null && !(location is Int) && !(location is Bytes) && (location is String))
 		{
 			final location:String = cast(location, String);
 
