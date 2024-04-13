@@ -22,6 +22,8 @@ using StringTools;
 @:cppNamespaceCode('
 static void logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
+	hx::SetTopOfStack((int *)99, true);
+
 	#ifdef __ANDROID__
 	switch (level)
 	{
@@ -50,6 +52,8 @@ static void logging(void *data, int level, const libvlc_log_t *ctx, const char *
 
 	vprintf(message, args);
 	#endif
+
+	hx::SetTopOfStack((int *)0, true);
 }')
 class Handle
 {
