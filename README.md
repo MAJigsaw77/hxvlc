@@ -17,6 +17,10 @@ A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback usin
 > [!CAUTION]
 > These platforms needs be to compiled using [Lime](https://lime.openfl.org) targeting `cpp` in order to work.
 
+## Known issues
+
+* **Bitstream playback** isn't really suitable for use; sometimes it can glitch out, and it doesn't seem to work with libVLC media options.
+
 ## Instructions
 
 1. Install the library.
