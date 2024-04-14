@@ -9,9 +9,7 @@ import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.Define;
 import lime.utils.Log;
-#if (target.threaded)
 import sys.thread.Thread;
-#end
 import sys.FileSystem;
 
 using StringTools;
@@ -24,6 +22,8 @@ using StringTools;
 @:cppNamespaceCode('
 static void logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
+	hx::SetTopOfStack((int *)99, true);
+
 	#ifdef __ANDROID__
 	switch (level)
 	{
@@ -52,6 +52,8 @@ static void logging(void *data, int level, const libvlc_log_t *ctx, const char *
 
 	vprintf(message, args);
 	#endif
+
+	hx::SetTopOfStack((int *)0, true);
 }')
 class Handle
 {
@@ -156,7 +158,6 @@ class Handle
 		return true;
 	}
 
-	#if (target.threaded)
 	/**
 	 * Initialize the LibVLC instance asynchronously if isn't already.
 	 *
@@ -176,7 +177,6 @@ class Handle
 				finishCallback(success);
 		});
 	}
-	#end
 
 	/**
 	 * Frees the LibVLC instance.
