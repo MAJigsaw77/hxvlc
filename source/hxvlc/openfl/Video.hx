@@ -171,6 +171,13 @@ static void callbacks(const libvlc_event_t *p_event, void *p_data)
 class Video extends Bitmap
 {
 	/**
+	 * Indicates whether to use GPU texture for rendering.
+	 *
+	 * If set to true, GPU texture rendering will be used if possible, otherwise, CPU-based image rendering will be used.
+	 */
+	public static var useTexture:Bool = true;
+
+	/**
 	 * The format width, in pixels.
 	 */
 	public var formatWidth(default, null):Int = 0;
@@ -1058,7 +1065,7 @@ class Video extends Bitmap
 			{
 				try
 				{
-					if (Lib.current.stage != null && Lib.current.stage.context3D != null)
+					if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
 					{
 						texture = Lib.current.stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
 
@@ -1066,7 +1073,8 @@ class Video extends Bitmap
 					}
 					else
 					{
-						Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
+						if (useTexture)
+							Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
 
 						bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
 					}
