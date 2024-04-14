@@ -19,7 +19,7 @@ using StringTools;
 #end
 @:headerInclude('stdarg.h')
 @:headerInclude('stdio.h')
-@:cppFileCode('
+@:cppNamespaceCode('
 static void logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
 	hx::SetTopOfStack((int *)99, true);
