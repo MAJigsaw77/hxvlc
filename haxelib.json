@@ -11,15 +11,15 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "1.3.0",
-	"releasenote": "Added BitStream and File Descriptor playback support, organized the source code a bit, and made some improvements.",
+	"version": "1.4.0",
+	"releasenote": "API additions, bug fixes, and minor improvements.",
 	"contributors": [
 		"MAJigsaw77"
 	],
+	"classPath": "source",
 	"dependencies": {
 		"hxcpp": "",
 		"lime": "",
 		"openfl": ""
-	},
-	"classPath": "source"
+	}
 }
