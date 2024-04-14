@@ -51,12 +51,20 @@ static ssize_t read(void *opaque, unsigned char *buf, size_t len)
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
 	if (self->mediaOffset >= self->mediaSize)
+	{
+		hx::SetTopOfStack((int *)0, true);
+
 		return 0;
+	}
 
 	uint64_t toRead = len < (self->mediaSize - self->mediaOffset) ? len : (self->mediaSize - self->mediaOffset);
 
 	if (self->mediaData == NULL || (self->mediaOffset > self->mediaSize - toRead))
+	{
+		hx::SetTopOfStack((int *)0, true);
+
 		return -1;
+	}
 
 	memcpy(buf, &self->mediaData[self->mediaOffset], (size_t) toRead);
 
@@ -74,7 +82,11 @@ static int seek(void *opaque, uint64_t offset)
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
 	if (offset > self->mediaSize)
+	{
+		hx::SetTopOfStack((int *)0, true);
+
 		return -1;
+	}
 
 	self->mediaOffset = offset;
 
