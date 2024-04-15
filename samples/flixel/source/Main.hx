@@ -32,10 +32,7 @@ class Main extends Sprite
 		super();
 
 		#if android
-		if (VERSION.SDK_INT > 30)
-			Sys.setCwd(Path.addTrailingSlash(Context.getObbDir()));
-		else
-			Sys.setCwd(Path.addTrailingSlash(Context.getExternalFilesDir()));
+		Sys.setCwd(Path.addTrailingSlash(VERSION.SDK_INT > 30 ? Context.getObbDir() : Context.getExternalFilesDir()));
 		#elseif ios
 		Sys.setCwd(System.documentsDirectory);
 		#end
@@ -48,7 +45,12 @@ class Main extends Sprite
 
 		addChild(new FlxGame(1280, 720, PlayState, refreshRate, refreshRate));
 
-		fps = new FPS(10, 10, FlxColor.RED);
+		#if FLX_MOUSE
+		FlxG.mouse.useSystemCursor = true;
+		#end
+
+		fps = new FPS(10, 10, FlxColor.WHITE);
+		fps.defaultTextFormat.size = 16;
 		FlxG.game.addChild(fps);
 	}
 
@@ -95,7 +97,7 @@ class Main extends Sprite
 		catch (e:Exception)
 			Log.trace('Couldn\'t save error message "${e.message}"', null);
 
-		Log.trace(msg, null);
+		Sys.println(msg);
 		Lib.application.window.alert(msg, 'Error!');
 		System.exit(1);
 	}
