@@ -26,7 +26,6 @@ using StringTools;
  *
  * It extends a Bitmap object to provide a seamless integration with existing display objects.
  */
-@:headerInclude('stdio.h')
 @:cppNamespaceCode('
 #ifndef _MSC_VER
 static int open(void *opaque, void **datap, uint64_t *sizep)

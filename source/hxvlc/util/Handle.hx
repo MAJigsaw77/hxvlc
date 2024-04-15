@@ -17,8 +17,6 @@ using StringTools;
 #if android
 @:headerInclude('android/log.h')
 #end
-@:headerInclude('stdarg.h')
-@:headerInclude('stdio.h')
 @:cppNamespaceCode('
 static void logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
