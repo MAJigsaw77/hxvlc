@@ -44,13 +44,9 @@ static void logging(void *data, int level, const libvlc_log_t *ctx, const char *
 			break;
 	}
 	#else
-	char message[512] = { 0 };
+	vprintf(fmt, args);
 
-	strcpy(message, fmt);
-
-	strcat(message, "\\n");
-
-	vprintf(message, args);
+	printf("\\n");
 	#endif
 
 	hx::SetTopOfStack((int *)0, true);
