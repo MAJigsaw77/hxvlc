@@ -6,10 +6,6 @@ package hxvlc.externs;
 import hxvlc.externs.Types;
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-#if ios
-@:objc
-@:include('MobileVLCKit/MobileVLCKit.h')
-#end
 @:include('vlc/vlc.h')
 @:unreflective
 extern class LibVLC
