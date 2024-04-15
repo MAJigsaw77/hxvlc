@@ -34,10 +34,7 @@ class Main extends Sprite
 		super();
 
 		#if android
-		if (VERSION.SDK_INT > 30)
-			Sys.setCwd(Path.addTrailingSlash(Context.getObbDir()));
-		else
-			Sys.setCwd(Path.addTrailingSlash(Context.getExternalFilesDir()));
+		Sys.setCwd(Path.addTrailingSlash(VERSION.SDK_INT > 30 ? Context.getObbDir() : Context.getExternalFilesDir()));
 		#elseif ios
 		Sys.setCwd(LimeSystem.documentsDirectory);
 		#end
