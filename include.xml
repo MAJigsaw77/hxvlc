@@ -35,7 +35,4 @@
 	<sample path="samples" />
 
 	<source path="source" />
-
-	<template path="templates" />
-
 </extension>
