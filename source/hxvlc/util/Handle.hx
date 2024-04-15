@@ -62,6 +62,13 @@ class Handle
 	public static var loading(default, null):Bool = false;
 
 	/**
+	 * Retrieve LibVLC version.
+	 *
+	 * Example: "1.1.0-git The Luggage"
+	 */
+	public static var version(get, never):String;
+
+	/**
 	 * Initialize the LibVLC instance if isn't already.
 	 *
 	 * @param options The additional options you can add to the LibVLC instance.
@@ -186,5 +193,13 @@ class Handle
 
 			instance = null;
 		}
+	}
+
+	// Get & Set Methods
+
+	@:noCompletion
+	private static function get_version():String
+	{
+		return cast(LibVLC.get_version(), String);
 	}
 }
