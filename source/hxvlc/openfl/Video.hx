@@ -1059,7 +1059,9 @@ class Video extends Bitmap
 
 			if (bitmapData != null)
 			{
-				if (bitmapData.width != formatWidth && bitmapData.height != formatHeight)
+				@:privateAccess
+				if ((bitmapData.width != formatWidth && bitmapData.height != formatHeight)
+				    || ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
 				{
 					bitmapData.dispose();
 
