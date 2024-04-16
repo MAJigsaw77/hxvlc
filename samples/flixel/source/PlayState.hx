@@ -39,7 +39,7 @@ class PlayState extends FlxState
 		video.load('assets/video.mp4', [':input-repeat=2']);
 		add(video);
 
-		new FlxTimer().start(0.001, function(tmr:FlxTimer):Void
+		FlxTimer.wait(0.001, function(tmr:FlxTimer):Void
 		{
 			video.play();
 		});
