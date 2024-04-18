@@ -1066,7 +1066,10 @@ class Video extends Bitmap
 					bitmapData.dispose();
 
 					if (texture != null)
+					{
 						texture.dispose();
+						texture = null;
+					}
 
 					mustRecreate = true;
 				}
