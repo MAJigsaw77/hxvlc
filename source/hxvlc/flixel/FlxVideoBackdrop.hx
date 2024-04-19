@@ -58,7 +58,6 @@ class FlxVideoBackdrop extends FlxBackdrop
 		bitmap.onOpening.add(() -> bitmap.role = LibVLC_Role_Game);
 		bitmap.onFormatSetup.add(() -> loadGraphic(bitmap.bitmapData));
 		bitmap.alpha = 0;
-
 		FlxG.game.addChild(bitmap);
 	}
 	#else

@@ -273,7 +273,7 @@ class Video extends Bitmap
 	 * Audio output cannot be changed while playing.
 	 */
 	public var output(never, set):String;
-	
+
 	/**
 	 * The audio's mute status.
 	 *
@@ -836,7 +836,7 @@ class Video extends Bitmap
 	private function get_outputModules():Array<String>
 	{
 		var modules:Array<String> = null;
-		
+
 		if (audioOutput != null)
 		{
 			modules = [];
@@ -1061,7 +1061,7 @@ class Video extends Bitmap
 			{
 				@:privateAccess
 				if ((bitmapData.width != formatWidth && bitmapData.height != formatHeight)
-				    || ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
+					|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
 				{
 					bitmapData.dispose();
 
