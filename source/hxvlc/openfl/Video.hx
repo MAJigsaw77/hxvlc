@@ -623,6 +623,9 @@ class Video extends Bitmap
 			LibVLC.media_player_release(mediaPlayer);
 		}
 
+		eventManager = null;
+		mediaPlayer = null;
+
 		if (Lib.current.hasEventListener(openfl.events.Event.ENTER_FRAME))
 			Lib.current.removeEventListener(openfl.events.Event.ENTER_FRAME, this_onEnterFrame);
 
@@ -634,22 +637,21 @@ class Video extends Bitmap
 			if (mediaData != null)
 			{
 				untyped __cpp__('delete[] {0}', mediaData);
-
 				mediaData = null;
 			}
 
 			mediaOffset = 0;
 			mediaSize = 0;
 			#end
+
+			mediaItem = null;
 		}
 
 		if (audioOutput != null)
+		{
 			LibVLC.audio_output_list_release(audioOutput);
-
-		eventManager = null;
-		mediaPlayer = null;
-		mediaItem = null;
-		audioOutput = null;
+			audioOutput = null;
+		}
 
 		if (bitmapData != null)
 		{
@@ -668,7 +670,6 @@ class Video extends Bitmap
 		if (planes != null)
 		{
 			untyped __cpp__('delete[] {0}', planes);
-
 			planes = null;
 		}
 	}
