@@ -1,6 +1,4 @@
-<p align="center">
-	 <img src="https://github.com/MAJigsaw77/hxvlc/raw/main/logo.png" />
-</p>
+<img src="https://github.com/MAJigsaw77/hxvlc/raw/main/logo.png" align="center" />
 
 # hxvlc
 
