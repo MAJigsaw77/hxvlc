@@ -113,9 +113,7 @@ static void display(void *opaque, void *picture)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
- 
-	self->events[8] = true;
+	reinterpret_cast<Video_obj *>(opaque)->events[8] = true;
 
 	hx::SetTopOfStack((int *)0, true);
 }
