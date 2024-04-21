@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/MAJigsaw77/hxvlc/raw/main/logo.png" />
+	 <img src="https://github.com/MAJigsaw77/hxvlc/raw/main/logo.png" />
 </p>
 
 # hxvlc
@@ -22,42 +22,42 @@ A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback usin
 ## Instructions
 
 1. Install the library:
-   - Via `Haxelib`:
-     ```bash
-     haxelib install hxvlc
-     ```
-   - Via `Git` for the latest updates:
-     ```bash
-     haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git
-     ```
+	- Via `Haxelib`:
+	  ```bash
+	  haxelib install hxvlc
+	  ```
+	- Via `Git` for the latest updates:
+	  ```bash
+	  haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git
+	  ```
 
 2. Add this code in the **project.xml** file:
-    ```xml
-    <section if="cpp">
-    	<haxelib name="hxvlc" if="desktop || mobile" />
-    </section>
-    ```
+	```xml
+	<section if="cpp">
+		<haxelib name="hxvlc" if="desktop || mobile" />
+	</section>
+	```
 
 3. **Linux users only**: Install `vlc` from your distro's package manager.
-   - [Debian](https://debian.org) based distributions:
-        ```bash
-        sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc
-        ```
-   - [Arch](https://archlinux.org) based distributions:
-        ```bash
-        sudo pacman -S vlc
-        ```
-   - [Gentoo](https://www.gentoo.org) based distributions:
-        ```bash
-        sudo emerge media-video/vlc
-        ```
+	- [Debian](https://debian.org) based distributions:
+		```bash
+		sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc
+		```
+	- [Arch](https://archlinux.org) based distributions:
+		```bash
+		sudo pacman -S vlc
+		```
+	- [Gentoo](https://www.gentoo.org) based distributions:
+		```bash
+		sudo emerge media-video/vlc
+		```
 
 4. **iOS users only**: 
-   - Download the [MobileVLCKit Framework](https://download.videolan.org/cocoapods/unstable/MobileVLCKit-3.6.0b10-615f96dc-4733d1cc.tar.xz) and extract it.
-   - In your app's `.xcodeproj` file, click on the target named after your app.
-   - Navigate to `Build Settings` and change `Debug Information Format` to `DWARF`.
-   - Go to `Build Phases/Link Binary With Libraries`, click on the plus sign at the bottom, and select `Add Other/Add Files`.
-   - Locate the path of the `MobileVLCKit.xcframework` where you extracted the framework and add it.
+	- Download the [MobileVLCKit Framework](https://download.videolan.org/cocoapods/unstable/MobileVLCKit-3.6.0b10-615f96dc-4733d1cc.tar.xz) and extract it.
+	- In your app's `.xcodeproj` file, click on the target named after your app.
+	- Navigate to `Build Settings` and change `Debug Information Format` to `DWARF`.
+	- Go to `Build Phases/Link Binary With Libraries`, click on the plus sign at the bottom, and select `Add Other/Add Files`.
+	- Locate the path of the `MobileVLCKit.xcframework` where you extracted the framework and add it.
 
 5. **Well done!**
 
