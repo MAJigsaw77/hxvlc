@@ -1107,10 +1107,10 @@ class Video extends Bitmap
 
 			if (__renderable && planes != null)
 			{
-				final planesData:BytesData = cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4);
-
 				try
 				{
+					final planesData:BytesData = cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4);
+
 					if (texture != null)
 					{
 						texture.uploadFromByteArray(planesData, 0);
