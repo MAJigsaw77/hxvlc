@@ -1109,12 +1109,19 @@ class Video extends Bitmap
 			{
 				final planesData:BytesData = cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4);
 
-				if (texture != null)
-					texture.uploadFromByteArray(planesData, 0);
-				else if (bitmapData != null && bitmapData.image != null)
-					bitmapData.setPixels(bitmapData.rect, planesData);
+				try
+				{
+					if (texture != null)
+					{
+						texture.uploadFromByteArray(planesData, 0);
 
-				__setRenderDirty();
+						__setRenderDirty();
+					}
+					else if (bitmapData != null && bitmapData.image != null)
+						bitmapData.setPixels(bitmapData.rect, planesData);
+				}
+				catch (e:Exception)
+					Log.error('An error occurred while attempting to render the video: ${e.message}');
 			}
 
 			onDisplay.dispatch();
