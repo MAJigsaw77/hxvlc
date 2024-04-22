@@ -20,7 +20,7 @@
 
 	<!--Window Settings-->
 
-	<window allow-high-dpi="true" background="#FFA500" fps="60" />
+	<window allow-high-dpi="true" background="#000000" fps="60" />
 
 	<!--Path Settings-->
 
