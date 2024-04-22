@@ -246,6 +246,6 @@ class Handle
 	@:noCompletion
 	private static function get_clock():Int64
 	{
-		return LibVLC.get_clock();
+		return LibVLC.clock();
 	}
 }
