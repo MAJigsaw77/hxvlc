@@ -3,6 +3,7 @@ package;
 #if android
 import android.widget.Toast;
 #end
+import flixel.text.FlxText;
 import flixel.util.FlxTimer;
 import flixel.FlxG;
 import flixel.FlxState;
@@ -27,17 +28,30 @@ class PlayState extends FlxState
 		copyFiles();
 		#end
 
+		FlxG.cameras.bgColor = 0xFF131C1B;
+
+		var infoText:FlxText = new FlxText(10, 10, FlxG.width - 20, 'LibVLC Version: ${Handle.version}\nLibVLC Compiler: ${Handle.compiler}');
+		infoText.active = false;
+		infoText.antialiasing = true;
+		infoText.size = 16;
+
 		var video:FlxVideoSprite = new FlxVideoSprite(0, 0);
 		video.antialiasing = true;
+		video.bitmap.onOpening.add(function():Void
+		{
+			infoText.text = 'LibVLC Version: ${Handle.version}\nLibVLC Compiler: ${Handle.compiler}\nMRL: ${video.bitmap.mrl}';
+		});
 		video.bitmap.onFormatSetup.add(function():Void
 		{
-			video.setGraphicSize(FlxG.width, FlxG.height);
+			video.setGraphicSize(FlxG.width * 0.7, FlxG.height * 0.7);
 			video.updateHitbox();
 			video.screenCenter();
 		});
 		video.bitmap.onEndReached.add(video.destroy);
 		video.load('assets/video.mp4', [':input-repeat=2']);
 		add(video);
+
+		add(infoText);
 
 		FlxTimer.wait(0.001, function():Void
 		{
