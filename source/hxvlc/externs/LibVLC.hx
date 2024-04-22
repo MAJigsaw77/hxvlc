@@ -25,6 +25,12 @@ extern class LibVLC
 	@:native('libvlc_get_version')
 	static function get_version():cpp.ConstCharStar;
 
+	@:native('libvlc_get_compiler')
+	static function get_compiler():cpp.ConstCharStar;
+
+	@:native('libvlc_get_changeset')
+	static function get_changeset():cpp.ConstCharStar;
+
 	@:native('libvlc_event_attach')
 	static function event_attach(p_event_manager:cpp.RawPointer<LibVLC_Event_Manager_T>, i_event_type:Int, f_callback:LibVLC_Callback_T,
 		user_data:cpp.RawPointer<cpp.Void>):Int;
@@ -38,6 +44,9 @@ extern class LibVLC
 
 	@:native('libvlc_log_set')
 	static function log_set(p_instance:cpp.RawPointer<LibVLC_Instance_T>, cb:LibVLC_Log_CB, data:cpp.RawPointer<cpp.Void>):Void;
+
+	@:native('libvlc_clock')
+	static function clock():cpp.Int64;
 
 	@:native('libvlc_media_new_location')
 	static function media_new_location(p_instance:cpp.RawPointer<LibVLC_Instance_T>, psz_mrl:cpp.ConstCharStar):cpp.RawPointer<LibVLC_Media_T>;

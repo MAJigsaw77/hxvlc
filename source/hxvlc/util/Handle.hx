@@ -5,6 +5,7 @@ package hxvlc.util;
 #end
 import haxe.io.Path;
 import haxe.Exception;
+import haxe.Int64;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.Define;
@@ -67,6 +68,33 @@ class Handle
 	 * Example: "1.1.0-git The Luggage"
 	 */
 	public static var version(get, never):String;
+
+	/**
+	 * Retrieve libvlc compiler version.
+	 *
+	 * Example: "gcc version 4.2.3 (Ubuntu 4.2.3-2ubuntu6)"
+	 */
+	public static var compiler(get, never):String;
+
+	/**
+	 * Retrieve libvlc changeset.
+	 *
+	 * Example: "aa9bce0bc4"
+	 */
+	public static var changeset(get, never):String;
+
+	/**
+	 * Return the current time as defined by LibVLC.
+	 *
+	 * The unit is the microsecond.
+	 *
+	 * Time increases monotonically (regardless of time zone changes and RTC adjustements).
+	 *
+	 * The origin is arbitrary but consistent across the whole system (e.g. the system uptim, the time since the system was booted).
+	 *
+	 * @note On systems that support it, the POSIX monotonic clock is used.
+	 */
+	public static var clock(get, never):Int64;
 
 	/**
 	 * Initialize the LibVLC instance if isn't already.
@@ -201,5 +229,23 @@ class Handle
 	private static function get_version():String
 	{
 		return cast(LibVLC.get_version(), String);
+	}
+
+	@:noCompletion
+	private static function get_compiler():String
+	{
+		return cast(LibVLC.get_compiler(), String);
+	}
+
+	@:noCompletion
+	private static function get_changeset():String
+	{
+		return cast(LibVLC.get_changeset(), String);
+	}
+
+	@:noCompletion
+	private static function get_clock():Int64
+	{
+		return LibVLC.get_clock();
 	}
 }
