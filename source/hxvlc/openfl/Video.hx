@@ -18,7 +18,6 @@ import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.Texture;
 import openfl.Lib;
-import sys.thread.Mutex;
 
 using StringTools;
 
@@ -102,8 +101,8 @@ static void *lock(void *opaque, void **planes)
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
-	if (self->planesData != NULL)
-		(*planes) = self->planesData;
+	if (self->planes != NULL)
+		(*planes) = self->planes;
 
 	hx::SetTopOfStack((int *)0, true);
 
@@ -135,10 +134,10 @@ static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsig
 
 	self->events[7] = true;
 
-	if (self->planesData != NULL)
-		delete[] self->planesData;
+	if (self->planes != NULL)
+		delete[] self->planes;
 
-	self->planesData = new unsigned char[self->formatWidth * self->formatHeight * 4];
+	self->planes = new unsigned char[self->formatWidth * self->formatHeight * 4];
 
 	hx::SetTopOfStack((int *)0, true);
 
@@ -393,10 +392,7 @@ class Video extends Bitmap
 	private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false];
 
 	@:noCompletion
-	private var planesData:cpp.RawPointer<cpp.UInt8>;
-
-	@:noCompletion
-	private var planesMutex:Mutex;
+	private var planes:cpp.RawPointer<cpp.UInt8>;
 
 	@:noCompletion
 	private var texture:Texture;
@@ -426,8 +422,6 @@ class Video extends Bitmap
 		Handle.init();
 
 		audioOutput = LibVLC.audio_output_list_get(Handle.instance);
-
-		planesMutex = new Mutex();
 	}
 
 	/**
@@ -671,10 +665,10 @@ class Video extends Bitmap
 
 		formatWidth = formatHeight = 0;
 
-		if (planesData != null)
+		if (planes != null)
 		{
-			untyped __cpp__('delete[] {0}', planesData);
-			planesData = null;
+			untyped __cpp__('delete[] {0}', planes);
+			planes = null;
 		}
 	}
 
@@ -1111,24 +1105,20 @@ class Video extends Bitmap
 		{
 			events[8] = false;
 
-			if (__renderable && planesData != null)
+			if (__renderable && planes != null)
 			{
 				try
 				{
-					planesMutex.acquire();
-					
-					final bytes:BytesData = cpp.Pointer.fromRaw(planesData).toUnmanagedArray(formatWidth * formatHeight * 4);
+					final planesData:BytesData = cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4);
 
 					if (texture != null)
 					{
-						texture.uploadFromByteArray(bytes, 0);
+						texture.uploadFromByteArray(planesData, 0);
 
 						__setRenderDirty();
 					}
 					else if (bitmapData != null && bitmapData.image != null)
-						bitmapData.setPixels(bitmapData.rect, bytes);
-
-					planesMutex.release();
+						bitmapData.setPixels(bitmapData.rect, planesData);
 				}
 				catch (e:Exception)
 					Log.error('An error occurred while attempting to render the video: ${e.message}');
