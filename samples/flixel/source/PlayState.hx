@@ -30,7 +30,7 @@ class PlayState extends FlxState
 
 		FlxG.cameras.bgColor = 0xFF131C1B;
 
-		var infoText:FlxText = new FlxText(10, 10, FlxG.width - 20, 'LibVLC Version: ${Handle.version}\nLibVLC Compiler: ${Handle.compiler}');
+		var infoText:FlxText = new FlxText(10, FlxG.height - 70, FlxG.width - 20, 'LibVLC Version: ${Handle.version}\nLibVLC Compiler: ${Handle.compiler}');
 		infoText.active = false;
 		infoText.antialiasing = true;
 		infoText.size = 16;
