@@ -4,6 +4,7 @@ package;
 import android.widget.Toast;
 #end
 import flixel.text.FlxText;
+import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import flixel.FlxG;
 import flixel.FlxState;
@@ -43,6 +44,7 @@ class PlayState extends FlxState
 		add(video);
 
 		var infoText:FlxText = new FlxText(10, FlxG.height - 50, FlxG.width - 20, 'LibVLC Version: ${Handle.version}\nLibVLC Compiler: ${Handle.compiler}', 16);
+		infoText.setBorderStyle(OUTLINE, FlxColor.BLACK);
 		infoText.active = false;
 		infoText.antialiasing = true;
 		add(infoText);
