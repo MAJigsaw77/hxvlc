@@ -29,7 +29,7 @@ jobs:
           haxe-version: 4.3.4
 
       - name: Installing Dependencies
-        if: matrix.os == 'ubuntu-latest'
+        if: startsWith(matrix.os, 'ubuntu')
         run: sudo apt-get update && sudo apt-get upgrade && sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc
 
       - name: Installing Haxe Libraries
@@ -45,25 +45,25 @@ jobs:
         run: haxelib list
 
       - name: Building Windows
-        if: matrix.os == 'windows-latest'
+        if: startsWith(matrix.os, 'windows')
         run: cd samples/${{matrix.sample}} && haxelib run lime build windows -debug
 
       - name: Building MacOS
-        if: matrix.os == 'macos-latest'
+        if: startsWith(matrix.os, 'macos')
         run: |
           cd samples/${{matrix.sample}}
           haxelib run lime build mac -debug
           tar -zcvf build.tar.gz export/macos/bin
 
       - name: Building Linux
-        if: matrix.os == 'ubuntu-latest'
+        if: startsWith(matrix.os, 'ubuntu')
         run: |
           cd samples/${{matrix.sample}}
           haxelib run lime build linux -debug
           tar -zcvf build.tar.gz export/linux/bin
 
       - name: Upload Artifact Windows
-        if: matrix.os == 'windows-latest'
+        if: startsWith(matrix.os, 'windows')
         uses: actions/upload-artifact@main
         with:
           name: windowsBuild-${{matrix.sample}}
@@ -71,7 +71,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload Artifact MacOS
-        if: matrix.os == 'macos-latest'
+        if: startsWith(matrix.os, 'macos')
         uses: actions/upload-artifact@main
         with:
           name: macBuild-${{matrix.sample}}
@@ -79,7 +79,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload Artifact Linux
-        if: matrix.os == 'ubuntu-latest'
+        if: startsWith(matrix.os, 'ubuntu')
         uses: actions/upload-artifact@main
         with:
           name: linuxBuild-${{matrix.sample}}
