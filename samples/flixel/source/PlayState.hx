@@ -30,17 +30,8 @@ class PlayState extends FlxState
 
 		FlxG.cameras.bgColor = 0xFF131C1B;
 
-		var infoText:FlxText = new FlxText(10, FlxG.height - 70, FlxG.width - 20, 'LibVLC Version: ${Handle.version}\nLibVLC Compiler: ${Handle.compiler}');
-		infoText.active = false;
-		infoText.antialiasing = true;
-		infoText.size = 16;
-
 		var video:FlxVideoSprite = new FlxVideoSprite(0, 0);
 		video.antialiasing = true;
-		video.bitmap.onOpening.add(function():Void
-		{
-			infoText.text = 'LibVLC Version: ${Handle.version}\nLibVLC Compiler: ${Handle.compiler}\nMRL: ${video.bitmap.mrl}';
-		});
 		video.bitmap.onFormatSetup.add(function():Void
 		{
 			video.setGraphicSize(FlxG.width * 0.7, FlxG.height * 0.7);
@@ -51,6 +42,9 @@ class PlayState extends FlxState
 		video.load('assets/video.mp4', [':input-repeat=2']);
 		add(video);
 
+		var infoText:FlxText = new FlxText(10, FlxG.height - 50, FlxG.width - 20, 'LibVLC Version: ${Handle.version}\nLibVLC Compiler: ${Handle.compiler}', 16);
+		infoText.active = false;
+		infoText.antialiasing = true;
 		add(infoText);
 
 		FlxTimer.wait(0.001, function():Void
