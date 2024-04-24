@@ -7,7 +7,6 @@ import haxe.io.Bytes;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Video;
 import hxvlc.util.OneOfThree;
-import lime.utils.Log;
 import sys.FileSystem;
 
 using StringTools;
@@ -76,7 +75,7 @@ class FlxVideo extends Video
 					return super.load(absolutePath, options);
 				else
 				{
-					Log.warn('Unable to find the file at location "$absolutePath".');
+					FlxG.log.warn('Unable to find the file at location "$absolutePath".');
 
 					return false;
 				}
