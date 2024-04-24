@@ -113,7 +113,7 @@ static void display(void *opaque, void *picture)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(opaque)->events[8] = true;
+	reinterpret_cast<Video_obj *>(opaque)->events[10] = true;
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -132,7 +132,7 @@ static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsig
 	(*pitches) = self->formatWidth * 4;
 	(*lines) = self->formatHeight;
 
-	self->events[7] = true;
+	self->events[9] = true;
 
 	if (self->planes != NULL)
 		delete[] self->planes;
@@ -172,6 +172,12 @@ static void callbacks(const libvlc_event_t *p_event, void *p_data)
 			break;
 		case libvlc_MediaPlayerMediaChanged:
 			self->events[6] = true;
+			break;
+		case libvlc_MediaPlayerCorked:
+			self->events[7] = true;
+			break;
+		case libvlc_MediaPlayerUncorked:
+			self->events[8] = true;
 			break;
 	}
 
@@ -356,6 +362,18 @@ class Video extends Bitmap
 	public var onMediaChanged(default, null):Event<Void->Void>;
 
 	/**
+	 * An event that is dispatched when the media player enters or exits the corked state.
+	 *
+	 * The corked state indicates that playback is temporarily paused or blocked, usually due to buffering.
+	 */
+	public var onCorked(default, null):Event<Bool->Void>;
+
+	/**
+	 * An event that is dispatched when the media player exits the corked state and resumes playback.
+	 */
+	public var onUncorked(default, null):Event<Void->Void>;
+
+	/**
 	 * An event that is dispatched when the format is being initialized.
 	 */
 	public var onFormatSetup(default, null):Event<Void->Void>;
@@ -389,7 +407,7 @@ class Video extends Bitmap
 	private var eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>;
 
 	@:noCompletion
-	private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false];
+	private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false, false, false];
 
 	@:noCompletion
 	private var planes:cpp.RawPointer<cpp.UInt8>;
@@ -413,6 +431,8 @@ class Video extends Bitmap
 		onEndReached = new Event<Void->Void>();
 		onEncounteredError = new Event<String->Void>();
 		onMediaChanged = new Event<Void->Void>();
+		onCorked = new Event<Void->Void>();
+		onUncorked = new Event<Void->Void>();
 		onFormatSetup = new Event<Void->Void>();
 		onDisplay = new Event<Void->Void>();
 
@@ -1054,6 +1074,20 @@ class Video extends Bitmap
 		{
 			events[7] = false;
 
+			onCorked.dispatch();
+		}
+
+		if (events[8])
+		{
+			events[8] = false;
+
+			onUncorked.dispatch();
+		}
+
+		if (events[9])
+		{
+			events[9] = false;
+
 			var mustRecreate:Bool = false;
 
 			if (bitmapData != null)
@@ -1101,9 +1135,9 @@ class Video extends Bitmap
 			}
 		}
 
-		if (events[8])
+		if (events[10])
 		{
-			events[8] = false;
+			events[10] = false;
 
 			if (__renderable && planes != null)
 			{
