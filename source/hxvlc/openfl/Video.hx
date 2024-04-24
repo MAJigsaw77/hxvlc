@@ -362,14 +362,12 @@ class Video extends Bitmap
 	public var onMediaChanged(default, null):Event<Void->Void>;
 
 	/**
-	 * An event that is dispatched when the media player enters or exits the corked state.
-	 *
-	 * The corked state indicates that playback is temporarily paused or blocked, usually due to buffering.
+	 * An event that is dispatched when the media player is corked.
 	 */
-	public var onCorked(default, null):Event<Bool->Void>;
+	public var onCorked(default, null):Event<Void->Void>;
 
 	/**
-	 * An event that is dispatched when the media player exits the corked state and resumes playback.
+	 * An event that is dispatched when the media player is uncorked.
 	 */
 	public var onUncorked(default, null):Event<Void->Void>;
 
