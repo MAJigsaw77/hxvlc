@@ -65,7 +65,7 @@ Check out the [Samples Folder](samples/) for examples on how to use this library
 
 ## Licensing
 
-**hxvlc** is available under the **MIT License**. Check [LICENSE](./LICENSE) for more information.
+**hxvlc** is made available under the **MIT License**. Check [LICENSE](./LICENSE) for more information.
 
 ![](https://images.videolan.org/images/goodies/Cone-Video-small.png)
 
