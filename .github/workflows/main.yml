@@ -3,6 +3,7 @@ on:
   push:
     branches: main
     paths-ignore:
+      - '.github/workflows/format.yml'
       - 'LICENSE'
       - 'README.md'
       - 'TODO.md'
