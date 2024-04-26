@@ -56,7 +56,15 @@ class FlxVideoBackdrop extends FlxBackdrop
 
 		bitmap = new Video(antialiasing);
 		bitmap.onOpening.add(() -> bitmap.role = LibVLC_Role_Game);
-		bitmap.onFormatSetup.add(() -> loadGraphic(bitmap.bitmapData));
+		bitmap.onFormatSetup.add(function():Void
+		{
+			var graphic:FlxGraphic = FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false);
+
+			if (graphic == null)
+				return;
+
+			loadGraphic(graphic);
+		});
 		bitmap.alpha = 0;
 		FlxG.game.addChild(bitmap);
 	}
