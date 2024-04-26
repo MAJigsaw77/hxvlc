@@ -41,7 +41,7 @@ class FlxVideoSprite extends FlxSprite
 	 * @param x The initial X position of the sprite.
 	 * @param y The initial Y position of the sprite.
 	 */
-	public function new(x = 0, y = 0):Void
+	public function new(?x:Float = 0, ?y:Float = 0):Void
 	{
 		super(x, y);
 
