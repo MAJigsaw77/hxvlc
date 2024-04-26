@@ -126,7 +126,7 @@ class FlxVideoBackdrop extends FlxBackdrop
 					return bitmap.load(absolutePath, options);
 				else
 				{
-					FlxG.log.warn('Unable to find the file at location "$absolutePath".');
+					FlxG.log.warn('Unable to find the video file at location "$absolutePath".');
 
 					return false;
 				}
