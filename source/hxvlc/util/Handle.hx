@@ -117,13 +117,6 @@ class Handle
 
 			#if (windows || macos)
 			Sys.putEnv('VLC_PLUGIN_PATH', Path.join([Path.directory(Sys.programPath()), 'plugins']));
-			#elseif linux
-			final pluginsPath:String = '/usr/local/lib/vlc/plugins';
-
-			if (FileSystem.exists(pluginsPath))
-				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
-			else if (FileSystem.exists(pluginsPath.replace('local/', '')))
-				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath.replace('local/', ''));
 			#end
 
 			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
@@ -140,11 +133,6 @@ class Handle
 			#if (windows || macos)
 			args.push_back("--reset-config");
 			args.push_back("--reset-plugins-cache");
-			#elseif linux
-			final pluginsPath:String = Sys.getEnv('VLC_PLUGIN_PATH');
-
-			if (pluginsPath != null && pluginsPath.length > 0)
-				args.push_back("--reset-plugins-cache");
 			#end
 			args.push_back("--text-renderer=dummy");
 			#if HXVLC_VERBOSE
