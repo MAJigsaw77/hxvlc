@@ -104,7 +104,7 @@ class FlxVideo extends Video
 	@:noCompletion
 	private function postUpdate():Void
 	{
-		if (autoResizeMode.x || autoResizeMode.y)
+		if (autoResizeMode != null && (autoResizeMode.x || autoResizeMode.y))
 		{
 			width = autoResizeMode.x ? FlxG.scaleMode.gameSize.x : formatWidth;
 			height = autoResizeMode.y ? FlxG.scaleMode.gameSize.y : formatHeight;
