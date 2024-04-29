@@ -116,7 +116,9 @@ class Handle
 				options = new Array<String>();
 
 			#if (windows || macos)
-			Sys.putEnv('VLC_PLUGIN_PATH', Path.join([Path.directory(Sys.programPath()), 'plugins']));
+			final pluginsPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
+
+			Sys.putEnv('VLC_PLUGIN_PATH', pluginsDirectory);
 			#end
 
 			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
@@ -131,8 +133,8 @@ class Handle
 			args.push_back("--no-video-title-show");
 			args.push_back("--no-xlib");
 			#if (windows || macos)
-			args.push_back("--reset-config");
-			args.push_back("--reset-plugins-cache");
+			// args.push_back("--reset-config");
+			args.push_back(FileSystem.exists(Path.join([pluginsPath, 'plugins.dat'])) ? "--no-plugins-scan" : "--reset-plugins-cache");
 			#end
 			args.push_back("--text-renderer=dummy");
 			#if HXVLC_VERBOSE
