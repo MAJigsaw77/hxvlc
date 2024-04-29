@@ -10,6 +10,7 @@ import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.Define;
 import lime.utils.Log;
+import sys.thread.Mutex;
 import sys.thread.Thread;
 import sys.FileSystem;
 
