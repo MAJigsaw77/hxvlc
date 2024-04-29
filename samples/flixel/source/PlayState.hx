@@ -43,7 +43,7 @@ class PlayState extends FlxState
 		video.load('assets/video.mp4', [':input-repeat=2']);
 		add(video);
 
-		var infoText:FlxText = new FlxText(10, FlxG.height - 50, FlxG.width - 20, 'LibVLC Version: ${Handle.version}\nLibVLC Compiler: ${Handle.compiler}', 16);
+		var infoText:FlxText = new FlxText(10, FlxG.height - 50, FlxG.width - 20, 'LibVLC Version: ${Handle.version}\nLibVLC Change-Set: ${Handle.changeset}', 16);
 		infoText.setBorderStyle(OUTLINE, FlxColor.BLACK);
 		infoText.active = false;
 		infoText.antialiasing = true;
