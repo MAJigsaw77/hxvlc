@@ -118,7 +118,7 @@ class Handle
 			#if (windows || macos)
 			final pluginsPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
 
-			Sys.putEnv('VLC_PLUGIN_PATH', pluginsDirectory);
+			Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
 			#end
 
 			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
