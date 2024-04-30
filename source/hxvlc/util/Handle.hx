@@ -113,9 +113,6 @@ class Handle
 
 		if (instance == null)
 		{
-			if (options == null)
-				options = new Array<String>();
-
 			#if (windows || macos)
 			final pluginsPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
 
@@ -143,9 +140,12 @@ class Handle
 			args.push_back("--quiet");
 			#end
 
+			if (options == null)
+				options = new Array<String>();
+
 			for (option in options)
 			{
-				if (option != null)
+				if (option != null && option.length > 0)
 					args.push_back(option);
 			}
 
