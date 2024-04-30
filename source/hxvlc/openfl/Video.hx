@@ -455,9 +455,6 @@ class Video extends Bitmap
 		if (Handle.instance == null)
 			return false;
 
-		if (options == null)
-			options = new Array<String>();
-
 		if (location != null)
 		{
 			if ((location is String))
@@ -539,9 +536,12 @@ class Video extends Bitmap
 			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), null);
 		}
 
+		if (options == null)
+			options = new Array<String>();
+
 		for (option in options)
 		{
-			if (option != null)
+			if (option != null && option.length > 0)
 				LibVLC.media_add_option(mediaItem, option);
 		}
 
@@ -1012,7 +1012,7 @@ class Video extends Bitmap
 	// Private Methods
 
 	@:noCompletion
-	private function this_onEnterFrame(event:openfl.events.Event):Void
+	private function this_onEnterFrame(_):Void
 	{
 		if (!events.contains(true))
 			return;
