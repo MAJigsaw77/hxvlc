@@ -8,10 +8,8 @@
 		<library name="libvlc" preload="false" />
 
 		<section if="windows">
+			<assets path="project/vlc/lib/Windows" rename="" exclude="*.lib" library="libvlc" />
 			<assets path="project/vlc/plugins/Windows" rename="" library="libvlc" />
-
-			<dependency path="project/vlc/lib/Windows/libvlc.dll" />
-			<dependency path="project/vlc/lib/Windows/libvlccore.dll" />
 		</section>
 
 		<section if="mac">
