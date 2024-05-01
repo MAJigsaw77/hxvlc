@@ -530,6 +530,12 @@ class Video extends Bitmap
 
 				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerMediaChanged)');
+
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+					Log.warn('Failed to attach event (MediaPlayerCorked)');
+
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+					Log.warn('Failed to attach event (MediaPlayerUncorked)');
 			}
 
 			LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('lock'), null, untyped __cpp__('display'), untyped __cpp__('this'));
@@ -631,6 +637,8 @@ class Video extends Bitmap
 			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('callbacks'), untyped __cpp__('this'));
 			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('callbacks'), untyped __cpp__('this'));
 			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this'));
+			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('callbacks'), untyped __cpp__('this'));
+			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('callbacks'), untyped __cpp__('this'));
 		}
 
 		if (mediaPlayer != null)
