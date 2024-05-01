@@ -4,16 +4,17 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://lime.openfl.org/project/1.0.4 http://lime.openfl.org/xsd/project-1.0.4.xsd">
 
-	<assets path="project/vlc/plugins/Windows" rename="plugins" include="*" type="template" if="windows" />
+	<section if="windows || mac">
+		<library name="libvlc" preload="false" />
 
-	<section if="windows">
-		<dependency path="project/vlc/lib/Windows/libvlc.dll" />
-		<dependency path="project/vlc/lib/Windows/libvlccore.dll" />
-	</section>
+		<section if="windows">
+			<assets path="project/vlc/plugins/Windows" rename="" library="libvlc" />
+		</section>
 
-	<section if="mac">
-		<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" include="*" />
-		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" include="*" />
+		<section if="mac">
+			<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" library="libvlc" />
+			<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" library="libvlc" />
+		</section>
 	</section>
 
 	<section if="android">
