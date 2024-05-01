@@ -75,6 +75,27 @@ extern class LibVLC_Log_T {}
 
 extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 {
+	@:native('libvlc_MediaMetaChanged')
+	var LibVLC_MediaMetaChanged;
+
+	@:native('libvlc_MediaSubItemAdded')
+	var LibVLC_MediaSubItemAdded;
+
+	@:native('libvlc_MediaDurationChanged')
+	var LibVLC_MediaDurationChanged;
+
+	@:native('libvlc_MediaParsedChanged')
+	var LibVLC_MediaParsedChanged;
+
+	@:native('libvlc_MediaFreed')
+	var LibVLC_MediaFreed;
+
+	@:native('libvlc_MediaStateChanged')
+	var LibVLC_MediaStateChanged;
+
+	@:native('libvlc_MediaSubItemTreeAdded')
+	var LibVLC_MediaSubItemTreeAdded;
+
 	@:native('libvlc_MediaPlayerMediaChanged')
 	var LibVLC_MediaPlayerMediaChanged;
 
@@ -164,6 +185,87 @@ extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 
 	@:native('libvlc_MediaPlayerChapterChanged')
 	var LibVLC_MediaPlayerChapterChanged;
+
+	@:native('libvlc_MediaListItemAdded')
+	var LibVLC_MediaListItemAdded;
+
+	@:native('libvlc_MediaListWillAddItem')
+	var LibVLC_MediaListWillAddItem;
+
+	@:native('libvlc_MediaListItemDeleted')
+	var LibVLC_MediaListItemDeleted;
+
+	@:native('libvlc_MediaListWillDeleteItem')
+	var LibVLC_MediaListWillDeleteItem;
+
+	@:native('libvlc_MediaListEndReached')
+	var LibVLC_MediaListEndReached;
+
+	@:native('libvlc_MediaListViewItemAdded')
+	var LibVLC_MediaListViewItemAdded;
+
+	@:native('libvlc_MediaListViewWillAddItem')
+	var LibVLC_MediaListViewWillAddItem;
+
+	@:native('libvlc_MediaListViewItemDeleted')
+	var LibVLC_MediaListViewItemDeleted;
+
+	@:native('libvlc_MediaListViewWillDeleteItem')
+	var LibVLC_MediaListViewWillDeleteItem;
+
+	@:native('libvlc_MediaListPlayerPlayed')
+	var LibVLC_MediaListPlayerPlayed;
+
+	@:native('libvlc_MediaListPlayerNextItemSet')
+	var LibVLC_MediaListPlayerNextItemSet;
+
+	@:native('libvlc_MediaListPlayerStopped')
+	var LibVLC_MediaListPlayerStopped;
+
+	@:native('libvlc_MediaDiscovererStarted')
+	var LibVLC_MediaDiscovererStarted;
+
+	@:native('libvlc_MediaDiscovererEnded')
+	var LibVLC_MediaDiscovererEnded;
+
+	@:native('libvlc_RendererDiscovererItemAdded')
+	var LibVLC_RendererDiscovererItemAdded;
+
+	@:native('libvlc_RendererDiscovererItemDeleted')
+	var LibVLC_RendererDiscovererItemDeleted;
+
+	@:native('libvlc_VlmMediaAdded')
+	var LibVLC_VlmMediaAdded;
+
+	@:native('libvlc_VlmMediaRemoved')
+	var LibVLC_VlmMediaRemoved;
+
+	@:native('libvlc_VlmMediaChanged')
+	var LibVLC_VlmMediaChanged;
+
+	@:native('libvlc_VlmMediaInstanceStarted')
+	var LibVLC_VlmMediaInstanceStarted;
+
+	@:native('libvlc_VlmMediaInstanceStopped')
+	var LibVLC_VlmMediaInstanceStopped;
+
+	@:native('libvlc_VlmMediaInstanceStatusInit')
+	var LibVLC_VlmMediaInstanceStatusInit;
+
+	@:native('libvlc_VlmMediaInstanceStatusOpening')
+	var LibVLC_VlmMediaInstanceStatusOpening;
+
+	@:native('libvlc_VlmMediaInstanceStatusPlaying')
+	var LibVLC_VlmMediaInstanceStatusPlaying;
+
+	@:native('libvlc_VlmMediaInstanceStatusPause')
+	var LibVLC_VlmMediaInstanceStatusPause;
+
+	@:native('libvlc_VlmMediaInstanceStatusEnd')
+	var LibVLC_VlmMediaInstanceStatusEnd;
+
+	@:native('libvlc_VlmMediaInstanceStatusError')
+	var LibVLC_VlmMediaInstanceStatusError;
 
 	@:to extern public inline function toInt():Int
 		return untyped this;
