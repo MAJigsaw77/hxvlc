@@ -21,7 +21,7 @@ class FlxVideoSprite extends FlxSprite
 	/**
 	 * Whether the video should automatically be paused when focus is lost or not.
 	 *
-	 * WARNING: Must be set before loading a video.
+	 * @warning Must be set before loading a video.
 	 */
 	public var autoPause:Bool = FlxG.autoPause;
 

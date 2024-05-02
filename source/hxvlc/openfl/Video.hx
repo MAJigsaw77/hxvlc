@@ -250,7 +250,7 @@ class Video extends Bitmap
 	/**
 	 * The media player's play rate.
 	 *
-	 * WARNING: Depending on the underlying media, the requested rate may be different from the real playback rate.
+	 * @warning Depending on the underlying media, the requested rate may be different from the real playback rate.
 	 */
 	public var rate(get, set):Single;
 
@@ -281,12 +281,12 @@ class Video extends Bitmap
 	/**
 	 * The audio's mute status.
 	 *
-	 * WARNING: This function does not always work. If there is no active audio
-	 * playback stream, the mute status might not be available. If digital
-	 * pass-through (S/PDIF, HDMI...) is in use, muting may be unapplicable. Also
-	 * some audio output plugins do not support muting at all.
+	 * @warning This does not always work.
+	 * If there is no active audio playback stream, the mute status might not be available.
+	 * If digital pass-through (S/PDIF, HDMI...) is in use, muting may be unapplicable.
+	 * Also some audio output plugins do not support muting at all.
 	 *
-	 * NOTE: To force silent playback, disable all audio tracks. This is more efficient and reliable than mute.
+	 * @note To force silent playback, disable all audio tracks. This is more efficient and reliable than mute.
 	 */
 	public var mute(get, set):Bool;
 

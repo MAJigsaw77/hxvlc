@@ -16,14 +16,14 @@ class FlxVideo extends Video
 	/**
 	 * Whether the video should automatically be paused when focus is lost or not.
 	 *
-	 * WARNING: Must be set before loading a video.
+	 * @warning Must be set before loading a video.
 	 */
 	public var autoPause:Bool = FlxG.autoPause;
 
 	/**
 	 * Determines the automatic resizing behavior for the video.
 	 *
-	 * WARNING: Must be set before loading a video if you want to set it to `NONE`.
+	 * @warning Must be set before loading a video if you want to set it to `NONE`.
 	 */
 	public var autoResizeMode:FlxAxes = FlxAxes.XY;
 
