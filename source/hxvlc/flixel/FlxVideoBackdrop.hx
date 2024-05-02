@@ -56,12 +56,8 @@ class FlxVideoBackdrop extends FlxBackdrop
 
 		bitmap = new Video(antialiasing);
 		bitmap.onOpening.add(() -> bitmap.role = LibVLC_Role_Game);
-		bitmap.onFormatSetup.add(function():Void
-		{
-			loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
-		});
+		bitmap.onFormatSetup.add(() -> loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false)));
 		bitmap.alpha = 0;
-
 		FlxG.game.addChild(bitmap);
 	}
 	#else
@@ -71,14 +67,10 @@ class FlxVideoBackdrop extends FlxBackdrop
 
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
-		bitmap = new Video(false);
+		bitmap = new Video(antialiasing);
 		bitmap.onOpening.add(() -> bitmap.role = LibVLC_Role_Game);
-		bitmap.onFormatSetup.add(function():Void
-		{
-			loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
-		});
+		bitmap.onFormatSetup.add(() -> loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false)));
 		bitmap.alpha = 0;
-
 		FlxG.game.addChild(bitmap);
 	}
 	#end

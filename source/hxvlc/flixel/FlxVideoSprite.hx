@@ -49,12 +49,8 @@ class FlxVideoSprite extends FlxSprite
 
 		bitmap = new Video(antialiasing);
 		bitmap.onOpening.add(() -> bitmap.role = LibVLC_Role_Game);
-		bitmap.onFormatSetup.add(function():Void
-		{
-			loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
-		});
+		bitmap.onFormatSetup.add(() -> loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false)));
 		bitmap.alpha = 0;
-
 		FlxG.game.addChild(bitmap);
 	}
 
