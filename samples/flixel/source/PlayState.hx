@@ -32,7 +32,6 @@ class PlayState extends FlxState
 		FlxG.cameras.bgColor = 0xFF131C1B;
 
 		var video:FlxVideoSprite = new FlxVideoSprite(0, 0);
-		video.antialiasing = true;
 		video.bitmap.onFormatSetup.add(function():Void
 		{
 			video.setGraphicSize(FlxG.width * 0.7, FlxG.height * 0.7);
@@ -41,9 +40,10 @@ class PlayState extends FlxState
 		});
 		video.bitmap.onEndReached.add(video.destroy);
 		video.load('assets/video.mp4', [':input-repeat=2']);
+		video.antialiasing = true;
 		add(video);
 
-		var libvlcVersion:FlxText = new FlxText(10, FlxG.height - 50, FlxG.width - 20, 'LibVLC Version: ${Handle.version}', 16);
+		var libvlcVersion:FlxText = new FlxText(10, FlxG.height - 30, 0, 'LibVLC Version: ${Handle.version}', 16);
 		libvlcVersion.setBorderStyle(OUTLINE, FlxColor.BLACK);
 		libvlcVersion.active = false;
 		libvlcVersion.antialiasing = true;
