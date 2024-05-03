@@ -10,7 +10,6 @@ import flixel.FlxG;
 import flixel.FlxState;
 import haxe.Exception;
 import hxvlc.flixel.FlxVideo;
-import hxvlc.flixel.FlxVideoBackdrop;
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.util.Handle;
 import openfl.system.System;
