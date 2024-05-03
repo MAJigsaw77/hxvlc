@@ -35,7 +35,6 @@
 	<!--Libraries-->
 
 	<haxelib name="flixel" />
-	<haxelib name="flixel-addons" />
 
 	<section if="cpp">
 		<haxelib name="hxvlc" if="desktop || mobile" />
