@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "1.4.3",
-	"releasenote": "Faster libVLC instance initialization and a couple of bug fixes.",
+	"version": "1.5.0",
+	"releasenote": "Removed FlxVideoBackdrop from flixel backend and fixed onCorked/onUncorked callbacks from never being called.",
 	"contributors": [
 		"MAJigsaw77"
 	],
