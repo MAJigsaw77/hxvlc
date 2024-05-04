@@ -69,7 +69,9 @@ Check out the [Samples Folder](samples/) for examples on how to use this library
 
 <hr>
 
-<img src="https://images.videolan.org/images/goodies/Cone-Video-small.png" align="right" />
+<a href="https://www.videolan.org/vlc/libvlc.html">
+	<img src="https://images.videolan.org/images/goodies/Cone-Video-small.png" align="right" />
+</a>
 
 **libVLC** is released under the **LGPLv2 (or later) License**.
 
