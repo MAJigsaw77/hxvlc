@@ -67,6 +67,10 @@ Check out the [Samples Folder](samples/) for examples on how to use this library
 
 **hxvlc** is made available under the **MIT License**. Check [LICENSE](./LICENSE) for more information.
 
-![](https://images.videolan.org/images/goodies/Cone-Video-small.png)
+---
 
-**libVLC** is released under the **LGPLv2 (or later) License**. For more information, visit [VideoLAN.org](https://videolan.org/legal.html).
+<img src="https://images.videolan.org/images/goodies/Cone-Video-small.png" align="right" />
+
+**libVLC** is released under the **LGPLv2 (or later) License**.
+
+For more information, visit [VideoLAN.org](https://videolan.org/legal.html).
