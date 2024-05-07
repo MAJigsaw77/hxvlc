@@ -147,7 +147,6 @@ class FlxVideoSprite extends FlxSprite
 			bitmap.togglePaused();
 	}
 
-	// Overrides
 	public override function destroy():Void
 	{
 		if (FlxG.signals.focusGained.has(resume))

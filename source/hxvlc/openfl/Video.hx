@@ -698,8 +698,6 @@ class Video extends Bitmap
 		}
 	}
 
-	// Get & Set Methods
-
 	@:noCompletion
 	private function get_mrl():String
 	{
@@ -1017,8 +1015,6 @@ class Video extends Bitmap
 		return value;
 	}
 
-	// Private Methods
-
 	@:noCompletion
 	private function this_onEnterFrame(_):Void
 	{
@@ -1167,8 +1163,6 @@ class Video extends Bitmap
 			onDisplay.dispatch();
 		}
 	}
-
-	// Overrides
 
 	@:noCompletion
 	private override function set_bitmapData(value:BitmapData):BitmapData

@@ -219,8 +219,6 @@ class Handle
 		}
 	}
 
-	// Get & Set Methods
-
 	@:noCompletion
 	private static function get_version():String
 	{
