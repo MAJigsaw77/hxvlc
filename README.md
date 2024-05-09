@@ -20,36 +20,38 @@ A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback usin
 ## Instructions
 
 1. Install the library:
-	- Via `Haxelib`:
-	  ```bash
-	  haxelib install hxvlc
-	  ```
-	- Via `Git` for the latest updates:
-	  ```bash
-	  haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git
-	  ```
+   - Via `Haxelib`:
+     ```bash
+     haxelib install hxvlc
+     ```
+   - Via `Git` for the latest updates:
+     ```bash
+     haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git
+     ```
 
-2. Add this code in the **project.xml** file:
-	```xml
-	<section if="cpp">
-		<haxelib name="hxvlc" if="desktop || mobile" />
-	</section>
-	```
+3. Add this code in the **project.xml** file:
+   ```xml
+   <section if="cpp">
+   	<haxelib name="hxvlc" if="desktop || mobile" />
+   </section>
+   ```
 
-3. **Linux users only**: Install `vlc` from your distro's package manager.
-	- [Debian](https://debian.org) based distributions:
-		```bash
-		sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc
-		```
-	- [Arch](https://archlinux.org) based distributions:
-		```bash
-		sudo pacman -S vlc
-		```
-	- [Gentoo](https://www.gentoo.org) based distributions:
-		```bash
-		sudo emerge media-video/vlc
-		```
-4. **Well done!**
+### Dependencies
+
+On ***Linux*** you need to install `vlc` from your distro's package manager.
+
+* [Debian](https://debian.org) based distributions:
+  ```bash
+  sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc
+  ```
+* [Arch](https://archlinux.org) based distributions:
+  ```bash
+  sudo pacman -S vlc
+  ```
+* [Gentoo](https://gentoo.org) based distributions:
+  ```bash
+  sudo emerge media-video/vlc
+  ```
 
 ## Usage Examples
 
