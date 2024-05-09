@@ -49,15 +49,7 @@ A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback usin
 		```bash
 		sudo emerge media-video/vlc
 		```
-
-4. **iOS users only**: 
-	- Download the [MobileVLCKit Framework](https://download.videolan.org/cocoapods/unstable/MobileVLCKit-3.6.0b10-615f96dc-4733d1cc.tar.xz) and extract it.
-	- In your app's `.xcodeproj` file, click on the target named after your app.
-	- Navigate to `Build Settings` and change `Debug Information Format` to `DWARF`.
-	- Go to `Build Phases/Link Binary With Libraries`, click on the plus sign at the bottom, and select `Add Other/Add Files`.
-	- Locate the path of the `MobileVLCKit.xcframework` where you extracted the framework and add it.
-
-5. **Well done!**
+4. **Well done!**
 
 ## Usage Examples
 

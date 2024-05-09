@@ -32,6 +32,7 @@
 		<dependency name="Security.framework" />
 		<dependency name="VideoToolbox.framework" />
 		<dependency name="CoreImage.framework" />
+		<dependency name="libiconv.tbd" />
 	</section>
 
 	<sample path="samples" />
