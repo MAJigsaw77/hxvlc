@@ -1,4 +1,2 @@
 - [ ] [WebAssembly](https://webassembly.org) Support.
   - We need to figure out how to build [this](https://code.videolan.org/b1ue/vlc.js) and done!
-- [ ] Fix the plugins being add to the assets manifest on MacOS.
-- [ ] Fix iOS libVLC headers being used from both the framework and this lib's ones.
