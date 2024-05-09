@@ -6,7 +6,7 @@
 
 A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback using [libVLC](https://www.videolan.org/vlc/libvlc.html).
 
-## Supported Platforms
+### Supported Platforms
 
 - **Windows** (x86_64 only)
 - **MacOS** (x86_64 and arm64 only)
@@ -17,7 +17,7 @@ A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback usin
 > [!CAUTION]
 > These platforms need to be compiled using [Lime](https://lime.openfl.org) targeting `cpp` to work.
 
-## Instructions
+### Instructions
 
 1. Install the library:
    - Via `Haxelib`:
@@ -53,15 +53,15 @@ On ***Linux*** you need to install `vlc` from your distro's package manager.
   sudo emerge media-video/vlc
   ```
 
-## Usage Examples
+### Usage Examples
 
 Check out the [Samples Folder](samples/) for examples on how to use this library.
 
-## Licensing
+### Licensing
 
 **hxvlc** is made available under the **MIT License**. Check [LICENSE](./LICENSE) for more information.
 
-##
+###
 
 <a href="https://www.videolan.org/vlc/libvlc.html">
 	<img src="https://images.videolan.org/images/goodies/Cone-Video-small.png" align="right" />
