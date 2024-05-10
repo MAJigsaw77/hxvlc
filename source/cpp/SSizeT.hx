@@ -1,6 +1,6 @@
 package cpp;
 
-#if (mingw || !windows)
+#if (mingw || HXCPP_MINGW || !windows)
 @:native("ssize_t")
 @:scalar
 @:coreType

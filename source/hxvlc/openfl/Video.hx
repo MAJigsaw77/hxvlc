@@ -384,7 +384,7 @@ class Video extends Bitmap
 	@:noCompletion
 	private var audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T>;
 
-	#if (mingw || !windows)
+	#if (mingw || HXCPP_MINGW || !windows)
 	@:noCompletion
 	private var mediaData:cpp.RawPointer<cpp.UInt8>;
 
@@ -657,7 +657,7 @@ class Video extends Bitmap
 		{
 			LibVLC.media_release(mediaItem);
 
-			#if (mingw || !windows)
+			#if (mingw || HXCPP_MINGW || !windows)
 			if (mediaData != null)
 			{
 				untyped __cpp__('delete[] {0}', mediaData);
