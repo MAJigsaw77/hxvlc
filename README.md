@@ -36,6 +36,10 @@ A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback usin
    </section>
    ```
 
+### Building
+
+When updating the library on **Windows** or **MacOS** and the release notes indicate that **libVLC** has been updated, ensure to use the `-clean` option during the application build process once. This will allow proper regeneration of `plugins.dat`.
+
 ### Dependencies
 
 On ***Linux*** you need to install `vlc` from your distro's package manager.
