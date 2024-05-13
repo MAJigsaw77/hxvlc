@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "1.5.2",
-	"releasenote": "Updated libVLC to 3.0.20.",
+	"version": "1.5.3",
+	"releasenote": "Fixed libqt4 plugin.",
 	"contributors": [
 		"MAJigsaw77"
 	],
