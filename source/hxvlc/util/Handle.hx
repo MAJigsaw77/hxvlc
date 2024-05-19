@@ -122,6 +122,7 @@ class Handle
 			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
 			args.push_back("--drop-late-frames");
 			args.push_back("--intf=dummy");
+			args.push_back("--http-reconnect");
 			args.push_back("--no-interact");
 			args.push_back("--no-lua");
 			args.push_back("--no-snapshot-preview");
@@ -138,6 +139,9 @@ class Handle
 			args.push_back("--verbose=" + Define.getDefineInt('HXVLC_VERBOSE', 0));
 			#elseif !HXVLC_LOGGING
 			args.push_back("--quiet");
+			#end
+			#if (ios || macos)
+			args.push_back("--audio-resampler=soxr"); // TODO: Remove this when libvlc 4.0 gets added in this lib as it's used by default.
 			#end
 
 			if (options == null)
