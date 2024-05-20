@@ -35,11 +35,13 @@ jobs:
 
       - name: Installing Haxe Libraries
         run: |
-          haxelib install hxcpp --quiet
           haxelib install lime --quiet
           haxelib install openfl --quiet
           haxelib install flixel --quiet
           haxelib dev hxvlc .
+
+      - name: Setup Git hxcpp
+        run: haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp.git --quiet && haxelib run lime rebuild hxcpp
 
       - name: List of installed Haxe Libraries
         run: haxelib list
