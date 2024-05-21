@@ -17,6 +17,10 @@ A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback usin
 > [!CAUTION]
 > These platforms need to be compiled using [Lime](https://lime.openfl.org) targeting `cpp` to work.
 
+### Known issues
+
+- **iOS** is having problems when playing audio after a video plays.
+
 ### Instructions
 
 1. Install the library:
@@ -61,15 +65,9 @@ On ***Linux*** you need to install `vlc` from your distro's package manager.
 
 - Check out the [Samples Folder](samples/) for examples on how to use this library.
 
-### Known issues
-
-- **iOS** is having problems when playing audio after a video plays.
-
 ### Licensing
 
 **hxvlc** is made available under the **MIT License**. Check [LICENSE](./LICENSE) for more information.
-
-#
 
 <a href="https://www.videolan.org/vlc/libvlc.html">
 	<img src="https://images.videolan.org/images/goodies/Cone-Video-small.png" align="right" />
