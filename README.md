@@ -63,7 +63,7 @@ On ***Linux*** you need to install `vlc` from your distro's package manager.
 
 ### Known issues
 
-- **iOS** is having trouble when play audio after a video plays.
+- **iOS** is having problems when playing audio after a video plays.
 
 ### Licensing
 
