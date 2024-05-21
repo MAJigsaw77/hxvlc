@@ -422,14 +422,6 @@ class Video extends Bitmap
 	{
 		super(bitmapData, AUTO, smoothing);
 
-		#if ios
-		// Not the best fix but otherwise we need to modify libVLC itself.
-		onOpening.add(function():Void
-		{
-			role = LibVLC_Role_Accessibility;
-		});
-		#end
-
 		while (Handle.loading)
 			Sys.sleep(0.05);
 
