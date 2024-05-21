@@ -120,6 +120,12 @@ class Handle
 			#end
 
 			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
+			#if android
+			args.push_back("--aout=opensles");
+			#end
+			#if (ios || macos)
+			args.push_back("--audio-resampler=soxr"); // TODO: Remove this when libvlc 4.0 gets added in this lib as it's used by default.
+			#end
 			args.push_back("--drop-late-frames");
 			args.push_back("--intf=dummy");
 			args.push_back("--http-reconnect");
@@ -139,9 +145,6 @@ class Handle
 			args.push_back("--verbose=" + Define.getDefineInt('HXVLC_VERBOSE', 0));
 			#elseif !HXVLC_LOGGING
 			args.push_back("--quiet");
-			#end
-			#if (ios || macos)
-			args.push_back("--audio-resampler=soxr"); // TODO: Remove this when libvlc 4.0 gets added in this lib as it's used by default.
 			#end
 
 			if (options == null)
