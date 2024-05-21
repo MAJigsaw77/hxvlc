@@ -120,9 +120,6 @@ class Handle
 			#end
 
 			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
-			#if android
-			args.push_back("--aout=opensles");
-			#end
 			#if (ios || macos)
 			args.push_back("--audio-resampler=soxr"); // TODO: Remove this when libvlc 4.0 gets added in this lib as it's used by default.
 			#end
