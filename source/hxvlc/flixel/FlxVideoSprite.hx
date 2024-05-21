@@ -48,7 +48,9 @@ class FlxVideoSprite extends FlxSprite
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
 		bitmap = new Video(antialiasing);
+		#if !ios
 		bitmap.onOpening.add(() -> bitmap.role = LibVLC_Role_Game);
+		#end
 		bitmap.onFormatSetup.add(() -> loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false)));
 		bitmap.alpha = 0;
 		FlxG.game.addChild(bitmap);
