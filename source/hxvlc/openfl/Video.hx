@@ -329,57 +329,57 @@ class Video extends Bitmap
 	/**
 	 * An event that is dispatched when the media player is opening.
 	 */
-	public var onOpening(default, null):Event<Void->Void>;
+	public var onOpening(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player is playing.
 	 */
-	public var onPlaying(default, null):Event<Void->Void>;
+	public var onPlaying(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player stopped.
 	 */
-	public var onStopped(default, null):Event<Void->Void>;
+	public var onStopped(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player is paused.
 	 */
-	public var onPaused(default, null):Event<Void->Void>;
+	public var onPaused(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player reached the end.
 	 */
-	public var onEndReached(default, null):Event<Void->Void>;
+	public var onEndReached(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player encountered an error.
 	 */
-	public var onEncounteredError(default, null):Event<String->Void>;
+	public var onEncounteredError(default, null):Event<String->Void> = new Event<String->Void>();
 
 	/**
 	 * An event that is dispatched when the media is changed.
 	 */
-	public var onMediaChanged(default, null):Event<Void->Void>;
+	public var onMediaChanged(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player is corked.
 	 */
-	public var onCorked(default, null):Event<Void->Void>;
+	public var onCorked(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player is uncorked.
 	 */
-	public var onUncorked(default, null):Event<Void->Void>;
+	public var onUncorked(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the format is being initialized.
 	 */
-	public var onFormatSetup(default, null):Event<Void->Void>;
+	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media is being displayed.
 	 */
-	public var onDisplay(default, null):Event<Void->Void>;
+	public var onDisplay(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	@:noCompletion
 	private var audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T>;
@@ -422,17 +422,13 @@ class Video extends Bitmap
 	{
 		super(bitmapData, AUTO, smoothing);
 
-		onOpening = new Event<Void->Void>();
-		onPlaying = new Event<Void->Void>();
-		onStopped = new Event<Void->Void>();
-		onPaused = new Event<Void->Void>();
-		onEndReached = new Event<Void->Void>();
-		onEncounteredError = new Event<String->Void>();
-		onMediaChanged = new Event<Void->Void>();
-		onCorked = new Event<Void->Void>();
-		onUncorked = new Event<Void->Void>();
-		onFormatSetup = new Event<Void->Void>();
-		onDisplay = new Event<Void->Void>();
+		#if ios
+		// Not the best fix but otherwise we need to modify libVLC itself.
+		onOpening.add(function():Void
+		{
+			role = LibVLC_Role_Accessibility;
+		});
+		#end
 
 		while (Handle.loading)
 			Sys.sleep(0.05);
