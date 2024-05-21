@@ -17,10 +17,6 @@ A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback usin
 > [!CAUTION]
 > These platforms need to be compiled using [Lime](https://lime.openfl.org) targeting `cpp` to work.
 
-### Known issues
-
-- **iOS** is having problems when playing audio after a video plays.
-
 ### Instructions
 
 1. Install the library:
