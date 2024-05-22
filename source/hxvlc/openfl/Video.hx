@@ -10,7 +10,6 @@ import haxe.Exception;
 import haxe.Int64;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
-import hxvlc.util.Event;
 import hxvlc.util.Handle;
 import hxvlc.util.OneOfThree;
 import lime.app.Event;
