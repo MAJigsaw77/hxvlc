@@ -3,4 +3,4 @@ package hxvlc.util;
 /**
  * Just a typedef to lime's event dispatcher.
  */
-typedef Dispatcher = lime.app.Event;
+typedef Dispatcher<T> = lime.app.Event<T>;
