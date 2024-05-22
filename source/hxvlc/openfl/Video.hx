@@ -10,14 +10,14 @@ import haxe.Exception;
 import haxe.Int64;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
-import hxvlc.util.Dispatcher;
+import hxvlc.util.Event;
 import hxvlc.util.Handle;
 import hxvlc.util.OneOfThree;
+import lime.app.Event;
 import lime.utils.Log;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.Texture;
-import openfl.events.Event;
 import openfl.Lib;
 
 using StringTools;
@@ -330,57 +330,57 @@ class Video extends Bitmap
 	/**
 	 * An event that is dispatched when the media player is opening.
 	 */
-	public var onOpening(default, null):Dispatcher<Void->Void> = new Dispatcher<Void->Void>();
+	public var onOpening(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player is playing.
 	 */
-	public var onPlaying(default, null):Dispatcher<Void->Void> = new Dispatcher<Void->Void>();
+	public var onPlaying(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player stopped.
 	 */
-	public var onStopped(default, null):Dispatcher<Void->Void> = new Dispatcher<Void->Void>();
+	public var onStopped(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player is paused.
 	 */
-	public var onPaused(default, null):Dispatcher<Void->Void> = new Dispatcher<Void->Void>();
+	public var onPaused(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player reached the end.
 	 */
-	public var onEndReached(default, null):Dispatcher<Void->Void> = new Dispatcher<Void->Void>();
+	public var onEndReached(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player encountered an error.
 	 */
-	public var onEncounteredError(default, null):Dispatcher<String->Void> = new Dispatcher<String->Void>();
+	public var onEncounteredError(default, null):Event<String->Void> = new Event<String->Void>();
 
 	/**
 	 * An event that is dispatched when the media is changed.
 	 */
-	public var onMediaChanged(default, null):Dispatcher<Void->Void> = new Dispatcher<Void->Void>();
+	public var onMediaChanged(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player is corked.
 	 */
-	public var onCorked(default, null):Dispatcher<Void->Void> = new Dispatcher<Void->Void>();
+	public var onCorked(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player is uncorked.
 	 */
-	public var onUncorked(default, null):Dispatcher<Void->Void> = new Dispatcher<Void->Void>();
+	public var onUncorked(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the format is being initialized.
 	 */
-	public var onFormatSetup(default, null):Dispatcher<Void->Void> = new Dispatcher<Void->Void>();
+	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media is being displayed.
 	 */
-	public var onDisplay(default, null):Dispatcher<Void->Void> = new Dispatcher<Void->Void>();
+	public var onDisplay(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	@:noCompletion
 	private var audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T>;
@@ -403,7 +403,7 @@ class Video extends Bitmap
 	private var mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>;
 
 	@:noCompletion
-	private var eventManager:cpp.RawPointer<LibVLC_Dispatcher_Manager_T>;
+	private var eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>;
 
 	@:noCompletion
 	private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false, false, false];
@@ -493,7 +493,7 @@ class Video extends Bitmap
 		{
 			mediaPlayer = LibVLC.media_player_new(Handle.instance);
 
-			Lib.current.addEventListener(Event.ENTER_FRAME, this_onEnterFrame);
+			Lib.current.addEventListener(openfl.events.Event.ENTER_FRAME, this_onEnterFrame);
 
 			if (eventManager == null)
 			{
@@ -639,8 +639,8 @@ class Video extends Bitmap
 		eventManager = null;
 		mediaPlayer = null;
 
-		if (Lib.current.hasEventListener(Event.ENTER_FRAME))
-			Lib.current.removeEventListener(Event.ENTER_FRAME, this_onEnterFrame);
+		if (Lib.current.hasEventListener(openfl.events.Event.ENTER_FRAME))
+			Lib.current.removeEventListener(openfl.events.Event.ENTER_FRAME, this_onEnterFrame);
 
 		if (mediaItem != null)
 		{
