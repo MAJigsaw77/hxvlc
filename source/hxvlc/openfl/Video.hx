@@ -465,11 +465,7 @@ class Video extends Bitmap
 			}
 			else if ((location is Bytes))
 			{
-				#if (!mingw && windows)
-				Log.warn('Failed to use bitstream input, this doesn\'t work when compiling on Windows with MSVC compiler, use MinGW compiler instead.');
-
-				return false;
-				#else
+				#if (mingw || HXCPP_MINGW || !windows)
 				final data:BytesData = cast(location, Bytes).getData();
 
 				mediaData = untyped __cpp__('new unsigned char[{0}]', data.length);
@@ -480,6 +476,10 @@ class Video extends Bitmap
 				mediaSize = data.length;
 				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('open'), untyped __cpp__('read'), untyped __cpp__('seek'), null,
 					untyped __cpp__('this'));
+				#else
+				Log.warn('Failed to use bitstream input, this doesn\'t work when compiling on Windows with MSVC compiler, use MinGW compiler instead.');
+
+				return false;
 				#end
 			}
 			else
