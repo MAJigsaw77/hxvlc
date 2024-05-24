@@ -839,7 +839,7 @@ class Video extends Bitmap
 					alBuffers.push(buffer);
 			}
 
-			final samplesData:BytesData = cpp.Pointer.fromRaw(samples).toUnmanagedArray(count * 4);
+			final samplesData:BytesData = cpp.Pointer.fromRaw(samples).toUnmanagedArray(count * 8);
 
 			if (alBuffers.length > 0)
 			{
