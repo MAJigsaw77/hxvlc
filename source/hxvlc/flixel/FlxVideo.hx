@@ -43,8 +43,6 @@ class FlxVideo extends Video
 
 		onOpening.add(function():Void
 		{
-			role = LibVLC_Role_Game;
-
 			if (!FlxG.signals.postUpdate.has(postUpdate))
 				FlxG.signals.postUpdate.add(postUpdate);
 		});
