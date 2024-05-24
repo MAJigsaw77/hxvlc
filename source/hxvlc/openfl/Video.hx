@@ -14,6 +14,13 @@ import hxvlc.util.Handle;
 import hxvlc.util.OneOfThree;
 import lime.app.Application;
 import lime.app.Event;
+#if lime_openal
+import lime.media.openal.ALBuffer;
+import lime.media.openal.ALSource;
+import lime.media.AudioManager;
+import lime.media.OpenALAudioContext;
+import lime.utils.UInt8Array;
+#end
 import lime.utils.Log;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -145,6 +152,24 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 	return 1;
 }
 
+static void audio_play(void *data, const void *samples, unsigned count, int64_t pts)
+{
+	hx::SetTopOfStack((int *)99, true);
+
+	reinterpret_cast<Video_obj *>(data)->updateSound((unsigned char *) samples, count);
+
+	hx::SetTopOfStack((int *)0, true);
+}
+
+static void audio_set_volume(void *data, float volume, bool mute)
+{
+	hx::SetTopOfStack((int *)99, true);
+
+	reinterpret_cast<Video_obj *>(data)->updateSoundVolume(volume, mute);
+
+	hx::SetTopOfStack((int *)0, true);
+}
+
 static void media_player_callbacks(const libvlc_event_t *p_event, void *p_data)
 {
 	hx::SetTopOfStack((int *)99, true);
@@ -267,20 +292,6 @@ class Video extends Bitmap
 	public var canPause(get, never):Bool;
 
 	/**
-	 * Gets the list of available audio output modules.
-	 */
-	public var outputModules(get, never):Array<String>;
-
-	/**
-	 * Selects an audio output module.
-	 *
-	 * @note Any change will take be effect only after playback is stopped and restarted.
-	 *
-	 * Audio output cannot be changed while playing.
-	 */
-	public var output(never, set):String;
-
-	/**
 	 * The audio's mute status.
 	 *
 	 * @warning This does not always work.
@@ -308,25 +319,9 @@ class Video extends Bitmap
 	public var track(get, set):Int;
 
 	/**
-	 * The audio channel.
-	 *
-	 * - [Stereo] = 1
-	 * - [RStereo] = 2
-	 * - [Left] = 3
-	 * - [Right] = 4
-	 * - [Dolbys] = 5
-	 */
-	public var channel(get, set):Int;
-
-	/**
 	 * The audio delay in microseconds.
 	 */
 	public var delay(get, set):Int64;
-
-	/**
-	 * The media player's role.
-	 */
-	public var role(get, set):UInt;
 
 	/**
 	 * An event that is dispatched when the media player is opening.
@@ -383,8 +378,16 @@ class Video extends Bitmap
 	 */
 	public var onDisplay(default, null):Event<Void->Void> = new Event<Void->Void>();
 
+	#if lime_openal
 	@:noCompletion
-	private var audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T>;
+	private var alAudioContext:OpenALAudioContext;
+
+	@:noCompletion
+	private var alSource:ALSource;
+
+	@:noCompletion
+	private var alBuffers:Array<ALBuffer> = [];
+	#end
 
 	#if (mingw || HXCPP_MINGW || !windows)
 	@:noCompletion
@@ -424,12 +427,22 @@ class Video extends Bitmap
 	{
 		super(bitmapData, AUTO, smoothing);
 
+		#if lime_openal
+		if (AudioManager.context != null)
+		{
+			switch (AudioManager.context.type)
+			{
+				case OPENAL:
+					alAudioContext = AudioManager.context.openal;
+				default:
+			}
+		}
+		#end
+
 		while (Handle.loading)
 			Sys.sleep(0.05);
 
 		Handle.init();
-
-		audioOutput = LibVLC.audio_output_list_get(Handle.instance);
 	}
 
 	/**
@@ -531,6 +544,23 @@ class Video extends Bitmap
 
 			LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), null, untyped __cpp__('video_display'), untyped __cpp__('this'));
 			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), null);
+
+			#if lime_openal
+			if (alAudioContext != null)
+			{
+				alSource = alAudioContext.createSource();
+
+				alAudioContext.sourcef(alSource, alAudioContext.GAIN, 1);
+				alAudioContext.source3f(alSource, alAudioContext.POSITION, 0, 0, 0);
+				alAudioContext.sourcef(alSource, alAudioContext.PITCH, 1.0);
+
+				alBuffers = alAudioContext.genBuffers(3);
+
+				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), null, null, null, null, untyped __cpp__('this'));
+				LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
+				LibVLC.audio_set_format(mediaPlayer, "S16N", 44100, 2);
+			}
+			#end
 		}
 
 		if (options == null)
@@ -660,12 +690,6 @@ class Video extends Bitmap
 			#end
 
 			mediaItem = null;
-		}
-
-		if (audioOutput != null)
-		{
-			LibVLC.audio_output_list_release(audioOutput);
-			audioOutput = null;
 		}
 
 		if (bitmapData != null)
@@ -799,6 +823,45 @@ class Video extends Bitmap
 			case 8:
 				onUncorked.dispatch();
 		}
+	}
+
+	@:noCompletion
+	private function updateSound(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32):Void
+	{		
+		#if lime_openal
+		if (alAudioContext != null && alSource != null && alBuffers != null)
+		{
+			final processed:Int = alAudioContext.getSourcei(alSource, alAudioContext.BUFFERS_PROCESSED);
+
+			if (processed > 0)
+			{
+				for (buffer in alAudioContext.sourceUnqueueBuffers(alSource, processed))
+					alBuffers.push(buffer);
+			}
+
+			final samplesData:BytesData = cpp.Pointer.fromRaw(samples).toUnmanagedArray(count * 4);
+
+			if (alBuffers.length > 0)
+			{
+				final newBuffer:ALBuffer = alBuffers.pop();
+
+				alAudioContext.bufferData(newBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(Bytes.ofData(samplesData)), samplesData.length, 44100);
+				alAudioContext.sourceQueueBuffer(alSource, newBuffer);
+
+				if (alAudioContext.getSourcei(alSource, alAudioContext.SOURCE_STATE) != alAudioContext.PLAYING)
+					alAudioContext.sourcePlay(alSource);
+			}
+		}
+		#end
+	}
+
+	@:noCompletion
+	private function updateSoundVolume(volume:Single, mute:Bool):Void
+	{
+		#if lime_openal
+		if (alAudioContext != null && alSource != null)
+			alAudioContext.sourcef(alSource, alAudioContext.GAIN, mute ? 0 : volume);
+		#end
 	}
 
 	@:noCompletion
@@ -959,40 +1022,6 @@ class Video extends Bitmap
 	}
 
 	@:noCompletion
-	private function get_outputModules():Array<String>
-	{
-		var modules:Array<String> = null;
-
-		if (audioOutput != null)
-		{
-			modules = [];
-
-			var temp:cpp.RawPointer<LibVLC_Audio_Output_T> = audioOutput;
-
-			while (temp != null)
-			{
-				modules.push(temp[0].psz_name);
-
-				temp = temp[0].p_next;
-			}
-		}
-
-		return modules;
-	}
-
-	@:noCompletion
-	private function set_output(value:String):String
-	{
-		if (mediaPlayer != null)
-		{
-			if (LibVLC.audio_output_set(mediaPlayer, value) != 0)
-				Log.warn('Failed to set audio output module');
-		}
-
-		return value;
-	}
-
-	@:noCompletion
 	private function get_mute():Bool
 	{
 		if (mediaPlayer != null)
@@ -1062,24 +1091,6 @@ class Video extends Bitmap
 	}
 
 	@:noCompletion
-	private function get_channel():Int
-	{
-		if (mediaPlayer != null)
-			return LibVLC.audio_get_channel(mediaPlayer);
-
-		return -1;
-	}
-
-	@:noCompletion
-	private function set_channel(value:Int):Int
-	{
-		if (mediaPlayer != null)
-			LibVLC.audio_set_channel(mediaPlayer, value);
-
-		return value;
-	}
-
-	@:noCompletion
 	private function get_delay():Int64
 	{
 		if (mediaPlayer != null)
@@ -1093,27 +1104,6 @@ class Video extends Bitmap
 	{
 		if (mediaPlayer != null)
 			LibVLC.audio_set_delay(mediaPlayer, value);
-
-		return value;
-	}
-
-	@:noCompletion
-	private function get_role():UInt
-	{
-		if (mediaPlayer != null)
-			return LibVLC.media_player_get_role(mediaPlayer);
-
-		return 0;
-	}
-
-	@:noCompletion
-	private function set_role(value:UInt):UInt
-	{
-		if (mediaPlayer != null)
-		{
-			if (LibVLC.media_player_set_role(mediaPlayer, value) == -1)
-				Log.warn('Failed to media player\'s role');
-		}
 
 		return value;
 	}
