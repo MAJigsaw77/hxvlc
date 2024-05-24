@@ -184,6 +184,7 @@ static void media_player_callbacks(const libvlc_event_t *p_event, void *p_data)
 
 	hx::SetTopOfStack((int *)0, true);
 }')
+@:keep
 class Video extends Bitmap
 {
 	/**
