@@ -12,6 +12,7 @@ import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.Handle;
 import hxvlc.util.OneOfThree;
+import lime.app.Application;
 import lime.app.Event;
 import lime.utils.Log;
 import openfl.display.Bitmap;
@@ -28,7 +29,7 @@ using StringTools;
  */
 @:cppNamespaceCode('
 #ifndef _MSC_VER
-static int open(void *opaque, void **datap, uint64_t *sizep)
+static int media_open(void *opaque, void **datap, uint64_t *sizep)
 {
 	hx::SetTopOfStack((int *)99, true);
 
@@ -43,7 +44,7 @@ static int open(void *opaque, void **datap, uint64_t *sizep)
 	return 0;
 }
 
-static ssize_t read(void *opaque, unsigned char *buf, size_t len)
+static ssize_t media_read(void *opaque, unsigned char *buf, size_t len)
 {
 	hx::SetTopOfStack((int *)99, true);
 
@@ -74,7 +75,7 @@ static ssize_t read(void *opaque, unsigned char *buf, size_t len)
 	return (ssize_t) toRead;
 }
 
-static int seek(void *opaque, uint64_t offset)
+static int media_seek(void *opaque, uint64_t offset)
 {
 	hx::SetTopOfStack((int *)99, true);
 
@@ -95,7 +96,7 @@ static int seek(void *opaque, uint64_t offset)
 }
 #endif
 
-static void *lock(void *opaque, void **planes)
+static void *video_lock(void *opaque, void **planes)
 {
 	hx::SetTopOfStack((int *)99, true);
 
@@ -109,16 +110,16 @@ static void *lock(void *opaque, void **planes)
 	return NULL;
 }
 
-static void display(void *opaque, void *picture)
+static void video_display(void *opaque, void *picture)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(opaque)->events[10] = true;
+	reinterpret_cast<Video_obj *>(opaque)->events[1] = true;
 
 	hx::SetTopOfStack((int *)0, true);
 }
 
-static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
+static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
 {
 	hx::SetTopOfStack((int *)99, true);
 
@@ -132,7 +133,7 @@ static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsig
 	(*pitches) = self->formatWidth * 4;
 	(*lines) = self->formatHeight;
 
-	self->events[9] = true;
+	self->events[0] = true;
 
 	if (self->planes != NULL)
 		delete[] self->planes;
@@ -144,7 +145,7 @@ static unsigned format_setup(void **opaque, char *chroma, unsigned *width, unsig
 	return 1;
 }
 
-static void callbacks(const libvlc_event_t *p_event, void *p_data)
+static void media_player_callbacks(const libvlc_event_t *p_event, void *p_data)
 {
 	hx::SetTopOfStack((int *)99, true);
 
@@ -153,31 +154,31 @@ static void callbacks(const libvlc_event_t *p_event, void *p_data)
 	switch (p_event->type)
 	{
 		case libvlc_MediaPlayerOpening:
-			self->events[0] = true;
+			self->updateCallbacks(0);
 			break;
 		case libvlc_MediaPlayerPlaying:
-			self->events[1] = true;
+			self->updateCallbacks(1);
 			break;
 		case libvlc_MediaPlayerStopped:
-			self->events[2] = true;
+			self->updateCallbacks(2);
 			break;
 		case libvlc_MediaPlayerPaused:
-			self->events[3] = true;
+			self->updateCallbacks(3);
 			break;
 		case libvlc_MediaPlayerEndReached:
-			self->events[4] = true;
+			self->updateCallbacks(4);
 			break;
 		case libvlc_MediaPlayerEncounteredError:
-			self->events[5] = true;
+			self->updateCallbacks(5);
 			break;
 		case libvlc_MediaPlayerMediaChanged:
-			self->events[6] = true;
+			self->updateCallbacks(6);
 			break;
 		case libvlc_MediaPlayerCorked:
-			self->events[7] = true;
+			self->updateCallbacks(7);
 			break;
 		case libvlc_MediaPlayerUncorked:
-			self->events[8] = true;
+			self->updateCallbacks(8);
 			break;
 	}
 
@@ -405,7 +406,7 @@ class Video extends Bitmap
 	private var eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>;
 
 	@:noCompletion
-	private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false, false, false];
+	private var events:Array<Bool> = [false, false];
 
 	@:noCompletion
 	private var planes:cpp.RawPointer<cpp.UInt8>;
@@ -474,7 +475,7 @@ class Video extends Bitmap
 
 				mediaOffset = 0;
 				mediaSize = data.length;
-				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('open'), untyped __cpp__('read'), untyped __cpp__('seek'), null,
+				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'), untyped __cpp__('media_seek'), null,
 					untyped __cpp__('this'));
 				#else
 				Log.warn('Failed to use bitstream input, this doesn\'t work when compiling on Windows with MSVC compiler, use MinGW compiler instead.');
@@ -492,42 +493,43 @@ class Video extends Bitmap
 		{
 			mediaPlayer = LibVLC.media_player_new(Handle.instance);
 
-			Lib.current.addEventListener(openfl.events.Event.ENTER_FRAME, this_onEnterFrame);
+			if (Application.current != null && !Application.current.onUpdate.has(update))
+				Application.current.onUpdate.add(update);
 
 			if (eventManager == null)
 			{
 				eventManager = LibVLC.media_player_event_manager(mediaPlayer);
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerOpening)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPlaying, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPlaying, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerPlaying)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerStopped, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerStopped, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerStopped)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerPaused)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerEndReached)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerEncounteredError)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerMediaChanged)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerCorked)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('callbacks'), untyped __cpp__('this')) != 0)
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerUncorked)');
 			}
 
-			LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('lock'), null, untyped __cpp__('display'), untyped __cpp__('this'));
-			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('format_setup'), null);
+			LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), null, untyped __cpp__('video_display'), untyped __cpp__('this'));
+			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), null);
 		}
 
 		if (options == null)
@@ -618,15 +620,15 @@ class Video extends Bitmap
 	{
 		if (eventManager != null)
 		{
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerPlaying, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerStopped, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('callbacks'), untyped __cpp__('this'));
+			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
+			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerPlaying, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
+			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerStopped, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
+			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
+			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
+			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
+			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
+			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
+			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
 		}
 
 		if (mediaPlayer != null)
@@ -638,8 +640,8 @@ class Video extends Bitmap
 		eventManager = null;
 		mediaPlayer = null;
 
-		if (Lib.current.hasEventListener(openfl.events.Event.ENTER_FRAME))
-			Lib.current.removeEventListener(openfl.events.Event.ENTER_FRAME, this_onEnterFrame);
+		if (Application.current != null && Application.current.onUpdate.has(update))
+			Application.current.onUpdate.remove(update);
 
 		if (mediaItem != null)
 		{
@@ -683,6 +685,118 @@ class Video extends Bitmap
 		{
 			untyped __cpp__('delete[] {0}', planes);
 			planes = null;
+		}
+	}
+
+	@:noCompletion
+	private function update(deltaTime:Int):Void
+	{
+		if (!events.contains(true))
+			return;
+
+		if (events[0])
+		{
+			events[0] = false;
+
+			var mustRecreate:Bool = false;
+
+			if (bitmapData != null)
+			{
+				@:privateAccess
+				if ((bitmapData.width != formatWidth && bitmapData.height != formatHeight)
+					|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
+				{
+					bitmapData.dispose();
+
+					if (texture != null)
+					{
+						texture.dispose();
+						texture = null;
+					}
+
+					mustRecreate = true;
+				}
+			}
+			else
+				mustRecreate = true;
+
+			if (mustRecreate)
+			{
+				try
+				{
+					if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
+					{
+						texture = Lib.current.stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
+
+						bitmapData = BitmapData.fromTexture(texture);
+					}
+					else
+					{
+						if (useTexture)
+							Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
+
+						bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
+					}
+				}
+				catch (e:Exception)
+					Log.error('Failed to create video\'s texture: ${e.message}');
+
+				onFormatSetup.dispatch();
+			}
+		}
+
+		if (events[1])
+		{
+			events[1] = false;
+
+			if (__renderable && planes != null)
+			{
+				try
+				{
+					final planesData:BytesData = cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4);
+
+					if (texture != null)
+					{
+						texture.uploadFromByteArray(planesData, 0);
+
+						__setRenderDirty();
+					}
+					else if (bitmapData != null && bitmapData.image != null)
+						bitmapData.setPixels(bitmapData.rect, planesData);
+				}
+				catch (e:Exception)
+					Log.error('An error occurred while attempting to render the video: ${e.message}');
+			}
+
+			onDisplay.dispatch();
+		}
+	}
+
+	@:noCompletion
+	private function updateCallbacks(type:Int):Void
+	{
+		switch (type)
+		{
+			case 0:
+				onOpening.dispatch();
+			case 1:
+				onPlaying.dispatch();
+			case 2:
+				onStopped.dispatch();
+			case 3:
+				onPaused.dispatch();
+			case 4:
+				onEndReached.dispatch();
+			case 5:
+				final errmsg:String = cast(LibVLC.errmsg(), String);
+
+				onEncounteredError.dispatch(errmsg != null && errmsg.length > 0 ? errmsg : 'Could not specify the error');
+			case 6:
+				onMediaChanged.dispatch();
+			case 7:
+				onCorked.dispatch();
+			case 8:
+				onUncorked.dispatch();
 		}
 	}
 
@@ -1001,155 +1115,6 @@ class Video extends Bitmap
 		}
 
 		return value;
-	}
-
-	@:noCompletion
-	private function this_onEnterFrame(_):Void
-	{
-		if (!events.contains(true))
-			return;
-
-		if (events[0])
-		{
-			events[0] = false;
-
-			onOpening.dispatch();
-		}
-
-		if (events[1])
-		{
-			events[1] = false;
-
-			onPlaying.dispatch();
-		}
-
-		if (events[2])
-		{
-			events[2] = false;
-
-			onStopped.dispatch();
-		}
-
-		if (events[3])
-		{
-			events[3] = false;
-
-			onPaused.dispatch();
-		}
-
-		if (events[4])
-		{
-			events[4] = false;
-
-			onEndReached.dispatch();
-		}
-
-		if (events[5])
-		{
-			events[5] = false;
-
-			final errmsg:String = cast(LibVLC.errmsg(), String);
-
-			onEncounteredError.dispatch(errmsg != null && errmsg.length > 0 ? errmsg : 'Could not specify the error');
-		}
-
-		if (events[6])
-		{
-			events[6] = false;
-
-			onMediaChanged.dispatch();
-		}
-
-		if (events[7])
-		{
-			events[7] = false;
-
-			onCorked.dispatch();
-		}
-
-		if (events[8])
-		{
-			events[8] = false;
-
-			onUncorked.dispatch();
-		}
-
-		if (events[9])
-		{
-			events[9] = false;
-
-			var mustRecreate:Bool = false;
-
-			if (bitmapData != null)
-			{
-				@:privateAccess
-				if ((bitmapData.width != formatWidth && bitmapData.height != formatHeight)
-					|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
-				{
-					bitmapData.dispose();
-
-					if (texture != null)
-					{
-						texture.dispose();
-						texture = null;
-					}
-
-					mustRecreate = true;
-				}
-			}
-			else
-				mustRecreate = true;
-
-			if (mustRecreate)
-			{
-				try
-				{
-					if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
-					{
-						texture = Lib.current.stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
-
-						bitmapData = BitmapData.fromTexture(texture);
-					}
-					else
-					{
-						if (useTexture)
-							Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
-
-						bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
-					}
-				}
-				catch (e:Exception)
-					Log.error('Failed to create video\'s texture: ${e.message}');
-
-				onFormatSetup.dispatch();
-			}
-		}
-
-		if (events[10])
-		{
-			events[10] = false;
-
-			if (__renderable && planes != null)
-			{
-				try
-				{
-					final planesData:BytesData = cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4);
-
-					if (texture != null)
-					{
-						texture.uploadFromByteArray(planesData, 0);
-
-						__setRenderDirty();
-					}
-					else if (bitmapData != null && bitmapData.image != null)
-						bitmapData.setPixels(bitmapData.rect, planesData);
-				}
-				catch (e:Exception)
-					Log.error('An error occurred while attempting to render the video: ${e.message}');
-			}
-
-			onDisplay.dispatch();
-		}
 	}
 
 	@:noCompletion
