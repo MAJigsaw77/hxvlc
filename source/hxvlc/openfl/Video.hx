@@ -552,9 +552,9 @@ class Video extends Bitmap
 
 				alAudioContext.sourcef(alSource, alAudioContext.GAIN, 1);
 				alAudioContext.source3f(alSource, alAudioContext.POSITION, 0, 0, 0);
-				alAudioContext.sourcef(alSource, alAudioContext.PITCH, 1.0);
+				alAudioContext.sourcef(alSource, alAudioContext.PITCH, 1);
 
-				alBuffers = alAudioContext.genBuffers(3);
+				alBuffers = alAudioContext.genBuffers(4);
 
 				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), null, null, null, null, untyped __cpp__('this'));
 				LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
