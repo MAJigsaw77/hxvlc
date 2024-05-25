@@ -859,6 +859,8 @@ class Video extends Bitmap
 	private function updateSoundVolume(volume:Single, mute:Bool):Void
 	{
 		#if lime_openal
+		Log.info('Volume callback triggered: Volume = $volume, Mute = $mute');
+
 		if (alAudioContext != null && alSource != null)
 			alAudioContext.sourcef(alSource, alAudioContext.GAIN, mute ? 0 : volume);
 		#end
