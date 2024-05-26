@@ -760,7 +760,7 @@ class Video extends Bitmap
 
 					if (texture != null)
 					{
-						texture.uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(planesData)), 0);
+						texture.uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(planesData)));
 
 						__setRenderDirty();
 					}
