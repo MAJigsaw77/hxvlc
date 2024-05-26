@@ -27,7 +27,9 @@ using StringTools;
  *
  * It extends a Bitmap object to provide a seamless integration with existing display objects.
  */
-@:keep
+@:access(openfl.display.BitmapData)
+@:access(openfl.display3D.textures.TextureBase)
+@:access(openfl.display3D.Context3D)
 @:cppNamespaceCode('
 #ifndef _MSC_VER
 static int media_open(void *opaque, void **datap, uint64_t *sizep)
@@ -185,9 +187,7 @@ static void media_player_callbacks(const libvlc_event_t *p_event, void *p_data)
 
 	hx::SetTopOfStack((int *)0, true);
 }')
-@:access(openfl.display3D.textures.TextureBase)
-@:access(openfl.display3D.Context3D)
-@:access(openfl.display.BitmapData)
+@:keep
 class Video extends Bitmap
 {
 	/**
