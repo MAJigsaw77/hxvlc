@@ -417,9 +417,6 @@ class Video extends Bitmap
 
 	@:noCompletion
 	private var alSource:ALSource;
-
-	@:noCompletion
-	private var alBuffer:ALBuffer;
 	#end
 
 	#if (mingw || HXCPP_MINGW || !windows)
@@ -585,10 +582,9 @@ class Video extends Bitmap
 			if (alAudioContext != null)
 			{
 				alSource = alAudioContext.createSource();
-
 				alAudioContext.sourcef(alSource, alAudioContext.GAIN, 1);
-
-				alBuffer = alAudioContext.createBuffer();
+				alAudioContext.source3f(alSource, alAudioContext.POSITION, 0, 0, 0);
+				alAudioContext.sourcef(alSource, alAudioContext.PITCH, 1);
 
 				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), null, null, null, null, untyped __cpp__('this'));
 				LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
@@ -872,15 +868,19 @@ class Video extends Bitmap
 	private function updateSound(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32):Void
 	{		
 		#if lime_openal
-		if (alAudioContext != null && alSource != null && alBuffer != null)
+		if (alAudioContext != null && alSource != null && alBuffers != null)
 		{
-			final samplesData:BytesData = cpp.Pointer.fromRaw(samples).toUnmanagedArray(count);
+			final samplesData:BytesData = cpp.Pointer.fromRaw(samples).toUnmanagedArray(count * 8);
 
-			alAudioContext.bufferData(alBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(Bytes.ofData(samplesData)), samplesData.length, 44100);
+			final alBuffer:ALBuffer = alAudioContext.createBuffer();
+			alAudioContext.bufferData(alBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(Bytes.ofData(samplesData)), samplesData.length * 2, 44100);
 			alAudioContext.sourceQueueBuffer(alSource, alBuffer);
 
 			if (alAudioContext.getSourcei(alSource, alAudioContext.SOURCE_STATE) != alAudioContext.PLAYING)
 				alAudioContext.sourcePlay(alSource);
+
+			alAudioContext.sourceUnqueueBuffer(alSource, alBuffer);
+			alAudioContext.deleteBuffer(alBuffer);
 		}
 		#end
 	}
