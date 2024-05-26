@@ -18,7 +18,6 @@ import lime.utils.Log;
 import lime.utils.UInt8Array;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
-import openfl.display3D.textures.Texture;
 import openfl.Lib;
 
 using StringTools;
@@ -186,8 +185,9 @@ static void media_player_callbacks(const libvlc_event_t *p_event, void *p_data)
 
 	hx::SetTopOfStack((int *)0, true);
 }')
-@:access(openfl.display.BitmapData)
 @:access(openfl.display3D.textures.TextureBase)
+@:access(openfl.display3D.Context3D)
+@:access(openfl.display.BitmapData)
 class Video extends Bitmap
 {
 	/**
