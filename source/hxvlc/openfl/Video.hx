@@ -872,7 +872,7 @@ class Video extends Bitmap
 	private function updateSound(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32):Void
 	{		
 		#if lime_openal
-		if (alAudioContext != null && alSource != null && alBuffers != null)
+		if (alAudioContext != null && alSource != null && alBuffer != null)
 		{
 			final samplesData:BytesData = cpp.Pointer.fromRaw(samples).toUnmanagedArray(count);
 
