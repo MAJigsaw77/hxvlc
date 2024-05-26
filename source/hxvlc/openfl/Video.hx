@@ -415,9 +415,6 @@ class Video extends Bitmap
 	@:noCompletion
 	private var planes:cpp.RawPointer<cpp.UInt8>;
 
-	@:noCompletion
-	private var texture:Texture;
-
 	/**
 	 * Initializes a Video object.
 	 *
