@@ -419,7 +419,7 @@ class Video extends Bitmap
 	private var alSource:ALSource;
 
 	@:noCompletion
-	private var alBuffers:Array<ALBuffer> = [];
+	private var alBuffer:ALBuffer;
 	#end
 
 	#if (mingw || HXCPP_MINGW || !windows)
@@ -587,10 +587,8 @@ class Video extends Bitmap
 				alSource = alAudioContext.createSource();
 
 				alAudioContext.sourcef(alSource, alAudioContext.GAIN, 1);
-				alAudioContext.source3f(alSource, alAudioContext.POSITION, 0, 0, 0);
-				alAudioContext.sourcef(alSource, alAudioContext.PITCH, 1);
 
-				alBuffers = alAudioContext.genBuffers(4);
+				alBuffer = alAudioContext.createBuffer();
 
 				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), null, null, null, null, untyped __cpp__('this'));
 				LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
@@ -876,26 +874,13 @@ class Video extends Bitmap
 		#if lime_openal
 		if (alAudioContext != null && alSource != null && alBuffers != null)
 		{
-			final processed:Int = alAudioContext.getSourcei(alSource, alAudioContext.BUFFERS_PROCESSED);
+			final samplesData:BytesData = cpp.Pointer.fromRaw(samples).toUnmanagedArray(count);
 
-			if (processed > 0)
-			{
-				for (buffer in alAudioContext.sourceUnqueueBuffers(alSource, processed))
-					alBuffers.push(buffer);
-			}
+			alAudioContext.bufferData(alBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(Bytes.ofData(samplesData)), samplesData.length, 44100);
+			alAudioContext.sourceQueueBuffer(alSource, alBuffer);
 
-			final samplesData:BytesData = cpp.Pointer.fromRaw(samples).toUnmanagedArray(count * 8);
-
-			if (alBuffers.length > 0)
-			{
-				final newBuffer:ALBuffer = alBuffers.pop();
-
-				alAudioContext.bufferData(newBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(Bytes.ofData(samplesData)), samplesData.length, 44100);
-				alAudioContext.sourceQueueBuffer(alSource, newBuffer);
-
-				if (alAudioContext.getSourcei(alSource, alAudioContext.SOURCE_STATE) != alAudioContext.PLAYING)
-					alAudioContext.sourcePlay(alSource);
-			}
+			if (alAudioContext.getSourcei(alSource, alAudioContext.SOURCE_STATE) != alAudioContext.PLAYING)
+				alAudioContext.sourcePlay(alSource);
 		}
 		#end
 	}
