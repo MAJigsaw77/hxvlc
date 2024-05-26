@@ -669,18 +669,6 @@ class Video extends Bitmap
 			audioOutput = null;
 		}
 
-		/*if (bitmapData != null)
-			{
-				bitmapData.dispose();
-				bitmapData = null;
-			}
-
-			if (texture != null)
-			{
-				texture.dispose();
-				texture = null;
-		}*/
-
 		formatWidth = formatHeight = 0;
 
 		if (planes != null)
@@ -753,6 +741,7 @@ class Video extends Bitmap
 							__bitmapData.__texture.__width, __bitmapData.__texture.__height, 0, __bitmapData.__texture.__format,
 							__bitmapData.__texture.__context.gl.UNSIGNED_BYTE, UInt8Array.fromBytes(Bytes.ofData(planesData)));
 						__bitmapData.__texture.__context.__bindGLTexture2D(null);
+
 						__setRenderDirty();
 					}
 					else if (__bitmapData != null && __bitmapData.image != null)
