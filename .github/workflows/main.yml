@@ -38,6 +38,7 @@ jobs:
           haxelib install lime --quiet
           haxelib install openfl --quiet
           haxelib install flixel --quiet
+          haxelib install hscript --quiet
           haxelib dev hxvlc .
 
       - name: Setup Git hxcpp
@@ -114,6 +115,7 @@ jobs:
           haxelib install lime --quiet
           haxelib install openfl --quiet
           haxelib install flixel --quiet
+          haxelib install hscript --quiet
           haxelib install extension-androidtools --quiet --skip-dependencies
           haxelib dev hxvlc .
 
