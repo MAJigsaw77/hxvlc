@@ -15,6 +15,7 @@ import hxvlc.util.OneOfThree;
 import lime.app.Application;
 import lime.app.Event;
 import lime.utils.Log;
+import lime.utils.UInt8Array;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.RectangleTexture;
@@ -759,7 +760,7 @@ class Video extends Bitmap
 
 					if (texture != null)
 					{
-						texture.uploadFromByteArray(planesData, 0);
+						texture.uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(planesData)), 0);
 
 						__setRenderDirty();
 					}
