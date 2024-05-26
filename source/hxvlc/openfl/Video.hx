@@ -158,9 +158,9 @@ static void audio_play(void *data, const void *samples, unsigned count, int64_t 
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(data);
 
-	unsigned char *soundSamples = new unsigned char[count * 4];
-	memcpy(soundSamples, samples, count * 4);
-	self->updateSound(soundSamples, count * 4);
+	unsigned char *soundSamples = new unsigned char[count * 6];
+	memcpy(soundSamples, samples, count * 6);
+	self->updateSound(soundSamples, count * 6);
 
 	delete[] soundSamples;
 
