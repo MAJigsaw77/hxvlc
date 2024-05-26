@@ -688,22 +688,9 @@ class Video extends Bitmap
 		{
 			events[0] = false;
 
-			var mustRecreate:Bool = false;
-
-			if (__bitmapData != null)
-			{
-				if ((__bitmapData.width != formatWidth && __bitmapData.height != formatHeight)
-					|| ((!useTexture && __bitmapData.__texture != null) || (useTexture && __bitmapData.image != null)))
-				{
-					__bitmapData.dispose();
-
-					mustRecreate = true;
-				}
-			}
-			else
-				mustRecreate = true;
-
-			if (mustRecreate)
+			if (__bitmapData == null
+				|| ((__bitmapData.width != formatWidth && __bitmapData.height != formatHeight)
+					|| ((!useTexture && __bitmapData.__texture != null) || (useTexture && __bitmapData.image != null))))
 			{
 				try
 				{
