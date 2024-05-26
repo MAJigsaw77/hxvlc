@@ -422,7 +422,7 @@ class Video extends Bitmap
 	 */
 	public function new(smoothing:Bool = true):Void
 	{
-		super(bitmapData, AUTO, smoothing);
+		super(null, AUTO, smoothing);
 
 		while (Handle.loading)
 			Sys.sleep(0.05);
@@ -668,7 +668,7 @@ class Video extends Bitmap
 			audioOutput = null;
 		}
 
-		if (bitmapData != null)
+		/*if (bitmapData != null)
 		{
 			bitmapData.dispose();
 			bitmapData = null;
@@ -678,7 +678,7 @@ class Video extends Bitmap
 		{
 			texture.dispose();
 			texture = null;
-		}
+		}*/
 
 		formatWidth = formatHeight = 0;
 
@@ -701,13 +701,13 @@ class Video extends Bitmap
 
 			var mustRecreate:Bool = false;
 
-			if (bitmapData != null)
+			if (__bitmapData != null)
 			{
 				@:privateAccess
-				if ((bitmapData.width != formatWidth && bitmapData.height != formatHeight)
-					|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
+				if ((__bitmapData.width != formatWidth && __bitmapData.height != formatHeight)
+					|| ((!useTexture && __bitmapData.__texture != null) || (useTexture && __bitmapData.image != null)))
 				{
-					bitmapData.dispose();
+					__bitmapData.dispose();
 
 					if (texture != null)
 					{
@@ -729,14 +729,14 @@ class Video extends Bitmap
 					{
 						texture = Lib.current.stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
 
-						bitmapData = BitmapData.fromTexture(texture);
+						__bitmapData = BitmapData.fromTexture(texture);
 					}
 					else
 					{
 						if (useTexture)
 							Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
 
-						bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
+						__bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
 					}
 				}
 				catch (e:Exception)
@@ -762,8 +762,8 @@ class Video extends Bitmap
 
 						__setRenderDirty();
 					}
-					else if (bitmapData != null && bitmapData.image != null)
-						bitmapData.setPixels(bitmapData.rect, planesData);
+					else if (__bitmapData != null && __bitmapData.image != null)
+						__bitmapData.setPixels(__bitmapData.rect, planesData);
 				}
 				catch (e:Exception)
 					Log.error('An error occurred while attempting to render the video: ${e.message}');
@@ -1116,11 +1116,5 @@ class Video extends Bitmap
 		}
 
 		return value;
-	}
-
-	@:noCompletion
-	private override function set_bitmapData(value:BitmapData):BitmapData
-	{
-		return __bitmapData = value;
 	}
 }
