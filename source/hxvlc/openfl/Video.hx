@@ -156,9 +156,9 @@ static void audio_play(void *data, const void *samples, unsigned count, int64_t 
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	unsigned char *soundSamples = new unsigned char[count];
-	memcpy(soundSamples, samples, count);
-	reinterpret_cast<Video_obj *>(data)->updateSound(soundSamples, count);
+	unsigned char *soundSamples = new unsigned char[count * 2];
+	memcpy(soundSamples, samples, count * 2);
+	reinterpret_cast<Video_obj *>(data)->updateSound(soundSamples, count * 2);
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -592,8 +592,11 @@ class Video extends Bitmap
 				alAudioContext.source3f(alSource, alAudioContext.POSITION, 0, 0, 0);
 				alAudioContext.sourcef(alSource, alAudioContext.PITCH, 1);
 
-				alBuffers = alAudioContext.genBuffers(3);
+				alBuffers = new Array<ALBuffer>();
 
+				for (i in 0...3)
+					alBuffers.push(alAudioContext.createBuffer());
+	
 				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), null, null, null, null, untyped __cpp__('this'));
 				LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 				LibVLC.audio_set_format(mediaPlayer, "S16N", 44100, 2);
