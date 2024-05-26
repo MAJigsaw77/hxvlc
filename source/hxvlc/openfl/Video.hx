@@ -19,7 +19,6 @@ import lime.media.openal.ALBuffer;
 import lime.media.openal.ALSource;
 import lime.media.AudioManager;
 import lime.media.OpenALAudioContext;
-import lime.utils.UInt8Array;
 #end
 import lime.utils.Log;
 import lime.utils.UInt8Array;
@@ -295,6 +294,20 @@ class Video extends Bitmap
 	public var canPause(get, never):Bool;
 
 	/**
+	 * Gets the list of available audio output modules.
+	 */
+	public var outputModules(get, never):Array<String>;
+
+	/**
+	 * Selects an audio output module.
+	 *
+	 * @note Any change will take be effect only after playback is stopped and restarted.
+	 *
+	 * Audio output cannot be changed while playing.
+	 */
+	public var output(never, set):String;
+
+	/**
 	 * The audio's mute status.
 	 *
 	 * @warning This does not always work.
@@ -322,9 +335,25 @@ class Video extends Bitmap
 	public var track(get, set):Int;
 
 	/**
+	 * The audio channel.
+	 *
+	 * - [Stereo] = 1
+	 * - [RStereo] = 2
+	 * - [Left] = 3
+	 * - [Right] = 4
+	 * - [Dolbys] = 5
+	 */
+	public var channel(get, set):Int;
+
+	/**
 	 * The audio delay in microseconds.
 	 */
 	public var delay(get, set):Int64;
+
+	/**
+	 * The media player's role.
+	 */
+	public var role(get, set):UInt;
 
 	/**
 	 * An event that is dispatched when the media player is opening.
@@ -381,6 +410,9 @@ class Video extends Bitmap
 	 */
 	public var onDisplay(default, null):Event<Void->Void> = new Event<Void->Void>();
 
+	@:noCompletion
+	private var audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T>;
+
 	#if lime_openal
 	@:noCompletion
 	private var alAudioContext:OpenALAudioContext;
@@ -425,12 +457,26 @@ class Video extends Bitmap
 	 */
 	public function new(smoothing:Bool = true):Void
 	{
-		super(bitmapData, AUTO, smoothing);
+		super(null, AUTO, smoothing);
+
+		#if lime_openal
+		if (AudioManager.context != null)
+		{
+			switch (AudioManager.context.type)
+			{
+				case OPENAL:
+					alAudioContext = AudioManager.context.openal;
+				default:
+			}
+		}
+		#end
 
 		while (Handle.loading)
 			Sys.sleep(0.05);
 
 		Handle.init();
+
+		audioOutput = LibVLC.audio_output_list_get(Handle.instance);
 	}
 
 	/**
@@ -685,18 +731,6 @@ class Video extends Bitmap
 		{
 			LibVLC.audio_output_list_release(audioOutput);
 			audioOutput = null;
-		}
-
-		if (bitmapData != null)
-		{
-			bitmapData.dispose();
-			bitmapData = null;
-		}
-
-		if (texture != null)
-		{
-			texture.dispose();
-			texture = null;
 		}
 
 		formatWidth = formatHeight = 0;
@@ -1002,6 +1036,40 @@ class Video extends Bitmap
 	}
 
 	@:noCompletion
+	private function get_outputModules():Array<String>
+	{
+		var modules:Array<String> = null;
+
+		if (audioOutput != null)
+		{
+			modules = [];
+
+			var temp:cpp.RawPointer<LibVLC_Audio_Output_T> = audioOutput;
+
+			while (temp != null)
+			{
+				modules.push(temp[0].psz_name);
+
+				temp = temp[0].p_next;
+			}
+		}
+
+		return modules;
+	}
+
+	@:noCompletion
+	private function set_output(value:String):String
+	{
+		if (mediaPlayer != null)
+		{
+			if (LibVLC.audio_output_set(mediaPlayer, value) != 0)
+				Log.warn('Failed to set audio output module');
+		}
+
+		return value;
+	}
+
+	@:noCompletion
 	private function get_mute():Bool
 	{
 		if (mediaPlayer != null)
@@ -1071,6 +1139,24 @@ class Video extends Bitmap
 	}
 
 	@:noCompletion
+	private function get_channel():Int
+	{
+		if (mediaPlayer != null)
+			return LibVLC.audio_get_channel(mediaPlayer);
+
+		return -1;
+	}
+
+	@:noCompletion
+	private function set_channel(value:Int):Int
+	{
+		if (mediaPlayer != null)
+			LibVLC.audio_set_channel(mediaPlayer, value);
+
+		return value;
+	}
+
+	@:noCompletion
 	private function get_delay():Int64
 	{
 		if (mediaPlayer != null)
@@ -1107,11 +1193,5 @@ class Video extends Bitmap
 		}
 
 		return value;
-	}
-
-	@:noCompletion
-	private override function set_bitmapData(value:BitmapData):BitmapData
-	{
-		return __bitmapData = value;
 	}
 }
