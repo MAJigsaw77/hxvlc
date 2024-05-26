@@ -748,7 +748,7 @@ class Video extends Bitmap
 
 					if (__bitmapData.__texture != null)
 					{
-						__bitmapData.__texture.uploadFromByteArray(planesData, 0);
+						cast(__bitmapData.__texture, RectangleTexture).uploadFromByteArray(planesData, 0);
 						__setRenderDirty();
 					}
 					else if (__bitmapData != null && __bitmapData.image != null)
