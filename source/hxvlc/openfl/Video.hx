@@ -15,9 +15,9 @@ import hxvlc.util.OneOfThree;
 import lime.app.Application;
 import lime.app.Event;
 import lime.utils.Log;
-import lime.utils.UInt8Array;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
+import openfl.display3D.textures.RectangleTexture;
 import openfl.Lib;
 
 using StringTools;
@@ -27,9 +27,6 @@ using StringTools;
  *
  * It extends a Bitmap object to provide a seamless integration with existing display objects.
  */
-@:access(openfl.display.BitmapData)
-@:access(openfl.display3D.textures.TextureBase)
-@:access(openfl.display3D.Context3D)
 @:cppNamespaceCode('
 #ifndef _MSC_VER
 static int media_open(void *opaque, void **datap, uint64_t *sizep)
@@ -415,6 +412,9 @@ class Video extends Bitmap
 	@:noCompletion
 	private var planes:cpp.RawPointer<cpp.UInt8>;
 
+	@:noCompletion
+	private var texture:RectangleTexture;
+
 	/**
 	 * Initializes a Video object.
 	 *
@@ -669,6 +669,18 @@ class Video extends Bitmap
 			audioOutput = null;
 		}
 
+		if (bitmapData != null)
+		{
+			bitmapData.dispose();
+			bitmapData = null;
+		}
+
+		if (texture != null)
+		{
+			texture.dispose();
+			texture = null;
+		}
+
 		formatWidth = formatHeight = 0;
 
 		if (planes != null)
@@ -688,21 +700,45 @@ class Video extends Bitmap
 		{
 			events[0] = false;
 
-			if (__bitmapData == null
-				|| ((__bitmapData.width != formatWidth && __bitmapData.height != formatHeight)
-					|| ((!useTexture && __bitmapData.__texture != null) || (useTexture && __bitmapData.image != null))))
+			var mustRecreate:Bool = false;
+
+			if (bitmapData != null)
+			{
+				@:privateAccess
+				if ((bitmapData.width != formatWidth && bitmapData.height != formatHeight)
+					|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
+				{
+					bitmapData.dispose();
+
+					if (texture != null)
+					{
+						texture.dispose();
+						texture = null;
+					}
+
+					mustRecreate = true;
+				}
+			}
+			else
+				mustRecreate = true;
+
+			if (mustRecreate)
 			{
 				try
 				{
-					__bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
-
 					if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
 					{
-						__bitmapData.disposeImage();
-						__bitmapData.getTexture(Lib.current.stage.context3D);
+						texture = Lib.current.stage.context3D.createRectangleTexture(formatWidth, formatHeight, BGRA, true);
+
+						bitmapData = BitmapData.fromTexture(texture);
 					}
-					else if (useTexture)
-						Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
+					else
+					{
+						if (useTexture)
+							Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
+
+						bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
+					}
 				}
 				catch (e:Exception)
 					Log.error('Failed to create video\'s texture: ${e.message}');
@@ -721,18 +757,14 @@ class Video extends Bitmap
 				{
 					final planesData:BytesData = cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4);
 
-					if (__bitmapData.__texture != null)
+					if (texture != null)
 					{
-						__bitmapData.__texture.__context.__bindGLTexture2D(__bitmapData.__texture.__textureID);
-						__bitmapData.__texture.__context.gl.texImage2D(__bitmapData.__texture.__textureTarget, 0, __bitmapData.__texture.__internalFormat,
-							__bitmapData.__texture.__width, __bitmapData.__texture.__height, 0, __bitmapData.__texture.__format,
-							__bitmapData.__texture.__context.gl.UNSIGNED_BYTE, UInt8Array.fromBytes(Bytes.ofData(planesData)));
-						__bitmapData.__texture.__context.__bindGLTexture2D(null);
+						texture.uploadFromByteArray(planesData, 0);
 
 						__setRenderDirty();
 					}
-					else if (__bitmapData != null && __bitmapData.image != null)
-						__bitmapData.setPixels(__bitmapData.rect, planesData);
+					else if (bitmapData != null && bitmapData.image != null)
+						bitmapData.setPixels(bitmapData.rect, planesData);
 				}
 				catch (e:Exception)
 					Log.error('An error occurred while attempting to render the video: ${e.message}');
@@ -1088,5 +1120,11 @@ class Video extends Bitmap
 		}
 
 		return value;
+	}
+
+	@:noCompletion
+	private override function set_bitmapData(value:BitmapData):BitmapData
+	{
+		return __bitmapData = value;
 	}
 }
