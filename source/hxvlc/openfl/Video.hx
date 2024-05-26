@@ -15,6 +15,7 @@ import hxvlc.util.OneOfThree;
 import lime.app.Application;
 import lime.app.Event;
 import lime.utils.Log;
+import lime.utils.UInt8Array;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.Texture;
@@ -186,6 +187,7 @@ static void media_player_callbacks(const libvlc_event_t *p_event, void *p_data)
 	hx::SetTopOfStack((int *)0, true);
 }')
 @:access(openfl.display.BitmapData)
+@:access(openfl.display3D.textures.TextureBase)
 class Video extends Bitmap
 {
 	/**
@@ -477,8 +479,8 @@ class Video extends Bitmap
 
 				mediaOffset = 0;
 				mediaSize = data.length;
-				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'), untyped __cpp__('media_seek'), null,
-					untyped __cpp__('this'));
+				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
+					untyped __cpp__('media_seek'), null, untyped __cpp__('this'));
 				#else
 				Log.warn('Failed to use bitstream input, this doesn\'t work when compiling on Windows with MSVC compiler, use MinGW compiler instead.');
 
@@ -517,7 +519,8 @@ class Video extends Bitmap
 				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerEndReached)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('media_player_callbacks'),
+					untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerEncounteredError)');
 
 				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
@@ -670,15 +673,15 @@ class Video extends Bitmap
 		}
 
 		/*if (bitmapData != null)
-		{
-			bitmapData.dispose();
-			bitmapData = null;
-		}
+			{
+				bitmapData.dispose();
+				bitmapData = null;
+			}
 
-		if (texture != null)
-		{
-			texture.dispose();
-			texture = null;
+			if (texture != null)
+			{
+				texture.dispose();
+				texture = null;
 		}*/
 
 		formatWidth = formatHeight = 0;
@@ -748,7 +751,11 @@ class Video extends Bitmap
 
 					if (__bitmapData.__texture != null)
 					{
-						cast(__bitmapData.__texture, RectangleTexture).uploadFromByteArray(planesData, 0);
+						__bitmapData.__texture.__context.__bindGLTexture2D(__bitmapData.__texture.__textureID);
+						__bitmapData.__texture.__context.gl.texImage2D(__bitmapData.__texture.__textureTarget, 0, __bitmapData.__texture.__internalFormat,
+							__bitmapData.__texture.__width, __bitmapData.__texture.__height, 0, __bitmapData.__texture.__format,
+							__bitmapData.__texture.__context.gl.UNSIGNED_BYTE, UInt8Array.fromBytes(Bytes.ofData(planesData)));
+						__bitmapData.__texture.__context.__bindGLTexture2D(null);
 						__setRenderDirty();
 					}
 					else if (__bitmapData != null && __bitmapData.image != null)
