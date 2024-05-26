@@ -27,6 +27,7 @@ using StringTools;
  *
  * It extends a Bitmap object to provide a seamless integration with existing display objects.
  */
+@:keep
 @:cppNamespaceCode('
 #ifndef _MSC_VER
 static int media_open(void *opaque, void **datap, uint64_t *sizep)
@@ -184,7 +185,7 @@ static void media_player_callbacks(const libvlc_event_t *p_event, void *p_data)
 
 	hx::SetTopOfStack((int *)0, true);
 }')
-@:keep
+@:access(openfl.display.BitmapData)
 class Video extends Bitmap
 {
 	/**
@@ -703,17 +704,10 @@ class Video extends Bitmap
 
 			if (__bitmapData != null)
 			{
-				@:privateAccess
 				if ((__bitmapData.width != formatWidth && __bitmapData.height != formatHeight)
 					|| ((!useTexture && __bitmapData.__texture != null) || (useTexture && __bitmapData.image != null)))
 				{
 					__bitmapData.dispose();
-
-					if (texture != null)
-					{
-						texture.dispose();
-						texture = null;
-					}
 
 					mustRecreate = true;
 				}
@@ -725,19 +719,15 @@ class Video extends Bitmap
 			{
 				try
 				{
+					__bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
+
 					if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
 					{
-						texture = Lib.current.stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
-
-						__bitmapData = BitmapData.fromTexture(texture);
+						__bitmapData.disposeImage();
+						__bitmapData.getTexture(Lib.current.stage.context3D);
 					}
-					else
-					{
-						if (useTexture)
-							Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
-
-						__bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
-					}
+					else if (useTexture)
+						Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
 				}
 				catch (e:Exception)
 					Log.error('Failed to create video\'s texture: ${e.message}');
@@ -756,10 +746,9 @@ class Video extends Bitmap
 				{
 					final planesData:BytesData = cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4);
 
-					if (texture != null)
+					if (__bitmapData.__texture != null)
 					{
-						texture.uploadFromByteArray(planesData, 0);
-
+						__bitmapData.__texture.uploadFromByteArray(planesData, 0);
 						__setRenderDirty();
 					}
 					else if (__bitmapData != null && __bitmapData.image != null)
