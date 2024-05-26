@@ -46,8 +46,6 @@
 
 	<!--Libraries Settings-->
 
-	<haxedef name="FLX_NO_MOUSE" if="mobile" />
-	<haxedef name="FLX_NO_KEYBOARD" if="mobile" />
 	<haxedef name="FLX_NO_TOUCH" if="desktop" />
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
 

@@ -22,9 +22,9 @@ import lime.media.OpenALAudioContext;
 import lime.utils.UInt8Array;
 #end
 import lime.utils.Log;
+import lime.utils.UInt8Array;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
-import openfl.display3D.textures.Texture;
 import openfl.Lib;
 
 using StringTools;
@@ -34,6 +34,9 @@ using StringTools;
  *
  * It extends a Bitmap object to provide a seamless integration with existing display objects.
  */
+@:access(openfl.display.BitmapData)
+@:access(openfl.display3D.textures.TextureBase)
+@:access(openfl.display3D.Context3D)
 @:cppNamespaceCode('
 #ifndef _MSC_VER
 static int media_open(void *opaque, void **datap, uint64_t *sizep)
@@ -415,9 +418,6 @@ class Video extends Bitmap
 	@:noCompletion
 	private var planes:cpp.RawPointer<cpp.UInt8>;
 
-	@:noCompletion
-	private var texture:Texture;
-
 	/**
 	 * Initializes a Video object.
 	 *
@@ -426,18 +426,6 @@ class Video extends Bitmap
 	public function new(smoothing:Bool = true):Void
 	{
 		super(bitmapData, AUTO, smoothing);
-
-		#if lime_openal
-		if (AudioManager.context != null)
-		{
-			switch (AudioManager.context.type)
-			{
-				case OPENAL:
-					alAudioContext = AudioManager.context.openal;
-				default:
-			}
-		}
-		#end
 
 		while (Handle.loading)
 			Sys.sleep(0.05);
@@ -489,8 +477,8 @@ class Video extends Bitmap
 
 				mediaOffset = 0;
 				mediaSize = data.length;
-				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'), untyped __cpp__('media_seek'), null,
-					untyped __cpp__('this'));
+				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
+					untyped __cpp__('media_seek'), null, untyped __cpp__('this'));
 				#else
 				Log.warn('Failed to use bitstream input, this doesn\'t work when compiling on Windows with MSVC compiler, use MinGW compiler instead.');
 
@@ -529,7 +517,8 @@ class Video extends Bitmap
 				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerEndReached)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('media_player_callbacks'),
+					untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerEncounteredError)');
 
 				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
@@ -692,6 +681,12 @@ class Video extends Bitmap
 			mediaItem = null;
 		}
 
+		if (audioOutput != null)
+		{
+			LibVLC.audio_output_list_release(audioOutput);
+			audioOutput = null;
+		}
+
 		if (bitmapData != null)
 		{
 			bitmapData.dispose();
@@ -723,45 +718,21 @@ class Video extends Bitmap
 		{
 			events[0] = false;
 
-			var mustRecreate:Bool = false;
-
-			if (bitmapData != null)
-			{
-				@:privateAccess
-				if ((bitmapData.width != formatWidth && bitmapData.height != formatHeight)
-					|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
-				{
-					bitmapData.dispose();
-
-					if (texture != null)
-					{
-						texture.dispose();
-						texture = null;
-					}
-
-					mustRecreate = true;
-				}
-			}
-			else
-				mustRecreate = true;
-
-			if (mustRecreate)
+			if (__bitmapData == null
+				|| ((__bitmapData.width != formatWidth && __bitmapData.height != formatHeight)
+					|| ((!useTexture && __bitmapData.__texture != null) || (useTexture && __bitmapData.image != null))))
 			{
 				try
 				{
+					__bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
+
 					if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
 					{
-						texture = Lib.current.stage.context3D.createTexture(formatWidth, formatHeight, BGRA, true);
-
-						bitmapData = BitmapData.fromTexture(texture);
+						__bitmapData.disposeImage();
+						__bitmapData.getTexture(Lib.current.stage.context3D);
 					}
-					else
-					{
-						if (useTexture)
-							Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
-
-						bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
-					}
+					else if (useTexture)
+						Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
 				}
 				catch (e:Exception)
 					Log.error('Failed to create video\'s texture: ${e.message}');
@@ -780,14 +751,18 @@ class Video extends Bitmap
 				{
 					final planesData:BytesData = cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4);
 
-					if (texture != null)
+					if (__bitmapData.__texture != null)
 					{
-						texture.uploadFromByteArray(planesData, 0);
+						__bitmapData.__texture.__context.__bindGLTexture2D(__bitmapData.__texture.__textureID);
+						__bitmapData.__texture.__context.gl.texImage2D(__bitmapData.__texture.__textureTarget, 0, __bitmapData.__texture.__internalFormat,
+							__bitmapData.__texture.__width, __bitmapData.__texture.__height, 0, __bitmapData.__texture.__format,
+							__bitmapData.__texture.__context.gl.UNSIGNED_BYTE, UInt8Array.fromBytes(Bytes.ofData(planesData)));
+						__bitmapData.__texture.__context.__bindGLTexture2D(null);
 
 						__setRenderDirty();
 					}
-					else if (bitmapData != null && bitmapData.image != null)
-						bitmapData.setPixels(bitmapData.rect, planesData);
+					else if (__bitmapData != null && __bitmapData.image != null)
+						__bitmapData.setPixels(__bitmapData.rect, planesData);
 				}
 				catch (e:Exception)
 					Log.error('An error occurred while attempting to render the video: ${e.message}');
@@ -815,7 +790,10 @@ class Video extends Bitmap
 			case 5:
 				final errmsg:String = cast(LibVLC.errmsg(), String);
 
-				onEncounteredError.dispatch(errmsg != null && errmsg.length > 0 ? errmsg : 'Could not specify the error');
+				if (errmsg != null && errmsg.length > 0)
+					onEncounteredError.dispatch(errmsg);
+				else
+					onEncounteredError.dispatch('Unknown error');
 			case 6:
 				onMediaChanged.dispatch();
 			case 7:
@@ -1106,6 +1084,27 @@ class Video extends Bitmap
 	{
 		if (mediaPlayer != null)
 			LibVLC.audio_set_delay(mediaPlayer, value);
+
+		return value;
+	}
+
+	@:noCompletion
+	private function get_role():UInt
+	{
+		if (mediaPlayer != null)
+			return LibVLC.media_player_get_role(mediaPlayer);
+
+		return 0;
+	}
+
+	@:noCompletion
+	private function set_role(value:UInt):UInt
+	{
+		if (mediaPlayer != null)
+		{
+			if (LibVLC.media_player_set_role(mediaPlayer, value) == -1)
+				Log.warn('Failed to media player\'s role');
+		}
 
 		return value;
 	}
