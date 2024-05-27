@@ -484,18 +484,6 @@ class Video extends Bitmap
 	{
 		super(null, AUTO, smoothing);
 
-		#if lime_openal
-		if (AudioManager.context != null)
-		{
-			switch (AudioManager.context.type)
-			{
-				case OPENAL:
-					alAudioContext = AudioManager.context.openal;
-				default:
-			}
-		}
-		#end
-
 		while (Handle.loading)
 			Sys.sleep(0.05);
 
@@ -606,6 +594,16 @@ class Video extends Bitmap
 			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), null);
 
 			#if lime_openal
+			if (AudioManager.context != null)
+			{
+				switch (AudioManager.context.type)
+				{
+					case OPENAL:
+						alAudioContext = AudioManager.context.openal;
+					default:
+				}
+			}
+
 			if (alAudioContext != null)
 			{
 				alSource = alAudioContext.createSource();
@@ -802,6 +800,8 @@ class Video extends Bitmap
 				alAudioContext.deleteSource(alSource);
 				alSource = null;
 			}
+
+			alAudioContext = null;
 		}
 		#end
 	}
