@@ -6,7 +6,7 @@ package hxvlc.externs;
 import hxvlc.externs.Types;
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
+@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
 @:unreflective
 extern class LibVLC
 {
@@ -54,11 +54,9 @@ extern class LibVLC
 	@:native('libvlc_media_new_fd')
 	static function media_new_fd(p_instance:cpp.RawPointer<LibVLC_Instance_T>, fd:Int):cpp.RawPointer<LibVLC_Media_T>;
 
-	#if (mingw || HXCPP_MINGW || !windows)
 	@:native('libvlc_media_new_callbacks')
 	static function media_new_callbacks(p_instance:cpp.RawPointer<LibVLC_Instance_T>, open_cb:LibVLC_Media_Open_CB, read_cb:LibVLC_Media_Read_CB,
 		seek_cb:LibVLC_Media_Seek_CB, close_cb:LibVLC_Media_Close_CB, opaque:cpp.RawPointer<cpp.Void>):cpp.RawPointer<LibVLC_Media_T>;
-	#end
 
 	@:native('libvlc_media_add_option')
 	static function media_add_option(p_md:cpp.RawPointer<LibVLC_Media_T>, psz_options:cpp.ConstCharStar):Void;

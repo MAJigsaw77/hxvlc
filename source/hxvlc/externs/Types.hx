@@ -6,24 +6,24 @@ package hxvlc.externs;
 class Types {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
+@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
 @:native('libvlc_instance_t')
 extern class LibVLC_Instance_T {}
 
 typedef LibVLC_Time_T = cpp.Int64;
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
+@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
 @:native('libvlc_media_t')
 extern class LibVLC_Media_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
+@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
 @:native('libvlc_media_player_t')
 extern class LibVLC_Media_Player_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
+@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
 @:unreflective
 @:structAccess
 @:native('libvlc_audio_output_t')
@@ -38,17 +38,17 @@ extern class LibVLC_Audio_Output_T
 }
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
+@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
 @:native('libvlc_event_manager_t')
 extern class LibVLC_Event_Manager_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
+@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
 @:native('libvlc_event_t')
 extern class LibVLC_Event_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
+@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
 @:native('libvlc_log_t')
 extern class LibVLC_Log_T {}
 
@@ -188,7 +188,7 @@ extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 }
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
+@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
 @:native('libvlc_event_e')
 private extern class LibVLC_Event_E_Impl {}
 
@@ -197,14 +197,12 @@ typedef LibVLC_Callback_T = cpp.Callable<(p_event:cpp.RawConstPointer<LibVLC_Eve
 typedef LibVLC_Log_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, level:Int, ctx:cpp.RawConstPointer<LibVLC_Log_T>, fmt:cpp.ConstCharStar,
 		args:cpp.VarList) -> Void>;
 
-#if (mingw || HXCPP_MINGW || !windows)
 typedef LibVLC_Media_Open_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>, datap:cpp.RawPointer<cpp.RawPointer<cpp.Void>>,
 		sizep:cpp.RawPointer<cpp.UInt64>) -> Int>;
 
 typedef LibVLC_Media_Read_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>, buf:cpp.RawPointer<cpp.UInt8>, len:cpp.SizeT) -> cpp.SSizeT>;
 typedef LibVLC_Media_Seek_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>, offset:cpp.UInt64) -> Int>;
 typedef LibVLC_Media_Close_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>) -> Void>;
-#end
 
 typedef LibVLC_Video_Format_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.RawPointer<cpp.Void>>, chroma:cpp.CharStar, width:cpp.RawPointer<cpp.UInt32>,
 		height:cpp.RawPointer<cpp.UInt32>, pitches:cpp.RawPointer<cpp.UInt32>, lines:cpp.RawPointer<cpp.UInt32>) -> cpp.UInt32>;
@@ -252,6 +250,6 @@ extern enum abstract LibVLC_Media_Player_Role_T(LibVLC_Media_Player_Role_T_Impl)
 }
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
+@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
 @:native('libvlc_media_player_role_t')
 private extern class LibVLC_Media_Player_Role_T_Impl {}

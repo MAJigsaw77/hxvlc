@@ -328,7 +328,6 @@ typedef struct libvlc_media_slave_t
     unsigned int                    i_priority;
 } libvlc_media_slave_t;
 
-#ifndef _MSC_VER
 /**
  * Callback prototype to open a custom bitstream input media.
  *
@@ -386,8 +385,6 @@ typedef int (*libvlc_media_seek_cb)(void *opaque, uint64_t offset);
  *               callback
  */
 typedef void (*libvlc_media_close_cb)(void *opaque);
-
-#endif
 
 /**
  * Create a media with a certain given media resource location,
@@ -449,7 +446,6 @@ LIBVLC_API libvlc_media_t *libvlc_media_new_fd(
                                    libvlc_instance_t *p_instance,
                                    int fd );
 
-#ifndef _MSC_VER
 /**
  * Create a media with custom callbacks to read the data from.
  *
@@ -483,7 +479,6 @@ LIBVLC_API libvlc_media_t *libvlc_media_new_callbacks(
                                    libvlc_media_seek_cb seek_cb,
                                    libvlc_media_close_cb close_cb,
                                    void *opaque );
-#endif
 
 /**
  * Create a media as an empty node with a given name.
