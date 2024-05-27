@@ -782,6 +782,28 @@ class Video extends Bitmap
 			untyped __cpp__('delete[] {0}', planes);
 			planes = null;
 		}
+
+		#if lime_openal
+		if (alAudioContext != null)
+		{
+			if (alSource != null)
+				alAudioContext.sourceStop(alSource);
+				
+			if (alBuffers != null)
+			{
+				for (buffer in alBuffers)
+					alAudioContext.deleteBuffer(buffer);
+
+				alBuffers = null;
+			}
+
+			if (alSource != null)
+			{
+				alAudioContext.deleteSource(alSource);
+				alSource = null;
+			}
+		}
+		#end
 	}
 
 	@:noCompletion
