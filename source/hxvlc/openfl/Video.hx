@@ -121,7 +121,7 @@ static void video_display(void *opaque, void *picture)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(opaque)->events[1] = true;
+	reinterpret_cast<Video_obj *>(opaque)->events[10] = true;
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -140,7 +140,7 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 	(*pitches) = self->formatWidth * 4;
 	(*lines) = self->formatHeight;
 
-	self->events[0] = true;
+	self->events[9] = true;
 
 	if (self->planes != NULL)
 		delete[] self->planes;
@@ -185,31 +185,31 @@ static void media_player_callbacks(const libvlc_event_t *p_event, void *p_data)
 	switch (p_event->type)
 	{
 		case libvlc_MediaPlayerOpening:
-			self->updateCallbacks(0);
+			self->events[0] = true;
 			break;
 		case libvlc_MediaPlayerPlaying:
-			self->updateCallbacks(1);
+			self->events[1] = true;
 			break;
 		case libvlc_MediaPlayerStopped:
-			self->updateCallbacks(2);
+			self->events[2] = true;
 			break;
 		case libvlc_MediaPlayerPaused:
-			self->updateCallbacks(3);
+			self->events[3] = true;
 			break;
 		case libvlc_MediaPlayerEndReached:
-			self->updateCallbacks(4);
+			self->events[4] = true;
 			break;
 		case libvlc_MediaPlayerEncounteredError:
-			self->updateCallbacks(5);
+			self->events[5] = true;
 			break;
 		case libvlc_MediaPlayerMediaChanged:
-			self->updateCallbacks(6);
+			self->events[6] = true;
 			break;
 		case libvlc_MediaPlayerCorked:
-			self->updateCallbacks(7);
+			self->events[7] = true;
 			break;
 		case libvlc_MediaPlayerUncorked:
-			self->updateCallbacks(8);
+			self->events[8] = true;
 			break;
 	}
 
@@ -449,7 +449,7 @@ class Video extends Bitmap
 	private var eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>;
 
 	@:noCompletion
-	private var events:Array<Bool> = [false, false];
+	private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false, false, false];
 
 	@:noCompletion
 	private var planes:cpp.RawPointer<cpp.UInt8>;
@@ -777,6 +777,74 @@ class Video extends Bitmap
 		{
 			events[0] = false;
 
+			onOpening.dispatch();
+		}
+
+		if (events[1])
+		{
+			events[1] = false;
+
+			onPlaying.dispatch();
+		}
+
+		if (events[2])
+		{
+			events[2] = false;
+
+			onStopped.dispatch();
+		}
+
+		if (events[3])
+		{
+			events[3] = false;
+
+			onPaused.dispatch();
+		}
+
+		if (events[4])
+		{
+			events[4] = false;
+
+			onEndReached.dispatch();
+		}
+
+		if (events[5])
+		{
+			events[5] = false;
+
+			final errmsg:String = cast(LibVLC.errmsg(), String);
+
+			if (errmsg != null && errmsg.length > 0)
+				onEncounteredError.dispatch(errmsg);
+			else
+				onEncounteredError.dispatch('Unknown error');
+		}
+
+		if (events[6])
+		{
+			events[6] = false;
+
+			onMediaChanged.dispatch();
+		}
+
+		if (events[7])
+		{
+			events[7] = false;
+
+			onCorked.dispatch();
+		}
+
+		if (events[8])
+		{
+			events[8] = false;
+
+			onUncorked.dispatch();
+		}
+
+		if (events[9])
+		{
+			events[9] = false;
+
 			var mustRecreate:Bool = false;
 
 			if (bitmapData != null)
@@ -824,9 +892,9 @@ class Video extends Bitmap
 			}
 		}
 
-		if (events[1])
+		if (events[10])
 		{
-			events[1] = false;
+			events[10] = false;
 
 			if (__renderable && planes != null)
 			{
@@ -848,37 +916,6 @@ class Video extends Bitmap
 			}
 
 			onDisplay.dispatch();
-		}
-	}
-
-	@:noCompletion
-	private function updateCallbacks(type:Int):Void
-	{
-		switch (type)
-		{
-			case 0:
-				onOpening.dispatch();
-			case 1:
-				onPlaying.dispatch();
-			case 2:
-				onStopped.dispatch();
-			case 3:
-				onPaused.dispatch();
-			case 4:
-				onEndReached.dispatch();
-			case 5:
-				final errmsg:String = cast(LibVLC.errmsg(), String);
-
-				if (errmsg != null && errmsg.length > 0)
-					onEncounteredError.dispatch(errmsg);
-				else
-					onEncounteredError.dispatch('Unknown error');
-			case 6:
-				onMediaChanged.dispatch();
-			case 7:
-				onCorked.dispatch();
-			case 8:
-				onUncorked.dispatch();
 		}
 	}
 
@@ -909,17 +946,6 @@ class Video extends Bitmap
 					alAudioContext.sourcePlay(alSource);
 			}
 		}
-		#end
-	}
-
-	@:noCompletion
-	private function updateSoundVolume(volume:Single, mute:Bool):Void
-	{
-		#if lime_openal
-		Log.info('Volume callback triggered: Volume = $volume, Mute = $mute');
-
-		if (alAudioContext != null && alSource != null)
-			alAudioContext.sourcef(alSource, alAudioContext.GAIN, mute ? 0 : volume);
 		#end
 	}
 
