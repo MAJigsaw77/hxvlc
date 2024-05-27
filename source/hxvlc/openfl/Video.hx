@@ -160,9 +160,27 @@ static void audio_play(void *data, const void *samples, unsigned count, int64_t 
 
 	unsigned char *soundSamples = new unsigned char[byteCount];
 	memcpy(soundSamples, samples, byteCount);
-	reinterpret_cast<Video_obj *>(data)->updateSound(soundSamples, byteCount);
+	reinterpret_cast<Video_obj *>(data)->audioPlay(soundSamples, byteCount);
 
 	delete[] soundSamples;
+
+	hx::SetTopOfStack((int *)0, true);
+}
+
+static void audio_pause(void *data, int64_t pts)
+{
+	hx::SetTopOfStack((int *)99, true);
+
+	reinterpret_cast<Video_obj *>(data)->audioPause();
+
+	hx::SetTopOfStack((int *)0, true);
+}
+
+static void audio_resume(void *data, int64_t pts)
+{
+	hx::SetTopOfStack((int *)99, true);
+
+	reinterpret_cast<Video_obj *>(data)->audioResume();
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -171,7 +189,7 @@ static void audio_set_volume(void *data, float volume, bool mute)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(data)->updateSoundVolume(volume, mute);
+	reinterpret_cast<Video_obj *>(data)->audioSetVolume(volume, mute);
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -920,7 +938,7 @@ class Video extends Bitmap
 	}
 
 	@:noCompletion
-	private function updateSound(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32):Void
+	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32):Void
 	{		
 		#if lime_openal
 		if (alAudioContext != null && alSource != null && alBuffers != null)
@@ -950,7 +968,25 @@ class Video extends Bitmap
 	}
 
 	@:noCompletion
-	private function updateSoundVolume(volume:Single, mute:Bool):Void
+	private function audioPause():Void
+	{
+		#if lime_openal
+		if (alAudioContext != null && alSource != null)
+			alAudioContext.sourcePause(alSource);
+		#end
+	}
+
+	@:noCompletion
+	private function audioResume():Void
+	{
+		#if lime_openal
+		if (alAudioContext != null && alSource != null)
+			alAudioContext.sourcePlay(alSource);
+		#end
+	}
+
+	@:noCompletion
+	private function audioSetVolume(volume:Single, mute:Bool):Void
 	{
 		#if lime_openal
 		if (alAudioContext != null && alSource != null)
