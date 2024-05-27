@@ -156,11 +156,11 @@ static void audio_play(void *data, const void *samples, unsigned count, int64_t 
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	Video_obj *self = reinterpret_cast<Video_obj *>(data);
+	unsigned byteCount = count * 4;
 
-	unsigned char *soundSamples = new unsigned char[count * 6];
-	memcpy(soundSamples, samples, count * 6);
-	self->updateSound(soundSamples, count * 6);
+	unsigned char *soundSamples = new unsigned char[byteCount];
+	memcpy(soundSamples, samples, byteCount);
+	reinterpret_cast<Video_obj *>(data)->updateSound(soundSamples, byteCount);
 
 	delete[] soundSamples;
 
