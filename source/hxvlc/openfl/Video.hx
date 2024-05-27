@@ -29,7 +29,6 @@ using StringTools;
  * It extends a Bitmap object to provide a seamless integration with existing display objects.
  */
 @:cppNamespaceCode('
-#ifndef _MSC_VER
 static int media_open(void *opaque, void **datap, uint64_t *sizep)
 {
 	hx::SetTopOfStack((int *)99, true);
@@ -95,7 +94,6 @@ static int media_seek(void *opaque, uint64_t offset)
 
 	return 0;
 }
-#endif
 
 static void *video_lock(void *opaque, void **planes)
 {
@@ -387,7 +385,6 @@ class Video extends Bitmap
 	@:noCompletion
 	private var audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T>;
 
-	#if (mingw || HXCPP_MINGW || !windows)
 	@:noCompletion
 	private var mediaData:cpp.RawPointer<cpp.UInt8>;
 
@@ -396,7 +393,6 @@ class Video extends Bitmap
 
 	@:noCompletion
 	private var mediaSize:cpp.UInt64;
-	#end
 
 	@:noCompletion
 	private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
@@ -468,7 +464,6 @@ class Video extends Bitmap
 			}
 			else if ((location is Bytes))
 			{
-				#if (mingw || HXCPP_MINGW || !windows)
 				final data:BytesData = cast(location, Bytes).getData();
 
 				mediaData = untyped __cpp__('new unsigned char[{0}]', data.length);
@@ -479,11 +474,6 @@ class Video extends Bitmap
 				mediaSize = data.length;
 				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
 					untyped __cpp__('media_seek'), null, untyped __cpp__('this'));
-				#else
-				Log.warn('Failed to use bitstream input, this doesn\'t work when compiling on Windows with MSVC compiler, use MinGW compiler instead.');
-
-				return false;
-				#end
 			}
 			else
 				return false;
@@ -650,7 +640,6 @@ class Video extends Bitmap
 		{
 			LibVLC.media_release(mediaItem);
 
-			#if (mingw || HXCPP_MINGW || !windows)
 			if (mediaData != null)
 			{
 				untyped __cpp__('delete[] {0}', mediaData);
@@ -659,7 +648,6 @@ class Video extends Bitmap
 
 			mediaOffset = 0;
 			mediaSize = 0;
-			#end
 
 			mediaItem = null;
 		}
