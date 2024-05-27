@@ -610,12 +610,10 @@ class Video extends Bitmap
 			{
 				alSource = alAudioContext.createSource();
 
-				alAudioContext.sourcei(alSource, alAudioContext.SOURCE_RELATIVE, alAudioContext.TRUE);
 				alAudioContext.sourcef(alSource, alAudioContext.GAIN, 1);
 				alAudioContext.source3f(alSource, alAudioContext.POSITION, 0, 0, 0);
 				alAudioContext.source3f(alSource, alAudioContext.VELOCITY, 0, 0, 0);
 				alAudioContext.sourcef(alSource, alAudioContext.PITCH, 1);
-				alAudioContext.sourcef(alSource, alAudioContext.ROLLOFF_FACTOR, 2);
 
 				alBuffers = new Array<ALBuffer>();
 
