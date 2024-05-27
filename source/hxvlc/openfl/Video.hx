@@ -14,7 +14,7 @@ import hxvlc.util.Handle;
 import hxvlc.util.OneOfThree;
 import lime.app.Application;
 import lime.app.Event;
-#if lime_openal
+#if (HXVLC_OPENAL && lime_openal)
 import lime.media.openal.ALBuffer;
 import lime.media.openal.ALSource;
 import lime.media.AudioManager;
@@ -313,6 +313,7 @@ class Video extends Bitmap
 	 */
 	public var canPause(get, never):Bool;
 
+	#if !HXVLC_OPENAL
 	/**
 	 * Gets the list of available audio output modules.
 	 */
@@ -326,6 +327,7 @@ class Video extends Bitmap
 	 * Audio output cannot be changed while playing.
 	 */
 	public var output(never, set):String;
+	#end
 
 	/**
 	 * The audio's mute status.
@@ -354,6 +356,7 @@ class Video extends Bitmap
 	 */
 	public var track(get, set):Int;
 
+	#if !HXVLC_OPENAL
 	/**
 	 * The audio channel.
 	 *
@@ -364,6 +367,7 @@ class Video extends Bitmap
 	 * - [Dolbys] = 5
 	 */
 	public var channel(get, set):Int;
+	#end
 
 	/**
 	 * The audio delay in microseconds.
@@ -433,7 +437,7 @@ class Video extends Bitmap
 	@:noCompletion
 	private var audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T>;
 
-	#if lime_openal
+	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
 	private var alAudioContext:OpenALAudioContext;
 
@@ -583,7 +587,7 @@ class Video extends Bitmap
 			LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), null, untyped __cpp__('video_display'), untyped __cpp__('this'));
 			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), null);
 
-			#if lime_openal
+			#if (HXVLC_OPENAL && lime_openal)
 			if (AudioManager.context != null)
 			{
 				switch (AudioManager.context.type)
@@ -769,7 +773,7 @@ class Video extends Bitmap
 			planes = null;
 		}
 
-		#if lime_openal
+		#if (HXVLC_OPENAL && lime_openal)
 		if (alAudioContext != null)
 		{
 			if (alSource != null)
@@ -949,7 +953,7 @@ class Video extends Bitmap
 	@:noCompletion
 	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32):Void
 	{
-		#if lime_openal
+		#if (HXVLC_OPENAL && lime_openal)
 		if (alAudioContext != null && alSource != null && alBuffers != null)
 		{
 			final processed:Int = alAudioContext.getSourcei(alSource, alAudioContext.BUFFERS_PROCESSED);
@@ -980,7 +984,7 @@ class Video extends Bitmap
 	@:noCompletion
 	private function audioPause():Void
 	{
-		#if lime_openal
+		#if (HXVLC_OPENAL && lime_openal)
 		if (alAudioContext != null && alSource != null)
 			alAudioContext.sourcePause(alSource);
 		#end
@@ -989,7 +993,7 @@ class Video extends Bitmap
 	@:noCompletion
 	private function audioResume():Void
 	{
-		#if lime_openal
+		#if (HXVLC_OPENAL && lime_openal)
 		if (alAudioContext != null && alSource != null)
 			alAudioContext.sourcePlay(alSource);
 		#end
@@ -998,7 +1002,7 @@ class Video extends Bitmap
 	@:noCompletion
 	private function audioSetVolume(volume:Single, mute:Bool):Void
 	{
-		#if lime_openal
+		#if (HXVLC_OPENAL && lime_openal)
 		if (alAudioContext != null && alSource != null)
 			alAudioContext.sourcef(alSource, alAudioContext.GAIN, mute ? 0 : volume);
 		#end
@@ -1161,6 +1165,7 @@ class Video extends Bitmap
 		return false;
 	}
 
+	#if !HXVLC_OPENAL
 	@:noCompletion
 	private function get_outputModules():Array<String>
 	{
@@ -1194,6 +1199,7 @@ class Video extends Bitmap
 
 		return value;
 	}
+	#end
 
 	@:noCompletion
 	private function get_mute():Bool
@@ -1264,6 +1270,7 @@ class Video extends Bitmap
 		return value;
 	}
 
+	#if !HXVLC_OPENAL
 	@:noCompletion
 	private function get_channel():Int
 	{
@@ -1281,6 +1288,7 @@ class Video extends Bitmap
 
 		return value;
 	}
+	#end
 
 	@:noCompletion
 	private function get_delay():Int64
