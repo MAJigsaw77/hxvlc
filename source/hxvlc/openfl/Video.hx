@@ -615,7 +615,7 @@ class Video extends Bitmap
 
 				alBuffers = new Array<ALBuffer>();
 
-				for (i in 0...12)
+				for (i in 0...13)
 					alBuffers.push(alAudioContext.createBuffer());
 
 				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'), null,
