@@ -592,15 +592,18 @@ class Video extends Bitmap
 			{
 				alSource = alAudioContext.createSource();
 
+				alAudioContext.sourcei(alSource, alAudioContext.SOURCE_RELATIVE, alAudioContext.TRUE);
 				alAudioContext.sourcef(alSource, alAudioContext.GAIN, 1);
 				alAudioContext.source3f(alSource, alAudioContext.POSITION, 0, 0, 0);
+				alAudioContext.source3f(alSource, alAudioContext.VELOCITY, 0, 0, 0);
 				alAudioContext.sourcef(alSource, alAudioContext.PITCH, 1);
+				alAudioContext.sourcef(alSource, alAudioContext.ROLLOFF_FACTOR, 2);
 
 				alBuffers = new Array<ALBuffer>();
 
 				for (i in 0...3)
 					alBuffers.push(alAudioContext.createBuffer());
-	
+
 				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), null, null, null, null, untyped __cpp__('this'));
 				LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 				LibVLC.audio_set_format(mediaPlayer, "S16N", 44100, 2);
