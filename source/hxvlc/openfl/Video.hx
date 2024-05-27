@@ -950,6 +950,15 @@ class Video extends Bitmap
 	}
 
 	@:noCompletion
+	private function updateSoundVolume(volume:Single, mute:Bool):Void
+	{
+		#if lime_openal
+		if (alAudioContext != null && alSource != null)
+			alAudioContext.sourcef(alSource, alAudioContext.GAIN, mute ? 0 : volume);
+		#end
+	}
+
+	@:noCompletion
 	private function get_mrl():String
 	{
 		if (mediaPlayer != null)
