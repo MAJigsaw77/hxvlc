@@ -313,12 +313,12 @@ class Video extends Bitmap
 	 */
 	public var canPause(get, never):Bool;
 
-	#if !HXVLC_OPENAL
 	/**
 	 * Gets the list of available audio output modules.
 	 */
 	public var outputModules(get, never):Array<String>;
 
+	#if !HXVLC_OPENAL
 	/**
 	 * Selects an audio output module.
 	 *
@@ -1165,7 +1165,6 @@ class Video extends Bitmap
 		return false;
 	}
 
-	#if !HXVLC_OPENAL
 	@:noCompletion
 	private function get_outputModules():Array<String>
 	{
@@ -1188,6 +1187,7 @@ class Video extends Bitmap
 		return modules;
 	}
 
+	#if !HXVLC_OPENAL
 	@:noCompletion
 	private function set_output(value:String):String
 	{
