@@ -622,7 +622,8 @@ class Video extends Bitmap
 				for (i in 0...8)
 					alBuffers.push(alAudioContext.createBuffer());
 
-				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), null, null, null, null, untyped __cpp__('this'));
+				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'), null,
+					null, untyped __cpp__('this'));
 				LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 				LibVLC.audio_set_format(mediaPlayer, "S16N", 44100, 2);
 			}
@@ -939,7 +940,7 @@ class Video extends Bitmap
 
 	@:noCompletion
 	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32):Void
-	{		
+	{
 		#if lime_openal
 		if (alAudioContext != null && alSource != null && alBuffers != null)
 		{
@@ -957,7 +958,8 @@ class Video extends Bitmap
 			{
 				final newBuffer:ALBuffer = alBuffers.pop();
 
-				alAudioContext.bufferData(newBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(Bytes.ofData(samplesData)), samplesData.length, 44100);
+				alAudioContext.bufferData(newBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(Bytes.ofData(samplesData)), samplesData.length,
+					44100);
 				alAudioContext.sourceQueueBuffer(alSource, newBuffer);
 
 				if (alAudioContext.getSourcei(alSource, alAudioContext.SOURCE_STATE) != alAudioContext.PLAYING)
