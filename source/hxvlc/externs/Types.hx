@@ -211,16 +211,14 @@ typedef LibVLC_Video_Cleanup_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>)
 typedef LibVLC_Video_Lock_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, p_pixels:cpp.RawPointer<cpp.RawPointer<cpp.Void>>) -> cpp.RawPointer<cpp.Void>>;
 typedef LibVLC_Video_Unlock_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, id:cpp.RawPointer<cpp.Void>, p_pixels:cpp.VoidStarConstStar) -> Void>;
 typedef LibVLC_Video_Display_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>, picture:cpp.RawPointer<cpp.Void>) -> Void>;
+
 typedef LibVLC_Audio_Play_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, samples:cpp.RawConstPointer<cpp.Void>, count:cpp.UInt32, pts:cpp.Int64) -> Void>;
 typedef LibVLC_Audio_Pause_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, pts:cpp.Int64) -> Void>;
 typedef LibVLC_Audio_Resume_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, pts:cpp.Int64) -> Void>;
 typedef LibVLC_Audio_Flush_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, pts:cpp.Int64) -> Void>;
 typedef LibVLC_Audio_Drain_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>) -> Void>;
 
-typedef LibVLC_Audio_Setup_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.RawPointer<cpp.Void>>, format:cpp.CharStar, rate:cpp.RawPointer<cpp.UInt32>,
-		channels:cpp.RawPointer<cpp.UInt32>) -> Int>;
-
-typedef LibVLC_Audio_Cleanup_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>) -> Void>;
+typedef LibVLC_Audio_Set_Volume_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, volume:Single, mute:Bool) -> Void>;
 
 extern enum abstract LibVLC_Media_Player_Role_T(LibVLC_Media_Player_Role_T_Impl)
 {

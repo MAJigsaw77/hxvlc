@@ -156,8 +156,11 @@ extern class LibVLC
 	static function audio_set_callbacks(mp:cpp.RawPointer<LibVLC_Media_Player_T>, play:LibVLC_Audio_Play_CB, pause:LibVLC_Audio_Pause_CB, resume:LibVLC_Audio_Resume_CB,
 		flush:LibVLC_Audio_Flush_CB, drain:LibVLC_Audio_Drain_CB, opaque:cpp.RawPointer<cpp.Void>):Void;
 
-	@:native('libvlc_audio_set_format_callbacks')
-	static function audio_set_format_callbacks(mp:cpp.RawPointer<LibVLC_Media_Player_T>, setup:LibVLC_Audio_Setup_CB, cleanup:LibVLC_Audio_Cleanup_CB):Void;
+	@:native('libvlc_audio_set_volume_callback')
+	static function audio_set_volume_callback(mp:cpp.RawPointer<LibVLC_Media_Player_T>, set_volume:LibVLC_Audio_Set_Volume_CB):Void;
+
+	@:native('libvlc_audio_set_format')
+	static function audio_set_format(mp:cpp.RawPointer<LibVLC_Media_Player_T>, format:cpp.ConstCharStar, rate:cpp.UInt32, channels:cpp.UInt32):Void;
 
 	@:native('libvlc_audio_output_list_get')
 	static function audio_output_list_get(p_instance:cpp.RawPointer<LibVLC_Instance_T>):cpp.RawPointer<LibVLC_Audio_Output_T>;

@@ -14,6 +14,12 @@ import hxvlc.util.Handle;
 import hxvlc.util.OneOfThree;
 import lime.app.Application;
 import lime.app.Event;
+#if (HXVLC_OPENAL && lime_openal)
+import lime.media.openal.ALBuffer;
+import lime.media.openal.ALSource;
+import lime.media.AudioManager;
+import lime.media.OpenALAudioContext;
+#end
 import lime.utils.Log;
 import lime.utils.UInt8Array;
 import openfl.display.Bitmap;
@@ -144,6 +150,48 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 	return 1;
 }
 
+static void audio_play(void *data, const void *samples, unsigned count, int64_t pts)
+{
+	hx::SetTopOfStack((int *)99, true);
+
+	unsigned byteCount = count * 4;
+
+	unsigned char *soundSamples = new unsigned char[byteCount];
+	memcpy(soundSamples, samples, byteCount);
+	reinterpret_cast<Video_obj *>(data)->audioPlay(soundSamples, byteCount);
+
+	delete[] soundSamples;
+
+	hx::SetTopOfStack((int *)0, true);
+}
+
+static void audio_pause(void *data, int64_t pts)
+{
+	hx::SetTopOfStack((int *)99, true);
+
+	reinterpret_cast<Video_obj *>(data)->audioPause();
+
+	hx::SetTopOfStack((int *)0, true);
+}
+
+static void audio_resume(void *data, int64_t pts)
+{
+	hx::SetTopOfStack((int *)99, true);
+
+	reinterpret_cast<Video_obj *>(data)->audioResume();
+
+	hx::SetTopOfStack((int *)0, true);
+}
+
+static void audio_set_volume(void *data, float volume, bool mute)
+{
+	hx::SetTopOfStack((int *)99, true);
+
+	reinterpret_cast<Video_obj *>(data)->audioSetVolume(volume, mute);
+
+	hx::SetTopOfStack((int *)0, true);
+}
+
 static void media_player_callbacks(const libvlc_event_t *p_event, void *p_data)
 {
 	hx::SetTopOfStack((int *)99, true);
@@ -270,6 +318,7 @@ class Video extends Bitmap
 	 */
 	public var outputModules(get, never):Array<String>;
 
+	#if !HXVLC_OPENAL
 	/**
 	 * Selects an audio output module.
 	 *
@@ -278,6 +327,7 @@ class Video extends Bitmap
 	 * Audio output cannot be changed while playing.
 	 */
 	public var output(never, set):String;
+	#end
 
 	/**
 	 * The audio's mute status.
@@ -306,6 +356,7 @@ class Video extends Bitmap
 	 */
 	public var track(get, set):Int;
 
+	#if !HXVLC_OPENAL
 	/**
 	 * The audio channel.
 	 *
@@ -316,6 +367,7 @@ class Video extends Bitmap
 	 * - [Dolbys] = 5
 	 */
 	public var channel(get, set):Int;
+	#end
 
 	/**
 	 * The audio delay in microseconds.
@@ -384,6 +436,17 @@ class Video extends Bitmap
 
 	@:noCompletion
 	private var audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T>;
+
+	#if (HXVLC_OPENAL && lime_openal)
+	@:noCompletion
+	private var alAudioContext:OpenALAudioContext;
+
+	@:noCompletion
+	private var alSource:ALSource;
+
+	@:noCompletion
+	private var alBuffers:Array<ALBuffer> = [];
+	#end
 
 	@:noCompletion
 	private var mediaData:cpp.RawPointer<cpp.UInt8>;
@@ -523,6 +586,38 @@ class Video extends Bitmap
 
 			LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), null, untyped __cpp__('video_display'), untyped __cpp__('this'));
 			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), null);
+
+			#if (HXVLC_OPENAL && lime_openal)
+			if (AudioManager.context != null)
+			{
+				switch (AudioManager.context.type)
+				{
+					case OPENAL:
+						alAudioContext = AudioManager.context.openal;
+					default:
+				}
+			}
+
+			if (alAudioContext != null)
+			{
+				alSource = alAudioContext.createSource();
+
+				alAudioContext.sourcef(alSource, alAudioContext.GAIN, 1);
+				alAudioContext.source3f(alSource, alAudioContext.POSITION, 0, 0, 0);
+				alAudioContext.source3f(alSource, alAudioContext.VELOCITY, 0, 0, 0);
+				alAudioContext.sourcef(alSource, alAudioContext.PITCH, 1);
+
+				alBuffers = new Array<ALBuffer>();
+
+				for (i in 0...13)
+					alBuffers.push(alAudioContext.createBuffer());
+
+				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'), null,
+					null, untyped __cpp__('this'));
+				LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
+				LibVLC.audio_set_format(mediaPlayer, "S16N", 44100, 2);
+			}
+			#end
 		}
 
 		if (options == null)
@@ -677,6 +772,30 @@ class Video extends Bitmap
 			untyped __cpp__('delete[] {0}', planes);
 			planes = null;
 		}
+
+		#if (HXVLC_OPENAL && lime_openal)
+		if (alAudioContext != null)
+		{
+			if (alSource != null)
+				alAudioContext.sourceStop(alSource);
+				
+			if (alBuffers != null)
+			{
+				for (buffer in alBuffers)
+					alAudioContext.deleteBuffer(buffer);
+
+				alBuffers = null;
+			}
+
+			if (alSource != null)
+			{
+				alAudioContext.deleteSource(alSource);
+				alSource = null;
+			}
+
+			alAudioContext = null;
+		}
+		#end
 	}
 
 	@:noCompletion
@@ -829,6 +948,64 @@ class Video extends Bitmap
 
 			onDisplay.dispatch();
 		}
+	}
+
+	@:noCompletion
+	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32):Void
+	{
+		#if (HXVLC_OPENAL && lime_openal)
+		if (alAudioContext != null && alSource != null && alBuffers != null)
+		{
+			final processed:Int = alAudioContext.getSourcei(alSource, alAudioContext.BUFFERS_PROCESSED);
+
+			if (processed > 0)
+			{
+				for (buffer in alAudioContext.sourceUnqueueBuffers(alSource, processed))
+					alBuffers.push(buffer);
+			}
+
+			final samplesData:BytesData = cpp.Pointer.fromRaw(samples).toUnmanagedArray(count);
+
+			if (alBuffers.length > 0)
+			{
+				final newBuffer:ALBuffer = alBuffers.pop();
+
+				alAudioContext.bufferData(newBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(Bytes.ofData(samplesData)), samplesData.length,
+					44100);
+				alAudioContext.sourceQueueBuffer(alSource, newBuffer);
+
+				if (alAudioContext.getSourcei(alSource, alAudioContext.SOURCE_STATE) != alAudioContext.PLAYING)
+					alAudioContext.sourcePlay(alSource);
+			}
+		}
+		#end
+	}
+
+	@:noCompletion
+	private function audioPause():Void
+	{
+		#if (HXVLC_OPENAL && lime_openal)
+		if (alAudioContext != null && alSource != null)
+			alAudioContext.sourcePause(alSource);
+		#end
+	}
+
+	@:noCompletion
+	private function audioResume():Void
+	{
+		#if (HXVLC_OPENAL && lime_openal)
+		if (alAudioContext != null && alSource != null)
+			alAudioContext.sourcePlay(alSource);
+		#end
+	}
+
+	@:noCompletion
+	private function audioSetVolume(volume:Single, mute:Bool):Void
+	{
+		#if (HXVLC_OPENAL && lime_openal)
+		if (alAudioContext != null && alSource != null)
+			alAudioContext.sourcef(alSource, alAudioContext.GAIN, mute ? 0 : volume);
+		#end
 	}
 
 	@:noCompletion
@@ -1010,6 +1187,7 @@ class Video extends Bitmap
 		return modules;
 	}
 
+	#if !HXVLC_OPENAL
 	@:noCompletion
 	private function set_output(value:String):String
 	{
@@ -1021,6 +1199,7 @@ class Video extends Bitmap
 
 		return value;
 	}
+	#end
 
 	@:noCompletion
 	private function get_mute():Bool
@@ -1091,6 +1270,7 @@ class Video extends Bitmap
 		return value;
 	}
 
+	#if !HXVLC_OPENAL
 	@:noCompletion
 	private function get_channel():Int
 	{
@@ -1108,6 +1288,7 @@ class Video extends Bitmap
 
 		return value;
 	}
+	#end
 
 	@:noCompletion
 	private function get_delay():Int64
