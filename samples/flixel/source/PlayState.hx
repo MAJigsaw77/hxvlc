@@ -18,10 +18,10 @@ import openfl.Lib;
 import sys.io.File;
 import sys.FileSystem;
 
-using haxe.io.Path;
-
 class PlayState extends FlxState
 {
+	var video:FlxVideoSprite;
+	
 	override function create():Void
 	{
 		#if mobile
@@ -30,7 +30,7 @@ class PlayState extends FlxState
 
 		FlxG.cameras.bgColor = 0xFF131C1B;
 
-		var video:FlxVideoSprite = new FlxVideoSprite(0, 0);
+		video = new FlxVideoSprite(0, 0);
 		video.bitmap.onFormatSetup.add(function():Void
 		{
 			video.setGraphicSize(FlxG.width * 0.7, FlxG.height * 0.7);
