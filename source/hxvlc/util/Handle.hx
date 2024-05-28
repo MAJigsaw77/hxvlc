@@ -20,7 +20,7 @@ using StringTools;
 @:headerInclude('android/log.h')
 #end
 @:cppNamespaceCode('
-static void logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
+static void instance_logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
 	hx::SetTopOfStack((int *)99, true);
 
@@ -171,7 +171,7 @@ class Handle
 			else
 			{
 				#if HXVLC_LOGGING
-				LibVLC.log_set(instance, untyped __cpp__('logging'), null);
+				LibVLC.log_set(instance, untyped __cpp__('instance_logging'), null);
 				#end
 			}
 		}
