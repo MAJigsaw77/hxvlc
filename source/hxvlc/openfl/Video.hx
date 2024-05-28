@@ -595,6 +595,7 @@ class Video extends Bitmap
 					case OPENAL:
 						alAudioContext = AudioManager.context.openal;
 					default:
+						Log.warn('Unable to use a sound output.');
 				}
 			}
 
@@ -931,16 +932,16 @@ class Video extends Bitmap
 			{
 				try
 				{
-					final planesData:BytesData = cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4);
+					final planesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4));
 
 					if (texture != null)
 					{
-						texture.uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(planesData)));
+						texture.uploadFromTypedArray(UInt8Array.fromBytes(planesBytes)));
 
 						__setRenderDirty();
 					}
 					else if (bitmapData != null && bitmapData.image != null)
-						bitmapData.setPixels(bitmapData.rect, planesData);
+						bitmapData.setPixels(bitmapData.rect, planesBytes);
 				}
 				catch (e:Exception)
 					Log.error('An error occurred while attempting to render the video: ${e.message}');
@@ -964,13 +965,13 @@ class Video extends Bitmap
 					alBuffers.push(buffer);
 			}
 
-			final samplesData:BytesData = cpp.Pointer.fromRaw(samples).toUnmanagedArray(count);
+			final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(samples).toUnmanagedArray(count));
 
 			if (alBuffers.length > 0)
 			{
 				final newBuffer:ALBuffer = alBuffers.pop();
 
-				alAudioContext.bufferData(newBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(Bytes.ofData(samplesData)), samplesData.length,
+				alAudioContext.bufferData(newBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length,
 					44100);
 				alAudioContext.sourceQueueBuffer(alSource, newBuffer);
 
