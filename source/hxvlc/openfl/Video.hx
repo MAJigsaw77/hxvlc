@@ -594,37 +594,37 @@ class Video extends Bitmap
 				{
 					case OPENAL:
 						alAudioContext = AudioManager.context.openal;
+
+						alSource = alAudioContext.createSource();
+
+						alAudioContext.sourcef(alSource, alAudioContext.GAIN, 1);
+						alAudioContext.source3f(alSource, alAudioContext.POSITION, 0, 0, 0);
+						alAudioContext.source3f(alSource, alAudioContext.VELOCITY, 0, 0, 0);
+						alAudioContext.sourcef(alSource, alAudioContext.PITCH, 1);
+
+						alBuffers = alAudioContext.genBuffers(13);
+
+						LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'), null,
+							null, untyped __cpp__('this'));
+
+						LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
+						LibVLC.audio_set_format(mediaPlayer, "S16N", 44100, 2);
 					default:
 						Log.warn('Unable to use a sound output.');
 				}
 			}
-
-			if (alAudioContext != null)
-			{
-				alSource = alAudioContext.createSource();
-
-				alAudioContext.sourcef(alSource, alAudioContext.GAIN, 1);
-				alAudioContext.source3f(alSource, alAudioContext.POSITION, 0, 0, 0);
-				alAudioContext.source3f(alSource, alAudioContext.VELOCITY, 0, 0, 0);
-				alAudioContext.sourcef(alSource, alAudioContext.PITCH, 1);
-
-				alBuffers = alAudioContext.genBuffers(13);
-
-				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'), null,
-					null, untyped __cpp__('this'));
-				LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
-				LibVLC.audio_set_format(mediaPlayer, "S16N", 44100, 2);
-			}
+			else
+				Log.warn('AudioManager\'s context isn\'t available.');
 			#end
 		}
 
-		if (options == null)
-			options = new Array<String>();
-
-		for (option in options)
+		if (options != null)
 		{
-			if (option != null && option.length > 0)
-				LibVLC.media_add_option(mediaItem, option);
+			for (option in options)
+			{
+				if (option != null && option.length > 0)
+					LibVLC.media_add_option(mediaItem, option);
+			}
 		}
 
 		LibVLC.media_player_set_media(mediaPlayer, mediaItem);
@@ -950,12 +950,12 @@ class Video extends Bitmap
 		#if (HXVLC_OPENAL && lime_openal)
 		if (alAudioContext != null && alSource != null && alBuffers != null)
 		{
-			final processed:Int = alAudioContext.getSourcei(alSource, alAudioContext.BUFFERS_PROCESSED);
+			final processedBuffers:Int = alAudioContext.getSourcei(alSource, alAudioContext.BUFFERS_PROCESSED);
 
-			if (processed > 0)
+			if (processedBuffers > 0)
 			{
-				for (buffer in alAudioContext.sourceUnqueueBuffers(alSource, processed))
-					alBuffers.push(buffer);
+				for (alBuffer in alAudioContext.sourceUnqueueBuffers(alSource, processedBuffers))
+					alBuffers.push(alBuffer);
 			}
 
 			final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(samples).toUnmanagedArray(count));
@@ -964,8 +964,7 @@ class Video extends Bitmap
 			{
 				final newBuffer:ALBuffer = alBuffers.pop();
 
-				alAudioContext.bufferData(newBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length,
-					44100);
+				alAudioContext.bufferData(newBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length, 44100);
 				alAudioContext.sourceQueueBuffer(alSource, newBuffer);
 
 				if (alAudioContext.getSourcei(alSource, alAudioContext.SOURCE_STATE) != alAudioContext.PLAYING)
