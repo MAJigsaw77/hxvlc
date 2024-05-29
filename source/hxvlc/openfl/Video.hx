@@ -778,20 +778,16 @@ class Video extends Bitmap
 		if (alAudioContext != null)
 		{
 			if (alSource != null)
+			{
 				alAudioContext.sourceStop(alSource);
-				
-			if (alBuffers != null)
-			{
-				for (buffer in alBuffers)
-					alAudioContext.deleteBuffer(buffer);
-
-				alBuffers = null;
-			}
-
-			if (alSource != null)
-			{
 				alAudioContext.deleteSource(alSource);
 				alSource = null;
+			}
+
+			if (alBuffers != null)
+			{
+				alAudioContext.deleteBuffers(alBuffers);
+				alBuffers = null;
 			}
 
 			alAudioContext = null;
