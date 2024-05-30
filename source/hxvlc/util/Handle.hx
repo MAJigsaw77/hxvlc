@@ -144,13 +144,13 @@ class Handle
 			args.push_back("--quiet");
 			#end
 
-			if (options == null)
-				options = new Array<String>();
-
-			for (option in options)
+			if (options != null)
 			{
-				if (option != null && option.length > 0)
-					args.push_back(option);
+				for (option in options)
+				{
+					if (option != null && option.length > 0)
+						args.push_back(option);
+				}
 			}
 
 			instance = LibVLC.alloc(args.size(), untyped args.data());
