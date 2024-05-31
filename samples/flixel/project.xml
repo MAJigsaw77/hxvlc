@@ -73,10 +73,7 @@
 
 	<haxeflag name="-dce" value="full" />
 
-	<!--Platforms Config-->
+	<!--Pretty Message Reporting-->
 
-	<section if="android">
-		<!--Target SDK-->
-		<config:android target-sdk-version="29" if="${lime &lt; 8.1.0}" />
-	</section>
+	<haxedef name="message.reporting" value="pretty" />
 </project>
