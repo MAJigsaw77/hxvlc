@@ -24,6 +24,8 @@
 	</section>
 
 	<section if="ios">
+		<define name="HXVLC_OPENAL" />
+
 		<dependency name="libiconv.tbd" />
 
 		<dependency name="CFNetwork.framework" />
