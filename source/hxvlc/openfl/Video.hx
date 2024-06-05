@@ -135,7 +135,7 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 	unsigned newWidth = 0;
 	unsigned newHeight = 0;
 
-	if (libvlc_video_get_size(self->mediaPlayer, 0, &newWidth, &newHeight) == 0)
+	if (self->mediaPlayer != NULL && libvlc_video_get_size(self->mediaPlayer, 0, &newWidth, &newHeight) == 0)
 	{
 		(*width) = newWidth;
 		(*height) = newHeight;
