@@ -14,7 +14,7 @@ using StringTools;
 class FlxVideo extends Video
 {
 	/**
-	 * Whether the video should automatically be paused when focus is lost or not.
+	 * Whether the video should automatically pause when focus is lost.
 	 *
 	 * @warning Must be set before loading a video.
 	 */
@@ -28,7 +28,7 @@ class FlxVideo extends Video
 	public var autoResizeMode:FlxAxes = FlxAxes.XY;
 
 	/**
-	 * Whether flixel should automatically change the volume according to the flixel sound system current volume.
+	 * Whether Flixel should automatically adjust the volume according to the Flixel sound system's current volume.
 	 */
 	public var autoVolumeHandle:Bool = true;
 
