@@ -1163,7 +1163,7 @@ class Video extends Bitmap
 		if (mediaPlayer != null)
 			return LibVLC.media_player_get_position(mediaPlayer);
 
-		return -1;
+		return -1.0;
 	}
 
 	@:noCompletion
@@ -1217,7 +1217,7 @@ class Video extends Bitmap
 		if (mediaPlayer != null)
 			return LibVLC.media_player_get_rate(mediaPlayer);
 
-		return -1;
+		return 1;
 	}
 
 	@:noCompletion
@@ -1304,7 +1304,7 @@ class Video extends Bitmap
 		if (mediaPlayer != null)
 			return LibVLC.audio_get_volume(mediaPlayer);
 
-		return 0;
+		return -1;
 	}
 
 	@:noCompletion
@@ -1350,7 +1350,7 @@ class Video extends Bitmap
 		if (mediaPlayer != null)
 			return LibVLC.audio_get_channel(mediaPlayer);
 
-		return -1;
+		return 0;
 	}
 
 	@:noCompletion
@@ -1369,7 +1369,7 @@ class Video extends Bitmap
 		if (mediaPlayer != null)
 			return LibVLC.audio_get_delay(mediaPlayer);
 
-		return -1;
+		return 0;
 	}
 
 	@:noCompletion
