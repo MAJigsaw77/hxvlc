@@ -59,50 +59,50 @@ class Handle
 	public static var instance(default, null):cpp.RawPointer<LibVLC_Instance_T>;
 
 	/**
-	 * Whether the instance is still loading or not.
+	 * Indicates whether the instance is still loading.
 	 */
 	public static var loading(default, null):Bool = false;
 
 	/**
-	 * Retrieve LibVLC version.
+	 * Retrieves the LibVLC version.
 	 *
 	 * Example: "1.1.0-git The Luggage"
 	 */
 	public static var version(get, never):String;
 
 	/**
-	 * Retrieve libvlc compiler version.
+	 * Retrieves the LibVLC compiler version.
 	 *
 	 * Example: "gcc version 4.2.3 (Ubuntu 4.2.3-2ubuntu6)"
 	 */
 	public static var compiler(get, never):String;
 
 	/**
-	 * Retrieve libvlc changeset.
+	 * Retrieves the LibVLC changeset.
 	 *
 	 * Example: "aa9bce0bc4"
 	 */
 	public static var changeset(get, never):String;
 
 	/**
-	 * Return the current time as defined by LibVLC.
+	 * Returns the current time as defined by LibVLC.
 	 *
 	 * The unit is the microsecond.
 	 *
-	 * Time increases monotonically (regardless of time zone changes and RTC adjustements).
+	 * Time increases monotonically (regardless of time zone changes and RTC adjustments).
 	 *
-	 * The origin is arbitrary but consistent across the whole system (e.g. the system uptim, the time since the system was booted).
+	 * The origin is arbitrary but consistent across the whole system (e.g. the system uptime, the time since the system was booted).
 	 *
 	 * @note On systems that support it, the POSIX monotonic clock is used.
 	 */
 	public static var clock(get, never):Int64;
 
 	/**
-	 * Initialize the LibVLC instance if isn't already.
+	 * Initializes the LibVLC instance if it isn't already.
 	 *
 	 * @param options The additional options you can add to the LibVLC instance.
 	 *
-	 * @return `true` if the instance created successfully or `false` if there's an error or the instance is still loading.
+	 * @return `true` if the instance was created successfully or `false` if there was an error or the instance is still loading.
 	 */
 	public static function init(?options:Array<String>):Bool
 	{
@@ -182,7 +182,7 @@ class Handle
 	}
 
 	/**
-	 * Initialize the LibVLC instance asynchronously if isn't already.
+	 * Initializes the LibVLC instance asynchronously if it isn't already.
 	 *
 	 * @param options The additional options you can add to the LibVLC instance.
 	 * @param finishCallback A callback that is called after it finishes loading.
