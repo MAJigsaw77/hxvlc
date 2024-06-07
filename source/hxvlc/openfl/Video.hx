@@ -411,7 +411,7 @@ class Video extends Bitmap
 	public var onPlaying(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player stopped.
+	 * An event that is dispatched when the media player stops.
 	 */
 	public var onStopped(default, null):Event<Void->Void> = new Event<Void->Void>();
 
@@ -421,17 +421,17 @@ class Video extends Bitmap
 	public var onPaused(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player reached the end.
+	 * An event that is dispatched when the media player reaches the end.
 	 */
 	public var onEndReached(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player encountered an error.
+	 * An event that is dispatched when the media player encounters an error.
 	 */
 	public var onEncounteredError(default, null):Event<String->Void> = new Event<String->Void>();
 
 	/**
-	 * An event that is dispatched when the media is changed.
+	 * An event that is dispatched when the media changes.
 	 */
 	public var onMediaChanged(default, null):Event<Void->Void> = new Event<Void->Void>();
 
@@ -446,22 +446,22 @@ class Video extends Bitmap
 	public var onUncorked(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player changed time.
+	 * An event that is dispatched when the media player changes time.
 	 */
 	public var onTimeChanged(default, null):Event<Int64->Void> = new Event<Int64->Void>();
 
 	/**
-	 * An event that is dispatched when the media player changed position.
+	 * An event that is dispatched when the media player changes position.
 	 */
 	public var onPositionChanged(default, null):Event<Single->Void> = new Event<Single->Void>();
 
 	/**
-	 * An event that is dispatched when the media player changed the length.
+	 * An event that is dispatched when the media player changes the length.
 	 */
 	public var onLengthChanged(default, null):Event<Int64->Void> = new Event<Int64->Void>();
 
 	/**
-	 * An event that is dispatched when the media player changed the chapter.
+	 * An event that is dispatched when the media player changes the chapter.
 	 */
 	public var onChapterChanged(default, null):Event<Int->Void> = new Event<Int->Void>();
 
@@ -627,13 +627,16 @@ class Video extends Bitmap
 				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerTimeChanged)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPositionChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPositionChanged, untyped __cpp__('media_player_callbacks'),
+					untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerPositionChanged)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerLengthChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerLengthChanged, untyped __cpp__('media_player_callbacks'),
+					untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerLengthChanged)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerChapterChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerChapterChanged, untyped __cpp__('media_player_callbacks'),
+					untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerChapterChanged)');
 			}
 
@@ -656,8 +659,8 @@ class Video extends Bitmap
 
 						alBuffers = alAudioContext.genBuffers(14);
 
-						LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'), null,
-							null, untyped __cpp__('this'));
+						LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'),
+							untyped __cpp__('audio_resume'), null, null, untyped __cpp__('this'));
 
 						LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 						LibVLC.audio_set_format(mediaPlayer, "S16N", 44100, 2);
