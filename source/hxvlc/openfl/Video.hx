@@ -508,7 +508,7 @@ class Video extends Bitmap
 	private var eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>;
 
 	@:noCompletion
-	private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false, false, false];
+	private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
 
 	@:noCompletion
 	private var planes:cpp.RawPointer<cpp.UInt8>;
