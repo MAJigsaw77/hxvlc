@@ -5,8 +5,8 @@ import flixel.util.FlxAxes;
 import flixel.FlxG;
 import haxe.io.Bytes;
 import hxvlc.externs.Types;
-import hxvlc.openfl.Video;
 import hxvlc.openfl.Location;
+import hxvlc.openfl.Video;
 import sys.FileSystem;
 
 using StringTools;

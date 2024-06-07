@@ -10,8 +10,8 @@ import haxe.Exception;
 import haxe.Int64;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
-import hxvlc.util.Handle;
 import hxvlc.openfl.Location;
+import hxvlc.util.Handle;
 import lime.app.Application;
 import lime.app.Event;
 #if (HXVLC_OPENAL && lime_openal)
