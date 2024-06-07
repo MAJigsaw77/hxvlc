@@ -6,6 +6,7 @@ import android.widget.Toast;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
+import flixel.ui.FlxBar;
 import flixel.FlxG;
 import flixel.FlxState;
 import haxe.io.Path;
@@ -22,7 +23,8 @@ import sys.FileSystem;
 class PlayState extends FlxState
 {
 	var video:FlxVideoSprite;
-	
+	var videoPositionBar:FlxBar;
+
 	override function create():Void
 	{
 		#if mobile
@@ -38,6 +40,11 @@ class PlayState extends FlxState
 			video.updateHitbox();
 			video.screenCenter();
 		});
+		video.bitmap.onPositionChanged.add(function(position:Single):Void
+		{
+			if (videoPositionBar != null)
+				videoPositionBar.value = position;
+		});
 		video.bitmap.onEndReached.add(video.destroy);
 		video.load('assets/video.mp4', [':input-repeat=2']);
 		video.antialiasing = true;
@@ -48,6 +55,10 @@ class PlayState extends FlxState
 		libvlcVersion.active = false;
 		libvlcVersion.antialiasing = true;
 		add(libvlcVersion);
+
+		videoPositionBar = new FlxBar(10, FlxG.height - 50, LEFT_TO_RIGHT, FlxG.width - 20, 10, null, '', 0, 1);
+		videoPositionBar.createFilledBar(FlxColor.GRAY, FlxColor.CYAN);
+		add(videoPositionBar);
 
 		FlxTimer.wait(0.001, function():Void
 		{
