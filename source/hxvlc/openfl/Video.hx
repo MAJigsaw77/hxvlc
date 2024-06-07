@@ -343,7 +343,7 @@ class Video extends Bitmap
 	/**
 	 * Selects an audio output module.
 	 *
-	 * @note Any change will take be effect only after playback is stopped and restarted.
+	 * @note Any change will take effect only after playback is stopped and restarted.
 	 *
 	 * Audio output cannot be changed while playing.
 	 */
@@ -355,7 +355,7 @@ class Video extends Bitmap
 	 *
 	 * @warning This does not always work.
 	 * If there is no active audio playback stream, the mute status might not be available.
-	 * If digital pass-through (S/PDIF, HDMI...) is in use, muting may be unapplicable.
+	 * If digital pass-through (S/PDIF, HDMI...) is in use, muting may be inapplicable.
 	 * Also some audio output plugins do not support muting at all.
 	 *
 	 * @note To force silent playback, disable all audio tracks. This is more efficient and reliable than mute.
@@ -508,7 +508,9 @@ class Video extends Bitmap
 	private var eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>;
 
 	@:noCompletion
-	private var events:Array<Bool> = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
+	private var events:Array<Bool> = [
+		false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+	];
 
 	@:noCompletion
 	private var planes:cpp.RawPointer<cpp.UInt8>;
@@ -536,7 +538,7 @@ class Video extends Bitmap
 	/**
 	 * Call this function to load a media.
 	 *
-	 * @param location The local filesystem path or the media location url or the id of a open file descriptor or the bitstream input.
+	 * @param location The local filesystem path or the media location URL or the ID of an open file descriptor or the bitstream input.
 	 * @param options The additional options you can add to the LibVLC Media instance.
 	 *
 	 * @return `true` if the media loaded successfully or `false` if there's an error.
