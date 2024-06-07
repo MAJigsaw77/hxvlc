@@ -14,19 +14,19 @@ import sys.FileSystem;
 using StringTools;
 
 /**
- * `FlxVideoSprite` is made for displaying video files in HaxeFlixel as sprites.
+ * `FlxVideoSprite` is used for displaying video files in HaxeFlixel as sprites.
  */
 class FlxVideoSprite extends FlxSprite
 {
 	/**
-	 * Whether the video should automatically be paused when focus is lost or not.
+	 * Whether the video should automatically pause when focus is lost.
 	 *
 	 * @warning Must be set before loading a video.
 	 */
 	public var autoPause:Bool = FlxG.autoPause;
 
 	/**
-	 * Whether flixel should automatically change the volume according to the flixel sound system current volume.
+	 * Whether Flixel should automatically adjust the volume according to the Flixel sound system's current volume.
 	 */
 	public var autoVolumeHandle:Bool = true;
 
@@ -55,12 +55,11 @@ class FlxVideoSprite extends FlxSprite
 	}
 
 	/**
-	 * Call this function to load a video.
+	 * Loads a video.
 	 *
-	 * @param location The local filesystem path or the media location url or the id of a open file descriptor or the bitstream input.
-	 * @param options The additional options you can add to the LibVLC Media.
-	 *
-	 * @return `true` if the video loaded successfully or `false` if there's an error.
+	 * @param location The local filesystem path, the media location URL, the ID of an open file descriptor, or the bitstream input.
+	 * @param options Additional options to add to the LibVLC Media.
+	 * @return `true` if the video loaded successfully, `false` otherwise.
 	 */
 	public function load(location:OneOfThree<String, Int, Bytes>, ?options:Array<String>):Bool
 	{
@@ -99,9 +98,9 @@ class FlxVideoSprite extends FlxSprite
 	}
 
 	/**
-	 * Call this function to play a video.
+	 * Plays the video.
 	 *
-	 * @return `true` if the video started playing or `false` if there's an error.
+	 * @return `true` if the video started playing, `false` otherwise.
 	 */
 	public function play():Bool
 	{
@@ -112,7 +111,7 @@ class FlxVideoSprite extends FlxSprite
 	}
 
 	/**
-	 * Call this function to stop the video.
+	 * Stops the video.
 	 */
 	public function stop():Void
 	{
@@ -121,7 +120,7 @@ class FlxVideoSprite extends FlxSprite
 	}
 
 	/**
-	 * Call this function to pause the video.
+	 * Pauses the video.
 	 */
 	public function pause():Void
 	{
@@ -130,7 +129,7 @@ class FlxVideoSprite extends FlxSprite
 	}
 
 	/**
-	 * Call this function to resume the video.
+	 * Resumes the video.
 	 */
 	public function resume():Void
 	{
@@ -139,7 +138,7 @@ class FlxVideoSprite extends FlxSprite
 	}
 
 	/**
-	 * Call this function to toggle the pause of the video.
+	 * Toggles the pause state of the video.
 	 */
 	public function togglePaused():Void
 	{
