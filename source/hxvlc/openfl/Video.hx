@@ -11,7 +11,7 @@ import haxe.Int64;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.Handle;
-import hxvlc.util.OneOfThree;
+import hxvlc.openfl.Location;
 import lime.app.Application;
 import lime.app.Event;
 #if (HXVLC_OPENAL && lime_openal)
@@ -543,7 +543,7 @@ class Video extends Bitmap
 	 *
 	 * @return `true` if the media loaded successfully or `false` if there's an error.
 	 */
-	public function load(location:OneOfThree<String, Int, Bytes>, ?options:Array<String>):Bool
+	public function load(location:Location, ?options:Array<String>):Bool
 	{
 		if (Handle.instance == null)
 			return false;

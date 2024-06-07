@@ -8,7 +8,7 @@ import haxe.Exception;
 import haxe.Int64;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
-import hxvlc.util.Define;
+import hxvlc.util.macros.Define;
 import lime.utils.Log;
 import sys.thread.Mutex;
 import sys.thread.Thread;

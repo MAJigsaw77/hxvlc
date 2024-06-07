@@ -8,7 +8,7 @@ import flixel.FlxSprite;
 import haxe.io.Bytes;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Video;
-import hxvlc.util.OneOfThree;
+import hxvlc.openfl.Location;
 import sys.FileSystem;
 
 using StringTools;
@@ -61,7 +61,7 @@ class FlxVideoSprite extends FlxSprite
 	 * @param options Additional options to add to the LibVLC Media.
 	 * @return `true` if the video loaded successfully, `false` otherwise.
 	 */
-	public function load(location:OneOfThree<String, Int, Bytes>, ?options:Array<String>):Bool
+	public function load(location:Location, ?options:Array<String>):Bool
 	{
 		if (bitmap == null)
 			return false;

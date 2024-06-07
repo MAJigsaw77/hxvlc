@@ -6,7 +6,7 @@ import flixel.FlxG;
 import haxe.io.Bytes;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Video;
-import hxvlc.util.OneOfThree;
+import hxvlc.openfl.Location;
 import sys.FileSystem;
 
 using StringTools;
@@ -52,7 +52,7 @@ class FlxVideo extends Video
 		FlxG.addChildBelowMouse(this);
 	}
 
-	public override function load(location:OneOfThree<String, Int, Bytes>, ?options:Array<String>):Bool
+	public override function load(location:Location, ?options:Array<String>):Bool
 	{
 		if (autoPause)
 		{
