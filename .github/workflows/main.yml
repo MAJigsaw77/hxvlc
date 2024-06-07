@@ -31,7 +31,7 @@ jobs:
 
       - name: Installing Dependencies
         if: startsWith(matrix.os, 'ubuntu')
-        run: sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc
+        run: sudo apt-get update && sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc
 
       - name: Installing Haxe Libraries
         run: |
