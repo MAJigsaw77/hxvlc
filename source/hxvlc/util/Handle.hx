@@ -170,7 +170,7 @@ class Handle
 					{
 						FileSystem.deleteFile(pluginsDatPath);
 
-						Log.warn('Deleted plugins.dat. Retrying initialization.');
+						Log.warn('Deleted "$pluginsDatPath", retrying initialization...');
 
 						return initWithRetry(options, true);
 					}
