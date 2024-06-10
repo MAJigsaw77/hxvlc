@@ -106,6 +106,11 @@ class Handle
 	 */
 	public static function init(?options:Array<String>):Bool
 	{
+		return initWithRetry(options, false);
+	}
+
+	private static function initWithRetry(?options:Array<String>, hasRetried:Bool):Bool
+	{
 		if (loading)
 			return false;
 
@@ -115,7 +120,6 @@ class Handle
 		{
 			#if (windows || macos)
 			final pluginsPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
-
 			Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
 			#end
 
@@ -157,14 +161,30 @@ class Handle
 
 			if (instance == null)
 			{
+				if (!hasRetried)
+				{
+					#if (windows || macos)
+					final pluginsDatPath:String = Path.join([pluginsPath, 'plugins.dat']);
+
+					if (FileSystem.exists(pluginsDatPath))
+					{
+						FileSystem.deleteFile(pluginsDatPath);
+
+						Log.warn('Deleted plugins.dat. Retrying initialization.');
+
+						return initWithRetry(options, true);
+					}
+					#end
+				}
+
+				loading = false;
+
 				final errmsg:String = cast(LibVLC.errmsg(), String);
 
 				if (errmsg != null && errmsg.length > 0)
 					Log.error('Failed to initialize the LibVLC instance, Error: $errmsg');
 				else
 					Log.error('Failed to initialize the LibVLC instance');
-
-				loading = false;
 
 				return false;
 			}
