@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "1.5.5",
-	"releasenote": "Enhanced video resolution accuracy for more precise rendering.",
+	"version": "1.6.0",
+	"releasenote": "Fixed some docs, organized some code and added some new features.",
 	"contributors": [
 		"MAJigsaw77"
 	],
