@@ -104,11 +104,56 @@ class Handle
 	 *
 	 * @return `true` if the instance was created successfully or `false` if there was an error or the instance is still loading.
 	 */
-	public static function init(?options:Array<String>):Bool
+	public static inline function init(?options:Array<String>):Bool
 	{
 		return initWithRetry(options, false);
 	}
 
+	/**
+	 * Initializes the LibVLC instance asynchronously if it isn't already.
+	 *
+	 * @param options The additional options you can add to the LibVLC instance.
+	 * @param finishCallback A callback that is called after it finishes loading.
+	 */
+	public static function initAsync(?options:Array<String>, ?finishCallback:Bool->Void):Void
+	{
+		if (loading)
+			return;
+
+		var initMutex:Mutex = new Mutex();
+
+		Thread.create(function():Void
+		{
+			initMutex.acquire();
+
+			final success:Bool = init(options);
+
+			if (finishCallback != null)
+				finishCallback(success);
+
+			initMutex.release();
+		});
+	}
+
+	/**
+	 * Frees the LibVLC instance.
+	 */
+	public static function dispose():Void
+	{
+		if (instance != null)
+		{
+			#if HXVLC_LOGGING
+			LibVLC.log_unset(instance);
+			#end
+			LibVLC.release(instance);
+
+			instance = null;
+		}
+	}
+
+	/**
+	 * This function exists to allow retrying the initialization after deleting the plugins.dat file inside the plugins folder.
+	 */
 	private static function initWithRetry(?options:Array<String>, hasRetried:Bool):Bool
 	{
 		if (loading)
@@ -164,21 +209,35 @@ class Handle
 			{
 				loading = false;
 
+				#if (windows || macos)
 				if (!hasRetried)
 				{
-					#if (windows || macos)
 					final pluginsDatPath:String = Path.join([pluginsPath, 'plugins.dat']);
 
 					if (FileSystem.exists(pluginsDatPath))
 					{
-						FileSystem.deleteFile(pluginsDatPath);
+						var canRetry:Bool = false;
+						
+						try
+						{
+							FileSystem.deleteFile(pluginsDatPath);
 
-						Log.warn('Deleted "$pluginsDatPath", retrying initialization...');
+							Log.warn('Deleted "$pluginsDatPath", retrying initialization');
 
-						return initWithRetry(options, true);
+							canRetry = true;
+						}
+						catch (e:Exception)
+						{
+							Log.warn('Unable to delete "$pluginsDatPath", initialization retry failed');
+
+							canRetry = false;
+						}
+
+						if (canRetry)
+							return initWithRetry(options, true);
 					}
-					#end
 				}
+				#end
 
 				final errmsg:String = cast(LibVLC.errmsg(), String);
 
@@ -200,48 +259,6 @@ class Handle
 		loading = false;
 
 		return true;
-	}
-
-	/**
-	 * Initializes the LibVLC instance asynchronously if it isn't already.
-	 *
-	 * @param options The additional options you can add to the LibVLC instance.
-	 * @param finishCallback A callback that is called after it finishes loading.
-	 */
-	public static function initAsync(?options:Array<String>, ?finishCallback:Bool->Void):Void
-	{
-		if (loading)
-			return;
-
-		var initMutex:Mutex = new Mutex();
-
-		Thread.create(function():Void
-		{
-			initMutex.acquire();
-
-			final success:Bool = init(options);
-
-			if (finishCallback != null)
-				finishCallback(success);
-
-			initMutex.release();
-		});
-	}
-
-	/**
-	 * Frees the LibVLC instance.
-	 */
-	public static function dispose():Void
-	{
-		if (instance != null)
-		{
-			#if HXVLC_LOGGING
-			LibVLC.log_unset(instance);
-			#end
-			LibVLC.release(instance);
-
-			instance = null;
-		}
 	}
 
 	@:noCompletion
