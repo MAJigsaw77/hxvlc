@@ -161,6 +161,8 @@ class Handle
 
 			if (instance == null)
 			{
+				loading = false;
+
 				if (!hasRetried)
 				{
 					#if (windows || macos)
@@ -176,8 +178,6 @@ class Handle
 					}
 					#end
 				}
-
-				loading = false;
 
 				final errmsg:String = cast(LibVLC.errmsg(), String);
 
