@@ -132,11 +132,14 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 
 	memcpy(chroma, "RV32", 4);
 
-	unsigned originalWidth = (*width);
-	unsigned originalHeight = (*height);
+	const unsigned originalWidth = (*width);
+	const unsigned originalHeight = (*height);
 
 	if (self->mediaPlayer != NULL && libvlc_video_get_size(self->mediaPlayer, 0, &self->formatWidth, &self->formatHeight) == 0)
 	{
+		(*width) = self->formatWidth;
+		(*height) = self->formatHeight;
+
 		if (originalWidth != self->formatWidth || originalHeight != self->formatHeight)
 		{
 			if (self->planes != NULL)
@@ -144,9 +147,6 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 
 			self->planes = new unsigned char[self->formatWidth * self->formatHeight * 4];
 		}
-
-		(*width) = self->formatWidth;
-		(*height) = self->formatHeight;
 	}
 	else
 	{
