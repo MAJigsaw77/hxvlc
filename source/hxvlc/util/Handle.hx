@@ -227,11 +227,7 @@ class Handle
 							canRetry = true;
 						}
 						catch (e:Exception)
-						{
 							Log.warn('Unable to delete "$pluginsDatPath", initialization retry failed');
-
-							canRetry = false;
-						}
 
 						if (canRetry)
 							return initWithRetry(options, true);
