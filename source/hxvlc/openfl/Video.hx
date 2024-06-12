@@ -275,12 +275,12 @@ class Video extends Bitmap
 	/**
 	 * The format width, in pixels.
 	 */
-	public var formatWidth(default, null):Int = 0;
+	public var formatWidth(default, null):cpp.UInt32 = 0;
 
 	/**
 	 * The format height, in pixels.
 	 */
-	public var formatHeight(default, null):Int = 0;
+	public var formatHeight(default, null):cpp.UInt32 = 0;
 
 	/**
 	 * The media resource locator.
