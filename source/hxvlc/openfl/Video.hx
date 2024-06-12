@@ -130,29 +130,39 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(*opaque);
 
-	strcpy(chroma, "RV32");
+	memcpy(chroma, "RV32", 4);
 
-	unsigned newWidth = 0;
-	unsigned newHeight = 0;
+	unsigned originalWidth = (*width);
+	unsigned originalHeight = (*height);
 
-	if (self->mediaPlayer != NULL && libvlc_video_get_size(self->mediaPlayer, 0, &newWidth, &newHeight) == 0)
+	if (self->mediaPlayer != NULL && libvlc_video_get_size(self->mediaPlayer, 0, &self->formatWidth, &self->formatHeight) == 0)
 	{
-		(*width) = newWidth;
-		(*height) = newHeight;
-	}
+		if (originalWidth != self->formatWidth || originalHeight != self->formatHeight)
+		{
+			if (self->planes != NULL)
+				delete[] self->planes;
 
-	self->formatWidth = (*width);
-	self->formatHeight = (*height);
+			self->planes = new unsigned char[self->formatWidth * self->formatHeight * 4];
+		}
+
+		(*width) = self->formatWidth;
+		(*height) = self->formatHeight;
+	}
+	else
+	{
+		self->formatWidth = (*width);
+		self->formatHeight = (*height);
+
+		if (self->planes != NULL)
+			delete[] self->planes;
+
+		self->planes = new unsigned char[self->formatWidth * self->formatHeight * 4];
+	}
 
 	(*pitches) = self->formatWidth * 4;
 	(*lines) = self->formatHeight;
 
 	self->events[13] = true;
-
-	if (self->planes != NULL)
-		delete[] self->planes;
-
-	self->planes = new unsigned char[self->formatWidth * self->formatHeight * 4];
 
 	hx::SetTopOfStack((int *)0, true);
 
