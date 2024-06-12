@@ -150,8 +150,8 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 	}
 	else
 	{
-		self->formatWidth = (*width);
-		self->formatHeight = (*height);
+		self->formatWidth = originalWidth;
+		self->formatHeight = originalHeight;
 
 		if (self->planes != NULL)
 			delete[] self->planes;
