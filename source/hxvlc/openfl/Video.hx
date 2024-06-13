@@ -347,7 +347,7 @@ class Video extends Bitmap
 	/**
 	 * Gets the list of available audio output modules.
 	 */
-	public var outputModules(get, never):Array<String>;
+	public var outputModules(get, never):Array<{name:String, description:String}>;
 
 	#if !HXVLC_OPENAL
 	/**
@@ -1258,9 +1258,9 @@ class Video extends Bitmap
 	}
 
 	@:noCompletion
-	private function get_outputModules():Array<String>
+	private function get_outputModules():Array<{name:String, description:String}>
 	{
-		var modules:Array<String> = null;
+		var modules:Array<{name:String, description:String}> = null;
 
 		if (audioOutput != null)
 		{
@@ -1270,7 +1270,7 @@ class Video extends Bitmap
 
 			while (temp != null)
 			{
-				modules.push(temp[0].psz_name);
+				modules.push({name: temp[0].psz_name, description: temp[0].psz_description});
 
 				temp = temp[0].p_next;
 			}
