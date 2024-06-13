@@ -349,7 +349,6 @@ class Video extends Bitmap
 	 */
 	public var outputModules(get, never):Array<{name:String, description:String}>;
 
-	#if !HXVLC_OPENAL
 	/**
 	 * Selects an audio output module.
 	 *
@@ -358,7 +357,6 @@ class Video extends Bitmap
 	 * Audio output cannot be changed while playing.
 	 */
 	public var output(never, set):String;
-	#end
 
 	/**
 	 * The audio's mute status.
@@ -387,7 +385,6 @@ class Video extends Bitmap
 	 */
 	public var track(get, set):Int;
 
-	#if !HXVLC_OPENAL
 	/**
 	 * The audio channel.
 	 *
@@ -398,7 +395,6 @@ class Video extends Bitmap
 	 * - [Dolbys] = 5
 	 */
 	public var channel(get, set):Int;
-	#end
 
 	/**
 	 * The audio delay in microseconds.
@@ -1279,7 +1275,6 @@ class Video extends Bitmap
 		return modules;
 	}
 
-	#if !HXVLC_OPENAL
 	@:noCompletion
 	private function set_output(value:String):String
 	{
@@ -1288,7 +1283,6 @@ class Video extends Bitmap
 
 		return value;
 	}
-	#end
 
 	@:noCompletion
 	private function get_mute():Bool
@@ -1353,7 +1347,6 @@ class Video extends Bitmap
 		return value;
 	}
 
-	#if !HXVLC_OPENAL
 	@:noCompletion
 	private function get_channel():Int
 	{
@@ -1371,7 +1364,6 @@ class Video extends Bitmap
 
 		return value;
 	}
-	#end
 
 	@:noCompletion
 	private function get_delay():Int64
