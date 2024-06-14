@@ -70,6 +70,9 @@ extern class LibVLC
 	@:native('libvlc_media_get_mrl')
 	static function media_get_mrl(p_md:cpp.RawPointer<LibVLC_Media_T>):cpp.CharStar;
 
+	@:native('libvlc_media_get_stats')
+	static function media_get_stats(p_md:cpp.RawPointer<LibVLC_Media_T>, p_stats:cpp.RawPointer<LibVLC_Media_Stats_T>):Int;
+
 	@:native('libvlc_media_player_get_media')
 	static function media_player_get_media(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):cpp.RawPointer<LibVLC_Media_T>;
 

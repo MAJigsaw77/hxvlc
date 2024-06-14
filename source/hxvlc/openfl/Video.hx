@@ -11,6 +11,7 @@ import haxe.Int64;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Location;
+import hxvlc.openfl.Stats;
 import hxvlc.util.Handle;
 import lime.app.Application;
 import lime.app.Event;
@@ -281,6 +282,11 @@ class Video extends Bitmap
 	 * The format height, in pixels.
 	 */
 	public var formatHeight(default, null):cpp.UInt32 = 0;
+
+	/**
+	 * Statistics related to the media resource.
+	 */
+	public var stats(get, never):Null<Stats>;
 
 	/**
 	 * The media resource locator.
@@ -1104,10 +1110,29 @@ class Video extends Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currrentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
-			if (currrentMediaItem != null)
-				return cast(LibVLC.media_get_mrl(currrentMediaItem), String);
+			if (currentMediaItem != null)
+				return cast(LibVLC.media_get_mrl(currentMediaItem), String);
+		}
+
+		return null;
+	}
+
+	@:noCompletion
+	private function get_stats():Null<Stats>
+	{
+		if (mediaPlayer != null)
+		{
+			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+
+			if (currentMediaItem != null)
+			{
+				var currentMediaStats:LibVLC_Media_Stats_T = LibVLC_Media_Stats_T.alloc();
+
+				if (LibVLC.media_get_stats(currentMediaItem, cpp.RawPointer.addressOf(currentMediaStats)) != 0)
+					return Stats.fromMediaStats(currentMediaStats);
+			}
 		}
 
 		return null;
@@ -1118,10 +1143,10 @@ class Video extends Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currrentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
-			if (currrentMediaItem != null)
-				return LibVLC.media_get_duration(currrentMediaItem);
+			if (currentMediaItem != null)
+				return LibVLC.media_get_duration(currentMediaItem);
 		}
 
 		return -1;

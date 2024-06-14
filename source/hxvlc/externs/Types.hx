@@ -19,6 +19,44 @@ extern class LibVLC_Media_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:unreflective
+@:structAccess
+@:native('libvlc_media_stats_t')
+extern class LibVLC_Media_Stats_T
+{
+	@:native('libvlc_media_stats_t')
+	static function alloc():LibVLC_Media_Stats_T;
+
+	/* Input */
+	var i_read_bytes:Int;
+	var f_input_bitrate:Single;
+
+	/* Demux */
+	var i_demux_read_bytes:Int;
+	var f_demux_bitrate:Single;
+	var i_demux_corrupted:Int;
+	var i_demux_discontinuity:Int;
+
+	/* Decoders */
+	var i_decoded_video:Int;
+	var i_decoded_audio:Int;
+
+	/* Video Output */
+	var i_displayed_pictures:Int;
+	var i_lost_pictures:Int;
+
+	/* Audio Output */
+	var i_played_abuffers:Int;
+	var i_lost_abuffers:Int;
+
+	/* Stream Output */
+	var i_sent_packets:Int;
+	var i_sent_bytes:Int;
+	var f_send_bitrate:Single;
+}
+
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
 @:native('libvlc_media_player_t')
 extern class LibVLC_Media_Player_T {}
 
