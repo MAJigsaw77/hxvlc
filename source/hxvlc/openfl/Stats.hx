@@ -108,10 +108,11 @@ class Stats
 	/**
 	 * Constructs a Stats object from raw LibVLC media statistics.
 	 *
-	 * @param media_stats The reference to LibVLC media statistics.
+	 * @param media_stats The structure to LibVLC media statistics.
+	 *
 	 * @return A Stats object populated with the provided media statistics.
 	 */
-	public static function fromMediaStats(media_stats:cpp.Reference<LibVLC_Media_Stats_T>):Stats
+	public static function fromMediaStats(media_stats:cpp.Struct<LibVLC_Media_Stats_T>):Stats
 	{
 		var stats:Stats = new Stats();
 
