@@ -106,6 +106,20 @@ class Stats
 	}
 
 	/**
+	 * Returns a string representation of the Stats object.
+	 *
+	 * @return A string containing all the properties of the Stats object.
+	 */
+	public function toString():String
+	{
+		return 'Stats{i_read_bytes=$i_read_bytes, f_input_bitrate=$f_input_bitrate, i_demux_read_bytes=$i_demux_read_bytes, '
+			+ 'f_demux_bitrate=$f_demux_bitrate, i_demux_corrupted=$i_demux_corrupted, i_demux_discontinuity=$i_demux_discontinuity, '
+			+ 'i_decoded_video=$i_decoded_video, i_decoded_audio=$i_decoded_audio, i_displayed_pictures=$i_displayed_pictures, '
+			+ 'i_lost_pictures=$i_lost_pictures, i_played_abuffers=$i_played_abuffers, i_lost_abuffers=$i_lost_abuffers, '
+			+ 'i_sent_packets=$i_sent_packets, i_sent_bytes=$i_sent_bytes, f_send_bitrate=$f_send_bitrate}';
+	}
+
+	/**
 	 * Constructs a Stats object from raw LibVLC media statistics.
 	 *
 	 * @param media_stats The structure to LibVLC media statistics.
