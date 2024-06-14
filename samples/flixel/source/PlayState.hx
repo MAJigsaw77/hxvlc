@@ -34,6 +34,13 @@ class PlayState extends FlxState
 		FlxG.cameras.bgColor = 0xFF131C1B;
 
 		video = new FlxVideoSprite(0, 0);
+		#if debug
+		video.bitmap.onOpening.add(function():Void
+		{
+			if (video.bitmap.stats != null)
+				FlxG.debugger.track(video.bitmap.stats);
+		});
+		#end
 		video.bitmap.onFormatSetup.add(function():Void
 		{
 			video.setGraphicSize(FlxG.width * 0.7, FlxG.height * 0.7);
@@ -66,6 +73,10 @@ class PlayState extends FlxState
 		});
 
 		super.create();
+
+		#if debug
+		FlxG.debugger.visible = true;
+		#end
 	}
 
 	#if mobile
