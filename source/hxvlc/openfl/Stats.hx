@@ -137,7 +137,7 @@ class Stats
 		parts.push('i_sent_bytes=$i_sent_bytes');
 		parts.push('f_send_bitrate=$f_send_bitrate');
 
-		return '{ ${parts.join(', ')} }';
+		return parts.join('\n');
 	}
 
 	/**
