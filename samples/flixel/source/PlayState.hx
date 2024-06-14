@@ -3,9 +3,6 @@ package;
 #if android
 import android.widget.Toast;
 #end
-#if debug
-import flixel.system.debug.watch.Tracker;
-#end
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
@@ -16,7 +13,6 @@ import haxe.io.Path;
 import haxe.Exception;
 import hxvlc.flixel.FlxVideo;
 import hxvlc.flixel.FlxVideoSprite;
-import hxvlc.openfl.Stats;
 import hxvlc.util.Handle;
 import openfl.system.System;
 import openfl.utils.Assets;
@@ -70,18 +66,6 @@ class PlayState extends FlxState
 		});
 
 		super.create();
-
-		#if debug
-		FlxG.debugger.visible = true;
-		#end
-	}
-
-	override function update(elapsed:Float):Void
-	{
-		super.update(elapsed);
-
-		if (video != null && video.bitmap != null && video.bitmap.stats != null)
-			FlxG.watch.addQuick('Video Stats', video.bitmap.stats.toString());
 	}
 
 	#if mobile
