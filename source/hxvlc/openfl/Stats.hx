@@ -118,7 +118,6 @@ class Stats
 		if (media_stats == null)
 			return stats;
 
-		// Assigning values from media_stats to Stats object
 		stats.i_read_bytes = media_stats.i_read_bytes;
 		stats.f_input_bitrate = media_stats.f_input_bitrate;
 
