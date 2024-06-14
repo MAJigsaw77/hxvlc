@@ -105,6 +105,12 @@ class Stats
 		this.f_send_bitrate = 0.0;
 	}
 
+	/**
+	 * Constructs a Stats object from raw LibVLC media statistics.
+	 *
+	 * @param media_stats The pointer to LibVLC media statistics.
+	 * @return A Stats object populated with the provided media statistics.
+	 */
 	public static function fromRaw(media_stats:cpp.Pointer<LibVLC_Media_Stats_T>):Stats
 	{
 		var stats:Stats = new Stats();
