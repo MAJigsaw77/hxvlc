@@ -37,22 +37,7 @@ class PlayState extends FlxState
 
 		FlxG.cameras.bgColor = 0xFF131C1B;
 
-		#if debug
-		FlxG.debugger.addTrackerProfile(new TrackerProfile(Stats, [
-			"i_read_bytes", "f_input_bitrate", "i_demux_read_bytes", "f_demux_bitrate", "i_demux_corrupted", "i_demux_discontinuity", "i_decoded_video",
-			"i_decoded_audio", "i_displayed_pictures", "i_lost_pictures", "i_played_abuffers", "i_lost_abuffers", "i_sent_packets", "i_sent_bytes",
-			"f_send_bitrate"
-		]));
-		#end
-
 		video = new FlxVideoSprite(0, 0);
-		#if debug
-		video.bitmap.onOpening.add(function():Void
-		{
-			if (video.bitmap.stats != null)
-				FlxG.debugger.track(video.bitmap.stats);
-		});
-		#end
 		video.bitmap.onFormatSetup.add(function():Void
 		{
 			video.setGraphicSize(FlxG.width * 0.7, FlxG.height * 0.7);
@@ -89,6 +74,14 @@ class PlayState extends FlxState
 		#if debug
 		FlxG.debugger.visible = true;
 		#end
+	}
+
+	override function update(elapsed:Float):Void
+	{
+		super.update(elapsed);
+
+		if (video != null && video.bitmap != null && video.bitmap.stats != null)
+			FlxG.watch.addQuick('Video Stats', video.bitmap.stats.toString());
 	}
 
 	#if mobile
