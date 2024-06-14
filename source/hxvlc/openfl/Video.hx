@@ -708,10 +708,7 @@ class Video extends Bitmap
 	 */
 	public function play():Bool
 	{
-		if (mediaPlayer != null)
-			return LibVLC.media_player_play(mediaPlayer) == 0;
-
-		return false;
+		return mediaPlayer != null && LibVLC.media_player_play(mediaPlayer) == 0;
 	}
 
 	/**
