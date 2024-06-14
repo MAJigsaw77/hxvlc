@@ -108,7 +108,7 @@ class Stats
 	/**
 	 * Constructs a Stats object from raw LibVLC media statistics.
 	 *
-	 * @param media_stats The pointer to LibVLC media statistics.
+	 * @param media_stats The reference to LibVLC media statistics.
 	 * @return A Stats object populated with the provided media statistics.
 	 */
 	public static function fromMediaStats(media_stats:cpp.Reference<LibVLC_Media_Stats_T>):Stats
@@ -118,6 +118,7 @@ class Stats
 		if (media_stats == null)
 			return stats;
 
+		// Assigning values from media_stats to Stats object
 		stats.i_read_bytes = media_stats.i_read_bytes;
 		stats.f_input_bitrate = media_stats.f_input_bitrate;
 
