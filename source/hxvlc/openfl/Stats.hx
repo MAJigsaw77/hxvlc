@@ -114,11 +114,30 @@ class Stats
 	 */
 	public function toString():String
 	{
-		return 'Stats[i_read_bytes=$i_read_bytes, f_input_bitrate=$f_input_bitrate, i_demux_read_bytes=$i_demux_read_bytes, '
-			+ 'f_demux_bitrate=$f_demux_bitrate, i_demux_corrupted=$i_demux_corrupted, i_demux_discontinuity=$i_demux_discontinuity, '
-			+ 'i_decoded_video=$i_decoded_video, i_decoded_audio=$i_decoded_audio, i_displayed_pictures=$i_displayed_pictures, '
-			+ 'i_lost_pictures=$i_lost_pictures, i_played_abuffers=$i_played_abuffers, i_lost_abuffers=$i_lost_abuffers, '
-			+ 'i_sent_packets=$i_sent_packets, i_sent_bytes=$i_sent_bytes, f_send_bitrate=$f_send_bitrate]';
+		var parts:Array<String> = [];
+
+		parts.push('i_read_bytes=$i_read_bytes');
+		parts.push('f_input_bitrate=$f_input_bitrate');
+
+		parts.push('i_demux_read_bytes=$i_demux_read_bytes');
+		parts.push('f_demux_bitrate=$f_demux_bitrate');
+		parts.push('i_demux_corrupted=$i_demux_corrupted');
+		parts.push('i_demux_discontinuity=$i_demux_discontinuity');
+
+		parts.push('i_decoded_video=$i_decoded_video');
+		parts.push('i_decoded_audio=$i_decoded_audio');
+
+		parts.push('i_displayed_pictures=$i_displayed_pictures');
+		parts.push('i_lost_pictures=$i_lost_pictures');
+
+		parts.push('i_played_abuffers=$i_played_abuffers');
+		parts.push('i_lost_abuffers=$i_lost_abuffers');
+
+		parts.push('i_sent_packets=$i_sent_packets');
+		parts.push('i_sent_bytes=$i_sent_bytes');
+		parts.push('f_send_bitrate=$f_send_bitrate');
+
+		return '{ ${parts.join(', ')} }';
 	}
 
 	/**
@@ -132,29 +151,29 @@ class Stats
 	{
 		var stats:Stats = new Stats();
 
-		if (media_stats == null)
-			return stats;
+		if (media_stats != null)
+		{
+			stats.i_read_bytes = media_stats.i_read_bytes;
+			stats.f_input_bitrate = media_stats.f_input_bitrate;
 
-		stats.i_read_bytes = media_stats.i_read_bytes;
-		stats.f_input_bitrate = media_stats.f_input_bitrate;
+			stats.i_demux_read_bytes = media_stats.i_demux_read_bytes;
+			stats.f_demux_bitrate = media_stats.f_demux_bitrate;
+			stats.i_demux_corrupted = media_stats.i_demux_corrupted;
+			stats.i_demux_discontinuity = media_stats.i_demux_discontinuity;
 
-		stats.i_demux_read_bytes = media_stats.i_demux_read_bytes;
-		stats.f_demux_bitrate = media_stats.f_demux_bitrate;
-		stats.i_demux_corrupted = media_stats.i_demux_corrupted;
-		stats.i_demux_discontinuity = media_stats.i_demux_discontinuity;
+			stats.i_decoded_video = media_stats.i_decoded_video;
+			stats.i_decoded_audio = media_stats.i_decoded_audio;
 
-		stats.i_decoded_video = media_stats.i_decoded_video;
-		stats.i_decoded_audio = media_stats.i_decoded_audio;
+			stats.i_displayed_pictures = media_stats.i_displayed_pictures;
+			stats.i_lost_pictures = media_stats.i_lost_pictures;
 
-		stats.i_displayed_pictures = media_stats.i_displayed_pictures;
-		stats.i_lost_pictures = media_stats.i_lost_pictures;
+			stats.i_played_abuffers = media_stats.i_played_abuffers;
+			stats.i_lost_abuffers = media_stats.i_lost_abuffers;
 
-		stats.i_played_abuffers = media_stats.i_played_abuffers;
-		stats.i_lost_abuffers = media_stats.i_lost_abuffers;
-
-		stats.i_sent_packets = media_stats.i_sent_packets;
-		stats.i_sent_bytes = media_stats.i_sent_bytes;
-		stats.f_send_bitrate = media_stats.f_send_bitrate;
+			stats.i_sent_packets = media_stats.i_sent_packets;
+			stats.i_sent_bytes = media_stats.i_sent_bytes;
+			stats.f_send_bitrate = media_stats.f_send_bitrate;
+		}
 
 		return stats;
 	}
