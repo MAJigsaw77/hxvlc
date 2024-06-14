@@ -814,7 +814,6 @@ class Video extends Bitmap
 
 			mediaOffset = 0;
 			mediaSize = 0;
-
 			mediaItem = null;
 		}
 
@@ -1042,9 +1041,9 @@ class Video extends Bitmap
 				}
 				catch (e:Exception)
 					Log.error('An error occurred while attempting to render the video: ${e.message}');
-			}
 
-			onDisplay.dispatch();
+				onDisplay.dispatch();
+			}
 		}
 	}
 
