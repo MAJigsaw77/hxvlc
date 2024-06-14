@@ -111,33 +111,33 @@ class Stats
 	 * @param media_stats The pointer to LibVLC media statistics.
 	 * @return A Stats object populated with the provided media statistics.
 	 */
-	public static function fromRaw(media_stats:cpp.Pointer<LibVLC_Media_Stats_T>):Stats
+	public static function fromMediaStats(media_stats:cpp.Reference<LibVLC_Media_Stats_T>):Stats
 	{
 		var stats:Stats = new Stats();
 
 		if (media_stats == null)
 			return stats;
 
-		stats.i_read_bytes = media_stats.value.i_read_bytes;
-		stats.f_input_bitrate = media_stats.value.f_input_bitrate;
+		stats.i_read_bytes = media_stats.i_read_bytes;
+		stats.f_input_bitrate = media_stats.f_input_bitrate;
 
-		stats.i_demux_read_bytes = media_stats.value.i_demux_read_bytes;
-		stats.f_demux_bitrate = media_stats.value.f_demux_bitrate;
-		stats.i_demux_corrupted = media_stats.value.i_demux_corrupted;
-		stats.i_demux_discontinuity = media_stats.value.i_demux_discontinuity;
+		stats.i_demux_read_bytes = media_stats.i_demux_read_bytes;
+		stats.f_demux_bitrate = media_stats.f_demux_bitrate;
+		stats.i_demux_corrupted = media_stats.i_demux_corrupted;
+		stats.i_demux_discontinuity = media_stats.i_demux_discontinuity;
 
-		stats.i_decoded_video = media_stats.value.i_decoded_video;
-		stats.i_decoded_audio = media_stats.value.i_decoded_audio;
+		stats.i_decoded_video = media_stats.i_decoded_video;
+		stats.i_decoded_audio = media_stats.i_decoded_audio;
 
-		stats.i_displayed_pictures = media_stats.value.i_displayed_pictures;
-		stats.i_lost_pictures = media_stats.value.i_lost_pictures;
+		stats.i_displayed_pictures = media_stats.i_displayed_pictures;
+		stats.i_lost_pictures = media_stats.i_lost_pictures;
 
-		stats.i_played_abuffers = media_stats.value.i_played_abuffers;
-		stats.i_lost_abuffers = media_stats.value.i_lost_abuffers;
+		stats.i_played_abuffers = media_stats.i_played_abuffers;
+		stats.i_lost_abuffers = media_stats.i_lost_abuffers;
 
-		stats.i_sent_packets = media_stats.value.i_sent_packets;
-		stats.i_sent_bytes = media_stats.value.i_sent_bytes;
-		stats.f_send_bitrate = media_stats.value.f_send_bitrate;
+		stats.i_sent_packets = media_stats.i_sent_packets;
+		stats.i_sent_bytes = media_stats.i_sent_bytes;
+		stats.f_send_bitrate = media_stats.f_send_bitrate;
 
 		return stats;
 	}
