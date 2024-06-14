@@ -3,6 +3,9 @@ package;
 #if android
 import android.widget.Toast;
 #end
+#if debug
+import flixel.system.debug.watch.Tracker;
+#end
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
@@ -13,6 +16,7 @@ import haxe.io.Path;
 import haxe.Exception;
 import hxvlc.flixel.FlxVideo;
 import hxvlc.flixel.FlxVideoSprite;
+import hxvlc.openfl.Stats;
 import hxvlc.util.Handle;
 import openfl.system.System;
 import openfl.utils.Assets;
@@ -32,6 +36,14 @@ class PlayState extends FlxState
 		#end
 
 		FlxG.cameras.bgColor = 0xFF131C1B;
+
+		#if debug
+		FlxG.debugger.addTrackerProfile(new TrackerProfile(Stats, [
+			"i_read_bytes", "f_input_bitrate", "i_demux_read_bytes", "f_demux_bitrate", "i_demux_corrupted", "i_demux_discontinuity", "i_decoded_video",
+			"i_decoded_audio", "i_displayed_pictures", "i_lost_pictures", "i_played_abuffers", "i_lost_abuffers", "i_sent_packets", "i_sent_bytes",
+			"f_send_bitrate"
+		]));
+		#end
 
 		video = new FlxVideoSprite(0, 0);
 		#if debug
