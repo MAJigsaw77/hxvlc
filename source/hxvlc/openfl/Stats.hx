@@ -1,6 +1,8 @@
 package hxvlc.openfl;
 
-import hxvlc.externs.LibVLC;
+#if (!cpp && !(desktop || mobile))
+#error 'The current target platform isn\'t supported by hxvlc.'
+#end
 import hxvlc.externs.Types;
 
 /**
@@ -112,11 +114,11 @@ class Stats
 	 */
 	public function toString():String
 	{
-		return 'Stats{i_read_bytes=$i_read_bytes, f_input_bitrate=$f_input_bitrate, i_demux_read_bytes=$i_demux_read_bytes, '
+		return 'Stats[i_read_bytes=$i_read_bytes, f_input_bitrate=$f_input_bitrate, i_demux_read_bytes=$i_demux_read_bytes, '
 			+ 'f_demux_bitrate=$f_demux_bitrate, i_demux_corrupted=$i_demux_corrupted, i_demux_discontinuity=$i_demux_discontinuity, '
 			+ 'i_decoded_video=$i_decoded_video, i_decoded_audio=$i_decoded_audio, i_displayed_pictures=$i_displayed_pictures, '
 			+ 'i_lost_pictures=$i_lost_pictures, i_played_abuffers=$i_played_abuffers, i_lost_abuffers=$i_lost_abuffers, '
-			+ 'i_sent_packets=$i_sent_packets, i_sent_bytes=$i_sent_bytes, f_send_bitrate=$f_send_bitrate}';
+			+ 'i_sent_packets=$i_sent_packets, i_sent_bytes=$i_sent_bytes, f_send_bitrate=$f_send_bitrate]';
 	}
 
 	/**
