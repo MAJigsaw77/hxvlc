@@ -154,7 +154,7 @@ class Handle
 	/**
 	 * This function exists to allow retrying the initialization after deleting the plugins.dat file inside the plugins folder.
 	 */
-	private static function initWithRetry(?options:Array<String>, hasRetried:Bool):Bool
+	private static function initWithRetry(?options:Array<String>, ?resetCache:Bool = false):Bool
 	{
 		if (loading)
 			return false;
@@ -184,7 +184,7 @@ class Handle
 			args.push_back("--no-video-title-show");
 			args.push_back("--no-xlib");
 			#if (windows || macos)
-			args.push_back(FileSystem.exists(Path.join([pluginsPath, 'plugins.dat'])) ? "--no-plugins-scan" : "--reset-plugins-cache");
+			args.push_back(!resetCache && FileSystem.exists(Path.join([pluginsPath, 'plugins.dat'])) ? "--no-plugins-scan" : "--reset-plugins-cache");
 			#end
 			args.push_back("--text-renderer=dummy");
 			#if HXVLC_VERBOSE
@@ -209,28 +209,11 @@ class Handle
 				loading = false;
 
 				#if (windows || macos)
-				if (!hasRetried)
+				if (!resetCache)
 				{
-					final pluginsDatPath:String = Path.join([pluginsPath, 'plugins.dat']);
+					Log.warn('Failed to initialize the LibVLC instance, resetting plugins\'s cache');
 
-					if (FileSystem.exists(pluginsDatPath))
-					{
-						var canRetry:Bool = false;
-						
-						try
-						{
-							FileSystem.deleteFile(pluginsDatPath);
-
-							Log.warn('Deleted "$pluginsDatPath", retrying initialization');
-
-							canRetry = true;
-						}
-						catch (e:Exception)
-							Log.warn('Unable to delete "$pluginsDatPath", initialization retry failed');
-
-						if (canRetry)
-							return initWithRetry(options, true);
-					}
+					return initWithRetry(options, true);
 				}
 				#end
 
