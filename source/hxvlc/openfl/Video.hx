@@ -1278,7 +1278,7 @@ class Video extends Bitmap
 	@:noCompletion
 	private function get_mute():Bool
 	{
-		return mediaPlayer != null ? (LibVLC.audio_get_mute(mediaPlayer) > 0) : false;
+		return mediaPlayer != null && LibVLC.audio_get_mute(mediaPlayer) > 0;
 	}
 
 	@:noCompletion
