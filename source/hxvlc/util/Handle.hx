@@ -152,7 +152,7 @@ class Handle
 	}
 
 	/**
-	 * This function exists to allow retrying the initialization after deleting the plugins.dat file inside the plugins folder.
+	 * This function exists to allow retrying the initialization after resetting plugins cache.
 	 */
 	private static function initWithRetry(?options:Array<String>, ?resetCache:Bool = false):Bool
 	{
