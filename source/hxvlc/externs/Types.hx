@@ -181,6 +181,30 @@ extern class LibVLC_Audio_Output_T
 	var p_next:cpp.RawPointer<LibVLC_Audio_Output_T>;
 }
 
+extern enum abstract LibVLC_Audio_Output_Channel_T(LibVLC_Audio_Output_Channel_T_Impl)
+{
+	@:native('libvlc_AudioChannel_Error')
+	var LibVLC_Audio_Channel_Error;
+	@:native('libvlc_AudioChannel_Stereo')
+	var LibVLC_Audio_Channel_Stereo;
+	@:native('libvlc_AudioChannel_RStereo')
+	var LibVLC_Audio_Channel_RStereo;
+	@:native('libvlc_AudioChannel_Left')
+	var LibVLC_Audio_Channel_Left;
+	@:native('libvlc_AudioChannel_Right')
+	var LibVLC_Audio_Channel_Right;
+	@:native('libvlc_AudioChannel_Dolbys')
+	var LibVLC_Audio_Channel_Dolbys;
+
+	@:to extern public inline function toInt():Int
+		return untyped this;
+}
+
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:native('libvlc_audio_output_channel_t')
+private extern class LibVLC_Audio_Output_Channel_T_Impl {}
+
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
 @:native('libvlc_event_manager_t')
