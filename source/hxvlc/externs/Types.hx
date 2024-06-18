@@ -17,6 +17,70 @@ typedef LibVLC_Time_T = cpp.Int64;
 @:native('libvlc_media_t')
 extern class LibVLC_Media_T {}
 
+extern enum abstract LibVLC_Meta_T(LibVLC_Meta_T_Impl)
+{
+	@:native('libvlc_meta_Title')
+	var LibVLC_Meta_Title;
+	@:native('libvlc_meta_Artist')
+	var LibVLC_Meta_Artist;
+	@:native('libvlc_meta_Genre')
+	var LibVLC_Meta_Genre;
+	@:native('libvlc_meta_Copyright')
+	var LibVLC_Meta_Copyright;
+	@:native('libvlc_meta_Album')
+	var LibVLC_Meta_Album;
+	@:native('libvlc_meta_TrackNumber')
+	var LibVLC_Meta_TrackNumber;
+	@:native('libvlc_meta_Description')
+	var LibVLC_Meta_Description;
+	@:native('libvlc_meta_Rating')
+	var LibVLC_Meta_Rating;
+	@:native('libvlc_meta_Date')
+	var LibVLC_Meta_Date;
+	@:native('libvlc_meta_Setting')
+	var LibVLC_Meta_Setting;
+	@:native('libvlc_meta_URL')
+	var LibVLC_Meta_URL;
+	@:native('libvlc_meta_Language')
+	var LibVLC_Meta_Language;
+	@:native('libvlc_meta_NowPlaying')
+	var LibVLC_Meta_NowPlaying;
+	@:native('libvlc_meta_Publisher')
+	var LibVLC_Meta_Publisher;
+	@:native('libvlc_meta_EncodedBy')
+	var LibVLC_Meta_EncodedBy;
+	@:native('libvlc_meta_ArtworkURL')
+	var LibVLC_Meta_ArtworkURL;
+	@:native('libvlc_meta_TrackID')
+	var LibVLC_Meta_TrackID;
+	@:native('libvlc_meta_TrackTotal')
+	var LibVLC_Meta_TrackTotal;
+	@:native('libvlc_meta_Director')
+	var LibVLC_Meta_Director;
+	@:native('libvlc_meta_Season')
+	var LibVLC_Meta_Season;
+	@:native('libvlc_meta_Episode')
+	var LibVLC_Meta_Episode;
+	@:native('libvlc_meta_ShowName')
+	var LibVLC_Meta_ShowName;
+	@:native('libvlc_meta_Actors')
+	var LibVLC_Meta_Actors;
+	@:native('libvlc_meta_AlbumArtist')
+	var LibVLC_Meta_AlbumArtist;
+	@:native('libvlc_meta_DiscNumber')
+	var LibVLC_Meta_DiscNumber;
+	@:native('libvlc_meta_DiscTotal')
+	var LibVLC_Meta_DiscTotal;
+
+	@:to extern public inline function toInt():Int
+		return untyped this;
+}
+
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:native('libvlc_meta_t')
+private extern class LibVLC_Meta_T_Impl {}
+
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
 @:unreflective
@@ -54,6 +118,48 @@ extern class LibVLC_Media_Stats_T
 	var i_sent_bytes:Int;
 	var f_send_bitrate:Single;
 }
+
+extern enum abstract LibVLC_Media_Parse_Flag_T(LibVLC_Media_Parse_Flag_T_Impl)
+{
+	@:native('libvlc_media_parse_local')
+	var LibVLC_Media_Parse_Local;
+	@:native('libvlc_media_parse_network')
+	var LibVLC_Media_Parse_Network;
+	@:native('libvlc_media_fetch_local')
+	var LibVLC_Media_Fetch_Local;
+	@:native('libvlc_media_fetch_network')
+	var LibVLC_Media_Fetch_Network;
+	@:native('libvlc_media_do_interact')
+	var LibVLC_Media_Do_Interact;
+
+	@:to extern public inline function toInt():Int
+		return untyped this;
+}
+
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:native('libvlc_media_parse_flag_t')
+private extern class LibVLC_Media_Parse_Flag_T_Impl {}
+
+extern enum abstract LibVLC_Media_Parsed_Status_T(LibVLC_Media_Parsed_Status_T_Impl)
+{
+	@:native('libvlc_media_parsed_status_skipped')
+	var LibVLC_Media_Parsed_Status_Skipped;
+	@:native('libvlc_media_parsed_status_failed')
+	var LibVLC_Media_Parsed_Status_Failed;
+	@:native('libvlc_media_parsed_status_timeout')
+	var LibVLC_Media_Parsed_Status_Timeout;
+	@:native('libvlc_media_parsed_status_done')
+	var LibVLC_Media_Parsed_Status_Done;
+
+	@:to extern public inline function toInt():Int
+		return untyped this;
+}
+
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:native('libvlc_media_parsed_status_t')
+private extern class LibVLC_Media_Parsed_Status_T_Impl {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
@@ -249,13 +355,11 @@ typedef LibVLC_Video_Cleanup_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>)
 typedef LibVLC_Video_Lock_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, p_pixels:cpp.RawPointer<cpp.RawPointer<cpp.Void>>) -> cpp.RawPointer<cpp.Void>>;
 typedef LibVLC_Video_Unlock_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, id:cpp.RawPointer<cpp.Void>, p_pixels:cpp.VoidStarConstStar) -> Void>;
 typedef LibVLC_Video_Display_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>, picture:cpp.RawPointer<cpp.Void>) -> Void>;
-
 typedef LibVLC_Audio_Play_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, samples:cpp.RawConstPointer<cpp.Void>, count:cpp.UInt32, pts:cpp.Int64) -> Void>;
 typedef LibVLC_Audio_Pause_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, pts:cpp.Int64) -> Void>;
 typedef LibVLC_Audio_Resume_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, pts:cpp.Int64) -> Void>;
 typedef LibVLC_Audio_Flush_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, pts:cpp.Int64) -> Void>;
 typedef LibVLC_Audio_Drain_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>) -> Void>;
-
 typedef LibVLC_Audio_Set_Volume_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, volume:Single, mute:Bool) -> Void>;
 
 extern enum abstract LibVLC_Media_Player_Role_T(LibVLC_Media_Player_Role_T_Impl)
