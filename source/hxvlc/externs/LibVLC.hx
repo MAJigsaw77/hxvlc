@@ -64,14 +64,20 @@ extern class LibVLC
 	@:native('libvlc_media_release')
 	static function media_release(p_md:cpp.RawPointer<LibVLC_Media_T>):Void;
 
-	@:native('libvlc_media_get_duration')
-	static function media_get_duration(p_md:cpp.RawPointer<LibVLC_Media_T>):LibVLC_Time_T;
-
 	@:native('libvlc_media_get_mrl')
 	static function media_get_mrl(p_md:cpp.RawPointer<LibVLC_Media_T>):cpp.CharStar;
 
+	@:native('libvlc_media_get_meta')
+	static function media_get_meta(p_md:cpp.RawPointer<LibVLC_Media_T>, e_meta:LibVLC_Meta_T):cpp.CharStar;
+
 	@:native('libvlc_media_get_stats')
 	static function media_get_stats(p_md:cpp.RawPointer<LibVLC_Media_T>, p_stats:cpp.RawPointer<LibVLC_Media_Stats_T>):Int;
+
+	@:native('libvlc_media_event_manager')
+	static function media_event_manager(p_md:cpp.RawPointer<LibVLC_Media_T>):cpp.RawPointer<LibVLC_Event_Manager_T>;
+
+	@:native('libvlc_media_get_duration')
+	static function media_get_duration(p_md:cpp.RawPointer<LibVLC_Media_T>):LibVLC_Time_T;
 
 	@:native('libvlc_media_player_get_media')
 	static function media_player_get_media(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):cpp.RawPointer<LibVLC_Media_T>;
