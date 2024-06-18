@@ -79,6 +79,15 @@ extern class LibVLC
 	@:native('libvlc_media_get_duration')
 	static function media_get_duration(p_md:cpp.RawPointer<LibVLC_Media_T>):LibVLC_Time_T;
 
+	@:native('libvlc_media_parse_with_options')
+	static function media_parse_with_options(p_md:cpp.RawPointer<LibVLC_Media_T>, parse_flag:LibVLC_Media_Parse_Flag_T, timeout:Int):Int;
+
+	@:native('libvlc_media_parse_stop')
+	static function media_parse_stop(p_md:cpp.RawPointer<LibVLC_Media_T>):Void;
+
+	@:native('libvlc_media_get_parsed_status')
+	static function media_get_parsed_status(p_md:cpp.RawPointer<LibVLC_Media_T>):LibVLC_Media_Parsed_Status_T;
+
 	@:native('libvlc_media_player_get_media')
 	static function media_player_get_media(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):cpp.RawPointer<LibVLC_Media_T>;
 
