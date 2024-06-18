@@ -759,31 +759,12 @@ class Video extends Bitmap
 	 */
 	public function dispose():Void
 	{
-		/*if (eventManager != null)
-		{
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerPlaying, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerStopped, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerPositionChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerLengthChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
-			LibVLC.event_detach(eventManager, LibVLC_MediaPlayerChapterChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this'));
-		}*/
-
 		if (mediaPlayer != null)
 		{
 			LibVLC.media_player_stop(mediaPlayer);
 			LibVLC.media_player_release(mediaPlayer);
+			mediaPlayer = null;
 		}
-
-		eventManager = null;
-		mediaPlayer = null;
 
 		if (Application.current != null && Application.current.onUpdate.has(update))
 			Application.current.onUpdate.remove(update);
@@ -802,6 +783,8 @@ class Video extends Bitmap
 			mediaSize = 0;
 			mediaItem = null;
 		}
+
+		eventManager = null;
 
 		if (bitmapData != null)
 		{
