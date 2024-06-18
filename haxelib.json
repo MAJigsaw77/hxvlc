@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "1.6.1",
-	"releasenote": "Added error handling for libVLC plugins.dat file deletion.",
+	"version": "1.6.2",
+	"releasenote": "Added the ability to retrieve the stats of the video and made some additional fixes.",
 	"contributors": [
 		"MAJigsaw77"
 	],
