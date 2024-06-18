@@ -481,9 +481,6 @@ class Video extends Bitmap
 	 */
 	public var onDisplay(default, null):Event<Void->Void> = new Event<Void->Void>();
 
-	@:noCompletion
-	private var audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T>;
-
 	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
 	private var alAudioContext:OpenALAudioContext;
@@ -537,8 +534,6 @@ class Video extends Bitmap
 			Sys.sleep(0.05);
 
 		Handle.init();
-
-		audioOutput = LibVLC.audio_output_list_get(Handle.instance);
 	}
 
 	/**
@@ -806,12 +801,6 @@ class Video extends Bitmap
 			mediaOffset = 0;
 			mediaSize = 0;
 			mediaItem = null;
-		}
-
-		if (audioOutput != null)
-		{
-			LibVLC.audio_output_list_release(audioOutput);
-			audioOutput = null;
 		}
 
 		if (bitmapData != null)
@@ -1241,23 +1230,30 @@ class Video extends Bitmap
 	@:noCompletion
 	private function get_outputModules():Array<{name:String, description:String}>
 	{
-		var modules:Array<{name:String, description:String}> = null;
-
-		if (audioOutput != null)
+		if (Handle.instance != null)
 		{
-			modules = [];
+			var audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T> = LibVLC.audio_output_list_get(Handle.instance);
 
-			var temp:cpp.RawPointer<LibVLC_Audio_Output_T> = audioOutput;
-
-			while (temp != null)
+			if (audioOutput != null)
 			{
-				modules.push({name: temp[0].psz_name, description: temp[0].psz_description});
+				var temp:cpp.RawPointer<LibVLC_Audio_Output_T> = audioOutput;
 
-				temp = temp[0].p_next;
+				var outputs:Array<{name:String, description:String}> = [];
+
+				while (temp != null)
+				{
+					outputs.push({name: temp[0].psz_name, description: temp[0].psz_description});
+
+					temp = temp[0].p_next;
+				}
+
+				LibVLC.audio_output_list_release(audioOutput);
+
+				return outputs;
 			}
 		}
 
-		return modules;
+		return null;
 	}
 
 	@:noCompletion
