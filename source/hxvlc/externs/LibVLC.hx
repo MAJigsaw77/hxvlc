@@ -698,8 +698,10 @@ extern class LibVLC
 
 	/**
 	 * Sets the current audio channel.
+	 *
 	 * @param p_mi Pointer to the media player.
 	 * @param channel The new audio channel.
+	 *
 	 * @return 0 on success, -1 on failure.
 	 */
 	@:native('libvlc_audio_set_channel')
