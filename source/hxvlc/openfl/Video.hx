@@ -26,6 +26,7 @@ import lime.utils.UInt8Array;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.RectangleTexture;
+import openfl.display3D.Context3DTextureFormat;
 import openfl.Lib;
 
 using StringTools;
@@ -964,7 +965,7 @@ class Video extends Bitmap
 				{
 					if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
 					{
-						texture = Lib.current.stage.context3D.createRectangleTexture(formatWidth, formatHeight, BGRA, true);
+						texture = Lib.current.stage.context3D.createRectangleTexture(formatWidth, formatHeight, Context3DTextureFormat.BGRA, true);
 
 						bitmapData = BitmapData.fromTexture(texture);
 					}
