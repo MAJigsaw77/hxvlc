@@ -6,14 +6,14 @@ package hxvlc.externs;
 class Types {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:include('vlc/vlc.h')
 @:native('libvlc_instance_t')
 extern class LibVLC_Instance_T {}
 
 typedef LibVLC_Time_T = cpp.Int64;
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:include('vlc/vlc.h')
 @:native('libvlc_media_t')
 extern class LibVLC_Media_T {}
 
@@ -77,12 +77,12 @@ extern enum abstract LibVLC_Meta_T(LibVLC_Meta_T_Impl)
 }
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:include('vlc/vlc.h')
 @:native('libvlc_meta_t')
 private extern class LibVLC_Meta_T_Impl {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:include('vlc/vlc.h')
 @:unreflective
 @:structAccess
 @:native('libvlc_media_stats_t')
@@ -137,7 +137,7 @@ extern enum abstract LibVLC_Media_Parse_Flag_T(LibVLC_Media_Parse_Flag_T_Impl)
 }
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:include('vlc/vlc.h')
 @:native('libvlc_media_parse_flag_t')
 private extern class LibVLC_Media_Parse_Flag_T_Impl {}
 
@@ -157,17 +157,17 @@ extern enum abstract LibVLC_Media_Parsed_Status_T(LibVLC_Media_Parsed_Status_T_I
 }
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:include('vlc/vlc.h')
 @:native('libvlc_media_parsed_status_t')
 private extern class LibVLC_Media_Parsed_Status_T_Impl {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:include('vlc/vlc.h')
 @:native('libvlc_media_player_t')
 extern class LibVLC_Media_Player_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:include('vlc/vlc.h')
 @:unreflective
 @:structAccess
 @:native('libvlc_audio_output_t')
@@ -201,22 +201,22 @@ extern enum abstract LibVLC_Audio_Output_Channel_T(LibVLC_Audio_Output_Channel_T
 }
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:include('vlc/vlc.h')
 @:native('libvlc_audio_output_channel_t')
 private extern class LibVLC_Audio_Output_Channel_T_Impl {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:include('vlc/vlc.h')
 @:native('libvlc_event_manager_t')
 extern class LibVLC_Event_Manager_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:include('vlc/vlc.h')
 @:native('libvlc_event_t')
 extern class LibVLC_Event_T {}
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:include('vlc/vlc.h')
 @:native('libvlc_log_t')
 extern class LibVLC_Log_T {}
 
@@ -356,7 +356,7 @@ extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 }
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:include('vlc/vlc.h')
 @:native('libvlc_event_e')
 private extern class LibVLC_Event_E_Impl {}
 
@@ -416,6 +416,6 @@ extern enum abstract LibVLC_Media_Player_Role_T(LibVLC_Media_Player_Role_T_Impl)
 }
 
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:include('vlc/vlc.h')
 @:native('libvlc_media_player_role_t')
 private extern class LibVLC_Media_Player_Role_T_Impl {}

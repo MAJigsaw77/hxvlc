@@ -11,7 +11,7 @@ import hxvlc.externs.Types;
  * and media objects, as well as the handling of audio, video, and events.
  */
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include(#if windows 'vlc_windows_fix.h' #else 'vlc/vlc.h' #end)
+@:include('vlc/vlc.h')
 @:unreflective
 extern class LibVLC
 {
