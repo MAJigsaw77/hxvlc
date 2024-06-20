@@ -62,7 +62,7 @@
 			<vflag name="-framework" value="CoreImage" />
 
 			<lib name="${haxelib:hxvlc}/project/vlc/lib/iOS/libvlc-64.a" if="HXCPP_ARM64" />
-			<lib name="${haxelib:hxvlc}/project/vlc/lib/iOS/libvlc-64.a" if="HXCPP_M64 || HXCPP_X86_64" />
+			<lib name="${haxelib:hxvlc}/project/vlc/lib/iOS/libvlc-64.a" if="HXCPP_M64" />
 		</section>
 	</target>
 </xml>
