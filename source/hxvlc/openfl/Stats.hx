@@ -116,26 +116,26 @@ class Stats
 	{
 		var parts:Array<String> = [];
 
-		parts.push('i_read_bytes=$i_read_bytes');
-		parts.push('f_input_bitrate=$f_input_bitrate');
+		parts.push('Bytes read: $i_read_bytes');
+		parts.push('Input bitrate: $f_input_bitrate bps');
 
-		parts.push('i_demux_read_bytes=$i_demux_read_bytes');
-		parts.push('f_demux_bitrate=$f_demux_bitrate');
-		parts.push('i_demux_corrupted=$i_demux_corrupted');
-		parts.push('i_demux_discontinuity=$i_demux_discontinuity');
+		parts.push('Demuxer bytes read: $i_demux_read_bytes');
+		parts.push('Demuxer bitrate: $f_demux_bitrate bps');
+		parts.push('Demuxer corrupted packets: $i_demux_corrupted');
+		parts.push('Demuxer discontinuities: $i_demux_discontinuity');
 
-		parts.push('i_decoded_video=$i_decoded_video');
-		parts.push('i_decoded_audio=$i_decoded_audio');
+		parts.push('Decoded video frames: $i_decoded_video');
+		parts.push('Decoded audio frames: $i_decoded_audio');
 
-		parts.push('i_displayed_pictures=$i_displayed_pictures');
-		parts.push('i_lost_pictures=$i_lost_pictures');
+		parts.push('Displayed pictures: $i_displayed_pictures');
+		parts.push('Lost pictures: $i_lost_pictures');
 
-		parts.push('i_played_abuffers=$i_played_abuffers');
-		parts.push('i_lost_abuffers=$i_lost_abuffers');
+		parts.push('Played audio buffers: $i_played_abuffers');
+		parts.push('Lost audio buffers: $i_lost_abuffers');
 
-		parts.push('i_sent_packets=$i_sent_packets');
-		parts.push('i_sent_bytes=$i_sent_bytes');
-		parts.push('f_send_bitrate=$f_send_bitrate');
+		parts.push('Sent packets: $i_sent_packets');
+		parts.push('Sent bytes: $i_sent_bytes');
+		parts.push('Send bitrate: $f_send_bitrate bps');
 
 		return parts.join('\n');
 	}
