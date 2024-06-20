@@ -59,6 +59,7 @@ class FlxVideoSprite extends FlxSprite
 	 *
 	 * @param location The local filesystem path, the media location URL, the ID of an open file descriptor, or the bitstream input.
 	 * @param options Additional options to add to the LibVLC Media.
+	 *
 	 * @return `true` if the video loaded successfully, `false` otherwise.
 	 */
 	public function load(location:Location, ?options:Array<String>):Bool
@@ -160,8 +161,7 @@ class FlxVideoSprite extends FlxSprite
 		{
 			bitmap.dispose();
 
-			if (FlxG.game.contains(bitmap))
-				FlxG.game.removeChild(bitmap);
+			FlxG.removeChild(bitmap);
 
 			bitmap = null;
 		}
@@ -190,7 +190,7 @@ class FlxVideoSprite extends FlxSprite
 		{
 			final curVolume:Int = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * 100);
 
-			if (bitmap.volume != curVolume)
+			if (bitmap != null && bitmap.volume != curVolume)
 				bitmap.volume = curVolume;
 		}
 		#end
