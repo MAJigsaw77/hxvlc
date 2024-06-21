@@ -25,10 +25,12 @@ class FlxVideoSprite extends FlxSprite
 	 */
 	public var autoPause:Bool = FlxG.autoPause;
 
+	#if FLX_SOUND_SYSTEM
 	/**
 	 * Whether Flixel should automatically adjust the volume according to the Flixel sound system's current volume.
 	 */
 	public var autoVolumeHandle:Bool = true;
+	#end
 
 	/**
 	 * The video bitmap.
@@ -48,8 +50,25 @@ class FlxVideoSprite extends FlxSprite
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
 		bitmap = new Video(antialiasing);
-		bitmap.onOpening.add(() -> bitmap.role = LibVLC_Role_Game);
-		bitmap.onFormatSetup.add(() -> loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false)));
+		bitmap.onOpening.add(function():Void
+		{
+			bitmap.role = LibVLC_Role_Game;
+
+			#if FLX_SOUND_SYSTEM
+			if (autoVolumeHandle)
+			{
+				final curVolume:Int = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * 100);
+
+				if (bitmap != null && bitmap.volume != curVolume)
+					bitmap.volume = curVolume;
+			}
+			#end
+		});
+		bitmap.onFormatSetup.add(function():Void
+		{
+			if (bitmap != null && bitmap.bitmapData != null)
+				loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
+		});
 		bitmap.alpha = 0;
 		FlxG.game.addChild(bitmap);
 	}
