@@ -27,10 +27,12 @@ class FlxVideo extends Video
 	 */
 	public var autoResizeMode:FlxAxes = FlxAxes.XY;
 
+	#if FLX_SOUND_SYSTEM
 	/**
 	 * Whether Flixel should automatically adjust the volume according to the Flixel sound system's current volume.
 	 */
 	public var autoVolumeHandle:Bool = true;
+	#end
 
 	/**
 	 * Initializes a FlxVideo object.
