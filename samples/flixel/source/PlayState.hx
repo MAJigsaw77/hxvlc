@@ -31,7 +31,7 @@ class PlayState extends FlxState
 		copyFiles();
 		#end
 
-		FlxG.cameras.bgColor = 0xFF131C1B;
+		FlxG.cameras.bgColor = FlxColor.ORANGE;
 
 		video = new FlxVideoSprite(0, 0);
 		video.bitmap.onFormatSetup.add(function():Void
@@ -57,7 +57,7 @@ class PlayState extends FlxState
 		add(libvlcVersion);
 
 		videoPositionBar = new FlxBar(10, FlxG.height - 50, LEFT_TO_RIGHT, FlxG.width - 20, 10, null, '', 0, 1);
-		videoPositionBar.createFilledBar(FlxColor.GRAY, FlxColor.CYAN);
+		videoPositionBar.createFilledBar(FlxColor.GRAY, FlxColor.CYAN, true, FlxColor.BLACK);
 		add(videoPositionBar);
 
 		FlxTimer.wait(0.001, function():Void
