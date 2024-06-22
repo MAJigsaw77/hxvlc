@@ -28,6 +28,7 @@ import openfl.display.BitmapData;
 import openfl.display3D.textures.RectangleTexture;
 import openfl.display3D.Context3DTextureFormat;
 import openfl.Lib;
+import sys.thread.Mutex;
 
 using StringTools;
 
@@ -109,12 +110,23 @@ static void *video_lock(void *opaque, void **planes)
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
+	self->mutex->acquire();
+
 	if (self->planes != NULL)
 		(*planes) = self->planes;
 
 	hx::SetTopOfStack((int *)0, true);
 
 	return NULL;
+}
+
+static void video_unlock(void *opaque, void *picture, void *const *planes)
+{
+	hx::SetTopOfStack((int *)99, true);
+
+	reinterpret_cast<Video_obj *>(opaque)->mutex->release();
+
+	hx::SetTopOfStack((int *)0, true);
 }
 
 static void video_display(void *opaque, void *picture)
@@ -136,6 +148,8 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 
 	const unsigned originalWidth = (*width);
 	const unsigned originalHeight = (*height);
+
+	self->mutex->acquire();
 
 	if (self->mediaPlayer != NULL && libvlc_video_get_size(self->mediaPlayer, 0, &self->formatWidth, &self->formatHeight) == 0)
 	{
@@ -160,6 +174,8 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 
 		self->planes = new unsigned char[self->formatWidth * self->formatHeight * 4];
 	}
+
+	self->mutex->release();
 
 	(*pitches) = self->formatWidth * 4;
 	(*lines) = self->formatHeight;
@@ -477,11 +493,6 @@ class Video extends Bitmap
 	 */
 	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
 
-	/**
-	 * An event that is dispatched when the media is being displayed.
-	 */
-	public var onDisplay(default, null):Event<Void->Void> = new Event<Void->Void>();
-
 	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
 	private var alAudioContext:OpenALAudioContext;
@@ -522,6 +533,9 @@ class Video extends Bitmap
 	@:noCompletion
 	private var texture:RectangleTexture;
 
+	@:noCompletion
+	private final mutex:Mutex;
+
 	/**
 	 * Initializes a Video object.
 	 *
@@ -530,6 +544,8 @@ class Video extends Bitmap
 	public function new(smoothing:Bool = true):Void
 	{
 		super(null, AUTO, smoothing);
+
+		mutex = new Mutex();
 
 		while (Handle.loading)
 			Sys.sleep(0.05);
@@ -644,7 +660,8 @@ class Video extends Bitmap
 					Log.warn('Failed to attach event (MediaPlayerChapterChanged)');
 			}
 
-			LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), null, untyped __cpp__('video_display'), untyped __cpp__('this'));
+			LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), untyped __cpp__('video_unlock'), untyped __cpp__('video_display'),
+				untyped __cpp__('this'));
 			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), null);
 
 			#if (HXVLC_OPENAL && lime_openal)
@@ -787,6 +804,8 @@ class Video extends Bitmap
 
 		eventManager = null;
 
+		mutex.acquire();
+
 		if (bitmapData != null)
 		{
 			bitmapData.dispose();
@@ -806,6 +825,8 @@ class Video extends Bitmap
 			untyped __cpp__('delete[] {0}', planes);
 			planes = null;
 		}
+
+		mutex.release();
 
 		#if (HXVLC_OPENAL && lime_openal)
 		if (alAudioContext != null)
@@ -937,48 +958,36 @@ class Video extends Bitmap
 		{
 			events[13] = false;
 
-			var mustRecreate:Bool = false;
-
-			if (bitmapData != null)
+			@:privateAccess
+			if (bitmapData == null
+				|| (bitmapData.width != formatWidth || bitmapData.height != formatHeight)
+				|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
 			{
-				@:privateAccess
-				if ((bitmapData.width != formatWidth && bitmapData.height != formatHeight)
-					|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
-				{
+				mutex.acquire();
+
+				if (bitmapData != null)
 					bitmapData.dispose();
 
-					if (texture != null)
-					{
-						texture.dispose();
-						texture = null;
-					}
-
-					mustRecreate = true;
-				}
-			}
-			else
-				mustRecreate = true;
-
-			if (mustRecreate)
-			{
-				try
+				if (texture != null)
 				{
-					if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
-					{
-						texture = Lib.current.stage.context3D.createRectangleTexture(formatWidth, formatHeight, Context3DTextureFormat.BGRA, true);
-
-						bitmapData = BitmapData.fromTexture(texture);
-					}
-					else
-					{
-						if (useTexture)
-							Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
-
-						bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
-					}
+					texture.dispose();
+					texture = null;
 				}
-				catch (e:Exception)
-					Log.error('Failed to create video\'s texture: ${e.message}');
+
+				if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
+				{
+					texture = Lib.current.stage.context3D.createRectangleTexture(formatWidth, formatHeight, Context3DTextureFormat.BGRA, true);
+					bitmapData = BitmapData.fromTexture(texture);
+				}
+				else
+				{
+					if (useTexture)
+						Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
+
+					bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
+				}
+
+				mutex.release();
 
 				onFormatSetup.dispatch();
 			}
@@ -990,23 +999,20 @@ class Video extends Bitmap
 
 			if (__renderable && planes != null)
 			{
-				try
+				mutex.acquire();
+
+				final planesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4));
+
+				if (texture != null)
 				{
-					final planesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4));
+					texture.uploadFromTypedArray(UInt8Array.fromBytes(planesBytes));
 
-					if (texture != null)
-					{
-						texture.uploadFromTypedArray(UInt8Array.fromBytes(planesBytes));
-
-						__setRenderDirty();
-					}
-					else if (bitmapData != null && bitmapData.image != null)
-						bitmapData.setPixels(bitmapData.rect, planesBytes);
+					__setRenderDirty();
 				}
-				catch (e:Exception)
-					Log.error('An error occurred while attempting to render the video: ${e.message}');
+				else if (bitmapData != null && bitmapData.image != null)
+					bitmapData.setPixels(bitmapData.rect, planesBytes);
 
-				onDisplay.dispatch();
+				mutex.release();
 			}
 		}
 	}
