@@ -31,7 +31,7 @@ class PlayState extends FlxState
 		copyFiles();
 		#end
 
-		FlxG.cameras.bgColor = FlxColor.ORANGE;
+		FlxG.cameras.bgColor = 0xFF131C1B;
 
 		video = new FlxVideoSprite(0, 0);
 		video.bitmap.onFormatSetup.add(function():Void
