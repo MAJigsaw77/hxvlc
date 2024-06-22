@@ -535,6 +535,10 @@ class Video extends Bitmap
 			Sys.sleep(0.05);
 
 		Handle.init();
+
+		#if !HXVLC_NO_GC_FINALIZER
+		cpp.vm.Gc.setFinalizer(this, cpp.Function.fromStaticFunction(finalize));
+		#end
 	}
 
 	/**
@@ -1350,4 +1354,16 @@ class Video extends Bitmap
 	{
 		return __bitmapData = value;
 	}
+
+	#if !HXVLC_NO_GC_FINALIZER
+	@:noCompletion
+	@:void
+	private static function finalize(video:Video):Void
+	{
+		Log.info('Finalizer called for Video instance.');
+
+		if (video != null)
+			video.dispose();
+	}
+	#end
 }
