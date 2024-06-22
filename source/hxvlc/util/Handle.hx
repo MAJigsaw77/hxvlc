@@ -120,18 +120,18 @@ class Handle
 		if (loading)
 			return;
 
-		var initMutex:Mutex = new Mutex();
+		final mutex:Mutex = new Mutex();
 
 		Thread.create(function():Void
 		{
-			initMutex.acquire();
+			mutex.acquire();
 
 			final success:Bool = init(options);
 
 			if (finishCallback != null)
 				finishCallback(success);
 
-			initMutex.release();
+			mutex.release();
 		});
 	}
 
