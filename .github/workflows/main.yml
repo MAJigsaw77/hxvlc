@@ -49,20 +49,20 @@ jobs:
 
       - name: Building Windows
         if: startsWith(matrix.os, 'windows')
-        run: cd samples/${{matrix.sample}} && haxelib run lime build windows -debug
+        run: cd samples/${{matrix.sample}} && haxelib run lime build windows -debug -D HXVLC_NO_GC_FINALIZER
 
       - name: Building MacOS
         if: startsWith(matrix.os, 'macos')
         run: |
           cd samples/${{matrix.sample}}
-          haxelib run lime build mac -debug
+          haxelib run lime build mac -debug -D HXVLC_NO_GC_FINALIZER
           tar -zcvf build.tar.gz export/macos/bin
 
       - name: Building Linux
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           cd samples/${{matrix.sample}}
-          haxelib run lime build linux -debug
+          haxelib run lime build linux -debug -D HXVLC_NO_GC_FINALIZER
           tar -zcvf build.tar.gz export/linux/bin
 
       - name: Upload Artifact Windows
@@ -134,7 +134,7 @@ jobs:
           haxelib run lime config ANDROID_SETUP true
 
       - name: Building
-        run: cd samples/${{matrix.sample}} && haxelib run lime build android -debug
+        run: cd samples/${{matrix.sample}} && haxelib run lime build android -debug -D HXVLC_NO_GC_FINALIZER
 
       - name: Upload Artifact
         uses: actions/upload-artifact@main
