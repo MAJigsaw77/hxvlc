@@ -1062,7 +1062,9 @@ class Video extends Bitmap
 		if (alAudioContext != null && alSource != null)
 		{
 			alMutex.acquire();
+
 			alAudioContext.sourcePause(alSource);
+
 			alMutex.release();
 		}
 		#end
@@ -1075,7 +1077,9 @@ class Video extends Bitmap
 		if (alAudioContext != null && alSource != null)
 		{
 			alMutex.acquire();
+
 			alAudioContext.sourcePlay(alSource);
+
 			alMutex.release();
 		}
 		#end
@@ -1088,7 +1092,9 @@ class Video extends Bitmap
 		if (alAudioContext != null && alSource != null)
 		{
 			alMutex.acquire();
+
 			alAudioContext.sourcef(alSource, alAudioContext.GAIN, mute ? 0 : volume);
+
 			alMutex.release();
 		}
 		#end
