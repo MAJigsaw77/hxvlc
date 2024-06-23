@@ -5,18 +5,18 @@ import flixel.util.FlxAxes;
 import flixel.FlxG;
 import haxe.io.Bytes;
 import hxvlc.externs.Types;
-import hxvlc.openfl.Location;
+import hxvlc.util.Location;
 import hxvlc.openfl.Video;
 import sys.FileSystem;
 
 using StringTools;
 
-class FlxVideo extends Video
+class FlxVideo extends Video implements IFlxVideo
 {
 	/**
 	 * Whether the video should automatically pause when focus is lost.
 	 *
-	 * @warning Must be set before loading a video.
+	 * WARNING: Must be set before loading a video.
 	 */
 	public var autoPause:Bool = FlxG.autoPause;
 
@@ -27,9 +27,14 @@ class FlxVideo extends Video
 	 */
 	public var autoResizeMode:FlxAxes = FlxAxes.XY;
 
+	/**
+	 * The video's volume multiplier used in `updateVolume` BY DEFAULT.
+	 */
+    public var volumeMultiplier:Float = 100;
+
 	#if FLX_SOUND_SYSTEM
 	/**
-	 * Whether Flixel should automatically adjust the volume according to the Flixel sound system's current volume.
+	 * Whether `updateVolume` should be atomatically called and used according to the Flixel sound system's current volume.
 	 */
 	public var autoVolumeHandle:Bool = true;
 	#end
@@ -54,6 +59,14 @@ class FlxVideo extends Video
 		FlxG.addChildBelowMouse(this);
 	}
 
+	/**
+	 * Loads a video.
+	 *
+	 * @param location The local filesystem path, the media location URL, the ID of an open file descriptor, or the bitstream input.
+	 * @param options Additional options to add to the LibVLC Media.
+	 *
+	 * @return `true` if the video loaded successfully, `false` otherwise.
+	 */
 	public override function load(location:Location, ?options:Array<String>):Bool
 	{
 		if (autoPause)
@@ -87,6 +100,24 @@ class FlxVideo extends Video
 		return super.load(location, options);
 	}
 
+	/**
+	 * Update the video's current volume.
+     *
+     * @param volume The volume to apply to the video.
+     * @param multiplier The volume's multiplier (if it's `null` or by default it equals to `volumeMultiplier`).
+     *
+     * @return The final volume.
+	 */
+	public function updateVolume(volume:Float = 0, ?multiplier:Float):Int
+	{
+		final finalVolume:Int = Math.floor(volume * (multiplier == null ? volumeMultiplier : multiplier));
+
+		if (volume != finalVolume)
+			volume = finalVolume;
+
+		return finalVolume;
+	}
+
 	public override function dispose():Void
 	{
 		if (FlxG.signals.focusGained.has(resume))
@@ -114,12 +145,7 @@ class FlxVideo extends Video
 
 		#if FLX_SOUND_SYSTEM
 		if (autoVolumeHandle)
-		{
-			final curVolume:Int = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * 100);
-
-			if (volume != curVolume)
-				volume = curVolume;
-		}
+			updateVolume((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
 		#end
 	}
 }

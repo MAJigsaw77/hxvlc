@@ -7,7 +7,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import haxe.io.Bytes;
 import hxvlc.externs.Types;
-import hxvlc.openfl.Location;
+import hxvlc.util.Location;
 import hxvlc.openfl.Video;
 import sys.FileSystem;
 
@@ -16,18 +16,23 @@ using StringTools;
 /**
  * `FlxVideoSprite` is used for displaying video files in HaxeFlixel as sprites.
  */
-class FlxVideoSprite extends FlxSprite
+class FlxVideoSprite extends FlxSprite implements IFlxVideo
 {
 	/**
 	 * Whether the video should automatically pause when focus is lost.
 	 *
-	 * @warning Must be set before loading a video.
+	 * WARNING: Must be set before loading a video.
 	 */
 	public var autoPause:Bool = FlxG.autoPause;
 
+	/**
+	 * The video's volume multiplier used in `updateVolume` BY DEFAULT.
+	 */
+    public var volumeMultiplier:Float = 100;
+
 	#if FLX_SOUND_SYSTEM
 	/**
-	 * Whether Flixel should automatically adjust the volume according to the Flixel sound system's current volume.
+	 * Whether `updateVolume` should be atomatically called and used according to the Flixel sound system's current volume.
 	 */
 	public var autoVolumeHandle:Bool = true;
 	#end
@@ -166,6 +171,24 @@ class FlxVideoSprite extends FlxSprite
 			bitmap.togglePaused();
 	}
 
+	/**
+	 * Update the video's current volume.
+     *
+     * @param volume The volume to apply to the video.
+     * @param multiplier The volume's multiplier (if it's `null` or by default it equals to `volumeMultiplier`).
+     *
+     * @return The final volume.
+	 */
+	public function updateVolume(volume:Float = 0, ?multiplier:Float):Int
+	{
+		final finalVolume:Int = Math.floor(volume * (multiplier == null ? volumeMultiplier : multiplier));
+
+		if (bitmap != null && volume != finalVolume)
+			bitmap.volume = finalVolume;
+
+		return finalVolume;
+	}
+
 	public override function destroy():Void
 	{
 		if (FlxG.signals.focusGained.has(resume))
@@ -206,12 +229,7 @@ class FlxVideoSprite extends FlxSprite
 	{
 		#if FLX_SOUND_SYSTEM
 		if (autoVolumeHandle)
-		{
-			final curVolume:Int = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * 100);
-
-			if (bitmap != null && bitmap.volume != curVolume)
-				bitmap.volume = curVolume;
-		}
+			updateVolume((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
 		#end
 
 		super.update(elapsed);

@@ -10,9 +10,10 @@ import haxe.Exception;
 import haxe.Int64;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
-import hxvlc.openfl.Location;
+import hxvlc.util.Location;
 import hxvlc.openfl.Stats;
 import hxvlc.util.Handle;
+import hxvlc.util.igenerals.IVideo;
 import lime.app.Application;
 import lime.app.Event;
 #if (HXVLC_OPENAL && lime_openal)
@@ -281,7 +282,7 @@ static void media_player_callbacks(const libvlc_event_t *p_event, void *p_data)
 	hx::SetTopOfStack((int *)0, true);
 }')
 @:keep
-class Video extends Bitmap
+class Video extends Bitmap implements IVideo
 {
 	/**
 	 * Indicates whether to use GPU texture for rendering.
