@@ -191,13 +191,15 @@ static void audio_play(void *data, const void *samples, unsigned count, int64_t 
 {
 	hx::SetTopOfStack((int *)99, true);
 
+	Video_obj *self = reinterpret_cast<Video_obj *>(data);
+
 	self->mutex->acquire();
 
 	unsigned byteCount = count * 4;
 
 	unsigned char *soundSamples = new unsigned char[byteCount];
 	memcpy(soundSamples, samples, byteCount);
-	reinterpret_cast<Video_obj *>(data)->audioPlay(soundSamples, byteCount);
+	self->audioPlay(soundSamples, byteCount);
 
 	delete[] soundSamples;
 
