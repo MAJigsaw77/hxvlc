@@ -1035,7 +1035,7 @@ class Video extends Bitmap
 			{
 				final newBuffer:ALBuffer = alBuffers.pop();
 
-				final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(cast(samples, cpp.RawPointer<cpp.UInt8>)).toUnmanagedArray(count));
+				final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(untyped __cpp__('(unsigned char*) {0}', samples)).toUnmanagedArray(count));
 				alAudioContext.bufferData(newBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length * 4, 44100);
 				alAudioContext.sourceQueueBuffer(alSource, newBuffer);
 
