@@ -191,6 +191,8 @@ static void audio_play(void *data, const void *samples, unsigned count, int64_t 
 {
 	hx::SetTopOfStack((int *)99, true);
 
+	self->mutex->acquire();
+
 	unsigned byteCount = count * 4;
 
 	unsigned char *soundSamples = new unsigned char[byteCount];
@@ -198,6 +200,8 @@ static void audio_play(void *data, const void *samples, unsigned count, int64_t 
 	reinterpret_cast<Video_obj *>(data)->audioPlay(soundSamples, byteCount);
 
 	delete[] soundSamples;
+
+	self->mutex->release();
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -1031,12 +1035,11 @@ class Video extends Bitmap
 					alBuffers.push(alBuffer);
 			}
 
-			final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(samples).toUnmanagedArray(count));
-
 			if (alBuffers.length > 0)
 			{
 				final newBuffer:ALBuffer = alBuffers.pop();
 
+				final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(samples).toUnmanagedArray(count));
 				alAudioContext.bufferData(newBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length, 44100);
 				alAudioContext.sourceQueueBuffer(alSource, newBuffer);
 
