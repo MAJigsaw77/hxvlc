@@ -205,6 +205,15 @@ static void audio_pause(void *data, int64_t pts)
 	hx::SetTopOfStack((int *)0, true);
 }
 
+static void audio_resume(void *data, int64_t pts)
+{
+	hx::SetTopOfStack((int *)99, true);
+
+	reinterpret_cast<Video_obj *>(data)->audioResume();
+
+	hx::SetTopOfStack((int *)0, true);
+}
+
 static void audio_set_volume(void *data, float volume, bool mute)
 {
 	hx::SetTopOfStack((int *)99, true);
@@ -672,7 +681,7 @@ class Video extends Bitmap
 						alMutex.release();
 
 						LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'),
-							null, null, null, untyped __cpp__('this'));
+							untyped __cpp__('audio_resume'), null, null, untyped __cpp__('this'));
 
 						LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 						LibVLC.audio_set_format(mediaPlayer, "S16N", 44100, 2);
@@ -1054,6 +1063,19 @@ class Video extends Bitmap
 		{
 			alMutex.acquire();
 			alAudioContext.sourcePause(alSource);
+			alMutex.release();
+		}
+		#end
+	}
+
+	@:noCompletion
+	private function audioResume():Void
+	{
+		#if (HXVLC_OPENAL && lime_openal)
+		if (alAudioContext != null && alSource != null)
+		{
+			alMutex.acquire();
+			alAudioContext.sourcePlay(alSource);
 			alMutex.release();
 		}
 		#end
