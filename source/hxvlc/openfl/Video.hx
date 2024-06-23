@@ -1018,7 +1018,7 @@ class Video extends Bitmap
 	}
 
 	@:noCompletion
-	private function audioPlay(samples:cpp.RawPointer<cpp.Void>, count:cpp.UInt32):Void
+	private function audioPlay(samples:cpp.RawConstPointer<cpp.Void>, count:cpp.UInt32):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
 		if (alAudioContext != null && alSource != null && alBuffers != null)
