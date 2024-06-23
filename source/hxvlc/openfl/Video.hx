@@ -195,13 +195,7 @@ static void audio_play(void *data, const void *samples, unsigned count, int64_t 
 
 	self->mutex->acquire();
 
-	unsigned byteCount = count * 4;
-
-	unsigned char *soundSamples = new unsigned char[byteCount];
-	memcpy(soundSamples, samples, byteCount);
-	self->audioPlay(soundSamples, byteCount);
-
-	delete[] soundSamples;
+	self->audioPlay(samples, count);
 
 	self->mutex->release();
 
@@ -1024,7 +1018,7 @@ class Video extends Bitmap
 	}
 
 	@:noCompletion
-	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32):Void
+	private function audioPlay(samples:cpp.RawPointer<cpp.Void>, count:cpp.UInt32):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
 		if (alAudioContext != null && alSource != null && alBuffers != null)
@@ -1041,8 +1035,8 @@ class Video extends Bitmap
 			{
 				final newBuffer:ALBuffer = alBuffers.pop();
 
-				final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(samples).toUnmanagedArray(count));
-				alAudioContext.bufferData(newBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length, 44100);
+				final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(cast(samples, cpp.RawPointer<cpp.UInt8>)).toUnmanagedArray(count));
+				alAudioContext.bufferData(newBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length * 4, 44100);
 				alAudioContext.sourceQueueBuffer(alSource, newBuffer);
 
 				if (alAudioContext.getSourcei(alSource, alAudioContext.SOURCE_STATE) != alAudioContext.PLAYING)
