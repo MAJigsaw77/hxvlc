@@ -1,22 +1,35 @@
 package hxvlc.externs;
 
+/**
+ * Dummy class for importing LibVLC native structures.
+ */
 #if !cpp
 #error 'LibVLC supports only C++ target platforms.'
 #end
 class Types {}
 
+@:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
 @:native('libvlc_instance_t')
 extern class LibVLC_Instance_T {}
 
-typedef LibVLC_Time_T = cpp.Int64;
+@:dox(hide)
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include('vlc/vlc.h')
+@:native('libvlc_time_t')
+@:scalar
+@:coreType
+@:notNull
+extern abstract LibVLC_Time_T from cpp.Int64 to cpp.Int64 {}
 
+@:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
 @:native('libvlc_media_t')
 extern class LibVLC_Media_T {}
 
+@:dox(hide)
 extern enum abstract LibVLC_Meta_T(LibVLC_Meta_T_Impl)
 {
 	@:native('libvlc_meta_Title')
@@ -81,6 +94,7 @@ extern enum abstract LibVLC_Meta_T(LibVLC_Meta_T_Impl)
 @:native('libvlc_meta_t')
 private extern class LibVLC_Meta_T_Impl {}
 
+@:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
 @:unreflective
@@ -119,6 +133,7 @@ extern class LibVLC_Media_Stats_T
 	var f_send_bitrate:Single;
 }
 
+@:dox(hide)
 extern enum abstract LibVLC_Media_Parse_Flag_T(LibVLC_Media_Parse_Flag_T_Impl)
 {
 	@:native('libvlc_media_parse_local')
@@ -141,6 +156,7 @@ extern enum abstract LibVLC_Media_Parse_Flag_T(LibVLC_Media_Parse_Flag_T_Impl)
 @:native('libvlc_media_parse_flag_t')
 private extern class LibVLC_Media_Parse_Flag_T_Impl {}
 
+@:dox(hide)
 extern enum abstract LibVLC_Media_Parsed_Status_T(LibVLC_Media_Parsed_Status_T_Impl)
 {
 	@:native('libvlc_media_parsed_status_skipped')
@@ -161,11 +177,13 @@ extern enum abstract LibVLC_Media_Parsed_Status_T(LibVLC_Media_Parsed_Status_T_I
 @:native('libvlc_media_parsed_status_t')
 private extern class LibVLC_Media_Parsed_Status_T_Impl {}
 
+@:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
 @:native('libvlc_media_player_t')
 extern class LibVLC_Media_Player_T {}
 
+@:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
 @:unreflective
@@ -181,6 +199,7 @@ extern class LibVLC_Audio_Output_T
 	var p_next:cpp.RawPointer<LibVLC_Audio_Output_T>;
 }
 
+@:dox(hide)
 extern enum abstract LibVLC_Audio_Output_Channel_T(LibVLC_Audio_Output_Channel_T_Impl)
 {
 	@:native('libvlc_AudioChannel_Error')
@@ -205,21 +224,25 @@ extern enum abstract LibVLC_Audio_Output_Channel_T(LibVLC_Audio_Output_Channel_T
 @:native('libvlc_audio_output_channel_t')
 private extern class LibVLC_Audio_Output_Channel_T_Impl {}
 
+@:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
 @:native('libvlc_event_manager_t')
 extern class LibVLC_Event_Manager_T {}
 
+@:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
 @:native('libvlc_event_t')
 extern class LibVLC_Event_T {}
 
+@:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
 @:native('libvlc_log_t')
 extern class LibVLC_Log_T {}
 
+@:dox(hide)
 extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 {
 	@:native('libvlc_MediaMetaChanged')
@@ -360,32 +383,61 @@ extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 @:native('libvlc_event_e')
 private extern class LibVLC_Event_E_Impl {}
 
+@:dox(hide)
 typedef LibVLC_Callback_T = cpp.Callable<(p_event:cpp.RawConstPointer<LibVLC_Event_T>, p_data:cpp.RawPointer<cpp.Void>) -> Void>;
 
+@:dox(hide)
 typedef LibVLC_Log_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, level:Int, ctx:cpp.RawConstPointer<LibVLC_Log_T>, fmt:cpp.ConstCharStar,
 		args:cpp.VarList) -> Void>;
 
+@:dox(hide)
 typedef LibVLC_Media_Open_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>, datap:cpp.RawPointer<cpp.RawPointer<cpp.Void>>,
 		sizep:cpp.RawPointer<cpp.UInt64>) -> Int>;
 
+@:dox(hide)
 typedef LibVLC_Media_Read_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>, buf:cpp.RawPointer<cpp.UInt8>, len:cpp.SizeT) -> cpp.SSizeT>;
+
+@:dox(hide)
 typedef LibVLC_Media_Seek_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>, offset:cpp.UInt64) -> Int>;
+
+@:dox(hide)
 typedef LibVLC_Media_Close_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>) -> Void>;
 
+@:dox(hide)
 typedef LibVLC_Video_Format_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.RawPointer<cpp.Void>>, chroma:cpp.CharStar, width:cpp.RawPointer<cpp.UInt32>,
 		height:cpp.RawPointer<cpp.UInt32>, pitches:cpp.RawPointer<cpp.UInt32>, lines:cpp.RawPointer<cpp.UInt32>) -> cpp.UInt32>;
 
+@:dox(hide)
 typedef LibVLC_Video_Cleanup_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>) -> Void>;
+
+@:dox(hide)
 typedef LibVLC_Video_Lock_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, p_pixels:cpp.RawPointer<cpp.RawPointer<cpp.Void>>) -> cpp.RawPointer<cpp.Void>>;
+
+@:dox(hide)
 typedef LibVLC_Video_Unlock_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, id:cpp.RawPointer<cpp.Void>, p_pixels:cpp.VoidStarConstStar) -> Void>;
+
+@:dox(hide)
 typedef LibVLC_Video_Display_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>, picture:cpp.RawPointer<cpp.Void>) -> Void>;
+
+@:dox(hide)
 typedef LibVLC_Audio_Play_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, samples:cpp.RawConstPointer<cpp.Void>, count:cpp.UInt32, pts:cpp.Int64) -> Void>;
+
+@:dox(hide)
 typedef LibVLC_Audio_Pause_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, pts:cpp.Int64) -> Void>;
+
+@:dox(hide)
 typedef LibVLC_Audio_Resume_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, pts:cpp.Int64) -> Void>;
+
+@:dox(hide)
 typedef LibVLC_Audio_Flush_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, pts:cpp.Int64) -> Void>;
+
+@:dox(hide)
 typedef LibVLC_Audio_Drain_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>) -> Void>;
+
+@:dox(hide)
 typedef LibVLC_Audio_Set_Volume_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, volume:Single, mute:Bool) -> Void>;
 
+@:dox(hide)
 extern enum abstract LibVLC_Media_Player_Role_T(LibVLC_Media_Player_Role_T_Impl)
 {
 	@:native('libvlc_role_None')
