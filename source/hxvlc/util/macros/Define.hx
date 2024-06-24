@@ -5,10 +5,13 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 #end
 
+/**
+ * Utility class to retrieve values from compiler defines.
+ */
 class Define
 {
 	/**
-	 * Retrieves an string value from the compiler define if it is set.
+	 * Retrieves a string value from the compiler define if it is set.
 	 * If the define is not set or the value is not a valid string, it returns the specified default value.
 	 *
 	 * @param key The compiler define key to check.
@@ -54,7 +57,7 @@ class Define
 	}
 
 	/**
-	 * Retrieves an float value from the compiler define if it is set.
+	 * Retrieves a float value from the compiler define if it is set.
 	 * If the define is not set or the value is not a valid float, it returns the specified default value.
 	 *
 	 * @param key The compiler define key to check.
