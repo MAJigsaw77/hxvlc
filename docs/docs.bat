@@ -1,3 +1,3 @@
 @echo off
 haxe docs/docs.hxml
-haxelib run dox -i docs -o pages --title "hxVLC Documentation" -in "hxvlc"
+haxelib run dox -theme ./docs/theme -i docs -o pages --title "hxVLC Documentation" -in "hxvlc" --toplevel-package hxvlc
