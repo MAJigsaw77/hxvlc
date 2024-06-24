@@ -23,18 +23,18 @@ class FlxVideo extends Video implements IFlxVideo
 	/**
 	 * Determines the automatic resizing behavior for the video.
 	 *
-	 * @warning Must be set before loading a video if you want to set it to `NONE`.
+	 * WARNING: Must be set before loading a video if you want to set it to `NONE`.
 	 */
 	public var autoResizeMode:FlxAxes = FlxAxes.XY;
 
 	/**
-	 * The video's volume multiplier used in `updateVolume` BY DEFAULT.
+	 * The video's volume multiplier.
 	 */
     public var volumeMultiplier:Float = 100;
 
 	#if FLX_SOUND_SYSTEM
 	/**
-	 * Whether `updateVolume` should be atomatically called and used according to the Flixel sound system's current volume.
+	 * Whether Flixel should automatically adjust the volume according to the Flixel sound system's current volume.
 	 */
 	public var autoVolumeHandle:Bool = true;
 	#end
@@ -100,24 +100,6 @@ class FlxVideo extends Video implements IFlxVideo
 		return super.load(location, options);
 	}
 
-	/**
-	 * Update the video's current volume.
-     *
-     * @param volume The volume to apply to the video.
-     * @param multiplier The volume's multiplier (if it's `null` or by default it equals to `volumeMultiplier`).
-     *
-     * @return The final volume.
-	 */
-	public function updateVolume(volume:Float = 0, ?multiplier:Float):Int
-	{
-		final finalVolume:Int = Math.floor(volume * (multiplier == null ? volumeMultiplier : multiplier));
-
-		if (volume != finalVolume)
-			volume = finalVolume;
-
-		return finalVolume;
-	}
-
 	public override function dispose():Void
 	{
 		if (FlxG.signals.focusGained.has(resume))
@@ -145,8 +127,15 @@ class FlxVideo extends Video implements IFlxVideo
 
 		#if FLX_SOUND_SYSTEM
 		if (autoVolumeHandle)
-			updateVolume((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
+			volume = (FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume;
 		#end
+	}
+
+	@:noCompletion
+	override private function set_volume(value:Float):Int
+	{
+		final finalVolume:Int = Math.floor(value * volumeMultiplier);
+		return finalVolume != volume ? finalVolume : super.set_volume(finalVolume);
 	}
 }
 #end

@@ -294,12 +294,12 @@ class Video extends Bitmap implements IVideo
 	/**
 	 * The format width, in pixels.
 	 */
-	public var formatWidth(default, null):cpp.UInt32 = 0;
+	public var formatWidth(get, null):cpp.UInt32 = 0;
 
 	/**
 	 * The format height, in pixels.
 	 */
-	public var formatHeight(default, null):cpp.UInt32 = 0;
+	public var formatHeight(get, null):cpp.UInt32 = 0;
 
 	/**
 	 * Statistics related to the media resource.
@@ -354,7 +354,7 @@ class Video extends Bitmap implements IVideo
 	/**
 	 * The media player's play rate.
 	 *
-	 * @warning Depending on the underlying media, the requested rate may be different from the real playback rate.
+	 * WARNING: Depending on the underlying media, the requested rate may be different from the real playback rate.
 	 */
 	public var rate(get, set):Single;
 
@@ -376,7 +376,7 @@ class Video extends Bitmap implements IVideo
 	/**
 	 * Selects an audio output module.
 	 *
-	 * @note Any change will take effect only after playback is stopped and restarted.
+	 * Note: Any change will take effect only after playback is stopped and restarted.
 	 *
 	 * Audio output cannot be changed while playing.
 	 */
@@ -385,12 +385,12 @@ class Video extends Bitmap implements IVideo
 	/**
 	 * The audio's mute status.
 	 *
-	 * @warning This does not always work.
+	 * WARNING: This does not always work.
 	 * If there is no active audio playback stream, the mute status might not be available.
 	 * If digital pass-through (S/PDIF, HDMI...) is in use, muting may be inapplicable.
 	 * Also some audio output plugins do not support muting at all.
 	 *
-	 * @note To force silent playback, disable all audio tracks. This is more efficient and reliable than mute.
+	 * Note: To force silent playback, disable all audio tracks. This is more efficient and reliable than mute.
 	 */
 	public var mute(get, set):Bool;
 
@@ -427,72 +427,72 @@ class Video extends Bitmap implements IVideo
 	/**
 	 * An event that is dispatched when the media player is opening.
 	 */
-	public var onOpening(default, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onOpening(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player is playing.
 	 */
-	public var onPlaying(default, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onPlaying(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player stops.
 	 */
-	public var onStopped(default, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onStopped(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player is paused.
 	 */
-	public var onPaused(default, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onPaused(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player reaches the end.
 	 */
-	public var onEndReached(default, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onEndReached(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player encounters an error.
 	 */
-	public var onEncounteredError(default, null):Event<String->Void> = new Event<String->Void>();
+	public var onEncounteredError(get, null):Event<String->Void> = new Event<String->Void>();
 
 	/**
 	 * An event that is dispatched when the media changes.
 	 */
-	public var onMediaChanged(default, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onMediaChanged(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player is corked.
 	 */
-	public var onCorked(default, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onCorked(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player is uncorked.
 	 */
-	public var onUncorked(default, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onUncorked(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media player changes time.
 	 */
-	public var onTimeChanged(default, null):Event<Int64->Void> = new Event<Int64->Void>();
+	public var onTimeChanged(get, null):Event<Int64->Void> = new Event<Int64->Void>();
 
 	/**
 	 * An event that is dispatched when the media player changes position.
 	 */
-	public var onPositionChanged(default, null):Event<Single->Void> = new Event<Single->Void>();
+	public var onPositionChanged(get, null):Event<Single->Void> = new Event<Single->Void>();
 
 	/**
 	 * An event that is dispatched when the media player changes the length.
 	 */
-	public var onLengthChanged(default, null):Event<Int64->Void> = new Event<Int64->Void>();
+	public var onLengthChanged(get, null):Event<Int64->Void> = new Event<Int64->Void>();
 
 	/**
 	 * An event that is dispatched when the media player changes the chapter.
 	 */
-	public var onChapterChanged(default, null):Event<Int->Void> = new Event<Int->Void>();
+	public var onChapterChanged(get, null):Event<Int->Void> = new Event<Int->Void>();
 
 	/**
 	 * An event that is dispatched when the format is being initialized.
 	 */
-	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onFormatSetup(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
@@ -1076,6 +1076,18 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
+	private function get_formatWidth():cpp.UInt32
+	{
+		return formatWidth;
+	}
+
+	@:noCompletion
+	private function get_formatHeight():cpp.UInt32
+	{
+		return formatHeight;
+	}
+
+	@:noCompletion
 	private function get_mrl():String
 	{
 		if (mediaPlayer != null)
@@ -1356,5 +1368,90 @@ class Video extends Bitmap implements IVideo
 	private override function set_bitmapData(value:BitmapData):BitmapData
 	{
 		return __bitmapData = value;
+	}
+
+	// Won't make these interfaces functions down below inlines so overriding them is possible for extensions  - Nex
+	@:noCompletion
+	private function get_onOpening():Event<Void->Void>
+	{
+		return onOpening;
+	}
+
+	@:noCompletion
+	private function get_onPlaying():Event<Void->Void>
+	{
+		return onPlaying;
+	}
+
+	@:noCompletion
+	private function get_onStopped():Event<Void->Void>
+	{
+		return onStopped;
+	}
+
+	@:noCompletion
+	private function get_onPaused():Event<Void->Void>
+	{
+		return onPaused;
+	}
+
+	@:noCompletion
+	private function get_onEndReached():Event<Void->Void>
+	{
+		return onEndReached;
+	}
+
+	@:noCompletion
+	private function get_onEncounteredError():Event<String->Void>
+	{
+		return onEncounteredError;
+	}
+
+	@:noCompletion
+	private function get_onMediaChanged():Event<Void->Void>
+	{
+		return onMediaChanged;
+	}
+
+	@:noCompletion
+	private function get_onCorked():Event<Void->Void>
+	{
+		return onCorked;
+	}
+
+	@:noCompletion
+	private function get_onUncorked():Event<Void->Void>
+	{
+		return onUncorked;
+	}
+
+	@:noCompletion
+	private function get_onTimeChanged():Event<Int64->Void>
+	{
+		return onTimeChanged;
+	}
+
+	@:noCompletion
+	private function get_onPositionChanged():Event<Single->Void>
+	{
+		return onPositionChanged;
+	}
+
+	@:noCompletion
+	private function get_onLengthChanged():Event<Int64->Void>
+	{
+		return onLengthChanged;
+	}
+
+	@:noCompletion
+	private function get_onChapterChanged():Event<Int->Void>
+	{
+		return onChapterChanged;
+	}
+
+	@:noCompletion
+	private function get_onFormatSetup():Event<Void->Void>
+	{
+		return onFormatSetup;
 	}
 }

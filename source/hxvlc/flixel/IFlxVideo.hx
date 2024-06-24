@@ -16,23 +16,13 @@ interface IFlxVideo extends IVideo
 	public var autoPause:Bool;
 
     /**
-	 * Update the video's current volume.
-     *
-     * @param volume The volume to apply to the video.
-     * @param multiplier The volume's multiplier (if it's `null` or by default it equals to `volumeMultiplier`).
-     *
-     * @return The final volume.
-	 */
-    public function updateVolume(volume:Float = 0, ?multiplier:Float):Int;
-
-    /**
-	 * The video's volume multiplier used in `updateVolume` BY DEFAULT.
+	 * The video's volume multiplier.
 	 */
     public var volumeMultiplier:Float;
 
     #if FLX_SOUND_SYSTEM
     /**
-	 * Whether `updateVolume` should be atomatically called and used according to the Flixel sound system's current volume.
+	 * Whether Flixel should automatically adjust the volume according to the Flixel sound system's current volume.
 	 */
 	public var autoVolumeHandle:Bool;
 	#end
