@@ -13,7 +13,7 @@ import hxvlc.externs.Types;
 import hxvlc.util.Location;
 import hxvlc.openfl.Stats;
 import hxvlc.util.Handle;
-import hxvlc.util.igenerals.IVideo;
+import hxvlc.util.interfaces.IVideo;
 import lime.app.Application;
 import lime.app.Event;
 #if (HXVLC_OPENAL && lime_openal)

@@ -1,7 +1,7 @@
 package hxvlc.flixel;
 
 #if flixel
-import hxvlc.util.igenerals.IVideo;
+import hxvlc.util.interfaces.IVideo;
 
 /**
  * `IFlxVideo` is an interface used for any kind of Flixel Video objects.
