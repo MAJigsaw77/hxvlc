@@ -189,7 +189,7 @@ class Handle
 			#end
 			args.push_back("--text-renderer=dummy");
 			#if HXVLC_VERBOSE
-			args.push_back("--verbose=" + Define.getDefineInt('HXVLC_VERBOSE', 0));
+			args.push_back("--verbose=" + Define.getInt('HXVLC_VERBOSE', 0));
 			#elseif !HXVLC_LOGGING
 			args.push_back("--quiet");
 			#end
