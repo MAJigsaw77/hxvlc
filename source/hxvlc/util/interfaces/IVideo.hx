@@ -121,11 +121,6 @@ interface IVideo
 	public var volume(get, set):Int;
 
 	/**
-	 * The video's volume multiplier.
-	 */
-	public var volumeMultiplier(get, set):Float;
-
-	/**
 	 * Get the number of available audio tracks.
 	 */
 	public var trackCount(get, never):Int;

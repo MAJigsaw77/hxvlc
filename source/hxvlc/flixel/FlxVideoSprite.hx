@@ -7,6 +7,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import haxe.io.Bytes;
 import haxe.Int64;
+import hxvlc.util.macros.Define;
 import hxvlc.externs.Types;
 import hxvlc.util.Location;
 import hxvlc.openfl.Video;
@@ -147,11 +148,6 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 	 * The audio volume in percents (0 = mute, 100 = nominal / 0dB).
 	 */
 	public var volume(get, set):Int;
-
-	/**
-	 * The video's volume multiplier.
-	 */
-	public var volumeMultiplier(get, set):Float;
 
 	/**
 	 * Get the number of available audio tracks.
@@ -572,19 +568,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 	@:noCompletion
 	private function set_volume(value:Float):Int
 	{
-		return bitmap == null ? Math.floor(value * volumeMultiplier) : (bitmap.volume = value);
-	}
-
-	@:noCompletion
-	private function get_volumeMultiplier():Float
-	{
-		return bitmap == null ? 100 : bitmap.volumeMultiplier;
-	}
-
-	@:noCompletion
-	private function set_volumeMultiplier(value:Float):Float
-	{
-		return bitmap == null ? value : (bitmap.volumeMultiplier = value);
+		return bitmap == null ? Math.floor(value * Define.getFloat("HXVLC_VOLUME_MULTIPLIER", 100)) : (bitmap.volume = value);
 	}
 
 	@:noCompletion

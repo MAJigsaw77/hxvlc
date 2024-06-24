@@ -12,6 +12,7 @@ import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Stats;
 import hxvlc.util.interfaces.IVideo;
+import hxvlc.util.macros.Define;
 import hxvlc.util.Location;
 import hxvlc.util.Handle;
 import lime.app.Application;
@@ -392,11 +393,6 @@ class Video extends Bitmap implements IVideo
 	 * The audio volume in percents (0 = mute, 100 = nominal / 0dB).
 	 */
 	public var volume(get, set):Int;
-
-	/**
-	 * The video's volume multiplier.
-	 */
-	@:isVar public var volumeMultiplier(get, set):Float = 100;
 
 	/**
 	 * Get the number of available audio tracks.
@@ -1317,24 +1313,12 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private function set_volume(value:Float):Int
 	{
-		final finalVolume:Int = Math.floor(value * volumeMultiplier);
+		final finalVolume:Int = Math.floor(value * Define.getFloat("HXVLC_VOLUME_MULTIPLIER", 100));
 
 		if (mediaPlayer != null && volume != finalVolume && LibVLC.audio_set_volume(mediaPlayer, finalVolume) == -1)
 			Log.warn('The volume is out of range');
 
 		return finalVolume;
-	}
-
-	@:noCompletion
-	private function get_volumeMultiplier():Float
-	{
-		return volumeMultiplier;
-	}
-
-	@:noCompletion
-	private function set_volumeMultiplier(value:Float):Float
-	{
-		return volumeMultiplier = value;
 	}
 
 	@:noCompletion
