@@ -1,16 +1,23 @@
-name: github-pages
+name: Github-pages
 on:
- workflow_dispatch:
-
+  push:
+    branches: main
+    paths-ignore:
+      - '.github/workflows/format.yml'
+      - 'samples/**'
+      - 'LICENSE'
+      - 'README.md'
+      - 'TODO.md'
+      - 'haxelib.json'
+      - 'hxformat.json'
+  workflow_dispatch:
 permissions:
   contents: write
   pages: write
   id-token: write
-
 concurrency:
-  group: "pages"
+  group: 'pages'
   cancel-in-progress: false
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,7 +40,7 @@ jobs:
           haxelib install openfl --quiet
           haxelib install flixel --quiet
           haxelib install hscript --quiet
-          haxelib git dox https://github.com/HaxeFoundation/dox
+          haxelib install dox --quiet
           haxelib dev hxvlc .
 
       - name: Creating Documentation Site
