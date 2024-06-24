@@ -39,6 +39,10 @@ class Main extends Sprite
 
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
 
+		#if (mobile && debug)
+		FlxG.log.redirectTraces = true;
+		#end
+
 		FlxG.signals.gameResized.add(onResizeGame);
 
 		final refreshRate:Int = #if linux 60 #else Lib.application.window.displayMode.refreshRate #end;
