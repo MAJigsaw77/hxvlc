@@ -565,7 +565,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 	}
 
 	@:noCompletion
-	private function set_volume(value:Float):Int
+	private function set_volume(value:Int):Int
 	{
 		return bitmap == null ? value : (bitmap.volume = value);
 	}
