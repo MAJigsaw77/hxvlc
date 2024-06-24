@@ -1038,7 +1038,7 @@ class Video extends Bitmap implements IVideo
 				alAudioContext.bufferData(alBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length * 4, 44100);
 				alAudioContext.sourceQueueBuffer(alSource, alBuffer);
 
-				// TODO: Audio synchronisation in case of a sudden desync.
+				// TODO: Audio synchronisation in case of a sudden desync using pts.
 
 				if (alAudioContext.getSourcei(alSource, alAudioContext.SOURCE_STATE) != alAudioContext.PLAYING)
 					alAudioContext.sourcePlay(alSource);
