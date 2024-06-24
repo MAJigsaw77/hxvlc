@@ -647,8 +647,7 @@ class Video extends Bitmap implements IVideo
 					untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerPositionChanged)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerLengthChanged, untyped __cpp__('media_player_callbacks'),
-					untyped __cpp__('this')) != 0)
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerLengthChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaPlayerLengthChanged)');
 
 				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerChapterChanged, untyped __cpp__('media_player_callbacks'),
@@ -962,7 +961,6 @@ class Video extends Bitmap implements IVideo
 		if (events[13])
 		{
 			events[13] = false;
-
 			@:privateAccess
 			if (bitmapData == null
 				|| (bitmapData.width != formatWidth || bitmapData.height != formatHeight)
@@ -1397,6 +1395,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	// Won't make these interfaces functions down below inlines so overriding them is possible for extensions  - Nex
+
 	@:noCompletion
 	private function get_onOpening():Event<Void->Void>
 	{

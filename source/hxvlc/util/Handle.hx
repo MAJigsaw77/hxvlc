@@ -184,7 +184,8 @@ class Handle
 			args.push_back("--no-video-title-show");
 			args.push_back("--no-xlib");
 			#if (windows || macos)
-			args.push_back(!resetCache && FileSystem.exists(Path.join([pluginsPath, 'plugins.dat'])) ? "--no-plugins-scan" : "--reset-plugins-cache");
+			args.push_back(!resetCache
+				&& FileSystem.exists(Path.join([pluginsPath, 'plugins.dat'])) ? "--no-plugins-scan" : "--reset-plugins-cache");
 			#end
 			args.push_back("--text-renderer=dummy");
 			#if HXVLC_VERBOSE

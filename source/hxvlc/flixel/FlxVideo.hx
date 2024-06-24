@@ -135,6 +135,7 @@ class FlxVideo extends Video implements IFlxVideo
 	override private function set_volume(value:Float):Int
 	{
 		final finalVolume:Int = Math.floor(value * volumeMultiplier);
+
 		return finalVolume != volume ? finalVolume : super.set_volume(finalVolume);
 	}
 }
