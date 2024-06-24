@@ -12,7 +12,6 @@ import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Stats;
 import hxvlc.util.interfaces.IVideo;
-import hxvlc.util.macros.Define;
 import hxvlc.util.Location;
 import hxvlc.util.Handle;
 import lime.app.Application;
@@ -1311,14 +1310,12 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
-	private function set_volume(value:Float):Int
+	private function set_volume(value:Int):Int
 	{
-		final finalVolume:Int = Math.floor(value * Define.getFloat("HXVLC_VOLUME_MULTIPLIER", 100));
-
-		if (mediaPlayer != null && volume != finalVolume && LibVLC.audio_set_volume(mediaPlayer, finalVolume) == -1)
+		if (mediaPlayer != null && LibVLC.audio_set_volume(mediaPlayer, value) == -1)
 			Log.warn('The volume is out of range');
 
-		return finalVolume;
+		return value;
 	}
 
 	@:noCompletion
