@@ -33,6 +33,7 @@ jobs:
           haxelib install openfl --quiet
           haxelib install flixel --quiet
           haxelib install hscript --quiet
+          haxelib git dox https://github.com/HaxeFoundation/dox
           haxelib dev hxvlc .
 
       - name: Creating Documentation Site
