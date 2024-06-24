@@ -7,11 +7,11 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import haxe.io.Bytes;
 import haxe.Int64;
-import hxvlc.util.macros.Define;
 import hxvlc.externs.Types;
+import hxvlc.util.macros.Define;
 import hxvlc.util.Location;
-import hxvlc.openfl.Video;
 import hxvlc.openfl.Stats;
+import hxvlc.openfl.Video;
 import lime.app.Event;
 import sys.FileSystem;
 
@@ -408,7 +408,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 	{
 		#if FLX_SOUND_SYSTEM
 		if (autoVolumeHandle)
-			volume = (FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume;
+			volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat("HXVLC_VOLUME_MULTIPLIER", 100));
 		#end
 
 		super.update(elapsed);
