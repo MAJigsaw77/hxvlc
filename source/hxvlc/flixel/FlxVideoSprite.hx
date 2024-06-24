@@ -263,7 +263,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 
 			#if FLX_SOUND_SYSTEM
 			if (autoVolumeHandle)
-				volume = (FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume;
+				volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat("HXVLC_VOLUME_MULTIPLIER", 100));
 			#end
 		});
 		onFormatSetup.add(function():Void
