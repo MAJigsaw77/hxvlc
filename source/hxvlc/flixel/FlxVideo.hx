@@ -30,7 +30,7 @@ class FlxVideo extends Video implements IFlxVideo
 	/**
 	 * The video's volume multiplier.
 	 */
-    public var volumeMultiplier:Float = 100;
+	public var volumeMultiplier:Float = 100;
 
 	#if FLX_SOUND_SYSTEM
 	/**
