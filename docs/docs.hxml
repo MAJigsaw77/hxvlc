@@ -1,0 +1,10 @@
+-cp source
+-lib hscript
+-lib flixel
+-lib openfl
+-lib lime
+-xml docs/doc.xml
+--cpp docs-bin
+--macro include('hxvlc')
+--no-output
+-D doc-gen
