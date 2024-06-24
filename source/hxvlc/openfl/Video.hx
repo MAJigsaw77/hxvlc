@@ -192,7 +192,7 @@ static void audio_play(void *data, const void *samples, unsigned count, int64_t 
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(data)->audioPlay(samples, count);
+	reinterpret_cast<Video_obj *>(data)->audioPlay(samples, count, pts);
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -201,7 +201,7 @@ static void audio_pause(void *data, int64_t pts)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(data)->audioPause();
+	reinterpret_cast<Video_obj *>(data)->audioPause(pts);
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -210,7 +210,7 @@ static void audio_resume(void *data, int64_t pts)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(data)->audioResume();
+	reinterpret_cast<Video_obj *>(data)->audioResume(pts);
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -668,14 +668,7 @@ class Video extends Bitmap implements IVideo
 						alMutex.acquire();
 
 						alAudioContext = AudioManager.context.openal;
-
 						alSource = alAudioContext.createSource();
-
-						alAudioContext.sourcef(alSource, alAudioContext.GAIN, 1);
-						alAudioContext.source3f(alSource, alAudioContext.POSITION, 0, 0, 0);
-						alAudioContext.sourcef(alSource, alAudioContext.PITCH, 1);
-						alAudioContext.sourcef(alSource, alAudioContext.ROLLOFF_FACTOR, 2);
-
 						alBuffers = alAudioContext.genBuffers(128);
 
 						alMutex.release();
@@ -1022,7 +1015,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
-	private function audioPlay(samples:cpp.RawConstPointer<cpp.Void>, count:cpp.UInt32):Void
+	private function audioPlay(samples:cpp.RawConstPointer<cpp.Void>, count:cpp.UInt32, pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
 		if (alAudioContext != null && alSource != null && alBuffers != null)
@@ -1039,12 +1032,13 @@ class Video extends Bitmap implements IVideo
 
 			if (alBuffers.length > 0)
 			{
-				final newBuffer:ALBuffer = alBuffers.shift();
-
 				final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(untyped __cpp__('(unsigned char*) {0}', samples)).toUnmanagedArray(count));
 
-				alAudioContext.bufferData(newBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length * 4, 44100);
-				alAudioContext.sourceQueueBuffer(alSource, newBuffer);
+				final alBuffer:ALBuffer = alBuffers.shift();
+				alAudioContext.bufferData(alBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length * 4, 44100);
+				alAudioContext.sourceQueueBuffer(alSource, alBuffer);
+
+				// TODO: Audio synchronisation in case of a sudden desync.
 
 				if (alAudioContext.getSourcei(alSource, alAudioContext.SOURCE_STATE) != alAudioContext.PLAYING)
 					alAudioContext.sourcePlay(alSource);
@@ -1056,14 +1050,15 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
-	private function audioPause():Void
+	private function audioPause(pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
 		if (alAudioContext != null && alSource != null)
 		{
 			alMutex.acquire();
 
-			alAudioContext.sourcePause(alSource);
+			if (alAudioContext.getSourcei(alSource, alAudioContext.SOURCE_STATE) == alAudioContext.PLAYING)
+				alAudioContext.sourcePause(alSource);
 
 			alMutex.release();
 		}
@@ -1071,14 +1066,15 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
-	private function audioResume():Void
+	private function audioResume(pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
 		if (alAudioContext != null && alSource != null)
 		{
 			alMutex.acquire();
 
-			alAudioContext.sourcePlay(alSource);
+			if (alAudioContext.getSourcei(alSource, alAudioContext.SOURCE_STATE) != alAudioContext.PLAYING)
+				alAudioContext.sourcePlay(alSource);
 
 			alMutex.release();
 		}
