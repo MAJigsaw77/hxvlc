@@ -1,10 +1,9 @@
 package hxvlc.util.igenerals;
 
-import lime.app.Event;
+import haxe.Int64;
 import hxvlc.openfl.Stats;
 import hxvlc.util.Location;
-import haxe.Int64;
-import cpp.UInt32;
+import lime.app.Event;
 
 // IMPORTANT NOTE: This Interface for now it's just used for the openfl video class (and extended by the flixel video interface) but I specifically made this just in case in the future hxvlc will work for more libs!  - Nex
 
@@ -16,12 +15,12 @@ interface IVideo
 	/**
 	 * The format width, in pixels.
 	 */
-	public var formatWidth(get, null):UInt32;
+	public var formatWidth(get, null):cpp.UInt32;
 
 	/**
 	 * The format height, in pixels.
 	 */
-	public var formatHeight(get, null):UInt32;
+	public var formatHeight(get, null):cpp.UInt32;
 
 	/**
 	 * Statistics related to the media resource.
@@ -210,12 +209,13 @@ interface IVideo
 	 * An event that is dispatched when the media player changes the chapter.
 	 */
 	public var onChapterChanged(get, null):Event<Int->Void>;
+
 	/**
 	 * An event that is dispatched when the format is being initialized.
 	 */
 	public var onFormatSetup(get, null):Event<Void->Void>;
 
-    /**
+	/**
 	 * Loads a video.
 	 *
 	 * @param location The local filesystem path, the media location URL, the ID of an open file descriptor, or the bitstream input.
@@ -223,21 +223,21 @@ interface IVideo
 	 *
 	 * @return `true` if the video loaded successfully, `false` otherwise.
 	 */
-    public function load(location:Location, ?options:Array<String>):Bool;
+	public function load(location:Location, ?options:Array<String>):Bool;
 
-    /**
+	/**
 	 * Plays the video.
 	 *
 	 * @return `true` if the video started playing, `false` otherwise.
 	 */
 	public function play():Bool;
 
-    /**
+	/**
 	 * Stops the video.
 	 */
 	public function stop():Void;
 
-    /**
+	/**
 	 * Pauses the video.
 	 */
 	public function pause():Void;
@@ -247,7 +247,7 @@ interface IVideo
 	 */
 	public function togglePaused():Void;
 
-    /**
+	/**
 	 * Resumes the video.
 	 */
 	public function resume():Void;
