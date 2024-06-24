@@ -263,7 +263,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 
 			#if FLX_SOUND_SYSTEM
 			if (autoVolumeHandle)
-				volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat("HXVLC_VOLUME_MULTIPLIER", 100));
+				volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER", 100));
 			#end
 		});
 		onFormatSetup.add(function():Void
@@ -408,7 +408,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 	{
 		#if FLX_SOUND_SYSTEM
 		if (autoVolumeHandle)
-			volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat("HXVLC_VOLUME_MULTIPLIER", 100));
+			volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER", 100));
 		#end
 
 		super.update(elapsed);
@@ -568,7 +568,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 	@:noCompletion
 	private function set_volume(value:Float):Int
 	{
-		return bitmap == null ? Math.floor(value * Define.getFloat("HXVLC_VOLUME_MULTIPLIER", 100)) : (bitmap.volume = value);
+		return bitmap == null ? value : (bitmap.volume = value);
 	}
 
 	@:noCompletion

@@ -122,7 +122,7 @@ class FlxVideo extends Video implements IFlxVideo
 
 		#if FLX_SOUND_SYSTEM
 		if (autoVolumeHandle)
-			volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat("HXVLC_VOLUME_MULTIPLIER", 100));
+			volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER", 100));
 		#end
 	}
 }
