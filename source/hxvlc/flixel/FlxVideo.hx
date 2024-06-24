@@ -5,27 +5,32 @@ import flixel.util.FlxAxes;
 import flixel.FlxG;
 import haxe.io.Bytes;
 import hxvlc.externs.Types;
-import hxvlc.openfl.Location;
+import hxvlc.util.Location;
 import hxvlc.openfl.Video;
 import sys.FileSystem;
 
 using StringTools;
 
-class FlxVideo extends Video
+class FlxVideo extends Video implements IFlxVideo
 {
 	/**
 	 * Whether the video should automatically pause when focus is lost.
 	 *
-	 * @warning Must be set before loading a video.
+	 * WARNING: Must be set before loading a video.
 	 */
 	public var autoPause:Bool = FlxG.autoPause;
 
 	/**
 	 * Determines the automatic resizing behavior for the video.
 	 *
-	 * @warning Must be set before loading a video if you want to set it to `NONE`.
+	 * WARNING: Must be set before loading a video if you want to set it to `NONE`.
 	 */
 	public var autoResizeMode:FlxAxes = FlxAxes.XY;
+
+	/**
+	 * The video's volume multiplier.
+	 */
+	public var volumeMultiplier:Float = 100;
 
 	#if FLX_SOUND_SYSTEM
 	/**
@@ -54,6 +59,14 @@ class FlxVideo extends Video
 		FlxG.addChildBelowMouse(this);
 	}
 
+	/**
+	 * Loads a video.
+	 *
+	 * @param location The local filesystem path, the media location URL, the ID of an open file descriptor, or the bitstream input.
+	 * @param options Additional options to add to the LibVLC Media.
+	 *
+	 * @return `true` if the video loaded successfully, `false` otherwise.
+	 */
 	public override function load(location:Location, ?options:Array<String>):Bool
 	{
 		if (autoPause)
@@ -114,13 +127,15 @@ class FlxVideo extends Video
 
 		#if FLX_SOUND_SYSTEM
 		if (autoVolumeHandle)
-		{
-			final curVolume:Int = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * 100);
-
-			if (volume != curVolume)
-				volume = curVolume;
-		}
+			volume = (FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume;
 		#end
+	}
+
+	@:noCompletion
+	override private function set_volume(value:Float):Int
+	{
+		final finalVolume:Int = Math.floor(value * volumeMultiplier);
+		return finalVolume != volume ? finalVolume : super.set_volume(finalVolume);
 	}
 }
 #end

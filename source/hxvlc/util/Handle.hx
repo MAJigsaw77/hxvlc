@@ -93,7 +93,7 @@ class Handle
 	 *
 	 * The origin is arbitrary but consistent across the whole system (e.g. the system uptime, the time since the system was booted).
 	 *
-	 * @note On systems that support it, the POSIX monotonic clock is used.
+	 * Note: On systems that support it, the POSIX monotonic clock is used.
 	 */
 	public static var clock(get, never):Int64;
 
