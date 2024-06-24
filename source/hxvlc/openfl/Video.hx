@@ -961,6 +961,7 @@ class Video extends Bitmap implements IVideo
 		if (events[13])
 		{
 			events[13] = false;
+
 			@:privateAccess
 			if (bitmapData == null
 				|| (bitmapData.width != formatWidth || bitmapData.height != formatHeight)
