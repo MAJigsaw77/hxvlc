@@ -13,7 +13,7 @@ class Define
 	 *
 	 * @param key The compiler define key to check.
 	 * @param defaultValue The default value to return if the define is not set or invalid.
-	 * @return The integer value from the compiler define or the default value.
+	 * @return The string value from the compiler define or the default value.
 	 */
 	public static macro function getString(key:String, defaultValue:String):Expr
 	{
@@ -59,7 +59,7 @@ class Define
 	 *
 	 * @param key The compiler define key to check.
 	 * @param defaultValue The default value to return if the define is not set or invalid.
-	 * @return The integer value from the compiler define or the default value.
+	 * @return The float value from the compiler define or the default value.
 	 */
 	public static macro function getFloat(key:String, defaultValue:Float):Expr
 	{
