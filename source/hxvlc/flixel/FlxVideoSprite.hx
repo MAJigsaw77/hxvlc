@@ -263,7 +263,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 
 			#if FLX_SOUND_SYSTEM
 			if (autoVolumeHandle)
-				volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER", 100));
+				volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 			#end
 		});
 		onFormatSetup.add(function():Void
@@ -408,7 +408,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 	{
 		#if FLX_SOUND_SYSTEM
 		if (autoVolumeHandle)
-			volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER", 100));
+			volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 		#end
 
 		super.update(elapsed);
@@ -471,7 +471,6 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 	@:noCompletion
 	private function set_time(value:Int64):Int64
 	{
-		// Returning the bitmap.time value instead of directly value just in case the setter edits the return (the same logic gets applided under)  - Nex
 		return bitmap == null ? value : (bitmap.time = value);
 	}
 
