@@ -5,6 +5,7 @@ import flixel.util.FlxAxes;
 import flixel.FlxG;
 import haxe.io.Bytes;
 import hxvlc.externs.Types;
+import hxvlc.util.macros.Define;
 import hxvlc.util.Location;
 import hxvlc.openfl.Video;
 import sys.FileSystem;
@@ -122,7 +123,7 @@ class FlxVideo extends Video implements IFlxVideo
 
 		#if FLX_SOUND_SYSTEM
 		if (autoVolumeHandle)
-			volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER", 100));
+			volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 		#end
 	}
 }
