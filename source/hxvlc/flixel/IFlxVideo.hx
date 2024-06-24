@@ -15,11 +15,6 @@ interface IFlxVideo extends IVideo
 	 */
 	public var autoPause:Bool;
 
-	/**
-	 * The video's volume multiplier.
-	 */
-	public var volumeMultiplier:Float;
-
 	#if FLX_SOUND_SYSTEM
 	/**
 	 * Whether Flixel should automatically adjust the volume according to the Flixel sound system's current volume.

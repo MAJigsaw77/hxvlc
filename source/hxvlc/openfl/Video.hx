@@ -394,6 +394,11 @@ class Video extends Bitmap implements IVideo
 	public var volume(get, set):Int;
 
 	/**
+	 * The video's volume multiplier.
+	 */
+	@:isVar public var volumeMultiplier(get, set):Float = 100;
+
+	/**
 	 * Get the number of available audio tracks.
 	 */
 	public var trackCount(get, never):Int;
@@ -954,7 +959,6 @@ class Video extends Bitmap implements IVideo
 		if (events[13])
 		{
 			events[13] = false;
-
 			@:privateAccess
 			if (bitmapData == null
 				|| (bitmapData.width != formatWidth || bitmapData.height != formatHeight)
@@ -1311,12 +1315,26 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
-	private function set_volume(value:Int):Int
+	private function set_volume(value:Float):Int
 	{
-		if (mediaPlayer != null && LibVLC.audio_set_volume(mediaPlayer, value) == -1)
+		final finalVolume:Int = Math.floor(value * volumeMultiplier);
+
+		if (mediaPlayer != null && volume != finalVolume && LibVLC.audio_set_volume(mediaPlayer, finalVolume) == -1)
 			Log.warn('The volume is out of range');
 
-		return value;
+		return finalVolume;
+	}
+
+	@:noCompletion
+	private function get_volumeMultiplier():Float
+	{
+		return volumeMultiplier;
+	}
+
+	@:noCompletion
+	private function set_volumeMultiplier(value:Float):Float
+	{
+		return volumeMultiplier = value;
 	}
 
 	@:noCompletion

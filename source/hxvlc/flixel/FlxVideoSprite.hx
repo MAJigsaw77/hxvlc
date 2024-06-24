@@ -28,11 +28,6 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 	 */
 	public var autoPause:Bool = FlxG.autoPause;
 
-	/**
-	 * The video's volume multiplier.
-	 */
-	public var volumeMultiplier:Float = 100;
-
 	#if FLX_SOUND_SYSTEM
 	/**
 	 * Whether Flixel should automatically adjust the volume according to the Flixel sound system's current volume.
@@ -152,6 +147,11 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 	 * The audio volume in percents (0 = mute, 100 = nominal / 0dB).
 	 */
 	public var volume(get, set):Int;
+
+	/**
+	 * The video's volume multiplier.
+	 */
+	public var volumeMultiplier(get, set):Float;
 
 	/**
 	 * Get the number of available audio tracks.
@@ -572,9 +572,19 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 	@:noCompletion
 	private function set_volume(value:Float):Int
 	{
-		final finalVolume:Int = Math.floor(value * volumeMultiplier);
+		return bitmap == null ? Math.floor(value * volumeMultiplier) : (bitmap.volume = value);
+	}
 
-		return bitmap == null && bitmap.volume != finalVolume ? finalVolume : (bitmap.volume = finalVolume);
+	@:noCompletion
+	private function get_volumeMultiplier():Float
+	{
+		return bitmap == null ? 100 : bitmap.volumeMultiplier;
+	}
+
+	@:noCompletion
+	private function set_volumeMultiplier(value:Float):Float
+	{
+		return bitmap == null ? value : (bitmap.volumeMultiplier = value);
 	}
 
 	@:noCompletion

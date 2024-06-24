@@ -27,11 +27,6 @@ class FlxVideo extends Video implements IFlxVideo
 	 */
 	public var autoResizeMode:FlxAxes = FlxAxes.XY;
 
-	/**
-	 * The video's volume multiplier.
-	 */
-	public var volumeMultiplier:Float = 100;
-
 	#if FLX_SOUND_SYSTEM
 	/**
 	 * Whether Flixel should automatically adjust the volume according to the Flixel sound system's current volume.
@@ -129,14 +124,6 @@ class FlxVideo extends Video implements IFlxVideo
 		if (autoVolumeHandle)
 			volume = (FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume;
 		#end
-	}
-
-	@:noCompletion
-	override private function set_volume(value:Float):Int
-	{
-		final finalVolume:Int = Math.floor(value * volumeMultiplier);
-
-		return finalVolume != volume ? finalVolume : super.set_volume(finalVolume);
 	}
 }
 #end
