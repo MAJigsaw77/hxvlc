@@ -1,19 +1,18 @@
 package hxvlc.flixel;
 
 #if flixel
-import lime.app.Event;
 import flixel.graphics.FlxGraphic;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import haxe.io.Bytes;
+import haxe.Int64;
 import hxvlc.externs.Types;
 import hxvlc.util.Location;
 import hxvlc.openfl.Video;
 import hxvlc.openfl.Stats;
+import lime.app.Event;
 import sys.FileSystem;
-import haxe.Int64;
-import cpp.UInt32;
 
 using StringTools;
 
@@ -32,7 +31,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 	/**
 	 * The video's volume multiplier.
 	 */
-    public var volumeMultiplier:Float = 100;
+	public var volumeMultiplier:Float = 100;
 
 	#if FLX_SOUND_SYSTEM
 	/**
@@ -49,12 +48,12 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 	/**
 	 * The format width, in pixels.
 	 */
-	public var formatWidth(get, null):UInt32;
+	public var formatWidth(get, null):cpp.UInt32;
 
 	/**
 	 * The format height, in pixels.
 	 */
-	public var formatHeight(get, null):UInt32;
+	public var formatHeight(get, null):cpp.UInt32;
 
 	/**
 	 * Statistics related to the media resource.
@@ -574,6 +573,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideo
 	private function set_volume(value:Float):Int
 	{
 		final finalVolume:Int = Math.floor(value * volumeMultiplier);
+
 		return bitmap == null && bitmap.volume != finalVolume ? finalVolume : (bitmap.volume = finalVolume);
 	}
 
