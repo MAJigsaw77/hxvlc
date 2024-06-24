@@ -4,6 +4,7 @@ on:
     branches: main
     paths-ignore:
       - '.github/workflows/format.yml'
+      - '.github/workflows/main.yml'
       - 'samples/**'
       - 'LICENSE'
       - 'README.md'
