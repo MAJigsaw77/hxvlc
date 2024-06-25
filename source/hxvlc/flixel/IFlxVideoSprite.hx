@@ -1,6 +1,9 @@
 package hxvlc.flixel;
 
 #if flixel
+import hxvlc.openfl.Video;
+import hxvlc.util.Location;
+
 /**
  * Interface representing a video sprite object in Flixel.
  */
