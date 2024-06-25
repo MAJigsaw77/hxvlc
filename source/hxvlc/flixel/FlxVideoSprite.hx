@@ -51,7 +51,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
 		bitmap = new Video(antialiasing);
-		onOpening.add(function():Void
+		bitmap.onOpening.add(function():Void
 		{
 			role = LibVLC_Role_Game;
 
@@ -60,7 +60,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 				bitmap.volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 			#end
 		});
-		onFormatSetup.add(function():Void
+		bitmap.onFormatSetup.add(function():Void
 		{
 			if (bitmap != null && bitmap.bitmapData != null)
 				loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
