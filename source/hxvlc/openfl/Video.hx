@@ -111,7 +111,7 @@ static void *video_lock(void *opaque, void **planes)
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
-	self->mutex->acquire();
+	self->textureMutex->acquire();
 
 	if (self->planes != NULL)
 		(*planes) = self->planes;
@@ -125,7 +125,7 @@ static void video_unlock(void *opaque, void *picture, void *const *planes)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(opaque)->mutex->release();
+	reinterpret_cast<Video_obj *>(opaque)->textureMutex->release();
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -150,7 +150,7 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 	const unsigned originalWidth = (*width);
 	const unsigned originalHeight = (*height);
 
-	self->mutex->acquire();
+	self->textureMutex->acquire();
 
 	if (self->mediaPlayer != NULL && libvlc_video_get_size(self->mediaPlayer, 0, &self->formatWidth, &self->formatHeight) == 0)
 	{
@@ -176,7 +176,7 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 		self->planes = new unsigned char[self->formatWidth * self->formatHeight * 4];
 	}
 
-	self->mutex->release();
+	self->textureMutex->release();
 
 	(*pitches) = self->formatWidth * 4;
 	(*lines) = self->formatHeight;
@@ -284,16 +284,6 @@ class Video extends Bitmap implements IVideo
 	 * If set to true, GPU texture rendering will be used if possible, otherwise, CPU-based image rendering will be used.
 	 */
 	public static var useTexture:Bool = true;
-
-	/**
-	 * The format width, in pixels.
-	 */
-	public var formatWidth(get, null):cpp.UInt32 = 0;
-
-	/**
-	 * The format height, in pixels.
-	 */
-	public var formatHeight(get, null):cpp.UInt32 = 0;
 
 	/**
 	 * Statistics related to the media resource.
@@ -506,10 +496,10 @@ class Video extends Bitmap implements IVideo
 	private var mediaData:cpp.RawPointer<cpp.UInt8>;
 
 	@:noCompletion
-	private var mediaOffset:cpp.UInt64;
+	private var mediaOffset:cpp.UInt64 = 0;
 
 	@:noCompletion
-	private var mediaSize:cpp.UInt64;
+	private var mediaSize:cpp.UInt64 = 0;
 
 	@:noCompletion
 	private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
@@ -526,13 +516,19 @@ class Video extends Bitmap implements IVideo
 	];
 
 	@:noCompletion
+	private var formatWidth:cpp.UInt32 = 0;
+
+	@:noCompletion
+	private var formatHeight:cpp.UInt32 = 0;
+
+	@:noCompletion
 	private var planes:cpp.RawPointer<cpp.UInt8>;
 
 	@:noCompletion
 	private var texture:RectangleTexture;
 
 	@:noCompletion
-	private final mutex:Mutex = new Mutex();
+	private final textureMutex:Mutex = new Mutex();
 
 	/**
 	 * Initializes a Video object.
@@ -797,7 +793,7 @@ class Video extends Bitmap implements IVideo
 
 		eventManager = null;
 
-		mutex.acquire();
+		textureMutex.acquire();
 
 		if (bitmapData != null)
 		{
@@ -819,7 +815,7 @@ class Video extends Bitmap implements IVideo
 			planes = null;
 		}
 
-		mutex.release();
+		textureMutex.release();
 
 		#if (HXVLC_OPENAL && lime_openal)
 		alMutex.acquire();
@@ -959,7 +955,7 @@ class Video extends Bitmap implements IVideo
 				|| (bitmapData.width != formatWidth || bitmapData.height != formatHeight)
 				|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
 			{
-				mutex.acquire();
+				textureMutex.acquire();
 
 				if (bitmapData != null)
 					bitmapData.dispose();
@@ -983,7 +979,7 @@ class Video extends Bitmap implements IVideo
 					bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
 				}
 
-				mutex.release();
+				textureMutex.release();
 
 				onFormatSetup.dispatch();
 			}
@@ -995,7 +991,7 @@ class Video extends Bitmap implements IVideo
 
 			if (__renderable && planes != null)
 			{
-				mutex.acquire();
+				textureMutex.acquire();
 
 				final planesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4));
 
@@ -1008,7 +1004,7 @@ class Video extends Bitmap implements IVideo
 				else if (bitmapData != null && bitmapData.image != null)
 					bitmapData.setPixels(bitmapData.rect, planesBytes);
 
-				mutex.release();
+				textureMutex.release();
 			}
 		}
 	}
@@ -1093,18 +1089,6 @@ class Video extends Bitmap implements IVideo
 			alMutex.release();
 		}
 		#end
-	}
-
-	@:noCompletion
-	private function get_formatWidth():cpp.UInt32
-	{
-		return formatWidth;
-	}
-
-	@:noCompletion
-	private function get_formatHeight():cpp.UInt32
-	{
-		return formatHeight;
 	}
 
 	@:noCompletion
@@ -1390,7 +1374,11 @@ class Video extends Bitmap implements IVideo
 		return __bitmapData = value;
 	}
 
-	// Won't make these interfaces functions down below inlines so overriding them is possible for extensions  - Nex
+	/**
+	 * Won't make these interfaces functions down below inlines so overriding them is possible for extensions.
+	 *
+	 * - Nex
+	 */
 
 	@:noCompletion
 	private function get_onOpening():Event<Void->Void>
