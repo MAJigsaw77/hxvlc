@@ -15,7 +15,7 @@ import sys.FileSystem;
 using StringTools;
 
 /**
- * `FlxVideoSprite` is used for displaying video files in HaxeFlixel as sprites.
+ * This class is used for displaying video files in HaxeFlixel as sprites.
  */
 class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 {
