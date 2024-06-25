@@ -286,14 +286,14 @@ class Video extends Bitmap implements IVideo
 	public static var useTexture:Bool = true;
 
 	/**
-	 * Statistics related to the media resource.
-	 */
-	public var stats(get, never):Null<Stats>;
-
-	/**
 	 * The media resource locator.
 	 */
 	public var mrl(get, never):String;
+
+	/**
+	 * Statistics related to the media resource.
+	 */
+	public var stats(get, never):Null<Stats>;
 
 	/**
 	 * The media's duration.
