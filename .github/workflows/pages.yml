@@ -1,17 +1,5 @@
-name: Github-pages
-on:
-  push:
-    branches: main
-    paths-ignore:
-      - '.github/workflows/format.yml'
-      - '.github/workflows/main.yml'
-      - 'samples/**'
-      - 'LICENSE'
-      - 'README.md'
-      - 'TODO.md'
-      - 'haxelib.json'
-      - 'hxformat.json'
-  workflow_dispatch:
+name: github-pages
+on: workflow_dispatch
 permissions:
   contents: write
   pages: write
@@ -32,8 +20,7 @@ jobs:
           haxe-version: 4.3.4
 
       - name: Installing Dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install -y rsync libvlc-dev libvlccore-dev
+        run: sudo apt-get update && sudo apt-get install -y rsync libvlc-dev libvlccore-dev
 
       - name: Installing Haxe Libraries
         run: |
@@ -45,11 +32,9 @@ jobs:
           haxelib dev hxvlc .
 
       - name: Creating Documentation Site
-        run: |
-            chmod +x docs/docs.sh
-            docs/docs.sh
+        run: chmod +x docs/docs.sh && docs/docs.sh
 
       - name: Deploying With Github Actions
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: JamesIves/github-pages-deploy-action@main
         with:
           folder: pages
