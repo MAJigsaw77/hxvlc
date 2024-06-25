@@ -35,6 +35,6 @@ jobs:
         run: chmod +x docs/docs.sh && docs/docs.sh
 
       - name: Deploying With Github Actions
-        uses: JamesIves/github-pages-deploy-action@main
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: pages
