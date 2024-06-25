@@ -17,7 +17,7 @@ import sys.FileSystem;
 using StringTools;
 
 /**
- * The `Handle` class manages the global instance of LibVLC, providing methods for initialization, disposal, and retrieving version information.
+ * This class manages the global instance of LibVLC, providing methods for initialization, disposal, and retrieving version information.
  */
 #if android
 @:headerInclude('android/log.h')

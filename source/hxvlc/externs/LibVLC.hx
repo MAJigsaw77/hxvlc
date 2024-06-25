@@ -6,7 +6,7 @@ package hxvlc.externs;
 import hxvlc.externs.Types;
 
 /**
- * The `LibVLC` class provides static methods to interact with the LibVLC library.
+ * This class provides static methods to interact with the LibVLC library.
  * It allows for the creation and management of VLC instances, media players,
  * and media objects, as well as the handling of audio, video, and events.
  */
