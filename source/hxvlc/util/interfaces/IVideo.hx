@@ -11,24 +11,14 @@ import lime.app.Event;
 interface IVideo
 {
 	/**
-	 * The format width of the video, in pixels.
+	 * The media resource locator (MRL).
 	 */
-	public var formatWidth(get, null):cpp.UInt32;
-
-	/**
-	 * The format height of the video, in pixels.
-	 */
-	public var formatHeight(get, null):cpp.UInt32;
+	public var mrl(get, never):String;
 
 	/**
 	 * Statistics related to the media resource.
 	 */
 	public var stats(get, never):Null<Stats>;
-
-	/**
-	 * The media resource locator (MRL).
-	 */
-	public var mrl(get, never):String;
 
 	/**
 	 * The duration of the media in microseconds.
