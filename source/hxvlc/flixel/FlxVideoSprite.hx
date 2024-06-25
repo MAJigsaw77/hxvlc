@@ -53,7 +53,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 		bitmap = new Video(antialiasing);
 		bitmap.onOpening.add(function():Void
 		{
-			role = LibVLC_Role_Game;
+			btimap.role = LibVLC_Role_Game;
 
 			#if FLX_SOUND_SYSTEM
 			if (bitmap != null && autoVolumeHandle)
