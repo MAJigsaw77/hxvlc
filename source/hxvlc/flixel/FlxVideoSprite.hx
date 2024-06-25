@@ -159,6 +159,24 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 			bitmap.togglePaused();
 	}
 
+	/**
+	 * Moves to the previous logical chapter or position in the video, if supported.
+	 */
+	public function previousChapter():Void
+	{
+		if (bitmap != null)
+			bitmap.previousChapter();
+	}
+
+	/**
+	 * Moves to the next logical chapter or position in the video, if supported.
+	 */
+	public function nextChapter():Void
+	{
+		if (bitmap != null)
+			bitmap.nextChapter();
+	}
+
 	public override function destroy():Void
 	{
 		if (FlxG.signals.focusGained.has(resume))
