@@ -17,7 +17,7 @@ using StringTools;
 /**
  * `FlxVideoSprite` is used for displaying video files in HaxeFlixel as sprites.
  */
-class FlxVideoSprite extends FlxSprite implements IFlxVideo
+class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 {
 	/**
 	 * Whether the video should automatically pause when focus is lost.
