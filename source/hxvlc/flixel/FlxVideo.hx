@@ -13,9 +13,9 @@ import sys.FileSystem;
 using StringTools;
 
 /**
- * @deprecated Use FlxVideoSprite class instead.
+ * This class is deprecated and will be removed in future versions.
  */
-@:deprecated("Use FlxVideoSprite class instead.")
+@:deprecated('Use FlxVideoSprite class instead.')
 class FlxVideo extends Video
 {
 	/**
