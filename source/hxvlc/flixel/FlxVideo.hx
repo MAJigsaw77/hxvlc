@@ -12,7 +12,11 @@ import sys.FileSystem;
 
 using StringTools;
 
-class FlxVideo extends Video implements IFlxVideo
+/**
+ * @deprecated Use FlxVideoSprite class instead.
+ */
+@:deprecated("Use FlxVideoSprite class instead.")
+class FlxVideo extends Video
 {
 	/**
 	 * Whether the video should automatically pause when focus is lost.
