@@ -113,8 +113,8 @@ static void *video_lock(void *opaque, void **planes)
 
 	self->textureMutex->acquire();
 
-	if (self->planes != NULL)
-		(*planes) = self->planes;
+	if (self->texturePlanes != NULL)
+		(*planes) = self->texturePlanes;
 
 	hx::SetTopOfStack((int *)0, true);
 
@@ -152,34 +152,34 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 
 	self->textureMutex->acquire();
 
-	if (self->mediaPlayer != NULL && libvlc_video_get_size(self->mediaPlayer, 0, &self->formatWidth, &self->formatHeight) == 0)
+	if (self->mediaPlayer != NULL && libvlc_video_get_size(self->mediaPlayer, 0, &self->textureWidth, &self->textureHeight) == 0)
 	{
-		(*width) = self->formatWidth;
-		(*height) = self->formatHeight;
+		(*width) = self->textureWidth;
+		(*height) = self->textureHeight;
 
-		if (self->planes == NULL || (originalWidth != self->formatWidth || originalHeight != self->formatHeight))
+		if (self->texturePlanes == NULL || (originalWidth != self->textureWidth || originalHeight != self->textureHeight))
 		{
-			if (self->planes != NULL)
-				delete[] self->planes;
+			if (self->texturePlanes != NULL)
+				delete[] self->texturePlanes;
 
-			self->planes = new unsigned char[self->formatWidth * self->formatHeight * 4];
+			self->texturePlanes = new unsigned char[self->textureWidth * self->textureHeight * 4];
 		}
 	}
 	else
 	{
-		self->formatWidth = originalWidth;
-		self->formatHeight = originalHeight;
+		self->textureWidth = originalWidth;
+		self->textureHeight = originalHeight;
 
-		if (self->planes != NULL)
-			delete[] self->planes;
+		if (self->texturePlanes != NULL)
+			delete[] self->texturePlanes;
 
-		self->planes = new unsigned char[self->formatWidth * self->formatHeight * 4];
+		self->texturePlanes = new unsigned char[self->textureWidth * self->textureHeight * 4];
 	}
 
 	self->textureMutex->release();
 
-	(*pitches) = self->formatWidth * 4;
-	(*lines) = self->formatHeight;
+	(*pitches) = self->textureWidth * 4;
+	(*lines) = self->textureHeight;
 
 	self->events[13] = true;
 
@@ -478,18 +478,23 @@ class Video extends Bitmap implements IVideo
 	 */
 	public var onFormatSetup(get, null):Event<Void->Void> = new Event<Void->Void>();
 
+	@:noCompletion
+	private var events:Array<Bool> = [
+		false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+	];
+
 	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
-	private var alAudioContext:OpenALAudioContext;
+	private final alMutex:Mutex = new Mutex();
 
 	@:noCompletion
-	private var alSource:ALSource;
+	private var alAudioContext:OpenALAudioContext;
 
 	@:noCompletion
 	private var alBuffers:Array<ALBuffer> = [];
 
 	@:noCompletion
-	private final alMutex:Mutex = new Mutex();
+	private var alSource:ALSource;
 	#end
 
 	@:noCompletion
@@ -511,24 +516,19 @@ class Video extends Bitmap implements IVideo
 	private var eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>;
 
 	@:noCompletion
-	private var events:Array<Bool> = [
-		false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
-	];
-
-	@:noCompletion
-	private var formatWidth:cpp.UInt32 = 0;
-
-	@:noCompletion
-	private var formatHeight:cpp.UInt32 = 0;
-
-	@:noCompletion
-	private var planes:cpp.RawPointer<cpp.UInt8>;
+	private final textureMutex:Mutex = new Mutex();
 
 	@:noCompletion
 	private var texture:RectangleTexture;
 
 	@:noCompletion
-	private final textureMutex:Mutex = new Mutex();
+	private var textureWidth:cpp.UInt32 = 0;
+
+	@:noCompletion
+	private var textureHeight:cpp.UInt32 = 0;
+
+	@:noCompletion
+	private var texturePlanes:cpp.RawPointer<cpp.UInt8>;
 
 	/**
 	 * Initializes a Video object.
@@ -664,8 +664,8 @@ class Video extends Bitmap implements IVideo
 						alMutex.acquire();
 
 						alAudioContext = AudioManager.context.openal;
-						alSource = alAudioContext.createSource();
 						alBuffers = alAudioContext.genBuffers(128);
+						alSource = alAudioContext.createSource();
 
 						alMutex.release();
 
@@ -807,12 +807,12 @@ class Video extends Bitmap implements IVideo
 			texture = null;
 		}
 
-		formatWidth = formatHeight = 0;
+		textureWidth = textureHeight = 0;
 
-		if (planes != null)
+		if (texturePlanes != null)
 		{
-			untyped __cpp__('delete[] {0}', planes);
-			planes = null;
+			untyped __cpp__('delete[] {0}', texturePlanes);
+			texturePlanes = null;
 		}
 
 		textureMutex.release();
@@ -952,7 +952,7 @@ class Video extends Bitmap implements IVideo
 			events[13] = false;
 			@:privateAccess
 			if (bitmapData == null
-				|| (bitmapData.width != formatWidth || bitmapData.height != formatHeight)
+				|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
 				|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
 			{
 				textureMutex.acquire();
@@ -968,7 +968,7 @@ class Video extends Bitmap implements IVideo
 
 				if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
 				{
-					texture = Lib.current.stage.context3D.createRectangleTexture(formatWidth, formatHeight, Context3DTextureFormat.BGRA, true);
+					texture = Lib.current.stage.context3D.createRectangleTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, true);
 					bitmapData = BitmapData.fromTexture(texture);
 				}
 				else
@@ -976,7 +976,7 @@ class Video extends Bitmap implements IVideo
 					if (useTexture)
 						Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
 
-					bitmapData = new BitmapData(formatWidth, formatHeight, true, 0);
+					bitmapData = new BitmapData(textureWidth, textureHeight, true, 0);
 				}
 
 				textureMutex.release();
@@ -989,20 +989,20 @@ class Video extends Bitmap implements IVideo
 		{
 			events[14] = false;
 
-			if (__renderable && planes != null)
+			if (__renderable && texturePlanes != null)
 			{
 				textureMutex.acquire();
 
-				final planesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(planes).toUnmanagedArray(formatWidth * formatHeight * 4));
+				final texturePlanesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(texturePlanes).toUnmanagedArray(textureWidth * textureHeight * 4));
 
 				if (texture != null)
 				{
-					texture.uploadFromTypedArray(UInt8Array.fromBytes(planesBytes));
+					texture.uploadFromTypedArray(UInt8Array.fromBytes(texturePlanesBytes));
 
 					__setRenderDirty();
 				}
 				else if (bitmapData != null && bitmapData.image != null)
-					bitmapData.setPixels(bitmapData.rect, planesBytes);
+					bitmapData.setPixels(bitmapData.rect, texturePlanesBytes);
 
 				textureMutex.release();
 			}
