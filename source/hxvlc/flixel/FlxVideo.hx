@@ -119,10 +119,10 @@ class FlxVideo extends Video
 	@:noCompletion
 	private function postUpdate():Void
 	{
-		if (autoResizeMode.x || autoResizeMode.y)
+		if ((autoResizeMode.x || autoResizeMode.y) && bitmapData != null)
 		{
-			width = autoResizeMode.x ? FlxG.scaleMode.gameSize.x : formatWidth;
-			height = autoResizeMode.y ? FlxG.scaleMode.gameSize.y : formatHeight;
+			width = autoResizeMode.x ? FlxG.scaleMode.gameSize.x : bitmapData.width;
+			height = autoResizeMode.y ? FlxG.scaleMode.gameSize.y : bitmapData.height;
 		}
 
 		#if FLX_SOUND_SYSTEM

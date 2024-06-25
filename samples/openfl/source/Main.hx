@@ -128,7 +128,10 @@ class Main extends Sprite
 
 	private inline function stage_onEnterFrame(event:Event):Void
 	{
-		final aspectRatio:Float = video.formatWidth / video.formatHeight;
+		if (video.bitmapData == null)
+			return;
+
+		final aspectRatio:Float = video.bitmapData.width / video.bitmapData.height;
 
 		if (stage.stageWidth / stage.stageHeight > aspectRatio)
 		{
