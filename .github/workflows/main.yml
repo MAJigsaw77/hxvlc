@@ -5,6 +5,7 @@ on:
     paths-ignore:
       - '.github/workflows/format.yml'
       - '.github/workflows/pages.yml'
+      - 'docs/**'
       - 'LICENSE'
       - 'README.md'
       - 'TODO.md'
