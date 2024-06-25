@@ -64,5 +64,15 @@ interface IFlxVideoSprite
 	 * Toggles the pause state of the video.
 	 */
 	public function togglePaused():Void;
+
+	/**
+	 * Moves to the previous logical chapter or position in the video, if supported.
+	 */
+	public function previousChapter():Void;
+
+	/**
+	 * Moves to the next logical chapter or position in the video, if supported.
+	 */
+	public function nextChapter():Void;
 }
 #end
