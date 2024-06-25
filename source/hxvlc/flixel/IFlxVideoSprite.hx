@@ -26,7 +26,7 @@ interface IFlxVideoSprite
 	/**
 	 * The video bitmap.
 	 */
-	public var bitmap(get, never):Video;
+	public var bitmap(default, null):Video;
 
 	/**
 	 * Loads a video.
