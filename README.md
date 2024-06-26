@@ -17,52 +17,59 @@ A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback usin
 > [!CAUTION]
 > These platforms need to be compiled using [Lime](https://lime.openfl.org) targeting `cpp` to work.
 
-### Instructions
+### Installation
 
-1. Install the library:
-   - Via `Haxelib`:
+To install **hxvlc**, follow these steps:
+
+1. **Haxelib Installation**
+   - Install the library using Haxelib:
      ```bash
      haxelib install hxvlc
      ```
-   - Via `Git` for the latest updates:
+
+2. **Git Installation (for latest updates)**
+   - Alternatively, clone the repository using Git:
      ```bash
      haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git
      ```
 
-3. Add this code in the **project.xml** file:
-   ```xml
-   <section if="cpp">
-   	<haxelib name="hxvlc" if="desktop || mobile" />
-   </section>
-   ```
+3. **Project Configuration**
+   - Add the following code to your **project.xml** file:
+     ```xml
+     <section if="cpp">
+     	<haxelib name="hxvlc" if="desktop || mobile" />
+     </section>
+     ```
 
 ### Dependencies
 
 On ***Linux*** you need to install `vlc` from your distro's package manager.
 
 * [Debian](https://debian.org) based distributions:
-  ```bash
-  sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc
+    ```bash
+    sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc
   ```
 * [Arch](https://archlinux.org) based distributions:
-  ```bash
-  sudo pacman -S vlc
-  ```
+    ```bash
+    sudo pacman -S vlc
+    ```
 * [Gentoo](https://gentoo.org) based distributions:
-  ```bash
-  sudo emerge media-video/vlc
-  ```
+    ```bash
+    sudo emerge media-video/vlc
+    ```
 
-### Usage Examples
+### Getting Started
 
-- Check out the [Samples Folder](samples/) for examples on how to use this library.
+- Explore the [Samples Folder](samples/) for examples of using this library with OpenFL and Flixel.
+
+- Visit the [API Documentation](https://majigsaw77.github.io/hxvlc) for detailed information on available functionalities.
 
 ### Licensing
 
 **hxvlc** is made available under the **MIT License**. Check [LICENSE](./LICENSE) for more information.
 
 <a href="https://www.videolan.org/vlc/libvlc.html">
-	<img src="https://images.videolan.org/images/goodies/Cone-Video-small.png" align="right" />
+    <img src="https://images.videolan.org/images/goodies/Cone-Video-small.png" align="right" />
 </a>
 
 **libVLC** is released under the **LGPLv2 (or later) License**.
