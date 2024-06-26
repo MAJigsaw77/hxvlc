@@ -8,7 +8,7 @@ package hxvlc.externs;
 #end
 class Types {}
 
-// @:dox(hide)
+@:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
 @:native('libvlc_instance_t')
