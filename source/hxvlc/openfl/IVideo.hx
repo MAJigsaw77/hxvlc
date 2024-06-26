@@ -1,4 +1,4 @@
-package hxvlc.util.interfaces;
+package hxvlc.openfl;
 
 import haxe.Int64;
 import hxvlc.openfl.Stats;
