@@ -34,9 +34,7 @@ import sys.thread.Mutex;
 using StringTools;
 
 /**
- * This class represents a video player that utilizes LibVLC to play videos.
- *
- * It extends a Bitmap object to provide a seamless integration with existing display objects.
+ * This class is a video player that uses LibVLC for seamless integration with OpenFL display objects.
  */
 @:cppNamespaceCode('
 static int media_open(void *opaque, void **datap, uint64_t *sizep)
@@ -890,6 +888,7 @@ class Video extends Bitmap implements IVideo
 		{
 			events[5] = false;
 
+			// TODO: Give this a better place as it should normally get called on the LibVLC thread.
 			final errmsg:String = cast(LibVLC.errmsg(), String);
 
 			if (errmsg != null && errmsg.length > 0)
