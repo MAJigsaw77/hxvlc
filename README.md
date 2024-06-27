@@ -26,13 +26,11 @@ To install **hxvlc**, follow these steps:
      ```bash
      haxelib install hxvlc
      ```
-
 2. **Git Installation (for latest updates)**
    - Alternatively, clone the repository using Git:
      ```bash
      haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git
      ```
-
 3. **Project Configuration**
    - Add the following code to your **project.xml** file:
      ```xml
@@ -47,15 +45,40 @@ On ***Linux*** you need to install `vlc` from your distro's package manager.
 
 * [Debian](https://debian.org) based distributions:
     ```bash
-    sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc
-  ```
+    sudo apt-get install vlc libvlc-dev libvlccore-dev vlc-bin
+    ```
 * [Arch](https://archlinux.org) based distributions:
     ```bash
     sudo pacman -S vlc
     ```
+* [Fedora](https://getfedora.org) based distributions:
+    ```bash
+    sudo dnf install vlc
+    ```
+* [Red Hat Enterprise Linux (RHEL)](https://www.redhat.com):
+    ```bash
+    sudo dnf install epel-release
+    sudo dnf install vlc
+    ```
+* [openSUSE](https://www.opensuse.org) based distributions:
+    ```bash
+    sudo zypper install vlc
+    ```
 * [Gentoo](https://gentoo.org) based distributions:
     ```bash
     sudo emerge media-video/vlc
+    ```
+* [Slackware](https://www.slackware.com) based distributions:
+    ```bash
+    sudo slackpkg install vlc
+    ```
+* [Void Linux](https://voidlinux.org):
+    ```bash
+    sudo xbps-install -S vlc
+    ```
+* [NixOS](https://nixos.org):
+    ```bash
+    nix-env -iA nixpkgs.vlc
     ```
 
 ### Getting Started
