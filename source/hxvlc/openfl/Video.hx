@@ -34,6 +34,32 @@ import sys.thread.Mutex;
 using StringTools;
 
 /**
+ * Enum representing parsing and fetching options for media.
+ */
+enum ParseFlags
+{
+	/**
+	 * Parse media assuming it's a local file.
+	 */
+	ParseLocal;
+
+	/**
+	 * Parse media even if it's from a network source.
+	 */
+	ParseNetwork;
+
+	/**
+	 * Fetch metadata and cover art using local resources.
+	 */
+	FetchLocal;
+
+	/**
+	 * Fetch metadata and cover art using network resources.
+	 */
+	FetchNetwork;
+}
+
+/**
  * This class is a video player that uses LibVLC for seamless integration with OpenFL display objects.
  */
 @:cppNamespaceCode('
@@ -698,20 +724,37 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to parse the current media item with specified timeout options.
+	 * Call this function to parse the current media item with the specified parsing option and timeout.
 	 *
-	 * @param timeout The timeout value in milliseconds.
+	 * @param flag The parsing option indicating how to parse the media item.
+	 * @param timeout The timeout value in milliseconds for parsing.
 	 *
 	 * @return `true` if parsing succeeded, `false` otherwise.
 	 */
-	public function parseWithOptions(timeout:Int):Bool
+	public function parseWithOptions(flag:ParseFlags, timeout:Int):Bool
 	{
 		if (mediaPlayer != null)
 		{
 			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
-				return LibVLC.media_parse_with_options(currentMediaItem, LibVLC_Media_Parse_Local, timeout) == 0;
+			{
+				var parse_flag:LibVLC_Media_Parse_Flag_T;
+
+				switch (flag)
+				{
+					case ParseLocal:
+						parse_flag = LibVLC_Media_Parse_Local;
+					case ParseNetwork:
+						parse_flag = LibVLC_Media_Parse_Network;
+					case FetchLocal:
+						parse_flag = LibVLC_Media_Fetch_Local;
+					case FetchNetwork:
+						parse_flag = LibVLC_Media_Fetch_Network;
+				}
+
+				return LibVLC.media_parse_with_options(currentMediaItem, parse_flag, timeout) == 0;
+			}
 		}
 
 		return false;
