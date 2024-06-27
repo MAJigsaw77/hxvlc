@@ -531,9 +531,6 @@ class Video extends Bitmap implements IVideo
 	private var mediaSize:cpp.UInt64 = 0;
 
 	@:noCompletion
-	private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
-
-	@:noCompletion
 	private var mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>;
 
 	@:noCompletion
@@ -579,6 +576,8 @@ class Video extends Bitmap implements IVideo
 		if (Handle.instance == null)
 			return false;
 
+		var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
+
 		if (location != null)
 		{
 			if ((location is String))
@@ -603,14 +602,19 @@ class Video extends Bitmap implements IVideo
 			{
 				final data:BytesData = cast(location, Bytes).getData();
 
-				mediaData = untyped __cpp__('new unsigned char[{0}]', data.length);
+				if (data.length > 0)
+				{
+					mediaData = untyped __cpp__('new unsigned char[{0}]', data.length);
 
-				cpp.Stdlib.nativeMemcpy(cast mediaData, cast cpp.Pointer.ofArray(data).constRaw, data.length);
+					cpp.Stdlib.nativeMemcpy(cast mediaData, cast cpp.Pointer.ofArray(data).constRaw, data.length);
 
-				mediaOffset = 0;
-				mediaSize = data.length;
-				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
-					untyped __cpp__('media_seek'), null, untyped __cpp__('this'));
+					mediaOffset = 0;
+					mediaSize = data.length;
+					mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
+						untyped __cpp__('media_seek'), null, untyped __cpp__('this'));
+				}
+				else
+					return false;
 			}
 			else
 				return false;
@@ -618,12 +622,12 @@ class Video extends Bitmap implements IVideo
 		else
 			return false;
 
+		if (Application.current != null && !Application.current.onUpdate.has(update))
+			Application.current.onUpdate.add(update);
+
 		if (mediaPlayer == null)
 		{
 			mediaPlayer = LibVLC.media_player_new(Handle.instance);
-
-			if (Application.current != null && !Application.current.onUpdate.has(update))
-				Application.current.onUpdate.add(update);
 
 			var eventManager:cpp.RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_player_event_manager(mediaPlayer);
 
@@ -699,16 +703,22 @@ class Video extends Bitmap implements IVideo
 			#end
 		}
 
-		if (options != null)
+		if (mediaItem != null)
 		{
-			for (option in options)
+			if (options != null)
 			{
-				if (option != null && option.length > 0)
-					LibVLC.media_add_option(mediaItem, option);
+				for (option in options)
+				{
+					if (option != null && option.length > 0)
+						LibVLC.media_add_option(mediaItem, option);
+				}
 			}
-		}
 
-		LibVLC.media_player_set_media(mediaPlayer, mediaItem);
+			LibVLC.media_player_set_media(mediaPlayer, mediaItem);
+			LibVLC.media_release(mediaItem);
+		}
+		else
+			return false;
 
 		return true;
 	}
@@ -848,20 +858,14 @@ class Video extends Bitmap implements IVideo
 		if (Application.current != null && Application.current.onUpdate.has(update))
 			Application.current.onUpdate.remove(update);
 
-		if (mediaItem != null)
+		if (mediaData != null)
 		{
-			LibVLC.media_release(mediaItem);
-
-			if (mediaData != null)
-			{
-				untyped __cpp__('delete[] {0}', mediaData);
-				mediaData = null;
-			}
-
-			mediaOffset = 0;
-			mediaSize = 0;
-			mediaItem = null;
+			untyped __cpp__('delete[] {0}', mediaData);
+			mediaData = null;
 		}
+
+		mediaOffset = 0;
+		mediaSize = 0;
 
 		textureMutex.acquire();
 
@@ -1377,7 +1381,7 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private function get_trackCount():Int
 	{
-		return mediaItem != null ? LibVLC.audio_get_track_count(mediaPlayer) : -1;
+		return mediaPlayer != null ? LibVLC.audio_get_track_count(mediaPlayer) : -1;
 	}
 
 	@:noCompletion
