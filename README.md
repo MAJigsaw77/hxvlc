@@ -43,43 +43,56 @@ To install **hxvlc**, follow these steps:
 
 On ***Linux*** you need to install `vlc` from your distro's package manager.
 
-* [Debian](https://debian.org) based distributions:
-    ```bash
-    sudo apt-get install vlc libvlc-dev libvlccore-dev vlc-bin
-    ```
-* [Arch](https://archlinux.org) based distributions:
-    ```bash
-    sudo pacman -S vlc
-    ```
-* [Fedora](https://getfedora.org) based distributions:
-    ```bash
-    sudo dnf install vlc
-    ```
-* [Red Hat Enterprise Linux (RHEL)](https://www.redhat.com):
-    ```bash
-    sudo dnf install epel-release
-    sudo dnf install vlc
-    ```
-* [openSUSE](https://www.opensuse.org) based distributions:
-    ```bash
-    sudo zypper install vlc
-    ```
-* [Gentoo](https://gentoo.org) based distributions:
-    ```bash
-    sudo emerge media-video/vlc
-    ```
-* [Slackware](https://www.slackware.com) based distributions:
-    ```bash
-    sudo slackpkg install vlc
-    ```
-* [Void Linux](https://voidlinux.org):
-    ```bash
-    sudo xbps-install -S vlc
-    ```
-* [NixOS](https://nixos.org):
-    ```bash
-    nix-env -iA nixpkgs.vlc
-    ```
+<details>
+<summary>Commands list</summary>
+
+#### Debian based distributions ([Debian](https://debian.org)):
+```bash
+sudo apt-get install vlc libvlc-dev libvlccore-dev vlc-bin
+```
+
+#### Arch based distributions ([Arch](https://archlinux.org)):
+```bash
+sudo pacman -S vlc
+```
+
+#### Fedora based distributions ([Fedora](https://getfedora.org)):
+```bash
+sudo dnf install vlc
+```
+
+#### Red Hat Enterprise Linux (RHEL):
+```bash
+sudo dnf install epel-release
+sudo dnf install vlc
+```
+
+#### openSUSE based distributions ([openSUSE](https://www.opensuse.org)):
+```bash
+sudo zypper install vlc
+```
+
+#### Gentoo based distributions ([Gentoo](https://gentoo.org)):
+```bash
+sudo emerge media-video/vlc
+```
+
+#### Slackware based distributions ([Slackware](https://www.slackware.com)):
+```bash
+sudo slackpkg install vlc
+```
+
+#### Void Linux ([Void Linux](https://voidlinux.org)):
+```bash
+sudo xbps-install -S vlc
+```
+
+#### NixOS ([NixOS](https://nixos.org)):
+```bash
+nix-env -iA nixpkgs.vlc
+```
+
+</details>
 
 ### Getting Started
 
