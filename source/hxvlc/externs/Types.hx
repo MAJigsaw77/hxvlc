@@ -132,7 +132,7 @@ extern class LibVLC_Media_Stats_T
 }
 
 @:dox(hide)
-extern enum abstract LibVLC_Media_Parse_Flag_T(LibVLC_Media_Parse_Flag_T_Impl) from Int to Int
+extern enum abstract LibVLC_Media_Parse_Flag_T(LibVLC_Media_Parse_Flag_T_Impl) from Int
 {
 	@:native('libvlc_media_parse_local')
 	var LibVLC_Media_Parse_Local;
@@ -159,7 +159,7 @@ extern enum abstract LibVLC_Media_Parse_Flag_T(LibVLC_Media_Parse_Flag_T_Impl) f
 private extern class LibVLC_Media_Parse_Flag_T_Impl {}
 
 @:dox(hide)
-extern enum abstract LibVLC_Media_Parsed_Status_T(LibVLC_Media_Parsed_Status_T_Impl) from Int to Int
+extern enum abstract LibVLC_Media_Parsed_Status_T(LibVLC_Media_Parsed_Status_T_Impl) from Int
 {
 	@:native('libvlc_media_parsed_status_skipped')
 	var LibVLC_Media_Parsed_Status_Skipped;
