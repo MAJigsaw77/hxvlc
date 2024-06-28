@@ -734,6 +734,9 @@ class Video extends Bitmap implements IVideo
 				if (LibVLC.event_attach(eventManager, LibVLC_MediaParsedChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaParsedChanged)');
 
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaMetaChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+					Log.warn('Failed to attach event (MediaMetaChanged)');
+
 				return LibVLC.media_parse_with_options(currentMediaItem, parse_flag, timeout) == 0;
 			}
 		}
