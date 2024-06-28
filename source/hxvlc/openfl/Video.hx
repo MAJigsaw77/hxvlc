@@ -34,6 +34,142 @@ import sys.thread.Mutex;
 using StringTools;
 
 /**
+ * Enum representing different types of metadata.
+ */
+enum MetaDataType
+{
+	/**
+	 * Metadata for the title.
+	 */
+	Title;
+
+	/**
+	 * Metadata for the artist.
+	 */
+	Artist;
+
+	/**
+	 * Metadata for the genre.
+	 */
+	Genre;
+
+	/**
+	 * Metadata for copyright information.
+	 */
+	Copyright;
+
+	/**
+	 * Metadata for the album.
+	 */
+	Album;
+
+	/**
+	 * Metadata for the track number.
+	 */
+	TrackNumber;
+
+	/**
+	 * Metadata for the description.
+	 */
+	Description;
+
+	/**
+	 * Metadata for the rating.
+	 */
+	Rating;
+
+	/**
+	 * Metadata for the date.
+	 */
+	Date;
+
+	/**
+	 * Metadata for settings.
+	 */
+	Setting;
+
+	/**
+	 * Metadata for the URL.
+	 */
+	URL;
+
+	/**
+	 * Metadata for the language.
+	 */
+	Language;
+
+	/**
+	 * Metadata for the currently playing item.
+	 */
+	NowPlaying;
+
+	/**
+	 * Metadata for the publisher.
+	 */
+	Publisher;
+
+	/**
+	 * Metadata for the entity that encoded the media.
+	 */
+	EncodedBy;
+
+	/**
+	 * Metadata for the artwork URL.
+	 */
+	ArtworkURL;
+
+	/**
+	 * Metadata for the track ID.
+	 */
+	TrackID;
+
+	/**
+	 * Metadata for the total number of tracks.
+	 */
+	TrackTotal;
+
+	/**
+	 * Metadata for the director.
+	 */
+	Director;
+
+	/**
+	 * Metadata for the season.
+	 */
+	Season;
+
+	/**
+	 * Metadata for the episode.
+	 */
+	Episode;
+
+	/**
+	 * Metadata for the show name.
+	 */
+	ShowName;
+
+	/**
+	 * Metadata for the actors.
+	 */
+	Actors;
+
+	/**
+	 * Metadata for the album artist.
+	 */
+	AlbumArtist;
+
+	/**
+	 * Metadata for the disc number.
+	 */
+	DiscNumber;
+
+	/**
+	 * Metadata for the total number of discs.
+	 */
+	DiscTotal;
+}
+
+/**
  * Enum representing parsing and fetching options for media.
  */
 enum ParseFlags
@@ -57,6 +193,32 @@ enum ParseFlags
 	 * Fetch metadata and cover art using network resources.
 	 */
 	FetchNetwork;
+}
+
+/**
+ * Enum representing the status of media parsing.
+ */
+enum ParsedStatus
+{
+	/**
+	 * Media parsing was skipped.
+	 */
+	Skipped;
+
+	/**
+	 * Media parsing failed.
+	 */
+	Failed;
+
+	/**
+	 * Media parsing timed out.
+	 */
+	Timeout;
+
+	/**
+	 * Media parsing was successfully completed.
+	 */
+	Done;
 }
 
 /**
