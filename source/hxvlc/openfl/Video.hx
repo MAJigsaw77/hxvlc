@@ -662,10 +662,10 @@ class Video extends Bitmap implements IVideo
 	 */
 	public var onChapterChanged(get, null):Event<Int->Void> = new Event<Int->Void>();
 
-/**
- * An event that is dispatched when the media is parsed.
- */
-public var onMediaParsedChanged(get, null):Event<ParseFlags->Void> = new Event<ParseFlags->Void>();
+	/**
+	 * An event that is dispatched when the media is parsed.
+	 */
+	public var onMediaParsedChanged(get, null):Event<ParseFlags->Void> = new Event<ParseFlags->Void>();
 
 	/**
 	 * An event that is dispatched when the format is being initialized.
