@@ -132,7 +132,7 @@ static void video_display(void *opaque, void *picture)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(opaque)->events[15] = true;
+	reinterpret_cast<Video_obj *>(opaque)->events[16] = true;
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -179,7 +179,7 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 	(*pitches) = self->textureWidth * 4;
 	(*lines) = self->textureHeight;
 
-	self->events[14] = true;
+	self->events[15] = true;
 
 	hx::SetTopOfStack((int *)0, true);
 
@@ -269,8 +269,11 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 		case libvlc_MediaPlayerChapterChanged:
 			self->events[12] = true;
 			break;
-		case libvlc_MediaParsedChanged:
+		case libvlc_MediaMetaChanged:
 			self->events[13] = true;
+			break;
+		case libvlc_MediaParsedChanged:
+			self->events[14] = true;
 			break;
 	}
 
@@ -474,6 +477,11 @@ class Video extends Bitmap implements IVideo
 	 */
 	public var onChapterChanged(get, null):Event<Int->Void> = new Event<Int->Void>();
 
+/**
+ * An event that is dispatched when the media metadata is changed.
+ */
+public var onMediaMetaChanged(get, null):Event<Int->Void> = new Event<Int->Void>();
+
 	/**
 	 * An event that is dispatched when the media is parsed.
 	 */
@@ -486,7 +494,7 @@ class Video extends Bitmap implements IVideo
 
 	@:noCompletion
 	private var events:Array<Bool> = [
-		false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+		false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
 	];
 
 	#if (HXVLC_OPENAL && lime_openal)
@@ -1046,6 +1054,13 @@ class Video extends Bitmap implements IVideo
 		{
 			events[13] = false;
 
+			onMediaMetaChanged.dispatch();
+		}
+
+		if (events[14])
+		{
+			events[14] = false;
+
 			if (mediaPlayer != null)
 			{
 				final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
@@ -1055,9 +1070,9 @@ class Video extends Bitmap implements IVideo
 			}
 		}
 
-		if (events[14])
+		if (events[15])
 		{
-			events[14] = false;
+			events[15] = false;
 
 			@:privateAccess
 			if (bitmapData == null
@@ -1094,9 +1109,9 @@ class Video extends Bitmap implements IVideo
 			}
 		}
 
-		if (events[15])
+		if (events[16])
 		{
-			events[15] = false;
+			events[16] = false;
 
 			if (__renderable && texturePlanes != null)
 			{
@@ -1564,6 +1579,12 @@ class Video extends Bitmap implements IVideo
 	private function get_onChapterChanged():Event<Int->Void>
 	{
 		return onChapterChanged;
+	}
+
+	@:noCompletion
+	private function get_onMediaMetaChanged():Event<Void->Void>
+	{
+		return onMediaMetaChanged;
 	}
 
 	@:noCompletion
