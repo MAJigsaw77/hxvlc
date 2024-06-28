@@ -295,7 +295,7 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 		case libvlc_MediaPlayerChapterChanged:
 			self->events[12] = true;
 			break;
-		case LibVLC_MediaParsedChanged:
+		case libvlc_MediaParsedChanged:
 			self->events[13] = true;
 			break;
 	}
