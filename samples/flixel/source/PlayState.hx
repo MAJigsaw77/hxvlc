@@ -78,7 +78,7 @@ class PlayState extends FlxState
 		});
 		video.bitmap.onEndReached.add(video.destroy);
 		video.load('assets/video.mp4', [':input-repeat=2']);
-		video.bitmap.parseWithOptions(LibVLC_Media_Parse_Local | LibVLC_Media_Parse_Network, -1);
+		video.bitmap.parseWithOptions(LibVLC_Media_Parse_Local, -1);
 		video.antialiasing = true;
 		add(video);
 
