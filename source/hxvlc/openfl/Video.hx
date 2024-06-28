@@ -196,32 +196,6 @@ enum ParseFlags
 }
 
 /**
- * Enum representing the status of media parsing.
- */
-enum ParsedStatus
-{
-	/**
-	 * Media parsing was skipped.
-	 */
-	Skipped;
-
-	/**
-	 * Media parsing failed.
-	 */
-	Failed;
-
-	/**
-	 * Media parsing timed out.
-	 */
-	Timeout;
-
-	/**
-	 * Media parsing was successfully completed.
-	 */
-	Done;
-}
-
-/**
  * This class is a video player that uses LibVLC for seamless integration with OpenFL display objects.
  */
 @:cppNamespaceCode('
@@ -665,7 +639,7 @@ class Video extends Bitmap implements IVideo
 	/**
 	 * An event that is dispatched when the media is parsed.
 	 */
-	public var onMediaParsedChanged(get, null):Event<ParseFlags->Void> = new Event<ParseFlags->Void>();
+	public var onMediaParsedChanged(get, null):Event<Int->Void> = new Event<Int->Void>();
 
 	/**
 	 * An event that is dispatched when the format is being initialized.
@@ -1201,23 +1175,7 @@ class Video extends Bitmap implements IVideo
 				final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 				if (currentMediaItem != null)
-				{
-					var parsed_status:ParsedStatus;
-
-					switch (LibVLC.media_get_parsed_status(currentMediaItem))
-					{
-						case LibVLC_Media_Parsed_Status_Skipped:
-							parsed_status = Skipped;
-						case LibVLC_Media_Parsed_Status_Failed:
-							parsed_status = Failed;
-						case LibVLC_Media_Parsed_Status_Timeout:
-							parsed_status = Timeout;
-						case LibVLC_Media_Parsed_Status_Done:
-							parsed_status = Done;
-					}
-
-					onMediaParsedChanged.dispatch(parsed_status);
-				}
+					onMediaParsedChanged.dispatch(LibVLC.media_get_parsed_status(currentMediaItem));
 			}
 		}
 
@@ -1733,7 +1691,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
-	private function get_onMediaParsedChanged():Event<ParseFlags->Void>
+	private function get_onMediaParsedChanged():Event<Int->Void>
 	{
 		return onMediaParsedChanged;
 	}
