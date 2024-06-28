@@ -63,7 +63,7 @@ interface IVideo
 	/**
 	 * The playback rate of the media player.
 	 *
-	 * WARNING: The actual rate may differ depending on the underlying media.
+	 * Note: The actual rate may differ depending on the underlying media.
 	 */
 	public var rate(get, set):Single;
 
@@ -92,7 +92,7 @@ interface IVideo
 	/**
 	 * Mute status of the media player audio.
 	 *
-	 * WARNING: May not be supported under certain conditions (e.g., digital pass-through).
+	 * Note: May not be supported under certain conditions (e.g., digital pass-through).
 	 */
 	public var mute(get, set):Bool;
 
@@ -192,6 +192,16 @@ interface IVideo
 	public var onChapterChanged(get, null):Event<Int->Void>;
 
 	/**
+	 * Event triggered when the media metadata changes.
+	 */
+	public var onMediaMetaChanged(get, null):Event<Void->Void>;
+
+	/**
+	 * Event triggered when the media is parsed.
+	 */
+	public var onMediaParsedChanged(get, null):Event<Int->Void>;
+
+	/**
 	 * Event triggered when the format setup of the media player is initialized.
 	 */
 	public var onFormatSetup(get, null):Event<Void->Void>;
@@ -201,10 +211,23 @@ interface IVideo
 	 *
 	 * @param location The location of the video file or stream.
 	 * @param options Additional options to configure the media.
-	 *
 	 * @return `true` if the video was loaded successfully, `false` otherwise.
 	 */
 	public function load(location:Location, ?options:Array<String>):Bool;
+
+	/**
+	 * Parses the current media item with the specified parsing option and timeout.
+	 *
+	 * @param parse_flag The parsing option indicating how to parse the media item.
+	 * @param timeout The timeout value in milliseconds for parsing.
+	 * @return `true` if parsing succeeded, `false` otherwise.
+	 */
+	public function parseWithOptions(parse_flag:Int, timeout:Int):Bool;
+
+	/**
+	 * Stops parsing of the current media item.
+	 */
+	public function parseStop():Void;
 
 	/**
 	 * Starts playing the loaded video.
@@ -242,6 +265,29 @@ interface IVideo
 	 * Sets the media player to the next chapter, if supported.
 	 */
 	public function nextChapter():Void;
+
+	/**
+	 * Retrieves metadata for the current media item.
+	 *
+	 * @param e_meta The metadata type to retrieve.
+	 * @return The metadata value as a string, or `null` if not available.
+	 */
+	public function getMeta(e_meta:Int):String;
+
+	/**
+	 * Sets metadata for the current media item.
+	 *
+	 * @param e_meta The metadata type to set.
+	 * @param value The metadata value to set.
+	 */
+	public function setMeta(e_meta:Int, value:String):Void;
+
+	/**
+	 * Saves the metadata of the current media item.
+	 *
+	 * @return `true` if the metadata was saved successfully, `false` otherwise.
+	 */
+	public function saveMeta():Bool;
 
 	/**
 	 * Frees the memory used by the media player object.
