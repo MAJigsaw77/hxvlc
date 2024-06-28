@@ -36,7 +36,7 @@ using StringTools;
 /**
  * Enum representing different types of metadata.
  */
-enum MetaDataType
+enum Meta
 {
 	/**
 	 * Metadata for the title.
@@ -320,7 +320,7 @@ static void video_display(void *opaque, void *picture)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(opaque)->events[14] = true;
+	reinterpret_cast<Video_obj *>(opaque)->events[15] = true;
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -367,7 +367,7 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 	(*pitches) = self->textureWidth * 4;
 	(*lines) = self->textureHeight;
 
-	self->events[13] = true;
+	self->events[14] = true;
 
 	hx::SetTopOfStack((int *)0, true);
 
@@ -456,6 +456,9 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 			break;
 		case libvlc_MediaPlayerChapterChanged:
 			self->events[12] = true;
+			break;
+		case LibVLC_MediaParsedChanged:
+			self->events[13] = true;
 			break;
 	}
 
@@ -659,6 +662,11 @@ class Video extends Bitmap implements IVideo
 	 */
 	public var onChapterChanged(get, null):Event<Int->Void> = new Event<Int->Void>();
 
+/**
+ * An event that is dispatched when the media is parsed.
+ */
+public var onMediaParsedChanged(get, null):Event<ParseFlags->Void> = new Event<ParseFlags->Void>();
+
 	/**
 	 * An event that is dispatched when the format is being initialized.
 	 */
@@ -666,7 +674,7 @@ class Video extends Bitmap implements IVideo
 
 	@:noCompletion
 	private var events:Array<Bool> = [
-		false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+		false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
 	];
 
 	#if (HXVLC_OPENAL && lime_openal)
@@ -1188,6 +1196,35 @@ class Video extends Bitmap implements IVideo
 		{
 			events[13] = false;
 
+			if (mediaPlayer != null)
+			{
+				final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+
+				if (currentMediaItem != null)
+				{
+					var parsed_status:ParsedStatus;
+
+					switch (LibVLC.media_get_parsed_status(currentMediaItem))
+					{
+						case LibVLC_Media_Parsed_Status_Skipped:
+							parsed_status = Skipped;
+						case LibVLC_Media_Parsed_Status_Failed:
+							parsed_status = Failed;
+						case LibVLC_Media_Parsed_Status_Timeout:
+							parsed_status = Timeout;
+						case LibVLC_Media_Parsed_Status_Done:
+							parsed_status = Done;
+					}
+
+					onMediaParsedChanged.dispatch(parsed_status);
+				}
+			}
+		}
+
+		if (events[14])
+		{
+			events[14] = false;
+
 			@:privateAccess
 			if (bitmapData == null
 				|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
@@ -1223,9 +1260,9 @@ class Video extends Bitmap implements IVideo
 			}
 		}
 
-		if (events[14])
+		if (events[15])
 		{
-			events[14] = false;
+			events[15] = false;
 
 			if (__renderable && texturePlanes != null)
 			{
@@ -1693,6 +1730,12 @@ class Video extends Bitmap implements IVideo
 	private function get_onChapterChanged():Event<Int->Void>
 	{
 		return onChapterChanged;
+	}
+
+	@:noCompletion
+	private function get_onMediaParsedChanged():Event<ParseFlags->Void>
+	{
+		return onMediaParsedChanged;
 	}
 
 	@:noCompletion
