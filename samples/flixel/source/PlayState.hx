@@ -11,6 +11,7 @@ import flixel.FlxG;
 import flixel.FlxState;
 import haxe.io.Path;
 import haxe.Exception;
+import hxvlc.externs.Types;
 import hxvlc.flixel.FlxVideo;
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.util.Handle;
@@ -38,7 +39,7 @@ class PlayState extends FlxState
 		{
 			switch (status)
 			{
-				case 1:
+				case LibVLC_Media_Parsed_Status_Skipped:
 					FlxG.log.notice("Media parsing skipped.");
 
 					video.bitmap.parseStop();
@@ -47,15 +48,15 @@ class PlayState extends FlxState
 					{
 						video.play();
 					});
-				case 2:
+				case LibVLC_Media_Parsed_Status_Failed:
 					FlxG.log.notice("Media parsing failed. Stopping further processing.");
 
 					video.bitmap.parseStop();
-				case 3:
+				case LibVLC_Media_Parsed_Status_Timeout:
 					FlxG.log.notice("Media parsing timed out. Stopping further processing.");
 
 					video.bitmap.parseStop();
-				case 4:
+				case LibVLC_Media_Parsed_Status_Done:
 					FlxG.log.notice("Media parsing done. Starting playback.");
 
 					FlxTimer.wait(0.001, function():Void
@@ -77,7 +78,7 @@ class PlayState extends FlxState
 		});
 		video.bitmap.onEndReached.add(video.destroy);
 		video.load('assets/video.mp4', [':input-repeat=2']);
-		video.bitmap.parseWithOptions(ParseLocal, -1);
+		video.bitmap.parseWithOptions(LibVLC_Media_Parse_Local | LibVLC_Media_Parse_Network, -1);
 		video.antialiasing = true;
 		add(video);
 
