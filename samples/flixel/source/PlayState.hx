@@ -28,11 +28,18 @@ class PlayState extends FlxState
 
 	override function create():Void
 	{
-		#if mobile
+		/*#if mobile
 		copyFiles();
-		#end
+		#end*/
+
+		if (!FileSystem.exists('assets'))
+			FileSystem.createDirectory('assets');
 
 		FlxG.cameras.bgColor = 0xFF131C1B;
+
+		var metadataInfo:FlxText = new FlxText(0, 40, 0, 'Title: Unknown\nArtist: Unknown', 32);
+		metadataInfo.setBorderStyle(OUTLINE, FlxColor.BLACK);
+		metadataInfo.antialiasing = true;
 
 		video = new FlxVideoSprite(0, 0);
 		video.bitmap.onMediaParsedChanged.add(function(status:Int):Void
@@ -40,7 +47,7 @@ class PlayState extends FlxState
 			switch (status)
 			{
 				case status if (status == LibVLC_Media_Parsed_Status_Skipped):
-					FlxG.log.notice("Media parsing skipped.");
+					FlxG.log.notice('Media parsing skipped.');
 
 					video.bitmap.parseStop();
 
@@ -49,15 +56,18 @@ class PlayState extends FlxState
 						video.play();
 					});
 				case status if (status == LibVLC_Media_Parsed_Status_Failed):
-					FlxG.log.notice("Media parsing failed. Stopping further processing.");
+					FlxG.log.notice('Media parsing failed. Stopping further processing.');
 
 					video.bitmap.parseStop();
 				case status if (status == LibVLC_Media_Parsed_Status_Timeout):
-					FlxG.log.notice("Media parsing timed out. Stopping further processing.");
+					FlxG.log.notice('Media parsing timed out. Stopping further processing.');
 
 					video.bitmap.parseStop();
 				case status if (status == LibVLC_Media_Parsed_Status_Done):
-					FlxG.log.notice("Media parsing done. Starting playback.");
+					FlxG.log.notice('Media parsing done. Starting playback.');
+
+					metadataInfo.text = 'Title: ${video.bitmap.getMeta(LibVLC_Meta_Title) ?? 'Unknown'}\nArtist: ${video.bitmap.getMeta(LibVLC_Meta_Artist) ?? 'Unknown'}';
+					metadataInfo.screenCenter(X);
 
 					FlxTimer.wait(0.001, function():Void
 					{
@@ -77,10 +87,12 @@ class PlayState extends FlxState
 				videoPositionBar.value = position;
 		});
 		video.bitmap.onEndReached.add(video.destroy);
-		video.load('assets/video.mp4', [':input-repeat=2']);
+		video.load(FileSystem.readDirectory('assets')[0], [':input-repeat=2']);
 		video.bitmap.parseWithOptions(LibVLC_Media_Parse_Local, -1);
 		video.antialiasing = true;
 		add(video);
+
+		add(metadataInfo);
 
 		var libvlcVersion:FlxText = new FlxText(10, FlxG.height - 30, 0, 'LibVLC Version: ${Handle.version}', 16);
 		libvlcVersion.setBorderStyle(OUTLINE, FlxColor.BLACK);
