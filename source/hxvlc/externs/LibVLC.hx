@@ -206,6 +206,28 @@ extern class LibVLC
 	static function media_get_meta(p_md:cpp.RawPointer<LibVLC_Media_T>, e_meta:LibVLC_Meta_T):cpp.CharStar;
 
 	/**
+	 * Sets the metadata of a media descriptor.
+	 *
+	 * @param p_md Pointer to the media descriptor.
+	 * @param e_meta Metadata type.
+	 * @param psz_value New metadata value.
+	 */
+	@:native('libvlc_media_set_meta')
+	static function media_set_meta(p_md:cpp.RawPointer<LibVLC_Media_T>, e_meta:LibVLC_Meta_T, psz_value:cpp.ConstCharStar):Void;
+
+	/**
+	 * Saves the metadata of a media descriptor.
+	 *
+	 * This function commits any metadata modifications to the underlying storage, if applicable.
+	 *
+	 * @param p_md Pointer to the media descriptor.
+	 *
+	 * @return 0 on failure, a non-zero value if the metadata was saved successfully.
+	 */
+	@:native('libvlc_media_save_meta')
+	static function media_save_meta(p_md:cpp.RawPointer<LibVLC_Media_T>):Int;
+
+	/**
 	 * Gets the statistics of a media descriptor.
 	 *
 	 * @param p_md Pointer to the media descriptor.
