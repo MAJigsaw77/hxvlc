@@ -831,12 +831,12 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to retrieve metadata for the current media item.
+	 * Call this function to set metadata for the current media item.
 	 *
-	 * @param e_meta The metadata type to retrieve.
-	 * @return The metadata value as a string, or `null` if not available.
+	 * @param e_meta The metadata type to set.
+	 * @param value The metadata value to set.
 	 */
-	public function setMeta(e_meta:Int, value:String):String
+	public function setMeta(e_meta:Int, value:String):Void
 	{
 		if (mediaPlayer != null && value != null)
 		{
