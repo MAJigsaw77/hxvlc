@@ -37,8 +37,9 @@ class PlayState extends FlxState
 
 		FlxG.cameras.bgColor = 0xFF131C1B;
 
-		var metadataInfo:FlxText = new FlxText(0, 40, 0, 'Title: Unknown\nArtist: Unknown', 32);
+		var metadataInfo:FlxText = new FlxText(0, 40, 0, 'Unknown\nUnknown', 32);
 		metadataInfo.setBorderStyle(OUTLINE, FlxColor.BLACK);
+		metadataInfo.alignment = CENTER;
 		metadataInfo.antialiasing = true;
 
 		video = new FlxVideoSprite(0, 0);
@@ -66,7 +67,7 @@ class PlayState extends FlxState
 				case status if (status == LibVLC_Media_Parsed_Status_Done):
 					FlxG.log.notice('Media parsing done. Starting playback.');
 
-					metadataInfo.text = 'Title: ${video.bitmap.getMeta(LibVLC_Meta_Title) ?? 'Unknown'}\nArtist: ${video.bitmap.getMeta(LibVLC_Meta_Artist) ?? 'Unknown'}';
+					metadataInfo.text = '${video.bitmap.getMeta(LibVLC_Meta_Title) ?? 'Unknown'}\n${video.bitmap.getMeta(LibVLC_Meta_Artist) ?? 'Unknown'}';
 					metadataInfo.screenCenter(X);
 
 					FlxTimer.wait(0.001, function():Void
@@ -87,7 +88,7 @@ class PlayState extends FlxState
 				videoPositionBar.value = position;
 		});
 		video.bitmap.onEndReached.add(video.destroy);
-		video.load(FileSystem.readDirectory('assets')[0], [':input-repeat=2']);
+		video.load(Path.join(['assets', FileSystem.readDirectory('assets')[0]]), [':input-repeat=2']);
 		video.bitmap.parseWithOptions(LibVLC_Media_Parse_Local, -1);
 		video.antialiasing = true;
 		add(video);
