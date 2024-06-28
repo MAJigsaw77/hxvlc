@@ -171,7 +171,7 @@ extern enum abstract LibVLC_Media_Parsed_Status_T(LibVLC_Media_Parsed_Status_T_I
 	var LibVLC_Media_Parsed_Status_Done;
 
 	@:from
-	static public inline function fromInt(i:Int):LibVLC_Media_Parsed_Status_Tl
+	static public inline function fromInt(i:Int):LibVLC_Media_Parsed_Status_T
 		return cast i;
 
 	@:to extern public inline function toInt():Int
