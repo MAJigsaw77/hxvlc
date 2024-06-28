@@ -1134,6 +1134,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
+	@:unreflective
 	private function audioPlay(samples:cpp.RawConstPointer<cpp.Void>, count:cpp.UInt32, pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
@@ -1169,6 +1170,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
+	@:unreflective
 	private function audioPause(pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
@@ -1185,6 +1187,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
+	@:unreflective
 	private function audioResume(pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
@@ -1201,6 +1204,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
+	@:unreflective
 	private function audioSetVolume(volume:Single, mute:Bool):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
