@@ -480,7 +480,7 @@ class Video extends Bitmap implements IVideo
 	/**
 	 * An event that is dispatched when the media metadata is changed.
 	 */
-	public var onMediaMetaChanged(get, null):Event<Int->Void> = new Event<Int->Void>();
+	public var onMediaMetaChanged(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * An event that is dispatched when the media is parsed.
