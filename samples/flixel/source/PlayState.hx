@@ -34,6 +34,36 @@ class PlayState extends FlxState
 		FlxG.cameras.bgColor = 0xFF131C1B;
 
 		video = new FlxVideoSprite(0, 0);
+		video.bitmap.onMediaParsedChanged.add(function(status:Int):Void
+		{
+			switch (status)
+			{
+				case 1:
+					FlxG.log.notice("Media parsing skipped.");
+
+					video.bitmap.parseStop();
+
+					FlxTimer.wait(0.001, function():Void
+					{
+						video.play();
+					});
+				case 2:
+					FlxG.log.notice("Media parsing failed. Stopping further processing.");
+
+					video.bitmap.parseStop();
+				case 3:
+					FlxG.log.notice("Media parsing timed out. Stopping further processing.");
+
+					video.bitmap.parseStop();
+				case 4:
+					FlxG.log.notice("Media parsing done. Starting playback.");
+
+					FlxTimer.wait(0.001, function():Void
+					{
+						video.play();
+					});
+			}
+		});
 		video.bitmap.onFormatSetup.add(function():Void
 		{
 			video.setGraphicSize(FlxG.width * 0.7, FlxG.height * 0.7);
@@ -47,6 +77,7 @@ class PlayState extends FlxState
 		});
 		video.bitmap.onEndReached.add(video.destroy);
 		video.load('assets/video.mp4', [':input-repeat=2']);
+		video.bitmap.parseWithOptions(ParseLocal, -1);
 		video.antialiasing = true;
 		add(video);
 
@@ -59,11 +90,6 @@ class PlayState extends FlxState
 		videoPositionBar = new FlxBar(10, FlxG.height - 50, LEFT_TO_RIGHT, FlxG.width - 20, 10, null, '', 0, 1);
 		videoPositionBar.createFilledBar(FlxColor.GRAY, FlxColor.CYAN, true, FlxColor.BLACK);
 		add(videoPositionBar);
-
-		FlxTimer.wait(0.001, function():Void
-		{
-			video.play();
-		});
 
 		super.create();
 	}
