@@ -39,7 +39,7 @@ class PlayState extends FlxState
 		{
 			switch (status)
 			{
-				case LibVLC_Media_Parsed_Status_Skipped:
+				case status if (status == LibVLC_Media_Parsed_Status_Skipped):
 					FlxG.log.notice("Media parsing skipped.");
 
 					video.bitmap.parseStop();
@@ -48,15 +48,15 @@ class PlayState extends FlxState
 					{
 						video.play();
 					});
-				case LibVLC_Media_Parsed_Status_Failed:
+				case status if (status == LibVLC_Media_Parsed_Status_Failed):
 					FlxG.log.notice("Media parsing failed. Stopping further processing.");
 
 					video.bitmap.parseStop();
-				case LibVLC_Media_Parsed_Status_Timeout:
+				case status if (status == LibVLC_Media_Parsed_Status_Timeout):
 					FlxG.log.notice("Media parsing timed out. Stopping further processing.");
 
 					video.bitmap.parseStop();
-				case LibVLC_Media_Parsed_Status_Done:
+				case status if (status == LibVLC_Media_Parsed_Status_Done):
 					FlxG.log.notice("Media parsing done. Starting playback.");
 
 					FlxTimer.wait(0.001, function():Void
