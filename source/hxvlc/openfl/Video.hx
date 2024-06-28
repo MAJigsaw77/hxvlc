@@ -713,7 +713,7 @@ class Video extends Bitmap implements IVideo
 	 *
 	 * @return `true` if parsing succeeded, `false` otherwise.
 	 */
-	public function parseWithOptions(flag:Int, timeout:Int):Bool
+	public function parseWithOptions(parse_flag:Int, timeout:Int):Bool
 	{
 		if (mediaPlayer != null)
 		{
@@ -726,7 +726,7 @@ class Video extends Bitmap implements IVideo
 				if (LibVLC.event_attach(eventManager, LibVLC_MediaParsedChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaParsedChanged)');
 
-				return LibVLC.media_parse_with_options(currentMediaItem, flag, timeout) == 0;
+				return LibVLC.media_parse_with_options(currentMediaItem, parse_flag, timeout) == 0;
 			}
 		}
 
@@ -809,6 +809,58 @@ class Video extends Bitmap implements IVideo
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_next_chapter(mediaPlayer);
+	}
+
+	/**
+	 * Call this function to retrieve metadata for the current media item.
+	 *
+	 * @param e_meta The metadata type to retrieve.
+	 * @return The metadata value as a string, or `null` if not available.
+	 */
+	public function getMeta(e_meta:Int):String
+	{
+		if (mediaPlayer != null)
+		{
+			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+
+			if (currentMediaItem != null)
+				return LibVLC.media_get_meta(currentMediaItem, e_meta);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Call this function to retrieve metadata for the current media item.
+	 *
+	 * @param e_meta The metadata type to retrieve.
+	 * @return The metadata value as a string, or `null` if not available.
+	 */
+	public function setMeta(e_meta:Int, value:String):String
+	{
+		if (mediaPlayer != null && value != null)
+		{
+			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+
+			if (currentMediaItem != null)
+				LibVLC.media_set_meta(currentMediaItem, e_meta, value);
+		}
+	}
+
+	/**
+	 * Call this function to save the metadata of the current media item.
+	 */
+	public function saveMeta():Bool
+	{
+		if (mediaPlayer != null)
+		{
+			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+
+			if (currentMediaItem != null)
+				return LibVLC.media_save_meta(currentMediaItem) != 0;
+		}
+
+		return false;
 	}
 
 	/**
