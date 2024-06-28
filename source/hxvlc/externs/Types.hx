@@ -79,6 +79,10 @@ extern enum abstract LibVLC_Meta_T(LibVLC_Meta_T_Impl)
 	@:native('libvlc_meta_DiscTotal')
 	var LibVLC_Meta_DiscTotal;
 
+	@:from
+	static public inline function fromInt(i:Int):LibVLC_Meta_T
+		return cast i;
+
 	@:to extern public inline function toInt():Int
 		return untyped this;
 }
@@ -141,6 +145,10 @@ extern enum abstract LibVLC_Media_Parse_Flag_T(LibVLC_Media_Parse_Flag_T_Impl)
 	@:native('libvlc_media_do_interact')
 	var LibVLC_Media_Do_Interact;
 
+	@:from
+	static public inline function fromInt(i:Int):LibVLC_Media_Parse_Flag_T
+		return cast i;
+
 	@:to extern public inline function toInt():Int
 		return untyped this;
 }
@@ -161,6 +169,10 @@ extern enum abstract LibVLC_Media_Parsed_Status_T(LibVLC_Media_Parsed_Status_T_I
 	var LibVLC_Media_Parsed_Status_Timeout;
 	@:native('libvlc_media_parsed_status_done')
 	var LibVLC_Media_Parsed_Status_Done;
+
+	@:from
+	static public inline function fromInt(i:Int):LibVLC_Media_Parsed_Status_Tl
+		return cast i;
 
 	@:to extern public inline function toInt():Int
 		return untyped this;
@@ -208,6 +220,10 @@ extern enum abstract LibVLC_Audio_Output_Channel_T(LibVLC_Audio_Output_Channel_T
 	var LibVLC_Audio_Channel_Right;
 	@:native('libvlc_AudioChannel_Dolbys')
 	var LibVLC_Audio_Channel_Dolbys;
+
+	@:from
+	static public inline function fromInt(i:Int):LibVLC_Audio_Output_Channel_T
+		return cast i;
 
 	@:to extern public inline function toInt():Int
 		return untyped this;
@@ -368,6 +384,10 @@ extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 	@:native('libvlc_VlmMediaInstanceStatusError')
 	var LibVLC_VlmMediaInstanceStatusError;
 
+	@:from
+	static public inline function fromInt(i:Int):LibVLC_Event_E
+		return cast i;
+
 	@:to extern public inline function toInt():Int
 		return untyped this;
 }
@@ -456,6 +476,10 @@ extern enum abstract LibVLC_Media_Player_Role_T(LibVLC_Media_Player_Role_T_Impl)
 	var LibVLC_Role_Test;
 	@:native('libvlc_role_Last')
 	var LibVLC_Role_Last;
+
+	@:from
+	static public inline function fromInt(i:Int):LibVLC_Media_Player_Role_T
+		return cast i;
 
 	@:to extern public inline function toInt():Int
 		return untyped this;
