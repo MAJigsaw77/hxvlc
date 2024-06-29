@@ -39,8 +39,9 @@ class PlayState extends FlxState
 
 		var metadataInfo:FlxText = new FlxText(0, 40, 0, 'Unknown\nUnknown', 32);
 		metadataInfo.setBorderStyle(OUTLINE, FlxColor.BLACK);
+		metadataInfo.borderSize = 2;
 		metadataInfo.alignment = CENTER;
-		metadataInfo.antialiasing = true;
+		metadataInfo.screenCenter(X);
 
 		video = new FlxVideoSprite(0, 0);
 		video.bitmap.onMediaParsedChanged.add(function(status:Int):Void
@@ -78,7 +79,7 @@ class PlayState extends FlxState
 		});
 		video.bitmap.onFormatSetup.add(function():Void
 		{
-			video.setGraphicSize(FlxG.width * 0.7, FlxG.height * 0.7);
+			video.setGraphicSize(FlxG.width * 0.8, FlxG.height * 0.8);
 			video.updateHitbox();
 			video.screenCenter();
 		});
@@ -89,13 +90,18 @@ class PlayState extends FlxState
 		});
 		video.bitmap.onEndReached.add(video.destroy);
 		video.load(Path.join(['assets', FileSystem.readDirectory('assets')[0]]), [':input-repeat=2']);
-		video.bitmap.parseWithOptions(LibVLC_Media_Parse_Local, -1);
 		video.antialiasing = true;
 		add(video);
 
+		final parseLocal:Int = LibVLC_Media_Parse_Local;
+		final fetchLocal:Int = LibVLC_Media_Fetch_Local;
+
+		video.parseWithOptions(parseLocal | fetchLocal, -1);
+
+		metadataInfo.antialiasing = true;
 		add(metadataInfo);
 
-		var libvlcVersion:FlxText = new FlxText(10, FlxG.height - 30, 0, 'LibVLC Version: ${Handle.version}', 16);
+		var libvlcVersion:FlxText = new FlxText(10, FlxG.height - 30, 0, 'LibVLC ${Handle.version}', 16);
 		libvlcVersion.setBorderStyle(OUTLINE, FlxColor.BLACK);
 		libvlcVersion.active = false;
 		libvlcVersion.antialiasing = true;
