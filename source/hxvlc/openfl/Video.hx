@@ -554,12 +554,11 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to load a media.
+	 * Loads media from the specified location.
 	 *
-	 * @param location The local filesystem path or the media location URL or the ID of an open file descriptor or the bitstream input.
-	 * @param options The additional options you can add to the LibVLC Media instance.
-	 *
-	 * @return `true` if the media loaded successfully or `false` if there's an error.
+	 * @param location The location of the media file or stream.
+	 * @param options Additional options to configure the media.
+	 * @return `true` if the media was loaded successfully, `false` otherwise.
 	 */
 	public function load(location:Location, ?options:Array<String>):Bool
 	{
@@ -705,6 +704,7 @@ class Video extends Bitmap implements IVideo
 			}
 
 			LibVLC.media_player_set_media(mediaPlayer, mediaItem);
+
 			LibVLC.media_release(mediaItem);
 		}
 		else
@@ -714,11 +714,10 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to parse the current media item with the specified parsing option and timeout.
+	 * Parses the current media item with the specified options.
 	 *
-	 * @param flag The parsing option indicating how to parse the media item.
-	 * @param timeout The timeout value in milliseconds for parsing.
-	 *
+	 * @param parse_flag The parsing option.
+	 * @param timeout The timeout in milliseconds.
 	 * @return `true` if parsing succeeded, `false` otherwise.
 	 */
 	public function parseWithOptions(parse_flag:Int, timeout:Int):Bool
@@ -745,7 +744,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to stop parsing of the current media item.
+	 * Stops parsing the current media item.
 	 */
 	public function parseStop():Void
 	{
@@ -759,9 +758,9 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to initiate playback with the media player.
+	 * Starts playback.
 	 *
-	 * @return `true` if the media player started playing or `false` if there's an error.
+	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
 	public function play():Bool
 	{
@@ -769,7 +768,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to stop the media player.
+	 * Stops playback.
 	 */
 	public function stop():Void
 	{
@@ -778,7 +777,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to pause the media player.
+	 * Pauses playback.
 	 */
 	public function pause():Void
 	{
@@ -787,7 +786,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to resume the media player.
+	 * Resumes playback.
 	 */
 	public function resume():Void
 	{
@@ -796,7 +795,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to toggle the pause of the media player.
+	 * Toggles the pause state.
 	 */
 	public function togglePaused():Void
 	{
@@ -805,7 +804,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to set the previous chapter (if applicable).
+	 * Moves to the previous chapter, if supported.
 	 */
 	public function previousChapter():Void
 	{
@@ -814,7 +813,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to set the next chapter (if applicable).
+	 * Moves to the next chapter, if supported.
 	 */
 	public function nextChapter():Void
 	{
@@ -823,9 +822,9 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to retrieve metadata for the current media item.
+	 * Retrieves metadata for the current media item.
 	 *
-	 * @param e_meta The metadata type to retrieve.
+	 * @param e_meta The metadata type.
 	 * @return The metadata value as a string, or `null` if not available.
 	 */
 	public function getMeta(e_meta:Int):String
@@ -842,10 +841,10 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to set metadata for the current media item.
+	 * Sets metadata for the current media item.
 	 *
-	 * @param e_meta The metadata type to set.
-	 * @param value The metadata value to set.
+	 * @param e_meta The metadata type.
+	 * @param value The metadata value.
 	 */
 	public function setMeta(e_meta:Int, value:String):Void
 	{
@@ -859,7 +858,9 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to save the metadata of the current media item.
+	 * Saves the metadata of the current media item.
+	 *
+	 * @return `true` if the metadata was saved successfully, `false` otherwise.
 	 */
 	public function saveMeta():Bool
 	{
