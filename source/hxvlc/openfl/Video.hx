@@ -290,205 +290,198 @@ class Video extends Bitmap implements IVideo
 	public static var useTexture:Bool = true;
 
 	/**
-	 * The media resource locator.
+	 * The media resource locator (MRL).
 	 */
 	public var mrl(get, never):String;
 
 	/**
-	 * Statistics related to the media resource.
+	 * Statistics related to the media.
 	 */
 	public var stats(get, never):Null<Stats>;
 
 	/**
-	 * The media's duration.
+	 * Duration of the media in microseconds.
 	 */
 	public var duration(get, never):Int64;
 
 	/**
-	 * Whether the media player is playing or not.
+	 * Indicates whether the media is currently playing.
 	 */
 	public var isPlaying(get, never):Bool;
 
 	/**
-	 * The media player's length in milliseconds.
+	 * Length of the media in microseconds.
 	 */
 	public var length(get, never):Int64;
 
 	/**
-	 * The media player's time in milliseconds.
+	 * Current time position in the media in microseconds.
 	 */
 	public var time(get, set):Int64;
 
 	/**
-	 * The media player's position as percentage between `0.0` and `1.0`.
+	 * Current playback position as a percentage (0.0 to 1.0).
 	 */
 	public var position(get, set):Single;
 
 	/**
-	 * The media player's chapter.
+	 * Current chapter of the video.
 	 */
 	public var chapter(get, set):Int;
 
 	/**
-	 * The media player's chapter count.
+	 * Total number of chapters in the video.
 	 */
 	public var chapterCount(get, never):Int;
 
 	/**
-	 * Whether the media player is able to play.
+	 * Indicates whether playback will start automatically once loaded.
 	 */
 	public var willPlay(get, never):Bool;
 
 	/**
-	 * The media player's play rate.
+	 * Playback rate of the video.
 	 *
-	 * WARNING: Depending on the underlying media, the requested rate may be different from the real playback rate.
+	 * Note: The actual rate may vary depending on the media.
 	 */
 	public var rate(get, set):Single;
 
 	/**
-	 * Whether the media player is seekable or not.
+	 * Indicates whether seeking is supported.
 	 */
 	public var isSeekable(get, never):Bool;
 
 	/**
-	 * Whether the media player can be paused or not.
+	 * Indicates whether pausing is supported.
 	 */
 	public var canPause(get, never):Bool;
 
 	/**
-	 * Gets the list of available audio output modules.
+	 * Available audio output modules.
 	 */
 	public var outputModules(get, never):Array<{name:String, description:String}>;
 
 	/**
-	 * Selects an audio output module.
+	 * Selected audio output module.
 	 *
-	 * Note: Any change will take effect only after playback is stopped and restarted.
-	 *
-	 * Audio output cannot be changed while playing.
+	 * Note: Changes take effect only after restarting playback.
 	 */
 	public var output(never, set):String;
 
 	/**
-	 * The audio's mute status.
+	 * Mute status of the audio.
 	 *
-	 * WARNING: This does not always work.
-	 * If there is no active audio playback stream, the mute status might not be available.
-	 * If digital pass-through (S/PDIF, HDMI...) is in use, muting may be inapplicable.
-	 * Also some audio output plugins do not support muting at all.
-	 *
-	 * Note: To force silent playback, disable all audio tracks. This is more efficient and reliable than mute.
+	 * Note: May not be supported under certain conditions (e.g., digital pass-through).
 	 */
 	public var mute(get, set):Bool;
 
 	/**
-	 * The audio volume in percents (0 = mute, 100 = nominal / 0dB).
+	 * Volume level (0 to 100).
 	 */
 	public var volume(get, set):Int;
 
 	/**
-	 * Get the number of available audio tracks.
+	 * Total number of available audio tracks.
 	 */
 	public var trackCount(get, never):Int;
 
 	/**
-	 * The media player's audio track.
+	 * Selected audio track.
 	 */
 	public var track(get, set):Int;
 
 	/**
-	 * The audio channel.
+	 * Selected audio channel.
 	 */
 	public var channel(get, set):Int;
 
 	/**
-	 * The audio delay in microseconds.
+	 * Audio delay in microseconds.
 	 */
 	public var delay(get, set):Int64;
 
 	/**
-	 * The media player's role.
+	 * Role of the media.
 	 */
 	public var role(get, set):UInt;
 
 	/**
-	 * An event that is dispatched when the media player is opening.
+	 * Event triggered when the media is opening.
 	 */
 	public var onOpening(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player is playing.
+	 * Event triggered when playback starts.
 	 */
 	public var onPlaying(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player stops.
+	 * Event triggered when playback stops.
 	 */
 	public var onStopped(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player is paused.
+	 * Event triggered when playback is paused.
 	 */
 	public var onPaused(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player reaches the end.
+	 * Event triggered when the end of the media is reached.
 	 */
 	public var onEndReached(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player encounters an error.
+	 * Event triggered when an error occurs.
 	 */
 	public var onEncounteredError(get, null):Event<String->Void> = new Event<String->Void>();
 
 	/**
-	 * An event that is dispatched when the media changes.
+	 * Event triggered when the media changes.
 	 */
 	public var onMediaChanged(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player is corked.
+	 * Event triggered when the media is corked.
 	 */
 	public var onCorked(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player is uncorked.
+	 * Event triggered when the media is uncorked.
 	 */
 	public var onUncorked(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player changes time.
+	 * Event triggered when the time changes.
 	 */
 	public var onTimeChanged(get, null):Event<Int64->Void> = new Event<Int64->Void>();
 
 	/**
-	 * An event that is dispatched when the media player changes position.
+	 * Event triggered when the position changes.
 	 */
 	public var onPositionChanged(get, null):Event<Single->Void> = new Event<Single->Void>();
 
 	/**
-	 * An event that is dispatched when the media player changes the length.
+	 * Event triggered when the length changes.
 	 */
 	public var onLengthChanged(get, null):Event<Int64->Void> = new Event<Int64->Void>();
 
 	/**
-	 * An event that is dispatched when the media player changes the chapter.
+	 * Event triggered when the chapter changes.
 	 */
 	public var onChapterChanged(get, null):Event<Int->Void> = new Event<Int->Void>();
 
 	/**
-	 * An event that is dispatched when the media metadata is changed.
+	 * Event triggered when the media metadata changes.
 	 */
 	public var onMediaMetaChanged(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media is parsed.
+	 * Event triggered when the media is parsed.
 	 */
 	public var onMediaParsedChanged(get, null):Event<Int->Void> = new Event<Int->Void>();
 
 	/**
-	 * An event that is dispatched when the format is being initialized.
+	 * Event triggered when the format setup is initialized.
 	 */
 	public var onFormatSetup(get, null):Event<Void->Void> = new Event<Void->Void>();
 
