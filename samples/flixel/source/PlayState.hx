@@ -65,7 +65,7 @@ class PlayState extends FlxState
 				case status if (status == LibVLC_Media_Parsed_Status_Done):
 					FlxG.log.notice('Media parsing done. Starting playback.');
 
-					metadataInfo.text = '${video.bitmap.getMeta(LibVLC_Meta_Title) ?? 'Unknown'}\n${video.bitmap.getMeta(LibVLC_Meta_Artist) ?? 'Unknown'}';
+					metadataInfo.text = '${video.bitmap.getMeta(LibVLC_Meta_Title) ?? 'Title Unknown'}\n${video.bitmap.getMeta(LibVLC_Meta_Artist) ?? 'Artist Unknown'}';
 					metadataInfo.screenCenter(X);
 
 					FlxTimer.wait(0.001, function():Void
