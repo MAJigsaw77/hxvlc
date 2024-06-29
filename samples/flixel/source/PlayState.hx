@@ -28,16 +28,13 @@ class PlayState extends FlxState
 
 	override function create():Void
 	{
-		/*#if mobile
+		#if mobile
 		copyFiles();
-		#end*/
-
-		if (!FileSystem.exists('assets'))
-			FileSystem.createDirectory('assets');
+		#end
 
 		FlxG.cameras.bgColor = 0xFF131C1B;
 
-		var metadataInfo:FlxText = new FlxText(0, 40, 0, 'Unknown\nUnknown', 32);
+		var metadataInfo:FlxText = new FlxText(0, 40, 0, 'Title Unknown\nArtist Unknown', 32);
 		metadataInfo.setBorderStyle(OUTLINE, FlxColor.BLACK);
 		metadataInfo.borderSize = 2;
 		metadataInfo.alignment = CENTER;
@@ -89,7 +86,7 @@ class PlayState extends FlxState
 				videoPositionBar.value = position;
 		});
 		video.bitmap.onEndReached.add(video.destroy);
-		video.load(Path.join(['assets', FileSystem.readDirectory('assets')[0]]), [':input-repeat=2']);
+		video.load('assets/video.mp4', [':input-repeat=2']);
 		video.antialiasing = true;
 		add(video);
 
