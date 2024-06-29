@@ -77,38 +77,5 @@ interface IFlxVideoSprite
 	 * Toggles between play and pause states of the video.
 	 */
 	public function togglePaused():Void;
-
-	/**
-	 * Moves to the previous chapter or position in the video, if supported.
-	 */
-	public function previousChapter():Void;
-
-	/**
-	 * Moves to the next chapter or position in the video, if supported.
-	 */
-	public function nextChapter():Void;
-
-	/**
-	 * Retrieves metadata for the current media item.
-	 *
-	 * @param e_meta The type of metadata to retrieve.
-	 * @return The metadata value as a string, or `null` if unavailable.
-	 */
-	public function getMeta(e_meta:Int):String;
-
-	/**
-	 * Sets metadata for the current media item.
-	 *
-	 * @param e_meta The type of metadata to set.
-	 * @param value The value of the metadata.
-	 */
-	public function setMeta(e_meta:Int, value:String):Void;
-
-	/**
-	 * Saves the metadata of the current media item.
-	 *
-	 * @return `true` if the metadata saves successfully, `false` otherwise.
-	 */
-	public function saveMeta():Bool;
 }
 #end
