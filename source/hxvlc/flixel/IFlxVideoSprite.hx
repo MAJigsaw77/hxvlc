@@ -52,9 +52,9 @@ interface IFlxVideoSprite
 	public function parseStop():Void;
 
 	/**
-	 * Begins playback of the video.
+	 * Starts video playback.
 	 *
-	 * @return `true` if the video starts playing successfully, `false` otherwise.
+	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
 	public function play():Bool;
 
