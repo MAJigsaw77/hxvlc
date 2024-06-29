@@ -47,7 +47,7 @@ class Main extends Sprite
 
 		final refreshRate:Int = #if linux 60 #else Lib.application.window.displayMode.refreshRate #end;
 
-		addChild(new FlxGame(1280, 720, PlayState, refreshRate, refreshRate));
+		addChild(new FlxGame(1280, 720, VideoState, refreshRate, refreshRate));
 
 		#if FLX_MOUSE
 		FlxG.mouse.useSystemCursor = true;

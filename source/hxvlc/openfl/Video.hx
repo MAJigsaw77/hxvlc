@@ -132,7 +132,7 @@ static void video_display(void *opaque, void *picture)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(opaque)->events[14] = true;
+	reinterpret_cast<Video_obj *>(opaque)->events[16] = true;
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -179,7 +179,7 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 	(*pitches) = self->textureWidth * 4;
 	(*lines) = self->textureHeight;
 
-	self->events[13] = true;
+	self->events[15] = true;
 
 	hx::SetTopOfStack((int *)0, true);
 
@@ -222,7 +222,7 @@ static void audio_set_volume(void *data, float volume, bool mute)
 	hx::SetTopOfStack((int *)0, true);
 }
 
-static void media_player_callbacks(const libvlc_event_t *p_event, void *p_data)
+static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 {
 	hx::SetTopOfStack((int *)99, true);
 
@@ -269,6 +269,12 @@ static void media_player_callbacks(const libvlc_event_t *p_event, void *p_data)
 		case libvlc_MediaPlayerChapterChanged:
 			self->events[12] = true;
 			break;
+		case libvlc_MediaMetaChanged:
+			self->events[13] = true;
+			break;
+		case libvlc_MediaParsedChanged:
+			self->events[14] = true;
+			break;
 	}
 
 	hx::SetTopOfStack((int *)0, true);
@@ -284,201 +290,204 @@ class Video extends Bitmap implements IVideo
 	public static var useTexture:Bool = true;
 
 	/**
-	 * The media resource locator.
+	 * The media resource locator (MRL).
 	 */
 	public var mrl(get, never):String;
 
 	/**
-	 * Statistics related to the media resource.
+	 * Statistics related to the media.
 	 */
 	public var stats(get, never):Null<Stats>;
 
 	/**
-	 * The media's duration.
+	 * Duration of the media in microseconds.
 	 */
 	public var duration(get, never):Int64;
 
 	/**
-	 * Whether the media player is playing or not.
+	 * Indicates whether the media is currently playing.
 	 */
 	public var isPlaying(get, never):Bool;
 
 	/**
-	 * The media player's length in milliseconds.
+	 * Length of the media in microseconds.
 	 */
 	public var length(get, never):Int64;
 
 	/**
-	 * The media player's time in milliseconds.
+	 * Current time position in the media in microseconds.
 	 */
 	public var time(get, set):Int64;
 
 	/**
-	 * The media player's position as percentage between `0.0` and `1.0`.
+	 * Current playback position as a percentage (0.0 to 1.0).
 	 */
 	public var position(get, set):Single;
 
 	/**
-	 * The media player's chapter.
+	 * Current chapter of the video.
 	 */
 	public var chapter(get, set):Int;
 
 	/**
-	 * The media player's chapter count.
+	 * Total number of chapters in the video.
 	 */
 	public var chapterCount(get, never):Int;
 
 	/**
-	 * Whether the media player is able to play.
+	 * Indicates whether playback will start automatically once loaded.
 	 */
 	public var willPlay(get, never):Bool;
 
 	/**
-	 * The media player's play rate.
+	 * Playback rate of the video.
 	 *
-	 * WARNING: Depending on the underlying media, the requested rate may be different from the real playback rate.
+	 * Note: The actual rate may vary depending on the media.
 	 */
 	public var rate(get, set):Single;
 
 	/**
-	 * Whether the media player is seekable or not.
+	 * Indicates whether seeking is supported.
 	 */
 	public var isSeekable(get, never):Bool;
 
 	/**
-	 * Whether the media player can be paused or not.
+	 * Indicates whether pausing is supported.
 	 */
 	public var canPause(get, never):Bool;
 
 	/**
-	 * Gets the list of available audio output modules.
+	 * Available audio output modules.
 	 */
 	public var outputModules(get, never):Array<{name:String, description:String}>;
 
 	/**
-	 * Selects an audio output module.
+	 * Selected audio output module.
 	 *
-	 * Note: Any change will take effect only after playback is stopped and restarted.
-	 *
-	 * Audio output cannot be changed while playing.
+	 * Note: Changes take effect only after restarting playback.
 	 */
 	public var output(never, set):String;
 
 	/**
-	 * The audio's mute status.
+	 * Mute status of the audio.
 	 *
-	 * WARNING: This does not always work.
-	 * If there is no active audio playback stream, the mute status might not be available.
-	 * If digital pass-through (S/PDIF, HDMI...) is in use, muting may be inapplicable.
-	 * Also some audio output plugins do not support muting at all.
-	 *
-	 * Note: To force silent playback, disable all audio tracks. This is more efficient and reliable than mute.
+	 * Note: May not be supported under certain conditions (e.g., digital pass-through).
 	 */
 	public var mute(get, set):Bool;
 
 	/**
-	 * The audio volume in percents (0 = mute, 100 = nominal / 0dB).
+	 * Volume level (0 to 100).
 	 */
 	public var volume(get, set):Int;
 
 	/**
-	 * Get the number of available audio tracks.
+	 * Total number of available audio tracks.
 	 */
 	public var trackCount(get, never):Int;
 
 	/**
-	 * The media player's audio track.
+	 * Selected audio track.
 	 */
 	public var track(get, set):Int;
 
 	/**
-	 * The audio channel.
+	 * Selected audio channel.
 	 */
 	public var channel(get, set):Int;
 
 	/**
-	 * The audio delay in microseconds.
+	 * Audio delay in microseconds.
 	 */
 	public var delay(get, set):Int64;
 
 	/**
-	 * The media player's role.
+	 * Role of the media.
 	 */
 	public var role(get, set):UInt;
 
 	/**
-	 * An event that is dispatched when the media player is opening.
+	 * Event triggered when the media is opening.
 	 */
 	public var onOpening(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player is playing.
+	 * Event triggered when playback starts.
 	 */
 	public var onPlaying(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player stops.
+	 * Event triggered when playback stops.
 	 */
 	public var onStopped(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player is paused.
+	 * Event triggered when playback is paused.
 	 */
 	public var onPaused(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player reaches the end.
+	 * Event triggered when the end of the media is reached.
 	 */
 	public var onEndReached(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player encounters an error.
+	 * Event triggered when an error occurs.
 	 */
 	public var onEncounteredError(get, null):Event<String->Void> = new Event<String->Void>();
 
 	/**
-	 * An event that is dispatched when the media changes.
+	 * Event triggered when the media changes.
 	 */
 	public var onMediaChanged(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player is corked.
+	 * Event triggered when the media is corked.
 	 */
 	public var onCorked(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player is uncorked.
+	 * Event triggered when the media is uncorked.
 	 */
 	public var onUncorked(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * An event that is dispatched when the media player changes time.
+	 * Event triggered when the time changes.
 	 */
 	public var onTimeChanged(get, null):Event<Int64->Void> = new Event<Int64->Void>();
 
 	/**
-	 * An event that is dispatched when the media player changes position.
+	 * Event triggered when the position changes.
 	 */
 	public var onPositionChanged(get, null):Event<Single->Void> = new Event<Single->Void>();
 
 	/**
-	 * An event that is dispatched when the media player changes the length.
+	 * Event triggered when the length changes.
 	 */
 	public var onLengthChanged(get, null):Event<Int64->Void> = new Event<Int64->Void>();
 
 	/**
-	 * An event that is dispatched when the media player changes the chapter.
+	 * Event triggered when the chapter changes.
 	 */
 	public var onChapterChanged(get, null):Event<Int->Void> = new Event<Int->Void>();
 
 	/**
-	 * An event that is dispatched when the format is being initialized.
+	 * Event triggered when the media metadata changes.
+	 */
+	public var onMediaMetaChanged(get, null):Event<Void->Void> = new Event<Void->Void>();
+
+	/**
+	 * Event triggered when the media is parsed.
+	 */
+	public var onMediaParsedChanged(get, null):Event<Int->Void> = new Event<Int->Void>();
+
+	/**
+	 * Event triggered when the format setup is initialized.
 	 */
 	public var onFormatSetup(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	@:noCompletion
 	private var events:Array<Bool> = [
-		false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+		false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
 	];
 
 	#if (HXVLC_OPENAL && lime_openal)
@@ -505,13 +514,7 @@ class Video extends Bitmap implements IVideo
 	private var mediaSize:cpp.UInt64 = 0;
 
 	@:noCompletion
-	private var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
-
-	@:noCompletion
 	private var mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>;
-
-	@:noCompletion
-	private var eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>;
 
 	@:noCompletion
 	private final textureMutex:Mutex = new Mutex();
@@ -544,17 +547,18 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to load a media.
+	 * Loads media from the specified location.
 	 *
-	 * @param location The local filesystem path or the media location URL or the ID of an open file descriptor or the bitstream input.
-	 * @param options The additional options you can add to the LibVLC Media instance.
-	 *
-	 * @return `true` if the media loaded successfully or `false` if there's an error.
+	 * @param location The location of the media file or stream.
+	 * @param options Additional options to configure the media.
+	 * @return `true` if the media was loaded successfully, `false` otherwise.
 	 */
 	public function load(location:Location, ?options:Array<String>):Bool
 	{
 		if (Handle.instance == null)
 			return false;
+
+		var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
 
 		if (location != null)
 		{
@@ -580,14 +584,19 @@ class Video extends Bitmap implements IVideo
 			{
 				final data:BytesData = cast(location, Bytes).getData();
 
-				mediaData = untyped __cpp__('new unsigned char[{0}]', data.length);
+				if (data.length > 0)
+				{
+					mediaData = untyped __cpp__('new unsigned char[{0}]', data.length);
 
-				cpp.Stdlib.nativeMemcpy(cast mediaData, cast cpp.Pointer.ofArray(data).constRaw, data.length);
+					cpp.Stdlib.nativeMemcpy(cast mediaData, cast cpp.Pointer.ofArray(data).constRaw, data.length);
 
-				mediaOffset = 0;
-				mediaSize = data.length;
-				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
-					untyped __cpp__('media_seek'), null, untyped __cpp__('this'));
+					mediaOffset = 0;
+					mediaSize = data.length;
+					mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
+						untyped __cpp__('media_seek'), null, untyped __cpp__('this'));
+				}
+				else
+					return false;
 			}
 			else
 				return false;
@@ -595,59 +604,54 @@ class Video extends Bitmap implements IVideo
 		else
 			return false;
 
+		if (Application.current != null && !Application.current.onUpdate.has(update))
+			Application.current.onUpdate.add(update);
+
 		if (mediaPlayer == null)
 		{
 			mediaPlayer = LibVLC.media_player_new(Handle.instance);
 
-			if (Application.current != null && !Application.current.onUpdate.has(update))
-				Application.current.onUpdate.add(update);
+			var eventManager:cpp.RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_player_event_manager(mediaPlayer);
 
-			if (eventManager == null)
-			{
-				eventManager = LibVLC.media_player_event_manager(mediaPlayer);
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (MediaPlayerOpening)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
-					Log.warn('Failed to attach event (MediaPlayerOpening)');
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPlaying, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (MediaPlayerPlaying)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPlaying, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
-					Log.warn('Failed to attach event (MediaPlayerPlaying)');
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerStopped, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (MediaPlayerStopped)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerStopped, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
-					Log.warn('Failed to attach event (MediaPlayerStopped)');
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (MediaPlayerPaused)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
-					Log.warn('Failed to attach event (MediaPlayerPaused)');
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (MediaPlayerEndReached)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
-					Log.warn('Failed to attach event (MediaPlayerEndReached)');
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('event_manager_callbacks'),
+				untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (MediaPlayerEncounteredError)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('media_player_callbacks'),
-					untyped __cpp__('this')) != 0)
-					Log.warn('Failed to attach event (MediaPlayerEncounteredError)');
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (MediaPlayerMediaChanged)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
-					Log.warn('Failed to attach event (MediaPlayerMediaChanged)');
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (MediaPlayerCorked)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
-					Log.warn('Failed to attach event (MediaPlayerCorked)');
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (MediaPlayerUncorked)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
-					Log.warn('Failed to attach event (MediaPlayerUncorked)');
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (MediaPlayerTimeChanged)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
-					Log.warn('Failed to attach event (MediaPlayerTimeChanged)');
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPositionChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (MediaPlayerPositionChanged)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPositionChanged, untyped __cpp__('media_player_callbacks'),
-					untyped __cpp__('this')) != 0)
-					Log.warn('Failed to attach event (MediaPlayerPositionChanged)');
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerLengthChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (MediaPlayerLengthChanged)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerLengthChanged, untyped __cpp__('media_player_callbacks'), untyped __cpp__('this')) != 0)
-					Log.warn('Failed to attach event (MediaPlayerLengthChanged)');
-
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerChapterChanged, untyped __cpp__('media_player_callbacks'),
-					untyped __cpp__('this')) != 0)
-					Log.warn('Failed to attach event (MediaPlayerChapterChanged)');
-			}
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerChapterChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+				Log.warn('Failed to attach event (MediaPlayerChapterChanged)');
 
 			LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), untyped __cpp__('video_unlock'), untyped __cpp__('video_display'),
 				untyped __cpp__('this'));
@@ -681,24 +685,75 @@ class Video extends Bitmap implements IVideo
 			#end
 		}
 
-		if (options != null)
+		if (mediaItem != null)
 		{
-			for (option in options)
+			if (options != null)
 			{
-				if (option != null && option.length > 0)
-					LibVLC.media_add_option(mediaItem, option);
+				for (option in options)
+				{
+					if (option != null && option.length > 0)
+						LibVLC.media_add_option(mediaItem, option);
+				}
 			}
-		}
 
-		LibVLC.media_player_set_media(mediaPlayer, mediaItem);
+			LibVLC.media_player_set_media(mediaPlayer, mediaItem);
+
+			LibVLC.media_release(mediaItem);
+		}
+		else
+			return false;
 
 		return true;
 	}
 
 	/**
-	 * Call this function to initiate playback with the media player.
+	 * Parses the current media item with the specified options.
 	 *
-	 * @return `true` if the media player started playing or `false` if there's an error.
+	 * @param parse_flag The parsing option.
+	 * @param timeout The timeout in milliseconds.
+	 * @return `true` if parsing succeeded, `false` otherwise.
+	 */
+	public function parseWithOptions(parse_flag:Int, timeout:Int):Bool
+	{
+		if (mediaPlayer != null)
+		{
+			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+
+			if (currentMediaItem != null)
+			{
+				var eventManager:cpp.RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_event_manager(currentMediaItem);
+
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaParsedChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+					Log.warn('Failed to attach event (MediaParsedChanged)');
+
+				if (LibVLC.event_attach(eventManager, LibVLC_MediaMetaChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+					Log.warn('Failed to attach event (MediaMetaChanged)');
+
+				return LibVLC.media_parse_with_options(currentMediaItem, parse_flag, timeout) == 0;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Stops parsing the current media item.
+	 */
+	public function parseStop():Void
+	{
+		if (mediaPlayer != null)
+		{
+			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+
+			if (currentMediaItem != null)
+				LibVLC.media_parse_stop(currentMediaItem);
+		}
+	}
+
+	/**
+	 * Starts playback.
+	 *
+	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
 	public function play():Bool
 	{
@@ -706,7 +761,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to stop the media player.
+	 * Stops playback.
 	 */
 	public function stop():Void
 	{
@@ -715,7 +770,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to pause the media player.
+	 * Pauses playback.
 	 */
 	public function pause():Void
 	{
@@ -724,7 +779,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to resume the media player.
+	 * Resumes playback.
 	 */
 	public function resume():Void
 	{
@@ -733,7 +788,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to toggle the pause of the media player.
+	 * Toggles the pause state.
 	 */
 	public function togglePaused():Void
 	{
@@ -742,7 +797,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to set the previous chapter (if applicable).
+	 * Moves to the previous chapter, if supported.
 	 */
 	public function previousChapter():Void
 	{
@@ -751,12 +806,66 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
-	 * Call this function to set the next chapter (if applicable).
+	 * Moves to the next chapter, if supported.
 	 */
 	public function nextChapter():Void
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_next_chapter(mediaPlayer);
+	}
+
+	/**
+	 * Retrieves metadata for the current media item.
+	 *
+	 * @param e_meta The metadata type.
+	 * @return The metadata value as a string, or `null` if not available.
+	 */
+	public function getMeta(e_meta:Int):String
+	{
+		if (mediaPlayer != null)
+		{
+			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+
+			if (currentMediaItem != null)
+				return LibVLC.media_get_meta(currentMediaItem, e_meta);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Sets metadata for the current media item.
+	 *
+	 * @param e_meta The metadata type.
+	 * @param value The metadata value.
+	 */
+	public function setMeta(e_meta:Int, value:String):Void
+	{
+		if (mediaPlayer != null && value != null)
+		{
+			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+
+			if (currentMediaItem != null)
+				LibVLC.media_set_meta(currentMediaItem, e_meta, value);
+		}
+	}
+
+	/**
+	 * Saves the metadata of the current media item.
+	 *
+	 * @return `true` if the metadata was saved successfully, `false` otherwise.
+	 */
+	public function saveMeta():Bool
+	{
+		if (mediaPlayer != null)
+		{
+			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+
+			if (currentMediaItem != null)
+				return LibVLC.media_save_meta(currentMediaItem) != 0;
+		}
+
+		return false;
 	}
 
 	/**
@@ -774,22 +883,14 @@ class Video extends Bitmap implements IVideo
 		if (Application.current != null && Application.current.onUpdate.has(update))
 			Application.current.onUpdate.remove(update);
 
-		if (mediaItem != null)
+		if (mediaData != null)
 		{
-			LibVLC.media_release(mediaItem);
-
-			if (mediaData != null)
-			{
-				untyped __cpp__('delete[] {0}', mediaData);
-				mediaData = null;
-			}
-
-			mediaOffset = 0;
-			mediaSize = 0;
-			mediaItem = null;
+			untyped __cpp__('delete[] {0}', mediaData);
+			mediaData = null;
 		}
 
-		eventManager = null;
+		mediaOffset = 0;
+		mediaSize = 0;
 
 		textureMutex.acquire();
 
@@ -950,6 +1051,26 @@ class Video extends Bitmap implements IVideo
 		{
 			events[13] = false;
 
+			onMediaMetaChanged.dispatch();
+		}
+
+		if (events[14])
+		{
+			events[14] = false;
+
+			if (mediaPlayer != null)
+			{
+				final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+
+				if (currentMediaItem != null)
+					onMediaParsedChanged.dispatch(LibVLC.media_get_parsed_status(currentMediaItem));
+			}
+		}
+
+		if (events[15])
+		{
+			events[15] = false;
+
 			@:privateAccess
 			if (bitmapData == null
 				|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
@@ -985,9 +1106,9 @@ class Video extends Bitmap implements IVideo
 			}
 		}
 
-		if (events[14])
+		if (events[16])
 		{
-			events[14] = false;
+			events[16] = false;
 
 			if (__renderable && texturePlanes != null)
 			{
@@ -1010,6 +1131,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
+	@:unreflective
 	private function audioPlay(samples:cpp.RawConstPointer<cpp.Void>, count:cpp.UInt32, pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
@@ -1045,6 +1167,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
+	@:unreflective
 	private function audioPause(pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
@@ -1061,6 +1184,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
+	@:unreflective
 	private function audioResume(pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
@@ -1077,6 +1201,7 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
+	@:unreflective
 	private function audioSetVolume(volume:Single, mute:Bool):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
@@ -1305,7 +1430,7 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private function get_trackCount():Int
 	{
-		return mediaItem != null ? LibVLC.audio_get_track_count(mediaPlayer) : -1;
+		return mediaPlayer != null ? LibVLC.audio_get_track_count(mediaPlayer) : -1;
 	}
 
 	@:noCompletion
@@ -1379,7 +1504,6 @@ class Video extends Bitmap implements IVideo
 	 *
 	 * - Nex
 	 */
-
 	@:noCompletion
 	private function get_onOpening():Event<Void->Void>
 	{
@@ -1456,6 +1580,18 @@ class Video extends Bitmap implements IVideo
 	private function get_onChapterChanged():Event<Int->Void>
 	{
 		return onChapterChanged;
+	}
+
+	@:noCompletion
+	private function get_onMediaMetaChanged():Event<Void->Void>
+	{
+		return onMediaMetaChanged;
+	}
+
+	@:noCompletion
+	private function get_onMediaParsedChanged():Event<Int->Void>
+	{
+		return onMediaParsedChanged;
 	}
 
 	@:noCompletion

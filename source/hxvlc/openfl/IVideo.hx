@@ -6,7 +6,7 @@ import hxvlc.util.Location;
 import lime.app.Event;
 
 /**
- * Interface representing a video object with various media player functionalities.
+ * Interface representing a video object with playback and media management functionalities.
  */
 interface IVideo
 {
@@ -16,143 +16,143 @@ interface IVideo
 	public var mrl(get, never):String;
 
 	/**
-	 * Statistics related to the media resource.
+	 * Statistics related to the media.
 	 */
 	public var stats(get, never):Null<Stats>;
 
 	/**
-	 * The duration of the media in microseconds.
+	 * Duration of the media in microseconds.
 	 */
 	public var duration(get, never):Int64;
 
 	/**
-	 * Indicates whether the media player is currently playing.
+	 * Indicates whether the media is currently playing.
 	 */
 	public var isPlaying(get, never):Bool;
 
 	/**
-	 * The length of the media in microseconds.
+	 * Length of the media in microseconds.
 	 */
 	public var length(get, never):Int64;
 
 	/**
-	 * The current time position in the media in microseconds.
+	 * Current time position in the media in microseconds.
 	 */
 	public var time(get, set):Int64;
 
 	/**
-	 * The current playback position in the media as a percentage (0.0 to 1.0).
+	 * Current playback position as a percentage (0.0 to 1.0).
 	 */
 	public var position(get, set):Single;
 
 	/**
-	 * The current chapter of the media player.
+	 * Current chapter of the video.
 	 */
 	public var chapter(get, set):Int;
 
 	/**
-	 * The total number of chapters in the media.
+	 * Total number of chapters in the video.
 	 */
 	public var chapterCount(get, never):Int;
 
 	/**
-	 * Indicates whether the media player will play once loaded.
+	 * Indicates whether playback will start automatically once loaded.
 	 */
 	public var willPlay(get, never):Bool;
 
 	/**
-	 * The playback rate of the media player.
+	 * Playback rate of the video.
 	 *
-	 * WARNING: The actual rate may differ depending on the underlying media.
+	 * Note: The actual rate may vary depending on the media.
 	 */
 	public var rate(get, set):Single;
 
 	/**
-	 * Indicates whether seeking is supported by the media player.
+	 * Indicates whether seeking is supported.
 	 */
 	public var isSeekable(get, never):Bool;
 
 	/**
-	 * Indicates whether pausing is supported by the media player.
+	 * Indicates whether pausing is supported.
 	 */
 	public var canPause(get, never):Bool;
 
 	/**
-	 * Available audio output modules for the media player.
+	 * Available audio output modules.
 	 */
 	public var outputModules(get, never):Array<{name:String, description:String}>;
 
 	/**
-	 * The selected audio output module for the media player.
+	 * Selected audio output module.
 	 *
 	 * Note: Changes take effect only after restarting playback.
 	 */
 	public var output(never, set):String;
 
 	/**
-	 * Mute status of the media player audio.
+	 * Mute status of the audio.
 	 *
-	 * WARNING: May not be supported under certain conditions (e.g., digital pass-through).
+	 * Note: May not be supported under certain conditions (e.g., digital pass-through).
 	 */
 	public var mute(get, set):Bool;
 
 	/**
-	 * Volume level of the media player audio (0 to 100).
+	 * Volume level (0 to 100).
 	 */
 	public var volume(get, set):Int;
 
 	/**
-	 * Total number of available audio tracks in the media.
+	 * Total number of available audio tracks.
 	 */
 	public var trackCount(get, never):Int;
 
 	/**
-	 * The selected audio track for the media player.
+	 * Selected audio track.
 	 */
 	public var track(get, set):Int;
 
 	/**
-	 * The selected audio channel for the media player.
+	 * Selected audio channel.
 	 */
 	public var channel(get, set):Int;
 
 	/**
-	 * Audio delay in microseconds for the media player.
+	 * Audio delay in microseconds.
 	 */
 	public var delay(get, set):Int64;
 
 	/**
-	 * Role of the media player.
+	 * Role of the media.
 	 */
 	public var role(get, set):UInt;
 
 	/**
-	 * Event triggered when the media player is opening.
+	 * Event triggered when the media is opening.
 	 */
 	public var onOpening(get, null):Event<Void->Void>;
 
 	/**
-	 * Event triggered when the media player starts playing.
+	 * Event triggered when playback starts.
 	 */
 	public var onPlaying(get, null):Event<Void->Void>;
 
 	/**
-	 * Event triggered when the media player stops.
+	 * Event triggered when playback stops.
 	 */
 	public var onStopped(get, null):Event<Void->Void>;
 
 	/**
-	 * Event triggered when the media player is paused.
+	 * Event triggered when playback is paused.
 	 */
 	public var onPaused(get, null):Event<Void->Void>;
 
 	/**
-	 * Event triggered when the media player reaches the end.
+	 * Event triggered when the end of the media is reached.
 	 */
 	public var onEndReached(get, null):Event<Void->Void>;
 
 	/**
-	 * Event triggered when the media player encounters an error.
+	 * Event triggered when an error occurs.
 	 */
 	public var onEncounteredError(get, null):Event<String->Void>;
 
@@ -162,89 +162,135 @@ interface IVideo
 	public var onMediaChanged(get, null):Event<Void->Void>;
 
 	/**
-	 * Event triggered when the media player is corked.
+	 * Event triggered when the media is corked.
 	 */
 	public var onCorked(get, null):Event<Void->Void>;
 
 	/**
-	 * Event triggered when the media player is uncorked.
+	 * Event triggered when the media is uncorked.
 	 */
 	public var onUncorked(get, null):Event<Void->Void>;
 
 	/**
-	 * Event triggered when the time of the media player changes.
+	 * Event triggered when the time changes.
 	 */
 	public var onTimeChanged(get, null):Event<Int64->Void>;
 
 	/**
-	 * Event triggered when the position of the media player changes.
+	 * Event triggered when the position changes.
 	 */
 	public var onPositionChanged(get, null):Event<Single->Void>;
 
 	/**
-	 * Event triggered when the length of the media player changes.
+	 * Event triggered when the length changes.
 	 */
 	public var onLengthChanged(get, null):Event<Int64->Void>;
 
 	/**
-	 * Event triggered when the chapter of the media player changes.
+	 * Event triggered when the chapter changes.
 	 */
 	public var onChapterChanged(get, null):Event<Int->Void>;
 
 	/**
-	 * Event triggered when the format setup of the media player is initialized.
+	 * Event triggered when the media metadata changes.
+	 */
+	public var onMediaMetaChanged(get, null):Event<Void->Void>;
+
+	/**
+	 * Event triggered when the media is parsed.
+	 */
+	public var onMediaParsedChanged(get, null):Event<Int->Void>;
+
+	/**
+	 * Event triggered when the format setup is initialized.
 	 */
 	public var onFormatSetup(get, null):Event<Void->Void>;
 
 	/**
-	 * Loads a video from the specified location.
+	 * Loads media from the specified location.
 	 *
-	 * @param location The location of the video file or stream.
+	 * @param location The location of the media file or stream.
 	 * @param options Additional options to configure the media.
-	 *
-	 * @return `true` if the video was loaded successfully, `false` otherwise.
+	 * @return `true` if the media was loaded successfully, `false` otherwise.
 	 */
 	public function load(location:Location, ?options:Array<String>):Bool;
 
 	/**
-	 * Starts playing the loaded video.
+	 * Parses the current media item with the specified options.
+	 *
+	 * @param parse_flag The parsing option.
+	 * @param timeout The timeout in milliseconds.
+	 * @return `true` if parsing succeeded, `false` otherwise.
+	 */
+	public function parseWithOptions(parse_flag:Int, timeout:Int):Bool;
+
+	/**
+	 * Stops parsing the current media item.
+	 */
+	public function parseStop():Void;
+
+	/**
+	 * Starts playback.
 	 *
 	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
 	public function play():Bool;
 
 	/**
-	 * Stops playback of the video.
+	 * Stops playback.
 	 */
 	public function stop():Void;
 
 	/**
-	 * Pauses the currently playing video.
+	 * Pauses playback.
 	 */
 	public function pause():Void;
 
 	/**
-	 * Resumes playback of a paused video.
+	 * Resumes playback.
 	 */
 	public function resume():Void;
 
 	/**
-	 * Toggles the pause state of the video.
+	 * Toggles the pause state.
 	 */
 	public function togglePaused():Void;
 
 	/**
-	 * Sets the media player to the previous chapter, if supported.
+	 * Moves to the previous chapter, if supported.
 	 */
 	public function previousChapter():Void;
 
 	/**
-	 * Sets the media player to the next chapter, if supported.
+	 * Moves to the next chapter, if supported.
 	 */
 	public function nextChapter():Void;
 
 	/**
-	 * Frees the memory used by the media player object.
+	 * Retrieves metadata for the current media item.
+	 *
+	 * @param e_meta The metadata type.
+	 * @return The metadata value as a string, or `null` if not available.
+	 */
+	public function getMeta(e_meta:Int):String;
+
+	/**
+	 * Sets metadata for the current media item.
+	 *
+	 * @param e_meta The metadata type.
+	 * @param value The metadata value.
+	 */
+	public function setMeta(e_meta:Int, value:String):Void;
+
+	/**
+	 * Saves the metadata of the current media item.
+	 *
+	 * @return `true` if the metadata was saved successfully, `false` otherwise.
+	 */
+	public function saveMeta():Bool;
+
+	/**
+	 * Frees the memory used by the media object.
 	 */
 	public function dispose():Void;
 }

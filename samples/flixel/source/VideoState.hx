@@ -20,7 +20,7 @@ import openfl.Lib;
 import sys.io.File;
 import sys.FileSystem;
 
-class PlayState extends FlxState
+class VideoState extends FlxState
 {
 	var video:FlxVideoSprite;
 	var videoPositionBar:FlxBar;
@@ -36,7 +36,7 @@ class PlayState extends FlxState
 		video = new FlxVideoSprite(0, 0);
 		video.bitmap.onFormatSetup.add(function():Void
 		{
-			video.setGraphicSize(FlxG.width * 0.7, FlxG.height * 0.7);
+			video.setGraphicSize(FlxG.width * 0.8, FlxG.height * 0.8);
 			video.updateHitbox();
 			video.screenCenter();
 		});
@@ -50,7 +50,7 @@ class PlayState extends FlxState
 		video.antialiasing = true;
 		add(video);
 
-		var libvlcVersion:FlxText = new FlxText(10, FlxG.height - 30, 0, 'LibVLC Version: ${Handle.version}', 16);
+		var libvlcVersion:FlxText = new FlxText(10, FlxG.height - 30, 0, 'LibVLC ${Handle.version}', 16);
 		libvlcVersion.setBorderStyle(OUTLINE, FlxColor.BLACK);
 		libvlcVersion.active = false;
 		libvlcVersion.antialiasing = true;
