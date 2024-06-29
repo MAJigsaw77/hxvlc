@@ -114,6 +114,27 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 	}
 
 	/**
+	 * Parses the current media item with the specified options.
+	 *
+	 * @param parse_flag The parsing option.
+	 * @param timeout The timeout duration in milliseconds.
+	 * @return `true` if parsing succeeds, `false` otherwise.
+	 */
+	public function parseWithOptions(parse_flag:Int, timeout:Int):Bool
+	{
+		return bitmap == null ? false : bitmap.parseWithOptions(parse_flag, timeout);
+	}
+
+	/**
+	 * Stops the parsing of the current media item.
+	 */
+	public function parseStop():Void
+	{
+		if (bitmap != null)
+			bitmap.parseStop();
+	}
+
+	/**
 	 * Plays the video.
 	 *
 	 * @return `true` if the video started playing, `false` otherwise.
@@ -157,24 +178,6 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 	{
 		if (bitmap != null)
 			bitmap.togglePaused();
-	}
-
-	/**
-	 * Moves to the previous logical chapter or position in the video, if supported.
-	 */
-	public function previousChapter():Void
-	{
-		if (bitmap != null)
-			bitmap.previousChapter();
-	}
-
-	/**
-	 * Moves to the next logical chapter or position in the video, if supported.
-	 */
-	public function nextChapter():Void
-	{
-		if (bitmap != null)
-			bitmap.nextChapter();
 	}
 
 	public override function destroy():Void
