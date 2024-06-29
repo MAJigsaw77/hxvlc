@@ -20,21 +20,21 @@ using StringTools;
 class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 {
 	/**
-	 * Whether the video should automatically pause when focus is lost.
+	 * Indicates whether the video should automatically pause when focus is lost.
 	 *
-	 * WARNING: Must be set before loading a video.
+	 * Must be set before loading a video.
 	 */
 	public var autoPause:Bool = FlxG.autoPause;
 
 	#if FLX_SOUND_SYSTEM
 	/**
-	 * Whether Flixel should automatically adjust the volume according to the Flixel sound system's current volume.
+	 * Determines if Flixel automatically adjusts the volume based on the Flixel sound system's current volume.
 	 */
 	public var autoVolumeHandle:Bool = true;
 	#end
 
 	/**
-	 * The video bitmap.
+	 * The video bitmap object.
 	 */
 	public var bitmap(default, null):Video;
 
@@ -70,12 +70,11 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 	}
 
 	/**
-	 * Loads a video.
+	 * Loads a video from the specified location.
 	 *
-	 * @param location The local filesystem path, the media location URL, the ID of an open file descriptor, or the bitstream input.
-	 * @param options Additional options to add to the LibVLC Media.
-	 *
-	 * @return `true` if the video loaded successfully, `false` otherwise.
+	 * @param location The location of the media file or stream.
+	 * @param options Additional options to configure the media.
+	 * @return `true` if the media was loaded successfully, `false` otherwise.
 	 */
 	public function load(location:Location, ?options:Array<String>):Bool
 	{
@@ -117,8 +116,8 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 	 * Parses the current media item with the specified options.
 	 *
 	 * @param parse_flag The parsing option.
-	 * @param timeout The timeout duration in milliseconds.
-	 * @return `true` if parsing succeeds, `false` otherwise.
+	 * @param timeout The timeout in milliseconds.
+	 * @return `true` if parsing succeeded, `false` otherwise.
 	 */
 	public function parseWithOptions(parse_flag:Int, timeout:Int):Bool
 	{
@@ -126,7 +125,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 	}
 
 	/**
-	 * Stops the parsing of the current media item.
+	 * Stops parsing the current media item.
 	 */
 	public function parseStop():Void
 	{
@@ -135,9 +134,9 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 	}
 
 	/**
-	 * Plays the video.
+	 * Starts video playback.
 	 *
-	 * @return `true` if the video started playing, `false` otherwise.
+	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
 	public function play():Bool
 	{
@@ -145,7 +144,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 	}
 
 	/**
-	 * Stops the video.
+	 * Stops video playback.
 	 */
 	public function stop():Void
 	{
@@ -154,7 +153,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 	}
 
 	/**
-	 * Pauses the video.
+	 * Pauses video playback.
 	 */
 	public function pause():Void
 	{
@@ -163,7 +162,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 	}
 
 	/**
-	 * Resumes the video.
+	 * Resumes playback of a paused video.
 	 */
 	public function resume():Void
 	{
@@ -172,7 +171,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 	}
 
 	/**
-	 * Toggles the pause state of the video.
+	 * Toggles between play and pause states of the video.
 	 */
 	public function togglePaused():Void
 	{
