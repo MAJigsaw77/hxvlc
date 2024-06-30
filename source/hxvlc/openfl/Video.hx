@@ -611,7 +611,7 @@ class Video extends Bitmap implements IVideo
 		{
 			mediaPlayer = LibVLC.media_player_new(Handle.instance);
 
-			var eventManager:cpp.RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_player_event_manager(mediaPlayer);
+			final eventManager:cpp.RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_player_event_manager(mediaPlayer);
 
 			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 				Log.warn('Failed to attach event (MediaPlayerOpening)');
@@ -721,7 +721,7 @@ class Video extends Bitmap implements IVideo
 
 			if (currentMediaItem != null)
 			{
-				var eventManager:cpp.RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_event_manager(currentMediaItem);
+				final eventManager:cpp.RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_event_manager(currentMediaItem);
 
 				if (LibVLC.event_attach(eventManager, LibVLC_MediaParsedChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 					Log.warn('Failed to attach event (MediaParsedChanged)');
@@ -1364,7 +1364,7 @@ class Video extends Bitmap implements IVideo
 	{
 		if (Handle.instance != null)
 		{
-			var audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T> = LibVLC.audio_output_list_get(Handle.instance);
+			final audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T> = LibVLC.audio_output_list_get(Handle.instance);
 
 			if (audioOutput != null)
 			{
