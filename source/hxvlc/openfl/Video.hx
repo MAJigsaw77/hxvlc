@@ -13,7 +13,6 @@ import hxvlc.externs.Types;
 import hxvlc.openfl.Stats;
 import hxvlc.util.Location;
 import hxvlc.util.Handle;
-import lime.app.Application;
 import lime.app.Event;
 #if (HXVLC_OPENAL && lime_openal)
 import lime.media.openal.ALBuffer;
@@ -603,8 +602,8 @@ class Video extends Bitmap implements IVideo
 		else
 			return false;
 
-		if (Application.current != null && !Application.current.onUpdate.has(update))
-			Application.current.onUpdate.add(update);
+		if (Lib.application != null && !Lib.application.onUpdate.has(update))
+			Lib.application.onUpdate.add(update);
 
 		if (mediaPlayer == null)
 		{
@@ -878,8 +877,8 @@ class Video extends Bitmap implements IVideo
 			mediaPlayer = null;
 		}
 
-		if (Application.current != null && Application.current.onUpdate.has(update))
-			Application.current.onUpdate.remove(update);
+		if (Lib.application != null && Lib.application.onUpdate.has(update))
+			Lib.application.onUpdate.remove(update);
 
 		if (mediaData != null)
 		{
