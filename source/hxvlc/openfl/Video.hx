@@ -1097,6 +1097,8 @@ class Video extends Bitmap implements IVideo
 					bitmapData = new BitmapData(textureWidth, textureHeight, true, 0);
 				}
 
+				__setRenderDirty();
+
 				textureMutex.release();
 
 				onFormatSetup.dispatch();
@@ -1114,13 +1116,11 @@ class Video extends Bitmap implements IVideo
 				final texturePlanesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(texturePlanes).toUnmanagedArray(textureWidth * textureHeight * 4));
 
 				if (texture != null)
-				{
 					texture.uploadFromTypedArray(UInt8Array.fromBytes(texturePlanesBytes));
-
-					__setRenderDirty();
-				}
 				else if (bitmapData != null && bitmapData.image != null)
 					bitmapData.setPixels(bitmapData.rect, texturePlanesBytes);
+
+				__setRenderDirty();
 
 				textureMutex.release();
 			}
@@ -1496,6 +1496,9 @@ class Video extends Bitmap implements IVideo
 
 		return value;
 	}
+
+	@:noCompletion
+	private override function __enterFrame(deltaTime:Int):Void {}
 
 	@:noCompletion
 	private override function set_bitmapData(value:BitmapData):BitmapData
