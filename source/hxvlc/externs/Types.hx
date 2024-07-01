@@ -15,7 +15,13 @@ class Types {}
 extern class LibVLC_Instance_T {}
 
 @:dox(hide)
-typedef LibVLC_Time_T = cpp.Int64;
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include('vlc/vlc.h')
+@:native('libvlc_time_t')
+@:scalar
+@:coreType
+@:notNull
+extern abstract LibVLC_Time_T from cpp.Int64 to cpp.Int64 {}
 
 @:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
