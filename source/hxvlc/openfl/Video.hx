@@ -1287,7 +1287,7 @@ class Video extends Bitmap implements IVideo
 	private function set_time(value:Int64):Int64
 	{
 		if (mediaPlayer != null)
-			LibVLC.media_player_set_time(mediaPlayer, cpp.Int64.ofInt64(value));
+			LibVLC.media_player_set_time(mediaPlayer, #if (haxe <= "4.2.5") cast #end value);
 
 		return value;
 	}
