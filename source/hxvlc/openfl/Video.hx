@@ -1226,7 +1226,7 @@ class Video extends Bitmap implements IVideo
 			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
-				return cast(LibVLC.media_get_mrl(currentMediaItem), String);
+				return new String(untyped LibVLC.media_get_mrl(currentMediaItem));
 		}
 
 		return null;
