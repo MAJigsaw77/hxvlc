@@ -200,8 +200,8 @@ extern class LibVLC_Audio_Output_T
 	@:native('libvlc_audio_output_t')
 	static function alloc():LibVLC_Audio_Output_T;
 
-	var psz_name:cpp.CharStar;
-	var psz_description:cpp.CharStar;
+	var psz_name:cpp.CastCharStar;
+	var psz_description:cpp.CastCharStar;
 	var p_next:cpp.RawPointer<LibVLC_Audio_Output_T>;
 }
 
@@ -418,7 +418,7 @@ typedef LibVLC_Media_Seek_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>, of
 typedef LibVLC_Media_Close_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>) -> Void>;
 
 @:dox(hide)
-typedef LibVLC_Video_Format_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.RawPointer<cpp.Void>>, chroma:cpp.CharStar, width:cpp.RawPointer<cpp.UInt32>,
+typedef LibVLC_Video_Format_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.RawPointer<cpp.Void>>, chroma:cpp.CastCharStar, width:cpp.RawPointer<cpp.UInt32>,
 		height:cpp.RawPointer<cpp.UInt32>, pitches:cpp.RawPointer<cpp.UInt32>, lines:cpp.RawPointer<cpp.UInt32>) -> cpp.UInt32>;
 
 @:dox(hide)

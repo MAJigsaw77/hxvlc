@@ -10,7 +10,6 @@ import haxe.Exception;
 import haxe.Int64;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
-import hxvlc.openfl.IVideo;
 import hxvlc.openfl.Stats;
 import hxvlc.util.Location;
 import hxvlc.util.Handle;
@@ -628,8 +627,7 @@ class Video extends Bitmap implements IVideo
 			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 				Log.warn('Failed to attach event (MediaPlayerEndReached)');
 
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('event_manager_callbacks'),
-				untyped __cpp__('this')) != 0)
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 				Log.warn('Failed to attach event (MediaPlayerEncounteredError)');
 
 			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
@@ -827,7 +825,7 @@ class Video extends Bitmap implements IVideo
 			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
-				return LibVLC.media_get_meta(currentMediaItem, e_meta);
+				return new String(untyped LibVLC.media_get_meta(currentMediaItem, e_meta));
 		}
 
 		return null;
@@ -1378,7 +1376,10 @@ class Video extends Bitmap implements IVideo
 
 				while (temp != null)
 				{
-					outputs.push({name: temp[0].psz_name, description: temp[0].psz_description});
+					outputs.push({
+						name: new String(untyped temp[0].psz_name),
+						description: new String(untyped temp[0].psz_description)
+					});
 
 					temp = temp[0].p_next;
 				}

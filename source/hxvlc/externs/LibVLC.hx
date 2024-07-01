@@ -192,7 +192,7 @@ extern class LibVLC
 	 * @return The MRL string.
 	 */
 	@:native('libvlc_media_get_mrl')
-	static function media_get_mrl(p_md:cpp.RawPointer<LibVLC_Media_T>):cpp.CharStar;
+	static function media_get_mrl(p_md:cpp.RawPointer<LibVLC_Media_T>):cpp.CastCharStar;
 
 	/**
 	 * Gets the metadata of a media descriptor.
@@ -203,7 +203,7 @@ extern class LibVLC
 	 * @return The metadata string.
 	 */
 	@:native('libvlc_media_get_meta')
-	static function media_get_meta(p_md:cpp.RawPointer<LibVLC_Media_T>, e_meta:LibVLC_Meta_T):cpp.CharStar;
+	static function media_get_meta(p_md:cpp.RawPointer<LibVLC_Media_T>, e_meta:LibVLC_Meta_T):cpp.CastCharStar;
 
 	/**
 	 * Sets the metadata of a media descriptor.
