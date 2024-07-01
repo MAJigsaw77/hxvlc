@@ -189,7 +189,7 @@ static void audio_play(void *data, const void *samples, unsigned count, int64_t 
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(data)->audioPlay(samples, count, pts);
+	reinterpret_cast<Video_obj *>(data)->audioPlay((unsigned char *) samples, count, pts);
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -1131,7 +1131,7 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	@:unreflective
 	@:void
-	private function audioPlay(samples:cpp.RawConstPointer<cpp.Void>, count:cpp.UInt32, pts:cpp.Int64):Void
+	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32, pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
 		if (alAudioContext != null && alSource != null && alBuffers != null)
@@ -1148,7 +1148,7 @@ class Video extends Bitmap implements IVideo
 
 			if (alBuffers.length > 0)
 			{
-				final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(untyped __cpp__('(unsigned char*) {0}', samples)).toUnmanagedArray(count));
+				final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(samples).toUnmanagedArray(count));
 
 				final alBuffer:ALBuffer = alBuffers.shift();
 				alAudioContext.bufferData(alBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length * 4, 44100);
