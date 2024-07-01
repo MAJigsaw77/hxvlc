@@ -6,19 +6,11 @@
 		<section unless="linux">
 			<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" />
 		</section>
-
-		<section if="windows">
-			<compilerflag value="-I${haxelib:hxvlc}/project/vlc/patches" />
-		</section>
 	</files>
 
 	<files id="__main__">
 		<section unless="linux">
 			<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" />
-		</section>
-
-		<section if="windows">
-			<compilerflag value="-I${haxelib:hxvlc}/project/vlc/patches" />
 		</section>
 	</files>
 
