@@ -830,7 +830,7 @@ class Video extends Bitmap implements IVideo
 
 				if (rawMeta != null)
 				{
-					fina metaString:String = new String(untyped rawMeta);
+					final metaString:String = new String(untyped rawMeta);
 
 					cpp.Stdlib.nativeFree(untyped rawMeta);
 
@@ -1242,7 +1242,7 @@ class Video extends Bitmap implements IVideo
 
 				if (rawMrl != null)
 				{
-					fina mrlString:String = new String(untyped rawMrl);
+					final mrlString:String = new String(untyped rawMrl);
 
 					cpp.Stdlib.nativeFree(untyped rawMrl);
 
