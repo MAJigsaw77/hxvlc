@@ -626,7 +626,8 @@ class Video extends Bitmap implements IVideo
 			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 				Log.warn('Failed to attach event (MediaPlayerEndReached)');
 
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('event_manager_callbacks'),
+				untyped __cpp__('this')) != 0)
 				Log.warn('Failed to attach event (MediaPlayerEncounteredError)');
 
 			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
@@ -824,7 +825,18 @@ class Video extends Bitmap implements IVideo
 			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
-				return new String(untyped LibVLC.media_get_meta(currentMediaItem, e_meta));
+			{
+				final rawMeta:cpp.CastCharStar = LibVLC.media_get_meta(currentMediaItem, e_meta);
+
+				if (rawMeta != null)
+				{
+					fina metaString:String = new String(untyped rawMeta);
+
+					cpp.Stdlib.nativeFree(untyped rawMeta);
+
+					return metaString;
+				}
+			}
 		}
 
 		return null;
@@ -1225,7 +1237,18 @@ class Video extends Bitmap implements IVideo
 			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
-				return new String(untyped LibVLC.media_get_mrl(currentMediaItem));
+			{
+				final rawMrl:cpp.CastCharStar = LibVLC.media_get_mrl(currentMediaItem);
+
+				if (rawMrl != null)
+				{
+					fina mrlString:String = new String(untyped rawMrl);
+
+					cpp.Stdlib.nativeFree(untyped rawMrl);
+
+					return mrlString;
+				}
+			}
 		}
 
 		return null;
