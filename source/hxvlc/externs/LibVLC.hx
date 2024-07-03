@@ -20,7 +20,6 @@ extern class LibVLC
 	 *
 	 * @param argc Number of arguments.
 	 * @param argv Argument values.
-	 *
 	 * @return Pointer to the new LibVLC instance.
 	 */
 	@:native('libvlc_new')
@@ -73,7 +72,6 @@ extern class LibVLC
 	 * @param i_event_type Type of the event.
 	 * @param f_callback Event callback function.
 	 * @param user_data User data to pass to the callback.
-	 *
 	 * @return 0 on success, -1 on failure.
 	 */
 	@:native('libvlc_event_attach')
@@ -123,7 +121,6 @@ extern class LibVLC
 	 *
 	 * @param p_instance Pointer to the LibVLC instance.
 	 * @param psz_mrl The location string.
-	 *
 	 * @return Pointer to the new media descriptor.
 	 */
 	@:native('libvlc_media_new_location')
@@ -134,7 +131,6 @@ extern class LibVLC
 	 *
 	 * @param p_instance Pointer to the LibVLC instance.
 	 * @param path The file path.
-	 *
 	 * @return Pointer to the new media descriptor.
 	 */
 	@:native('libvlc_media_new_path')
@@ -145,7 +141,6 @@ extern class LibVLC
 	 *
 	 * @param p_instance Pointer to the LibVLC instance.
 	 * @param fd The file descriptor.
-	 *
 	 * @return Pointer to the new media descriptor.
 	 */
 	@:native('libvlc_media_new_fd')
@@ -160,7 +155,6 @@ extern class LibVLC
 	 * @param seek_cb Seek callback function.
 	 * @param close_cb Close callback function.
 	 * @param opaque User data to pass to the callbacks.
-	 *
 	 * @return Pointer to the new media descriptor.
 	 */
 	@:native('libvlc_media_new_callbacks')
@@ -188,7 +182,6 @@ extern class LibVLC
 	 * Gets the media resource locator (MRL) of a media descriptor.
 	 *
 	 * @param p_md Pointer to the media descriptor.
-	 *
 	 * @return The MRL string.
 	 */
 	@:native('libvlc_media_get_mrl')
@@ -199,7 +192,6 @@ extern class LibVLC
 	 *
 	 * @param p_md Pointer to the media descriptor.
 	 * @param e_meta Metadata type.
-	 *
 	 * @return The metadata string.
 	 */
 	@:native('libvlc_media_get_meta')
@@ -221,7 +213,6 @@ extern class LibVLC
 	 * This function commits any metadata modifications to the underlying storage, if applicable.
 	 *
 	 * @param p_md Pointer to the media descriptor.
-	 *
 	 * @return 0 on failure, a non-zero value if the metadata was saved successfully.
 	 */
 	@:native('libvlc_media_save_meta')
@@ -232,7 +223,6 @@ extern class LibVLC
 	 *
 	 * @param p_md Pointer to the media descriptor.
 	 * @param p_stats Pointer to the statistics structure.
-	 *
 	 * @return 0 on success, -1 on failure.
 	 */
 	@:native('libvlc_media_get_stats')
@@ -242,7 +232,6 @@ extern class LibVLC
 	 * Gets the event manager of a media descriptor.
 	 *
 	 * @param p_md Pointer to the media descriptor.
-	 *
 	 * @return Pointer to the event manager.
 	 */
 	@:native('libvlc_media_event_manager')
@@ -252,7 +241,6 @@ extern class LibVLC
 	 * Gets the duration of a media descriptor.
 	 *
 	 * @param p_md Pointer to the media descriptor.
-	 *
 	 * @return The duration in milliseconds.
 	 */
 	@:native('libvlc_media_get_duration')
@@ -264,7 +252,6 @@ extern class LibVLC
 	 * @param p_md Pointer to the media descriptor.
 	 * @param parse_flag Parse flags.
 	 * @param timeout Timeout in milliseconds.
-	 *
 	 * @return 0 on success, -1 on failure.
 	 */
 	@:native('libvlc_media_parse_with_options')
@@ -282,7 +269,6 @@ extern class LibVLC
 	 * Gets the parsed status of a media descriptor.
 	 *
 	 * @param p_md Pointer to the media descriptor.
-	 *
 	 * @return The parsed status.
 	 */
 	@:native('libvlc_media_get_parsed_status')
@@ -292,7 +278,6 @@ extern class LibVLC
 	 * Gets the media descriptor from a media player.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return Pointer to the media descriptor.
 	 */
 	@:native('libvlc_media_player_get_media')
@@ -311,7 +296,6 @@ extern class LibVLC
 	 * Starts playback of the media player.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return 0 on success, -1 on failure.
 	 */
 	@:native('libvlc_media_player_play')
@@ -347,7 +331,6 @@ extern class LibVLC
 	 * Checks if the media player is playing.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return 1 if playing, 0 otherwise.
 	 */
 	@:native('libvlc_media_player_is_playing')
@@ -357,7 +340,6 @@ extern class LibVLC
 	 * Checks if the media player is seekable.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return 1 if seekable, 0 otherwise.
 	 */
 	@:native('libvlc_media_player_is_seekable')
@@ -367,7 +349,6 @@ extern class LibVLC
 	 * Checks if the media player can pause.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return 1 if can pause, 0 otherwise.
 	 */
 	@:native('libvlc_media_player_can_pause')
@@ -377,7 +358,6 @@ extern class LibVLC
 	 * Checks if the media player will play.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return 1 if will play, 0 otherwise.
 	 */
 	@:native('libvlc_media_player_will_play')
@@ -395,7 +375,6 @@ extern class LibVLC
 	 * Gets the event manager of a media player.
 	 *
 	 * @param mp Pointer to the media player.
-	 *
 	 * @return Pointer to the event manager.
 	 */
 	@:native('libvlc_media_player_event_manager')
@@ -405,7 +384,6 @@ extern class LibVLC
 	 * Gets the current playback time.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return The current playback time in milliseconds.
 	 */
 	@:native('libvlc_media_player_get_time')
@@ -416,7 +394,6 @@ extern class LibVLC
 	 *
 	 * @param p_mi Pointer to the media player.
 	 * @param i_time The new playback time in milliseconds.
-	 *
 	 * @return 0 on success, -1 on failure.
 	 */
 	@:native('libvlc_media_player_set_time')
@@ -426,7 +403,6 @@ extern class LibVLC
 	 * Gets the current playback position.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return The current playback position as a float between 0.0 and 1.0.
 	 */
 	@:native('libvlc_media_player_get_position')
@@ -445,7 +421,6 @@ extern class LibVLC
 	 * Gets the current chapter.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return The current chapter.
 	 */
 	@:native('libvlc_media_player_get_chapter')
@@ -464,7 +439,6 @@ extern class LibVLC
 	 * Gets the total number of chapters.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return The total number of chapters.
 	 */
 	@:native('libvlc_media_player_get_chapter_count')
@@ -490,7 +464,6 @@ extern class LibVLC
 	 * Gets the current playback rate.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return The current playback rate.
 	 */
 	@:native('libvlc_media_player_get_rate')
@@ -501,7 +474,6 @@ extern class LibVLC
 	 *
 	 * @param p_mi Pointer to the media player.
 	 * @param rate The new playback rate.
-	 *
 	 * @return 0 on success, -1 on failure.
 	 */
 	@:native('libvlc_media_player_set_rate')
@@ -511,7 +483,6 @@ extern class LibVLC
 	 * Gets the media length.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return The media length in milliseconds.
 	 */
 	@:native('libvlc_media_player_get_length')
@@ -521,7 +492,6 @@ extern class LibVLC
 	 * Creates a new media player.
 	 *
 	 * @param p_libvlc_instance Pointer to the LibVLC instance.
-	 *
 	 * @return Pointer to the new media player.
 	 */
 	@:native('libvlc_media_player_new')
@@ -589,7 +559,6 @@ extern class LibVLC
 	 * Gets the list of audio outputs.
 	 *
 	 * @param p_instance Pointer to the LibVLC instance.
-	 *
 	 * @return Pointer to the list of audio outputs.
 	 */
 	@:native('libvlc_audio_output_list_get')
@@ -608,7 +577,6 @@ extern class LibVLC
 	 *
 	 * @param p_mi Pointer to the media player.
 	 * @param psz_name Name of the audio output.
-	 *
 	 * @return 0 on success, -1 on failure.
 	 */
 	@:native('libvlc_audio_output_set')
@@ -618,7 +586,6 @@ extern class LibVLC
 	 * Gets the audio delay.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return The audio delay in microseconds.
 	 */
 	@:native('libvlc_audio_get_delay')
@@ -629,7 +596,6 @@ extern class LibVLC
 	 *
 	 * @param p_mi Pointer to the media player.
 	 * @param i_delay The new audio delay in microseconds.
-	 *
 	 * @return 0 on success, -1 on failure.
 	 */
 	@:native('libvlc_audio_set_delay')
@@ -639,7 +605,6 @@ extern class LibVLC
 	 * Gets the audio volume.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return The audio volume (0-100).
 	 */
 	@:native('libvlc_audio_get_volume')
@@ -650,7 +615,6 @@ extern class LibVLC
 	 *
 	 * @param p_mi Pointer to the media player.
 	 * @param i_volume The new audio volume (0-100).
-	 *
 	 * @return 0 on success, -1 on failure.
 	 */
 	@:native('libvlc_audio_set_volume')
@@ -660,7 +624,6 @@ extern class LibVLC
 	 * Gets the number of audio tracks.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return The number of audio tracks.
 	 */
 	@:native('libvlc_audio_get_track_count')
@@ -670,7 +633,6 @@ extern class LibVLC
 	 * Gets the current audio track.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return The current audio track.
 	 */
 	@:native('libvlc_audio_get_track')
@@ -681,7 +643,6 @@ extern class LibVLC
 	 *
 	 * @param p_mi Pointer to the media player.
 	 * @param i_track The new audio track.
-	 *
 	 * @return 0 on success, -1 on failure.
 	 */
 	@:native('libvlc_audio_set_track')
@@ -691,7 +652,6 @@ extern class LibVLC
 	 * Gets the mute status.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return 1 if muted, 0 otherwise.
 	 */
 	@:native('libvlc_audio_get_mute')
@@ -702,7 +662,6 @@ extern class LibVLC
 	 *
 	 * @param p_mi Pointer to the media player.
 	 * @param i_status 1 to mute, 0 to unmute.
-	 *
 	 * @return 0 on success, -1 on failure.
 	 */
 	@:native('libvlc_audio_set_mute')
@@ -712,7 +671,6 @@ extern class LibVLC
 	 * Gets the current audio channel.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return The current audio channel.
 	 */
 	@:native('libvlc_audio_get_channel')
@@ -723,7 +681,6 @@ extern class LibVLC
 	 *
 	 * @param p_mi Pointer to the media player.
 	 * @param channel The new audio channel.
-	 *
 	 * @return 0 on success, -1 on failure.
 	 */
 	@:native('libvlc_audio_set_channel')
@@ -733,7 +690,6 @@ extern class LibVLC
 	 * Gets the role of the media player.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 *
 	 * @return The role of the media player.
 	 */
 	@:native('libvlc_media_player_get_role')
@@ -744,7 +700,6 @@ extern class LibVLC
 	 *
 	 * @param p_mi Pointer to the media player.
 	 * @param role The new role.
-	 *
 	 * @return 0 on success, -1 on failure.
 	 */
 	@:native('libvlc_media_player_set_role')

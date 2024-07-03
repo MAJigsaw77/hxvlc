@@ -64,7 +64,6 @@ class FlxVideo extends Video
 	 *
 	 * @param location The local filesystem path, the media location URL, the ID of an open file descriptor, or the bitstream input.
 	 * @param options Additional options to add to the LibVLC Media.
-	 *
 	 * @return `true` if the video loaded successfully, `false` otherwise.
 	 */
 	public override function load(location:Location, ?options:Array<String>):Bool
