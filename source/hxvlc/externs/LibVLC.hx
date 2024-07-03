@@ -521,6 +521,19 @@ extern class LibVLC
 		display:LibVLC_Video_Display_CB, opaque:cpp.RawPointer<cpp.Void>):Void;
 
 	/**
+	 * Sets the video format.
+	 *
+	 * @param mp Pointer to the media player.
+	 * @param chroma Four-character string identifying the chroma format (e.g., "RV32" for 32-bit RGBA).
+	 * @param width Width of the video in pixels.
+	 * @param height Height of the video in pixels.
+	 * @param pitch Number of bytes per row of pixels in the video.
+	 */
+	@:native('libvlc_video_set_format')
+	static function video_set_format(mp:cpp.RawPointer<LibVLC_Media_Player_T>, chroma:cpp.ConstCharStar, width:cpp.UInt32, height:cpp.UInt32,
+		pitch:cpp.UInt32):Void;
+
+	/**
 	 * Sets the audio callbacks.
 	 *
 	 * @param mp Pointer to the media player.
