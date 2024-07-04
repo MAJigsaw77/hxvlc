@@ -36,7 +36,10 @@ class VideoState extends FlxState
 		video = new FlxVideoSprite(0, 0);
 		video.bitmap.onFormatSetup.add(function():Void
 		{
-			video.setGraphicSize(FlxG.width * 0.8, FlxG.height * 0.8);
+			final newWidth:Float = Math.min(video.bitmap.bitmapData.width, FlxG.width) * 0.8;
+			final newHeight:Float = Math.min(video.bitmap.bitmapData.height, FlxG.height) * 0.8;
+
+			video.setGraphicSize(newWidth, newHeight);
 			video.updateHitbox();
 			video.screenCenter();
 		});
