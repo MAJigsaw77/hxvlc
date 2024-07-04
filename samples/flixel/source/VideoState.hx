@@ -38,9 +38,21 @@ class VideoState extends FlxState
 		{
 			if (video.bitmap != null && video.bitmap.bitmapData != null)
 			{
-				final newWidth:Float = Math.min(video.bitmap.bitmapData.width, FlxG.width) * 0.8;
-				final newHeight:Float = Math.min(video.bitmap.bitmapData.height, FlxG.height) * 0.8;
+				final originalWidth:Float = video.bitmap.bitmapData.width;
+				final originalHeight:Float = video.bitmap.bitmapData.height;
 
+				// Calculate the scale factors for width and height
+				final widthScale:Float = FlxG.width / originalWidth;
+				final heightScale:Float = FlxG.height / originalHeight;
+
+				// Use the smaller scale factor to maintain the aspect ratio
+				final scale:Float = Math.min(widthScale, heightScale) * 0.8;
+
+				// Calculate the new dimensions
+				final newWidth:Float = originalWidth * scale;
+				final newHeight:Float = originalHeight * scale;
+
+				// Set the new graphic size
 				video.setGraphicSize(newWidth, newHeight);
 				video.updateHitbox();
 				video.screenCenter();
