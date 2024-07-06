@@ -53,8 +53,13 @@
 			<vflag name="-framework" value="VideoToolbox" />
 			<vflag name="-framework" value="CoreImage" />
 
-			<lib name="${haxelib:hxvlc}/project/vlc/lib/iOS/libvlc-64.a" if="HXCPP_ARM64" />
-			<lib name="${haxelib:hxvlc}/project/vlc/lib/iOS/libvlc-64.a" if="HXCPP_M64" />
+			<section if="iphoneos">
+				<lib name="${haxelib:hxvlc}/project/vlc/lib/iOS/libvlc_device.a" if="HXCPP_ARM64" />
+			</section>
+
+			<section if="iphonesim">
+				<lib name="${haxelib:hxvlc}/project/vlc/lib/iOS/libvlc_sim.a" if="HXCPP_M64" />
+			</section>
 		</section>
 	</target>
 </xml>
