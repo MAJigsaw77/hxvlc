@@ -185,7 +185,7 @@ class Handle
 			args.push_back("--intf=dummy");
 			args.push_back("--http-reconnect");
 			args.push_back("--no-interact");
-			args.push_back("--no-lua");
+			// args.push_back("--no-lua");
 			args.push_back("--no-snapshot-preview");
 			args.push_back("--no-spu");
 			args.push_back("--no-sub-autodetect-file");
