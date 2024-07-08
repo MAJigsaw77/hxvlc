@@ -149,7 +149,6 @@ class Handle
 			LibVLC.log_unset(instance);
 			#end
 			LibVLC.release(instance);
-
 			instance = null;
 		}
 	}
@@ -166,10 +165,16 @@ class Handle
 
 		if (instance == null)
 		{
+			final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
+
+			if (FileSystem.exists(dataPath))
+				Sys.putEnv('VLC_DATA_PATH', dataPath);
+
 			#if (windows || macos)
 			final pluginsPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
 
-			Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
+			if (FileSystem.exists(pluginsPath))
+				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
 			#end
 
 			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
