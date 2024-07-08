@@ -165,16 +165,18 @@ class Handle
 
 		if (instance == null)
 		{
+			#if desktop
+			final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
+			#else
 			final dataPath:String = Path.join([Path.directory(Sys.getCwd()), 'share']);
+			#end
 
-			if (FileSystem.exists(dataPath))
-				Sys.putEnv('VLC_DATA_PATH', dataPath);
+			Sys.putEnv('VLC_DATA_PATH', dataPath);
 
 			#if (windows || macos)
-			final pluginsPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
+			final pluginPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
 
-			if (FileSystem.exists(pluginsPath))
-				Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
+			Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
 			#end
 
 			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
@@ -193,7 +195,7 @@ class Handle
 			args.push_back("--no-xlib");
 			#if (windows || macos)
 			args.push_back(!resetCache
-				&& FileSystem.exists(Path.join([pluginsPath, 'plugins.dat'])) ? "--no-plugins-scan" : "--reset-plugins-cache");
+				&& FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])) ? "--no-plugins-scan" : "--reset-plugins-cache");
 			#end
 			args.push_back("--text-renderer=dummy");
 			#if HXVLC_VERBOSE
