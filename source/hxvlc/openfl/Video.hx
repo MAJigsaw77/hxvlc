@@ -725,24 +725,27 @@ class Video extends Bitmap implements IVideo
 				{
 					final count:Int = LibVLC.media_list_count(currentMediaSubItems);
 
-					if (count >= 0 && index < 0)
+					if (index >= 0 && index < count)
 					{
 						final mediaSubItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_list_item_at_index(currentMediaSubItems, index);
 
-						if (options != null)
+						if (mediaSubItem != null)
 						{
-							for (option in options)
+							if (options != null)
 							{
-								if (option != null && option.length > 0)
-									LibVLC.media_add_option(mediaSubItem, option);
+								for (option in options)
+								{
+									if (option != null && option.length > 0)
+										LibVLC.media_add_option(mediaSubItem, option);
+								}
 							}
+
+							LibVLC.media_player_set_media(mediaPlayer, mediaSubItem);
+
+							LibVLC.media_release(mediaSubItem);
+
+							return true;
 						}
-
-						LibVLC.media_player_set_media(mediaPlayer, mediaSubItem);
-
-						LibVLC.media_release(mediaSubItem);
-
-						return true;
 					}
 
 					LibVLC.media_list_release(currentMediaSubItems);
