@@ -54,12 +54,15 @@ class VideoState extends FlxState
 				case status if (status == LibVLC_Media_Parsed_Status_Done):
 					FlxG.log.notice('Media parsing done.');
 
-					video.bitmap.loadFromSubItem(0, [':input-repeat=2']);
-
-					FlxTimer.wait(0.001, function():Void
+					if (video.bitmap.loadFromSubItem(0, [':input-repeat=2']))
 					{
-						video.play();
-					});
+						FlxG.log.notice('Currently loading "${video.bitmap.mrl}"...');
+
+						FlxTimer.wait(0.001, function():Void
+						{
+							video.play();
+						});
+					}
 			}
 		});
 		video.bitmap.onFormatSetup.add(function():Void
@@ -79,7 +82,7 @@ class VideoState extends FlxState
 				videoPositionBar.value = position;
 		});
 		video.bitmap.onEndReached.add(video.destroy);
-		video.load('https://youtu.be/SKnRdQiH3-k?si=FsRpTrq0uCMJdBXQ');
+		video.load('https://on.soundcloud.com/S9Xbg');
 		video.antialiasing = true;
 		add(video);
 
