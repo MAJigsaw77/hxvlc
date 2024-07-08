@@ -34,6 +34,33 @@ class VideoState extends FlxState
 		FlxG.cameras.bgColor = 0xFF131C1B;
 
 		video = new FlxVideoSprite(0, 0);
+		video.bitmap.onMediaParsedChanged.add(function(status:Int):Void
+		{
+			switch (status)
+			{
+				case status if (status == LibVLC_Media_Parsed_Status_Skipped):
+					FlxG.log.notice('Media parsing skipped.');
+
+					video.parseStop();
+				case status if (status == LibVLC_Media_Parsed_Status_Failed):
+					FlxG.log.notice('Media parsing failed.');
+
+					video.parseStop();
+				case status if (status == LibVLC_Media_Parsed_Status_Timeout):
+					FlxG.log.notice('Media parsing timed out.');
+
+					video.parseStop();
+				case status if (status == LibVLC_Media_Parsed_Status_Done):
+					FlxG.log.notice('Media parsing done.');
+
+					video.bitmap.loadFromSubItem(0, [':input-repeat=2']);
+
+					FlxTimer.wait(0.001, function():Void
+					{
+						video.play();
+					});
+			}
+		});
 		video.bitmap.onFormatSetup.add(function():Void
 		{
 			if (video.bitmap != null && video.bitmap.bitmapData != null)
@@ -51,9 +78,14 @@ class VideoState extends FlxState
 				videoPositionBar.value = position;
 		});
 		video.bitmap.onEndReached.add(video.destroy);
-		video.load('assets/video.mp4', [':input-repeat=2']);
+		video.load('https://youtu.be/SKnRdQiH3-k?si=FsRpTrq0uCMJdBXQ');
 		video.antialiasing = true;
 		add(video);
+
+		final parseLocal:Int = LibVLC_Media_Parse_Network;
+		final fetchLocal:Int = LibVLC_Media_Fetch_Network;
+
+		video.parseWithOptions(parseLocal | fetchLocal, -1);
 
 		var libvlcVersion:FlxText = new FlxText(10, FlxG.height - 30, 0, 'LibVLC ${Handle.version}', 16);
 		libvlcVersion.setBorderStyle(OUTLINE, FlxColor.BLACK);
