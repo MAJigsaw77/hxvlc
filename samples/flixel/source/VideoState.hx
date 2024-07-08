@@ -11,6 +11,7 @@ import flixel.FlxG;
 import flixel.FlxState;
 import haxe.io.Path;
 import haxe.Exception;
+import hxvlc.externs.Types;
 import hxvlc.flixel.FlxVideo;
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.util.Handle;
