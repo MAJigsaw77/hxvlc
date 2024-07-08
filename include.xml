@@ -16,7 +16,7 @@
 		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" library="libvlc" />
 	</section>
 
-	<assets path="project/vlc/share" rename="share" library="libvlc" />
+	<assets path="project/vlc/share" rename="share" exclude="*.txt" library="libvlc" />
 
 	<section if="android">
 		<ndll name="c++_shared" dir="project/vlc/lib" />
