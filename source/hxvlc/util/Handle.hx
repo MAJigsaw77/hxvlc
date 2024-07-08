@@ -165,7 +165,7 @@ class Handle
 
 		if (instance == null)
 		{
-			final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
+			final dataPath:String = Path.join([Path.directory(Sys.getCwd()), 'share']);
 
 			if (FileSystem.exists(dataPath))
 				Sys.putEnv('VLC_DATA_PATH', dataPath);
