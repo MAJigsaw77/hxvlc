@@ -229,6 +229,15 @@ extern class LibVLC
 	static function media_get_stats(p_md:cpp.RawPointer<LibVLC_Media_T>, p_stats:cpp.RawPointer<LibVLC_Media_Stats_T>):Int;
 
 	/**
+	 * Gets the subitems of a media descriptor.
+	 *
+	 * @param p_md Pointer to the media descriptor.
+	 * @return Pointer to the media list containing subitems.
+	 */
+	@:native('libvlc_media_subitems')
+	static function media_subitems(p_md:cpp.RawPointer<LibVLC_Media_T>):cpp.RawPointer<LibVLC_Media_List_T>;
+
+	/**
 	 * Gets the event manager of a media descriptor.
 	 *
 	 * @param p_md Pointer to the media descriptor.
@@ -273,6 +282,33 @@ extern class LibVLC
 	 */
 	@:native('libvlc_media_get_parsed_status')
 	static function media_get_parsed_status(p_md:cpp.RawPointer<LibVLC_Media_T>):LibVLC_Media_Parsed_Status_T;
+
+	/**
+	 * Releases a media list.
+	 *
+	 * @param p_ml Pointer to the media list.
+	 */
+	@:native('libvlc_media_list_release')
+	static function media_list_release(p_ml:cpp.RawPointer<LibVLC_Media_List_T>):Void;
+
+	/**
+	 * Gets the number of items in a media list.
+	 *
+	 * @param p_ml Pointer to the media list.
+	 * @return Number of items in the list.
+	 */
+	@:native('libvlc_media_list_count')
+	static function media_list_count(p_ml:cpp.RawPointer<LibVLC_Media_List_T>):Int;
+
+	/**
+	 * Gets the media item at the specified index in a media list.
+	 *
+	 * @param p_ml Pointer to the media list.
+	 * @param i_pos Index of the media item to retrieve.
+	 * @return Pointer to the media descriptor.
+	 */
+	@:native('libvlc_media_list_item_at_index')
+	static function media_list_item_at_index(p_ml:cpp.RawPointer<LibVLC_Media_List_T>, i_pos:Int):cpp.RawPointer<LibVLC_Media_T>;
 
 	/**
 	 * Gets the media descriptor from a media player.
