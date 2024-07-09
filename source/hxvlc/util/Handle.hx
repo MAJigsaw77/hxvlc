@@ -185,10 +185,18 @@ class Handle
 
 					if (!FileSystem.exists(Path.directory(savePath)))
 						mkDirs(Path.directory(savePath));
-					
-					if (!FileSystem.exists(savePath))
-						File.saveBytes(savePath, library.getBytes(file));
+
+					try
+					{
+						if (!FileSystem.exists(savePath))
+							File.saveBytes(savePath, library.getBytes(file));
+					}
+					catch (e:Exception)
+						Log.warn('Failed to save file "$savePath", ${e.messege}.');
 				}
+			}).onError(function(error:String):Void
+			{
+				Log.warn('Failed to load library: libvlc, Error: $error')
 			});
  
 			Sys.putEnv('HOME', homePath);
@@ -299,8 +307,17 @@ class Handle
 
 				total += part;
 
-				if (!FileSystem.exists(total))
-					FileSystem.createDirectory(total);
+				try
+				{
+					if (!FileSystem.exists(total))
+						FileSystem.createDirectory(total);
+				}
+				catch (e:Exception)
+				{
+					Log.warn('Failed to create "$total" directory, ${e.messege}.');
+
+					break;
+				}
 			}
 		}
 	}
