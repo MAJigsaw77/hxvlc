@@ -10,7 +10,10 @@ import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.macros.Define;
 import lime.system.System;
+import lime.utils.AssetLibrary;
+import lime.utils.Assets;
 import lime.utils.Log;
+import sys.io.File;
 import sys.thread.Mutex;
 import sys.thread.Thread;
 import sys.FileSystem;
@@ -167,7 +170,26 @@ class Handle
 		if (instance == null)
 		{
 			#if android
-			final homePath:String = Path.join([Path.directory(System.applicationStorageDirectory), 'vlc']);
+			final homePath:String = Path.join([Path.directory(System.applicationStorageDirectory), 'libvlc']);
+
+			Assets.loadLibrary('libvlc').onComplete(function(library:AssetLibrary):Void
+			{
+				final sharePath:String = Path.join([homePath, '.share']);
+
+				if (!FileSystem.exists(Path.directory(sharePath)))
+					mkDirs(Path.directory(sharePath));
+				
+				for (file in library.list(null))
+				{
+					final savePath:String = Path.join([sharePath, file.substring(file.indexOf('/', 0) + 1, file.length)]);
+
+					if (!FileSystem.exists(Path.directory(savePath)))
+						mkDirs(Path.directory(savePath));
+					
+					if (!FileSystem.exists(savePath))
+						File.saveBytes(savePath, library.getBytes(file));
+				}
+			});
  
 			Sys.putEnv('HOME', homePath);
 			#else
@@ -251,6 +273,36 @@ class Handle
 		loading = false;
 
 		return true;
+	}
+
+	/**
+	 * @see https://github.com/openfl/hxp/blob/master/src/hxp/System.hx#L595
+	 */
+	public static function mkDirs(directory:String):Void
+	{
+		var total:String = '';
+
+		if (directory.substr(0, 1) == '/')
+			total = '/';
+
+		final parts:Array<String> = directory.split('/');
+
+		if (parts.length > 0 && parts[0].indexOf(':') > -1)
+			parts.shift();
+
+		for (part in parts)
+		{
+			if (part != '.' && part.length > 0)
+			{
+				if (total != '/' && total.length > 0)
+					total += '/';
+
+				total += part;
+
+				if (!FileSystem.exists(total))
+					FileSystem.createDirectory(total);
+			}
+		}
 	}
 
 	@:noCompletion
