@@ -90,7 +90,7 @@ class VideoState extends FlxState
 				videoPositionBar.value = position;
 		});
 		video.bitmap.onEndReached.add(video.destroy);
-		video.load('https://on.soundcloud.com/pK5Q3');
+		video.load('https://www.dailymotion.com/video/x91rmby');
 		video.antialiasing = true;
 		video.blend = ADD;
 		add(video);
