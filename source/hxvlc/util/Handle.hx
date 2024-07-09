@@ -200,13 +200,11 @@ class Handle
 			});
  
 			Sys.putEnv('HOME', homePath);
-			#elseif desktop
+			#elseif (windows || macos)
 			final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
 
 			Sys.putEnv('VLC_DATA_PATH', dataPath);
-			#end
 
-			#if (windows || macos)
 			final pluginPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
 
 			Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
