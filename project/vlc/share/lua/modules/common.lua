@@ -177,23 +177,24 @@ end
 
 -- seek
 function common.seek(value)
-    if value ~= nil then
+    local input = vlc.object.input()
+    if input ~= nil and value ~= nil then
         if string.sub(value,-1) == "%" then
             local number = common.us_tonumber(string.sub(value,1,-2))
             if number ~= nil then
                 local posPercent = number/100
                 if string.sub(value,1,1) == "+" or string.sub(value,1,1) == "-" then
-                    vlc.player.seek_by_pos_relative(posPercent);
+                    vlc.var.set(input,"position",vlc.var.get(input,"position") + posPercent)
                 else
-                    vlc.player.seek_by_pos_absolute(posPercent);
+                    vlc.var.set(input,"position",posPercent)
                 end
             end
         else
-            local posTime = common.parsetime(value) * 1000000 -- secs to usecs
+            local posTime = common.parsetime(value)
             if string.sub(value,1,1) == "+" or string.sub(value,1,1) == "-" then
-                vlc.player.seek_by_time_relative(posTime)
+                vlc.var.set(input,"time",vlc.var.get(input,"time") + (posTime * 1000000))
             else
-                vlc.player.seek_by_time_absolute(posTime)
+                vlc.var.set(input,"time",posTime * 1000000)
             end
         end
     end
