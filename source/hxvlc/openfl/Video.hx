@@ -708,7 +708,7 @@ class Video extends Bitmap implements IVideo
 	 * Loads a media subitem from the current media's subitems list at the specified index.
 	 *
 	 * @param index The index of the subitem to load.
-	 * @param options Optional array of additional options to configure the loaded subitem.
+	 * @param options Additional options to configure the loaded subitem.
 	 * @return `true` if the subitem was loaded successfully, `false` otherwise.
 	 */
 	public function loadFromSubItem(index:Int, ?options:Array<String>):Bool
@@ -1897,7 +1897,7 @@ interface IVideo
 	 * Loads a media subitem from the current media's subitems list at the specified index.
 	 *
 	 * @param index The index of the subitem to load.
-	 * @param options Optional array of additional options to configure the loaded subitem.
+	 * @param options Additional options to configure the loaded subitem.
 	 * @return `true` if the subitem was loaded successfully, `false` otherwise.
 	 */
 	public function loadFromSubItem(index:Int, ?options:Array<String>):Bool;
