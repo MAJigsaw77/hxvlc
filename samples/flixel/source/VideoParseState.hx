@@ -39,6 +39,7 @@ class VideoParseState extends FlxState
 		metadataInfo.borderSize = 2;
 		metadataInfo.alignment = CENTER;
 		metadataInfo.screenCenter(X);
+		metadataInfo.antialiasing = true;
 
 		video = new FlxVideoSprite(0, 0);
 		video.bitmap.onMediaParsedChanged.add(function(status:Int):Void
@@ -76,9 +77,14 @@ class VideoParseState extends FlxState
 		});
 		video.bitmap.onFormatSetup.add(function():Void
 		{
-			video.setGraphicSize(FlxG.width * 0.8, FlxG.height * 0.8);
-			video.updateHitbox();
-			video.screenCenter();
+			if (video.bitmap != null && video.bitmap.bitmapData != null)
+			{
+				final scale:Float = Math.min(FlxG.width / video.bitmap.bitmapData.width, FlxG.height / video.bitmap.bitmapData.height) * 0.8;
+
+				video.setGraphicSize(video.bitmap.bitmapData.width * scale, video.bitmap.bitmapData.height * scale);
+				video.updateHitbox();
+				video.screenCenter();
+			}
 		});
 		video.bitmap.onPositionChanged.add(function(position:Single):Void
 		{
@@ -106,6 +112,8 @@ class VideoParseState extends FlxState
 
 		videoPositionBar = new FlxBar(10, FlxG.height - 50, LEFT_TO_RIGHT, FlxG.width - 20, 10, null, '', 0, 1);
 		videoPositionBar.createFilledBar(FlxColor.GRAY, FlxColor.CYAN, true, FlxColor.BLACK);
+		videoPositionBar.antialiasing = true;
+		videoPositionBar.numDivisions = 10000;
 		add(videoPositionBar);
 
 		super.create();
