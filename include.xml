@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://lime.openfl.org/project/1.0.4 http://lime.openfl.org/xsd/project-1.0.4.xsd">
 
-	<library name="libvlc" preload="false" />
+	<library name="libvlc" preload="false" unless="linux" />
 
 	<section if="windows">
 		<assets path="project/vlc/lib/Windows" rename="" exclude="*.lib" library="libvlc" />
@@ -15,10 +15,10 @@
 	<section if="mac">
 		<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" library="libvlc" />
 		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" library="libvlc" />
-		<assets path="project/vlc/share" rename="../MacOS/share" library="libvlc" />
+		<assets path="project/vlc/share" rename="../MacOS/share" exclude="*.txt" library="libvlc" />
 	</section>
 
-	<assets path="project/vlc/share" rename="share" exclude="*.txt" library="libvlc" unless="windows || macos" />
+	<assets path="project/vlc/share" rename="share" exclude="*.txt" library="libvlc" unless="windows || mac || linux" />
 
 	<section if="android">
 		<ndll name="c++_shared" dir="project/vlc/lib" />
