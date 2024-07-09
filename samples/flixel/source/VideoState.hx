@@ -34,6 +34,14 @@ class VideoState extends FlxState
 
 		FlxG.cameras.bgColor = 0xFF131C1B;
 
+		Handle.init([
+			'--audio-visual=visual',
+			'--effect-list=spectrum',
+			'--effect-width=1280',
+			'--effect-height=720',
+			'--effect-fft-window=flattop'
+		]);
+
 		video = new FlxVideoSprite(0, 0);
 		video.bitmap.onMediaParsedChanged.add(function(status:Int):Void
 		{
@@ -54,7 +62,7 @@ class VideoState extends FlxState
 				case status if (status == LibVLC_Media_Parsed_Status_Done):
 					FlxG.log.notice('Media parsing done.');
 
-					if (video.bitmap.loadFromSubItem(0, [':input-repeat=2']))
+					if (video.loadFromSubItem(0, [':input-repeat=2']))
 					{
 						FlxG.log.notice('Currently loading "${video.bitmap.mrl}"...');
 
@@ -82,8 +90,9 @@ class VideoState extends FlxState
 				videoPositionBar.value = position;
 		});
 		video.bitmap.onEndReached.add(video.destroy);
-		video.load('https://on.soundcloud.com/S9Xbg');
+		video.load('https://on.soundcloud.com/pK5Q3');
 		video.antialiasing = true;
+		video.blend = ADD;
 		add(video);
 
 		final parseLocal:Int = LibVLC_Media_Parse_Network;
