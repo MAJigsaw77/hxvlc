@@ -192,7 +192,7 @@ class Handle
 							File.saveBytes(savePath, library.getBytes(file));
 					}
 					catch (e:Exception)
-						Log.warn('Failed to save file "$savePath", ${e.messege}.');
+						Log.warn('Failed to save file "$savePath", ${e.message}.');
 				}
 			}).onError(function(error:String):Void
 			{
@@ -200,7 +200,7 @@ class Handle
 			});
  
 			Sys.putEnv('HOME', homePath);
-			#else
+			#elseif desktop
 			final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
 
 			Sys.putEnv('VLC_DATA_PATH', dataPath);
@@ -283,6 +283,7 @@ class Handle
 		return true;
 	}
 
+	#if android
 	/**
 	 * @see https://github.com/openfl/hxp/blob/master/src/hxp/System.hx#L595
 	 */
@@ -314,13 +315,14 @@ class Handle
 				}
 				catch (e:Exception)
 				{
-					Log.warn('Failed to create "$total" directory, ${e.messege}.');
+					Log.warn('Failed to create "$total" directory, ${e.message}.');
 
 					break;
 				}
 			}
 		}
 	}
+	#end
 
 	@:noCompletion
 	private static function get_version():String
