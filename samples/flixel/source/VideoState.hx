@@ -11,7 +11,6 @@ import flixel.FlxG;
 import flixel.FlxState;
 import haxe.io.Path;
 import haxe.Exception;
-import hxvlc.externs.Types;
 import hxvlc.flixel.FlxVideo;
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.util.Handle;
@@ -35,36 +34,6 @@ class VideoState extends FlxState
 		FlxG.cameras.bgColor = 0xFF131C1B;
 
 		video = new FlxVideoSprite(0, 0);
-		video.bitmap.onMediaParsedChanged.add(function(status:Int):Void
-		{
-			switch (status)
-			{
-				case status if (status == LibVLC_Media_Parsed_Status_Skipped):
-					FlxG.log.notice('Media parsing skipped.');
-
-					video.parseStop();
-				case status if (status == LibVLC_Media_Parsed_Status_Failed):
-					FlxG.log.notice('Media parsing failed.');
-
-					video.parseStop();
-				case status if (status == LibVLC_Media_Parsed_Status_Timeout):
-					FlxG.log.notice('Media parsing timed out.');
-
-					video.parseStop();
-				case status if (status == LibVLC_Media_Parsed_Status_Done):
-					FlxG.log.notice('Media parsing done.');
-
-					if (video.loadFromSubItem(0, [':input-repeat=2']))
-					{
-						FlxG.log.notice('Currently loading "${video.bitmap.mrl}"...');
-
-						FlxTimer.wait(0.001, function():Void
-						{
-							video.play();
-						});
-					}
-			}
-		});
 		video.bitmap.onFormatSetup.add(function():Void
 		{
 			if (video.bitmap != null && video.bitmap.bitmapData != null)
@@ -82,14 +51,9 @@ class VideoState extends FlxState
 				videoPositionBar.value = position;
 		});
 		video.bitmap.onEndReached.add(video.destroy);
-		video.load('https://www.dailymotion.com/video/x91svgo');
+		video.load('assets/video.mp4', [':input-repeat=2']);
 		video.antialiasing = true;
 		add(video);
-
-		final parseLocal:Int = LibVLC_Media_Parse_Network;
-		final fetchLocal:Int = LibVLC_Media_Fetch_Network;
-
-		video.parseWithOptions(parseLocal | fetchLocal, -1);
 
 		var libvlcVersion:FlxText = new FlxText(10, FlxG.height - 30, 0, 'LibVLC ${Handle.version}', 16);
 		libvlcVersion.setBorderStyle(OUTLINE, FlxColor.BLACK);
@@ -99,7 +63,14 @@ class VideoState extends FlxState
 
 		videoPositionBar = new FlxBar(10, FlxG.height - 50, LEFT_TO_RIGHT, FlxG.width - 20, 10, null, '', 0, 1);
 		videoPositionBar.createFilledBar(FlxColor.GRAY, FlxColor.CYAN, true, FlxColor.BLACK);
+		videoPositionBar.antialiasing = true;
+		videoPositionBar.numDivisions = 10000;
 		add(videoPositionBar);
+
+		FlxTimer.wait(0.001, function():Void
+		{
+			video.play();
+		});
 
 		super.create();
 	}
