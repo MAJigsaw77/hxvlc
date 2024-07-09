@@ -9,6 +9,7 @@ import haxe.Int64;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.macros.Define;
+import lime.system.System;
 import lime.utils.Log;
 import sys.thread.Mutex;
 import sys.thread.Thread;
@@ -165,13 +166,15 @@ class Handle
 
 		if (instance == null)
 		{
-			#if desktop
-			final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
+			#if android
+			final homePath:String = Path.join([Path.directory(System.applicationStorageDirectory), 'vlc']);
+ 
+			Sys.putEnv('HOME', homePath);
 			#else
-			final dataPath:String = Path.join([Path.directory(Sys.getCwd()), 'share']);
-			#end
+			final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
 
 			Sys.putEnv('VLC_DATA_PATH', dataPath);
+			#end
 
 			#if (windows || macos)
 			final pluginPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
