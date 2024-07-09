@@ -113,6 +113,18 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 	}
 
 	/**
+	 * Loads a media subitem from the current media's subitems list at the specified index.
+	 *
+	 * @param index The index of the subitem to load.
+	 * @param options Additional options to configure the loaded subitem.
+	 * @return `true` if the subitem was loaded successfully, `false` otherwise.
+	 */
+	public function loadFromSubItem(index:Int, ?options:Array<String>):Bool
+	{
+		return bitmap == null ? false : bitmap.loadFromSubItem(index, options);
+	}
+
+	/**
 	 * Parses the current media item with the specified options.
 	 *
 	 * @param parse_flag The parsing option.
@@ -264,6 +276,15 @@ interface IFlxVideoSprite
 	 * @return `true` if the video loads successfully, `false` otherwise.
 	 */
 	public function load(location:Location, ?options:Array<String>):Bool;
+
+	/**
+	 * Loads a media subitem from the current media's subitems list at the specified index.
+	 *
+	 * @param index The index of the subitem to load.
+	 * @param options Additional options to configure the loaded subitem.
+	 * @return `true` if the subitem was loaded successfully, `false` otherwise.
+	 */
+	public function loadFromSubItem(index:Int, ?options:Array<String>):Bool;
 
 	/**
 	 * Parses the current media item with the specified options.

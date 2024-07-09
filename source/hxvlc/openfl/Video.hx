@@ -705,6 +705,58 @@ class Video extends Bitmap implements IVideo
 	}
 
 	/**
+	 * Loads a media subitem from the current media's subitems list at the specified index.
+	 *
+	 * @param index The index of the subitem to load.
+	 * @param options Additional options to configure the loaded subitem.
+	 * @return `true` if the subitem was loaded successfully, `false` otherwise.
+	 */
+	public function loadFromSubItem(index:Int, ?options:Array<String>):Bool
+	{
+		if (mediaPlayer != null)
+		{
+			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+
+			if (currentMediaItem != null)
+			{
+				final currentMediaSubItems:cpp.RawPointer<LibVLC_Media_List_T> = LibVLC.media_subitems(currentMediaItem);
+
+				if (currentMediaSubItems != null)
+				{
+					final count:Int = LibVLC.media_list_count(currentMediaSubItems);
+
+					if (index >= 0 && index < count)
+					{
+						final mediaSubItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_list_item_at_index(currentMediaSubItems, index);
+
+						if (mediaSubItem != null)
+						{
+							if (options != null)
+							{
+								for (option in options)
+								{
+									if (option != null && option.length > 0)
+										LibVLC.media_add_option(mediaSubItem, option);
+								}
+							}
+
+							LibVLC.media_player_set_media(mediaPlayer, mediaSubItem);
+
+							LibVLC.media_release(mediaSubItem);
+
+							return true;
+						}
+					}
+
+					LibVLC.media_list_release(currentMediaSubItems);
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Parses the current media item with the specified options.
 	 *
 	 * @param parse_flag The parsing option.
@@ -1840,6 +1892,15 @@ interface IVideo
 	 * @return `true` if the media was loaded successfully, `false` otherwise.
 	 */
 	public function load(location:Location, ?options:Array<String>):Bool;
+
+	/**
+	 * Loads a media subitem from the current media's subitems list at the specified index.
+	 *
+	 * @param index The index of the subitem to load.
+	 * @param options Additional options to configure the loaded subitem.
+	 * @return `true` if the subitem was loaded successfully, `false` otherwise.
+	 */
+	public function loadFromSubItem(index:Int, ?options:Array<String>):Bool;
 
 	/**
 	 * Parses the current media item with the specified options.

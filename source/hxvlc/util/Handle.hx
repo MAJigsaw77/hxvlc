@@ -9,7 +9,11 @@ import haxe.Int64;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.macros.Define;
+import lime.system.System;
+import lime.utils.AssetLibrary;
+import lime.utils.Assets;
 import lime.utils.Log;
+import sys.io.File;
 import sys.thread.Mutex;
 import sys.thread.Thread;
 import sys.FileSystem;
@@ -149,7 +153,6 @@ class Handle
 			LibVLC.log_unset(instance);
 			#end
 			LibVLC.release(instance);
-
 			instance = null;
 		}
 	}
@@ -166,10 +169,45 @@ class Handle
 
 		if (instance == null)
 		{
-			#if (windows || macos)
-			final pluginsPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
+			#if android
+			final homePath:String = Path.join([Path.directory(System.applicationStorageDirectory), 'libvlc']);
 
-			Sys.putEnv('VLC_PLUGIN_PATH', pluginsPath);
+			Assets.loadLibrary('libvlc').onComplete(function(library:AssetLibrary):Void
+			{
+				final sharePath:String = Path.join([homePath, '.share']);
+
+				if (!FileSystem.exists(Path.directory(sharePath)))
+					mkDirs(Path.directory(sharePath));
+				
+				for (file in library.list(null))
+				{
+					final savePath:String = Path.join([sharePath, file.substring(file.indexOf('/', 0) + 1, file.length)]);
+
+					if (!FileSystem.exists(Path.directory(savePath)))
+						mkDirs(Path.directory(savePath));
+
+					try
+					{
+						if (!FileSystem.exists(savePath))
+							File.saveBytes(savePath, library.getBytes(file));
+					}
+					catch (e:Exception)
+						Log.warn('Failed to save file "$savePath", ${e.message}.');
+				}
+			}).onError(function(error:String):Void
+			{
+				Log.warn('Failed to load library: libvlc, Error: $error');
+			});
+ 
+			Sys.putEnv('HOME', homePath);
+			#elseif (windows || macos)
+			final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
+
+			Sys.putEnv('VLC_DATA_PATH', dataPath);
+
+			final pluginPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
+
+			Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
 			#end
 
 			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
@@ -180,7 +218,7 @@ class Handle
 			args.push_back("--intf=dummy");
 			args.push_back("--http-reconnect");
 			args.push_back("--no-interact");
-			args.push_back("--no-lua");
+			// args.push_back("--no-lua");
 			args.push_back("--no-snapshot-preview");
 			args.push_back("--no-spu");
 			args.push_back("--no-sub-autodetect-file");
@@ -188,7 +226,7 @@ class Handle
 			args.push_back("--no-xlib");
 			#if (windows || macos)
 			args.push_back(!resetCache
-				&& FileSystem.exists(Path.join([pluginsPath, 'plugins.dat'])) ? "--no-plugins-scan" : "--reset-plugins-cache");
+				&& FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])) ? "--no-plugins-scan" : "--reset-plugins-cache");
 			#end
 			args.push_back("--text-renderer=dummy");
 			#if HXVLC_VERBOSE
@@ -242,6 +280,47 @@ class Handle
 
 		return true;
 	}
+
+	#if android
+	/**
+	 * @see https://github.com/openfl/hxp/blob/master/src/hxp/System.hx#L595
+	 */
+	public static function mkDirs(directory:String):Void
+	{
+		var total:String = '';
+
+		if (directory.substr(0, 1) == '/')
+			total = '/';
+
+		final parts:Array<String> = directory.split('/');
+
+		if (parts.length > 0 && parts[0].indexOf(':') > -1)
+			parts.shift();
+
+		for (part in parts)
+		{
+			if (part != '.' && part.length > 0)
+			{
+				if (total != '/' && total.length > 0)
+					total += '/';
+
+				total += part;
+
+				try
+				{
+					if (!FileSystem.exists(total))
+						FileSystem.createDirectory(total);
+				}
+				catch (e:Exception)
+				{
+					Log.warn('Failed to create "$total" directory, ${e.message}.');
+
+					break;
+				}
+			}
+		}
+	}
+	#end
 
 	@:noCompletion
 	private static function get_version():String

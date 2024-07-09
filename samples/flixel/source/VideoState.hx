@@ -63,6 +63,8 @@ class VideoState extends FlxState
 
 		videoPositionBar = new FlxBar(10, FlxG.height - 50, LEFT_TO_RIGHT, FlxG.width - 20, 10, null, '', 0, 1);
 		videoPositionBar.createFilledBar(FlxColor.GRAY, FlxColor.CYAN, true, FlxColor.BLACK);
+		videoPositionBar.antialiasing = true;
+		videoPositionBar.numDivisions = 10000;
 		add(videoPositionBar);
 
 		FlxTimer.wait(0.001, function():Void

@@ -4,19 +4,21 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://lime.openfl.org/project/1.0.4 http://lime.openfl.org/xsd/project-1.0.4.xsd">
 
-	<section if="windows || mac">
-		<library name="libvlc" preload="false" />
+	<library name="libvlc" preload="false" if="windows || mac || android" />
 
-		<section if="windows">
-			<assets path="project/vlc/lib/Windows" rename="" exclude="*.lib" library="libvlc" />
-			<assets path="project/vlc/plugins/Windows" rename="plugins" library="libvlc" />
-		</section>
-
-		<section if="mac">
-			<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" library="libvlc" />
-			<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" library="libvlc" />
-		</section>
+	<section if="windows">
+		<assets path="project/vlc/lib/Windows" rename="" exclude="*.lib" library="libvlc" />
+		<assets path="project/vlc/plugins/Windows" rename="plugins" library="libvlc" />
+		<assets path="project/vlc/share" rename="" exclude="*.lua" library="libvlc" />
 	</section>
+
+	<section if="mac">
+		<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" library="libvlc" />
+		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" library="libvlc" />
+		<assets path="project/vlc/share" rename="../MacOS/share" exclude="*.lua" library="libvlc" />
+	</section>
+
+	<assets path="project/vlc/share" rename="share" exclude="*.luac" library="libvlc" if="android" />
 
 	<section if="android">
 		<ndll name="c++_shared" dir="project/vlc/lib" />
@@ -24,9 +26,8 @@
 	</section>
 
 	<section if="ios">
+		<!--On iOS, Lime's sound breaks if we aren't outputting the audio to it's OpenAL-->
 		<define name="HXVLC_OPENAL" />
-
-		<dependency name="libiconv.tbd" />
 
 		<dependency name="CFNetwork.framework" />
 		<dependency name="CoreFoundation.framework" />
@@ -36,6 +37,8 @@
 		<dependency name="Security.framework" />
 		<dependency name="VideoToolbox.framework" />
 		<dependency name="CoreImage.framework" />
+
+		<dependency name="libiconv.tbd" />
 	</section>
 
 	<sample path="samples" />
