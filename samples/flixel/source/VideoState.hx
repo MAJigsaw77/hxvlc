@@ -101,11 +101,6 @@ class VideoState extends FlxState
 		videoPositionBar.createFilledBar(FlxColor.GRAY, FlxColor.CYAN, true, FlxColor.BLACK);
 		add(videoPositionBar);
 
-		FlxTimer.wait(0.001, function():Void
-		{
-			video.play();
-		});
-
 		super.create();
 	}
 
