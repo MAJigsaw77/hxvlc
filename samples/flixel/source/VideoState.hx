@@ -34,14 +34,6 @@ class VideoState extends FlxState
 
 		FlxG.cameras.bgColor = 0xFF131C1B;
 
-		Handle.init([
-			'--audio-visual=visual',
-			'--effect-list=spectrum',
-			'--effect-width=1280',
-			'--effect-height=720',
-			'--effect-fft-window=flattop'
-		]);
-
 		video = new FlxVideoSprite(0, 0);
 		video.bitmap.onMediaParsedChanged.add(function(status:Int):Void
 		{
@@ -90,9 +82,8 @@ class VideoState extends FlxState
 				videoPositionBar.value = position;
 		});
 		video.bitmap.onEndReached.add(video.destroy);
-		video.load('https://www.dailymotion.com/video/x91rmby');
+		video.load('https://www.dailymotion.com/video/x91svgo');
 		video.antialiasing = true;
-		video.blend = ADD;
 		add(video);
 
 		final parseLocal:Int = LibVLC_Media_Parse_Network;
