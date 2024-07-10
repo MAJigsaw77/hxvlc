@@ -18,9 +18,9 @@
 		<assets path="project/vlc/share" rename="../MacOS/share" exclude="*.lua" library="libvlc" />
 	</section>
 
-	<assets path="project/vlc/share" rename="share" exclude="*.luac" library="libvlc" if="android" />
-
 	<section if="android">
+		<assets path="project/vlc/share" rename="share" exclude="*.luac" library="libvlc" />
+
 		<ndll name="c++_shared" dir="project/vlc/lib" />
 		<ndll name="vlc" dir="project/vlc/lib" />
 	</section>
