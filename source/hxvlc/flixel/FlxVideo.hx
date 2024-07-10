@@ -13,9 +13,22 @@ import sys.FileSystem;
 using StringTools;
 
 /**
- * This class is deprecated and will be removed in future versions.
+ * This class extends Video to display video files in HaxeFlixel.
+ *
+ * ```haxe
+ * var video:FlxVideo = new FlxVideo();
+ * video.onEndReached.add(function():Void
+ * {
+ * 	video.dispose();
+ *
+ * 	FlxG.removeChild(video);
+ * });
+ * FlxG.addChildBelowMouse(video);
+ *
+ * if (video.load('assets/videos/video.mp4'))
+ * 	FlxTimer.wait(0.001, () -> video.play());
+ * ```
  */
-@:deprecated('Use FlxVideoSprite class instead.')
 class FlxVideo extends Video
 {
 	/**
@@ -52,11 +65,11 @@ class FlxVideo extends Video
 		{
 			role = LibVLC_Role_Game;
 
-			if (!FlxG.signals.postUpdate.has(postUpdate))
-				FlxG.signals.postUpdate.add(postUpdate);
+			#if FLX_SOUND_SYSTEM
+			if (autoVolumeHandle)
+				volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+			#end
 		});
-
-		FlxG.addChildBelowMouse(this);
 	}
 
 	/**
@@ -107,16 +120,11 @@ class FlxVideo extends Video
 		if (FlxG.signals.focusLost.has(pause))
 			FlxG.signals.focusLost.remove(pause);
 
-		if (FlxG.signals.postUpdate.has(postUpdate))
-			FlxG.signals.postUpdate.remove(postUpdate);
-
 		super.dispose();
-
-		FlxG.removeChild(this);
 	}
 
 	@:noCompletion
-	private function postUpdate():Void
+	private override function update(deltaTime:Int):Void
 	{
 		if ((autoResizeMode.x || autoResizeMode.y) && bitmapData != null)
 		{
@@ -128,6 +136,8 @@ class FlxVideo extends Video
 		if (autoVolumeHandle)
 			volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 		#end
+
+		super.update(deltaTime);
 	}
 }
 #end

@@ -15,7 +15,27 @@ import sys.FileSystem;
 using StringTools;
 
 /**
- * This class is used for displaying video files in HaxeFlixel as sprites.
+ * This class extends FlxSprite to display video files in HaxeFlixel.
+ *
+ * ```haxe
+ * var video:FlxVideoSprite = new FlxVideoSprite(0, 0);
+ * video.antialiasing = true;
+ * video.bitmap.onFormatSetup.add(function():Void
+ * {
+ * 	if (video.bitmap != null && video.bitmap.bitmapData != null)
+ * 	{
+ * 		final scale:Float = Math.min(FlxG.width / video.bitmap.bitmapData.width, FlxG.height / video.bitmap.bitmapData.height) * 0.8;
+ * 		video.setGraphicSize(video.bitmap.bitmapData.width * scale, video.bitmap.bitmapData.height * scale);
+ * 		video.updateHitbox();
+ * 		video.screenCenter();
+ * 	}
+ * });
+ * video.bitmap.onEndReached.add(video.destroy);
+ * add(video);
+ *
+ * if (video.load('assets/videos/video.mp4'))
+ * 	FlxTimer.wait(0.001, () -> video.play());
+ * ```
  */
 class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 {
