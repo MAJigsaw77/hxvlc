@@ -106,9 +106,6 @@ class FlxVideo extends Video
 		if (FlxG.signals.focusLost.has(pause))
 			FlxG.signals.focusLost.remove(pause);
 
-		if (FlxG.signals.postUpdate.has(postUpdate))
-			FlxG.signals.postUpdate.remove(postUpdate);
-
 		super.dispose();
 	}
 
