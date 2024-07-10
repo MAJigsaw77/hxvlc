@@ -13,9 +13,8 @@ import sys.FileSystem;
 using StringTools;
 
 /**
- * This class is deprecated and will be removed in future versions.
+ * This class integrates video playback into HaxeFlixel games.
  */
-@:deprecated('Use FlxVideoSprite class instead.')
 class FlxVideo extends Video
 {
 	/**
@@ -52,11 +51,11 @@ class FlxVideo extends Video
 		{
 			role = LibVLC_Role_Game;
 
-			if (!FlxG.signals.postUpdate.has(postUpdate))
-				FlxG.signals.postUpdate.add(postUpdate);
+			#if FLX_SOUND_SYSTEM
+			if (autoVolumeHandle)
+				volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+			#end
 		});
-
-		FlxG.addChildBelowMouse(this);
 	}
 
 	/**
@@ -111,12 +110,10 @@ class FlxVideo extends Video
 			FlxG.signals.postUpdate.remove(postUpdate);
 
 		super.dispose();
-
-		FlxG.removeChild(this);
 	}
 
 	@:noCompletion
-	private function postUpdate():Void
+	private override function update(deltaTime:Int):Void
 	{
 		if ((autoResizeMode.x || autoResizeMode.y) && bitmapData != null)
 		{
@@ -128,6 +125,8 @@ class FlxVideo extends Video
 		if (autoVolumeHandle)
 			volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 		#end
+
+		super.update(deltaTime);
 	}
 }
 #end
