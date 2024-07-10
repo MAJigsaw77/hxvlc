@@ -26,7 +26,7 @@ using StringTools;
  * FlxG.addChildBelowMouse(video);
  *
  * if (video.load('assets/videos/video.mp4'))
- * 	FlxTimer.wait(0.0001, () -> video.play());
+ * 	FlxTimer.wait(0.001, () -> video.play());
  * ```
  */
 class FlxVideo extends Video
