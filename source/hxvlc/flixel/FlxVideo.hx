@@ -14,6 +14,20 @@ using StringTools;
 
 /**
  * This class integrates video playback into HaxeFlixel games.
+ *
+ * ```haxe
+ * var video:FlxVideo = new FlxVideo();
+ * video.onEndReached.add(function():Void
+ * {
+ * 	video.dispose();
+ *
+ * 	FlxG.removeChild(video);
+ * });
+ * FlxG.addChildBelowMouse(video);
+ *
+ * if (video.load('assets/videos/video.mp4'))
+ * 	FlxTimer.wait(0.0001, () -> video.play());
+ * ```
  */
 class FlxVideo extends Video
 {
