@@ -24,7 +24,8 @@ using StringTools;
  * {
  * 	if (video.bitmap != null && video.bitmap.bitmapData != null)
  * 	{
- * 		final scale:Float = Math.min(FlxG.width / video.bitmap.bitmapData.width, FlxG.height / video.bitmap.bitmapData.height) * 0.8;
+ * 		final scale:Float = Math.min(FlxG.width / video.bitmap.bitmapData.width, FlxG.height / video.bitmap.bitmapData.height);
+ *
  * 		video.setGraphicSize(video.bitmap.bitmapData.width * scale, video.bitmap.bitmapData.height * scale);
  * 		video.updateHitbox();
  * 		video.screenCenter();
