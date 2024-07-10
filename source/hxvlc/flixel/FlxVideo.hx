@@ -13,7 +13,7 @@ import sys.FileSystem;
 using StringTools;
 
 /**
- * This class integrates video playback into HaxeFlixel games.
+ * This class extends Video to display video files in HaxeFlixel.
  *
  * ```haxe
  * var video:FlxVideo = new FlxVideo();
