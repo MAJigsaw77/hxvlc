@@ -211,14 +211,13 @@ class Handle
 			#end
 
 			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
-			#if (ios || macos)
-			args.push_back("--audio-resampler=soxr"); // TODO: Remove this when libvlc 4.0 gets added in this lib as it's used by default.
+			#if (android || ios || macos)
+			args.push_back("--audio-resampler=soxr");
 			#end
 			args.push_back("--drop-late-frames");
 			args.push_back("--intf=dummy");
 			args.push_back("--http-reconnect");
 			args.push_back("--no-interact");
-			// args.push_back("--no-lua");
 			args.push_back("--no-snapshot-preview");
 			args.push_back("--no-spu");
 			args.push_back("--no-sub-autodetect-file");
