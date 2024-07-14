@@ -34,6 +34,16 @@ extern class LibVLC
 	static function release(p_instance:cpp.RawPointer<LibVLC_Instance_T>):Void;
 
 	/**
+	 * Sets the application name and HTTP user agent string for LibVLC.
+	 *
+	 * @param p_instance Pointer to the LibVLC instance.
+	 * @param name Human-readable application name, e.g., "FooBar player 1.2.3".
+	 * @param http HTTP User Agent string, e.g., "FooBar/1.2.3 Python/2.6.0".
+	 */
+	@:native('libvlc_set_user_agent')
+	static function set_user_agent(p_instance:cpp.RawPointer<LibVLC_Instance_T>, name:cpp.ConstCharStar, http:cpp.ConstCharStar):Void;
+
+	/**
 	 * Gets the last error message.
 	 *
 	 * @return The last error message.
@@ -107,6 +117,16 @@ extern class LibVLC
 	 */
 	@:native('libvlc_log_set')
 	static function log_set(p_instance:cpp.RawPointer<LibVLC_Instance_T>, cb:LibVLC_Log_CB, data:cpp.RawPointer<cpp.Void>):Void;
+
+	/**
+	 * Sets up logging to a file.
+	 *
+	 * @param p_instance Pointer to the LibVLC instance.
+	 * @param stream FILE pointer opened for writing.
+	 *               The FILE pointer must remain valid until libvlc_log_unset().
+	 */
+	@:native('libvlc_log_set_file')
+	static function log_set_file(p_instance:cpp.RawPointer<LibVLC_Instance_T>, stream:cpp.FILE):Void;
 
 	/**
 	 * Gets the LibVLC clock time.
