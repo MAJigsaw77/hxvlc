@@ -1002,9 +1002,6 @@ class Video extends Bitmap implements IVideo
 		#end
 	}
 
-	/**
-	 * These events are not 100% accurate as they are called synchronously and the events from libVLC are called from another thread.
-	 */
 	@:noCompletion
 	private function update(deltaTime:Int):Void
 	{
@@ -1050,7 +1047,6 @@ class Video extends Bitmap implements IVideo
 		{
 			events[5] = false;
 
-			// TODO: Give this a better place as it should normally get called on the LibVLC thread.
 			final errmsg:String = cast(LibVLC.errmsg(), String);
 
 			if (errmsg != null && errmsg.length > 0)
@@ -1581,11 +1577,6 @@ class Video extends Bitmap implements IVideo
 		return __bitmapData = value;
 	}
 
-	/**
-	 * Won't make these interfaces functions down below inlines so overriding them is possible for extensions.
-	 *
-	 * - Nex
-	 */
 	@:noCompletion
 	private function get_onOpening():Event<Void->Void>
 	{
