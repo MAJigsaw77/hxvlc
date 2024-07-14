@@ -245,7 +245,7 @@ class Handle
 				}
 			}
 
-			instance = LibVLC.alloc(args.length, untyped cpp.NativeArray.getBase(args).getBase());
+			instance = LibVLC.alloc(args.length, untyped __cpp__('(const char *) {0}', cpp.NativeArray.getBase(args).getBase()));
 
 			if (instance == null)
 			{
