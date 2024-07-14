@@ -29,43 +29,41 @@ jobs:
         with:
           haxe-version: 4.3.4
 
-      - name: Installing Dependencies
+      - name: Install Dependencies
         if: startsWith(matrix.os, 'ubuntu')
         run: sudo apt-get update && sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc
 
-      - name: Installing Haxe Libraries
+      - name: Install Haxe Libraries
         run: |
           haxelib install lime --quiet
           haxelib install openfl --quiet
-          haxelib install flixel --quiet
-          haxelib install hscript --quiet
           haxelib dev hxvlc .
 
-      - name: Setup Git hxcpp
+      - name: Setup Flixel Libraries
+        if: matrix.sample == 'flixel'
+        run: |
+          haxelib install flixel --quiet
+          haxelib install hscript --quiet
+
+      - name: Setup hxcpp Library
         run: haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp.git --quiet && haxelib run lime rebuild hxcpp
 
-      - name: List of installed Haxe Libraries
+      - name: List Installed Haxe Libraries
         run: haxelib list
 
-      - name: Building Windows
+      - name: Build Windows
         if: startsWith(matrix.os, 'windows')
-        run: cd samples/${{matrix.sample}} && haxelib run lime build windows -debug
+        run: cd samples/${{matrix.sample}} && haxelib run lime build windows -debug -D gl_stats
 
-      - name: Building MacOS
+      - name: Build MacOS
         if: startsWith(matrix.os, 'macos')
-        run: |
-          cd samples/${{matrix.sample}}
-          haxelib run lime build mac -debug
-          tar -zcvf build.tar.gz export/macos/bin
+        run: cd samples/${{matrix.sample}} && haxelib run lime build mac -debug -D gl_stats && tar -zcvf build.tar.gz export/macos/bin
 
-      - name: Building Linux
+      - name: Build Linux
         if: startsWith(matrix.os, 'ubuntu')
-        run: |
-          cd samples/${{matrix.sample}}
-          haxelib run lime build linux -debug
-          tar -zcvf build.tar.gz export/linux/bin
+        run: cd samples/${{matrix.sample}} && haxelib run lime build linux -debug -D gl_stats && tar -zcvf build.tar.gz export/linux/bin
 
-      - name: Upload Artifact Windows
+      - name: Upload Windows Artifact
         if: startsWith(matrix.os, 'windows')
         uses: actions/upload-artifact@main
         with:
@@ -73,7 +71,7 @@ jobs:
           path: samples/${{matrix.sample}}/export/windows/bin
           if-no-files-found: warn
 
-      - name: Upload Artifact MacOS
+      - name: Upload MacOS Artifact
         if: startsWith(matrix.os, 'macos')
         uses: actions/upload-artifact@main
         with:
@@ -81,7 +79,7 @@ jobs:
           path: samples/${{matrix.sample}}/build.tar.gz
           if-no-files-found: warn
 
-      - name: Upload Artifact Linux
+      - name: Upload Linux Artifact
         if: startsWith(matrix.os, 'ubuntu')
         uses: actions/upload-artifact@main
         with:
@@ -110,22 +108,26 @@ jobs:
         with:
           haxe-version: 4.3.4
 
-      - name: Installing Libraries
+      - name: Install Haxe Libraries
         run: |
           haxelib install lime --quiet
           haxelib install openfl --quiet
-          haxelib install flixel --quiet
-          haxelib install hscript --quiet
           haxelib install extension-androidtools --quiet --skip-dependencies
           haxelib dev hxvlc .
 
-      - name: Setup Git hxcpp
+      - name: Setup Flixel Libraries
+        if: matrix.sample == 'flixel'
+        run: |
+          haxelib install flixel --quiet
+          haxelib install hscript --quiet
+
+      - name: Setup hxcpp Library
         run: haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp.git --quiet && haxelib run lime rebuild hxcpp
 
-      - name: List of installed Haxe Libraries
+      - name: List Installed Haxe Libraries
         run: haxelib list
 
-      - name: Configure Android
+      - name: Configure Android Environment
         run: |
           haxelib run lime setup -alias -y
           haxelib run lime config ANDROID_SDK $ANDROID_HOME
@@ -133,10 +135,10 @@ jobs:
           haxelib run lime config JAVA_HOME $JAVA_HOME
           haxelib run lime config ANDROID_SETUP true
 
-      - name: Building
-        run: cd samples/${{matrix.sample}} && haxelib run lime build android -debug
+      - name: Build Android
+        run: cd samples/${{matrix.sample}} && haxelib run lime build android -debug -D gl_stats
 
-      - name: Upload Artifact
+      - name: Upload Android Artifact
         uses: actions/upload-artifact@main
         with:
           name: androidBuild-${{matrix.sample}}
