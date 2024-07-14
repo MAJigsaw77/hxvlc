@@ -73,21 +73,21 @@ class Handle
 	/**
 	 * Retrieves the LibVLC version.
 	 *
-	 * Example: "1.1.0-git The Luggage"
+	 * Example: '1.1.0-git The Luggage'
 	 */
 	public static var version(get, never):String;
 
 	/**
 	 * Retrieves the LibVLC compiler version.
 	 *
-	 * Example: "gcc version 4.2.3 (Ubuntu 4.2.3-2ubuntu6)"
+	 * Example: 'gcc version 4.2.3 (Ubuntu 4.2.3-2ubuntu6)'
 	 */
 	public static var compiler(get, never):String;
 
 	/**
 	 * Retrieves the LibVLC changeset.
 	 *
-	 * Example: "aa9bce0bc4"
+	 * Example: 'aa9bce0bc4'
 	 */
 	public static var changeset(get, never):String;
 
@@ -149,9 +149,6 @@ class Handle
 	{
 		if (instance != null)
 		{
-			#if HXVLC_LOGGING
-			LibVLC.log_unset(instance);
-			#end
 			LibVLC.release(instance);
 			instance = null;
 		}
@@ -178,7 +175,7 @@ class Handle
 
 				if (!FileSystem.exists(Path.directory(sharePath)))
 					mkDirs(Path.directory(sharePath));
-				
+
 				for (file in library.list(null))
 				{
 					final savePath:String = Path.join([sharePath, file.substring(file.indexOf('/', 0) + 1, file.length)]);
@@ -198,7 +195,7 @@ class Handle
 			{
 				Log.warn('Failed to load library: libvlc, Error: $error');
 			});
- 
+
 			Sys.putEnv('HOME', homePath);
 			#elseif (windows || macos)
 			final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
@@ -210,28 +207,33 @@ class Handle
 			Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
 			#end
 
-			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
+			var args:Array<String> = [];
+
 			#if (android || ios || macos)
-			args.push_back("--audio-resampler=soxr");
+			args.push('--audio-resampler=soxr');
 			#end
-			args.push_back("--drop-late-frames");
-			args.push_back("--intf=dummy");
-			args.push_back("--http-reconnect");
-			args.push_back("--no-interact");
-			args.push_back("--no-snapshot-preview");
-			args.push_back("--no-spu");
-			args.push_back("--no-sub-autodetect-file");
-			args.push_back("--no-video-title-show");
-			args.push_back("--no-xlib");
+
+			args.push('--drop-late-frames');
+			args.push('--intf=dummy');
+			args.push('--http-reconnect');
+			args.push('--no-interact');
+			args.push('--no-snapshot-preview');
+			args.push('--no-spu');
+			args.push('--no-sub-autodetect-file');
+			args.push('--no-video-title-show');
+			args.push('--no-xlib');
+
 			#if (windows || macos)
-			args.push_back(!resetCache
-				&& FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])) ? "--no-plugins-scan" : "--reset-plugins-cache");
+			args.push(!resetCache
+				&& FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])) ? '--no-plugins-scan' : '--reset-plugins-cache');
 			#end
-			args.push_back("--text-renderer=dummy");
+
+			args.push('--text-renderer=dummy');
+
 			#if HXVLC_VERBOSE
-			args.push_back("--verbose=" + Define.getInt('HXVLC_VERBOSE', 0));
+			args.push('--verbose=${Define.getInt('HXVLC_VERBOSE', 0)}');
 			#elseif !HXVLC_LOGGING
-			args.push_back("--quiet");
+			args.push('--quiet');
 			#end
 
 			if (options != null)
@@ -239,11 +241,11 @@ class Handle
 				for (option in options)
 				{
 					if (option != null && option.length > 0)
-						args.push_back(option);
+						args.push(option);
 				}
 			}
 
-			instance = LibVLC.alloc(args.size(), untyped args.data());
+			instance = LibVLC.alloc(args.length, untyped cpp.NativeArray.getBase(args).getBase());
 
 			if (instance == null)
 			{
