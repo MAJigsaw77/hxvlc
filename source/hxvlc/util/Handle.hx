@@ -73,21 +73,21 @@ class Handle
 	/**
 	 * Retrieves the LibVLC version.
 	 *
-	 * Example: '1.1.0-git The Luggage'
+	 * Example: "1.1.0-git The Luggage"
 	 */
 	public static var version(get, never):String;
 
 	/**
 	 * Retrieves the LibVLC compiler version.
 	 *
-	 * Example: 'gcc version 4.2.3 (Ubuntu 4.2.3-2ubuntu6)'
+	 * Example: "gcc version 4.2.3 (Ubuntu 4.2.3-2ubuntu6)"
 	 */
 	public static var compiler(get, never):String;
 
 	/**
 	 * Retrieves the LibVLC changeset.
 	 *
-	 * Example: 'aa9bce0bc4'
+	 * Example: "aa9bce0bc4"
 	 */
 	public static var changeset(get, never):String;
 
@@ -207,31 +207,28 @@ class Handle
 			Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
 			#end
 
-			final args:Array<String> = [
-				'--drop-late-frames',
-				'--intf=dummy',
-				'--http-reconnect',
-				'--no-interact',
-				'--no-snapshot-preview',
-				'--no-spu',
-				'--no-sub-autodetect-file',
-				'--no-video-title-show',
-				'--no-xlib'
-			];
-
+			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
 			#if (android || ios || macos)
-			args.push('--audio-resampler=soxr');
+			args.push_back("--audio-resampler=soxr");
 			#end
-
+			args.push_back("--drop-late-frames");
+			args.push_back("--intf=dummy");
+			args.push_back("--http-reconnect");
+			args.push_back("--no-interact");
+			args.push_back("--no-snapshot-preview");
+			args.push_back("--no-spu");
+			args.push_back("--no-sub-autodetect-file");
+			args.push_back("--no-video-title-show");
+			args.push_back("--no-xlib");
 			#if (windows || macos)
-			args.push(!resetCache
-				&& FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])) ? '--no-plugins-scan' : '--reset-plugins-cache');
+			args.push_back(!resetCache
+				&& FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])) ? "--no-plugins-scan" : "--reset-plugins-cache");
 			#end
-
+			args.push_back("--text-renderer=dummy");
 			#if HXVLC_VERBOSE
-			args.push('--verbose=${Define.getInt('HXVLC_VERBOSE', 0)}');
+			args.push_back("--verbose=" + Define.getInt('HXVLC_VERBOSE', 0));
 			#elseif !HXVLC_LOGGING
-			args.push('--quiet');
+			args.push_back("--quiet");
 			#end
 
 			if (options != null)
@@ -239,11 +236,11 @@ class Handle
 				for (option in options)
 				{
 					if (option != null && option.length > 0)
-						args.push(option);
+						args.push_back(option);
 				}
 			}
 
-			instance = LibVLC.alloc(args.length, untyped __cpp__('(const char *) {0}', cpp.NativeArray.getBase(args).getBase()));
+			instance = LibVLC.alloc(args.size(), untyped args.data());
 
 			if (instance == null)
 			{
