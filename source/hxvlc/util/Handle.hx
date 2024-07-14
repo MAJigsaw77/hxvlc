@@ -207,28 +207,26 @@ class Handle
 			Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
 			#end
 
-			var args:Array<String> = [];
+			final args:Array<String> = [
+				'--drop-late-frames',
+				'--intf=dummy',
+				'--http-reconnect',
+				'--no-interact',
+				'--no-snapshot-preview',
+				'--no-spu',
+				'--no-sub-autodetect-file',
+				'--no-video-title-show',
+				'--no-xlib'
+			];
 
 			#if (android || ios || macos)
 			args.push('--audio-resampler=soxr');
 			#end
 
-			args.push('--drop-late-frames');
-			args.push('--intf=dummy');
-			args.push('--http-reconnect');
-			args.push('--no-interact');
-			args.push('--no-snapshot-preview');
-			args.push('--no-spu');
-			args.push('--no-sub-autodetect-file');
-			args.push('--no-video-title-show');
-			args.push('--no-xlib');
-
 			#if (windows || macos)
 			args.push(!resetCache
 				&& FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])) ? '--no-plugins-scan' : '--reset-plugins-cache');
 			#end
-
-			args.push('--text-renderer=dummy');
 
 			#if HXVLC_VERBOSE
 			args.push('--verbose=${Define.getInt('HXVLC_VERBOSE', 0)}');
