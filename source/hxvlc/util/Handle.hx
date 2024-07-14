@@ -169,8 +169,10 @@ class Handle
 			#if android
 			final homePath:String = Path.join([Path.directory(System.applicationStorageDirectory), 'libvlc']);
 
-			Assets.loadLibrary('libvlc').onComplete(function(library:AssetLibrary):Void
+			if (Assets.hasLibrary('libvlc'))
 			{
+				final library:AssetLibrary = Assets.getLibrary('libvlc');
+
 				final sharePath:String = Path.join([homePath, '.share']);
 
 				if (!FileSystem.exists(Path.directory(sharePath)))
@@ -191,19 +193,16 @@ class Handle
 					catch (e:Exception)
 						Log.warn('Failed to save file "$savePath", ${e.message}.');
 				}
-			}).onError(function(error:String):Void
-			{
-				Log.warn('Failed to load library: libvlc, Error: $error');
-			});
+			}
+			else
+				Log.warn('Unable to find "libvlc" asset library');
 
 			Sys.putEnv('HOME', homePath);
 			#elseif (windows || macos)
 			final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
-
-			Sys.putEnv('VLC_DATA_PATH', dataPath);
-
 			final pluginPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
 
+			Sys.putEnv('VLC_DATA_PATH', dataPath);
 			Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
 			#end
 
@@ -309,7 +308,7 @@ class Handle
 				}
 				catch (e:Exception)
 				{
-					Log.warn('Failed to create "$total" directory, ${e.message}.');
+					Log.warn('Failed to create "$total" directory, ${e.message}');
 
 					break;
 				}
