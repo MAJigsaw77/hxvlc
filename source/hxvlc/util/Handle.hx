@@ -181,9 +181,7 @@ class Handle
 		}
 	}
 
-	/**
-	 * This function exists to allow retrying the initialization after resetting plugins cache.
-	 */
+	@:noCompletion
 	private static function initWithRetry(?options:Array<String>, ?resetCache:Bool = false):Bool
 	{
 		if (loading)
@@ -307,7 +305,8 @@ class Handle
 	/**
 	 * @see https://github.com/openfl/hxp/blob/master/src/hxp/System.hx#L595
 	 */
-	public static function mkDirs(directory:String):Void
+	@:noCompletion
+	private static function mkDirs(directory:String):Void
 	{
 		var total:String = '';
 
