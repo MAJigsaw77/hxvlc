@@ -49,6 +49,23 @@ static void instance_logging(void *data, int level, const libvlc_log_t *ctx, con
 			break;
 	}
 	#else
+	switch (level)
+	{
+		case LIBVLC_NOTICE:
+			printf("[NOT] ");
+			break;
+		case LIBVLC_ERROR:
+			printf("[ERR] ");
+			break;
+		case LIBVLC_WARNING:
+			printf("[WAR] ");
+			break;
+		case LIBVLC_DEBUG:
+		default:
+			printf("[DEB] ");
+			break;
+	}
+
 	vprintf(fmt, args);
 
 	printf("\\n");
