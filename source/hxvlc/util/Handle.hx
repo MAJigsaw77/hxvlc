@@ -34,20 +34,18 @@ static void instance_logging(void *data, int level, const libvlc_log_t *ctx, con
 	#ifdef __ANDROID__
 	switch (level)
 	{
-		case LIBVLC_DEBUG:
-			__android_log_vprint(ANDROID_LOG_DEBUG, "HXVLC", fmt, args);
-			break;
 		case LIBVLC_NOTICE:
 			__android_log_vprint(ANDROID_LOG_INFO, "HXVLC", fmt, args);
-			break;
-		case LIBVLC_WARNING:
-			__android_log_vprint(ANDROID_LOG_WARN, "HXVLC", fmt, args);
 			break;
 		case LIBVLC_ERROR:
 			__android_log_vprint(ANDROID_LOG_ERROR, "HXVLC", fmt, args);
 			break;
+		case LIBVLC_WARNING:
+			__android_log_vprint(ANDROID_LOG_WARN, "HXVLC", fmt, args);
+			break;
+		case LIBVLC_DEBUG:
 		default:
-			__android_log_vprint(ANDROID_LOG_VERBOSE, "HXVLC", fmt, args);
+			__android_log_vprint(ANDROID_LOG_DEBUG, "HXVLC", fmt, args);
 			break;
 	}
 	#else
