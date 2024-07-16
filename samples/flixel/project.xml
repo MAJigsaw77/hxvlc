@@ -58,7 +58,7 @@
 	<section if="debug">
 		<!--These defines are mostly for testing (aren't required to be used)-->
 		<haxedef name="HXVLC_VERBOSE" value="2" />
-		<haxedef name="HXVLC_LOGGING" />
+		<haxedef name="HXVLC_FILE_LOGGING" />
 	</section>
 
 	<!--DPI Awareness-->
