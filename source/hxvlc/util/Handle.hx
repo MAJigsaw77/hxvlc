@@ -194,15 +194,13 @@ class Handle
 			#if android
 			final homePath:String = Path.join([Path.directory(System.applicationStorageDirectory), 'libvlc']);
 
-			if (Assets.hasLibrary('libvlc'))
+			Assets.loadLibrary('libvlc').onComplete(function(library:AssetLibrary):Void
 			{
-				final library:AssetLibrary = Assets.getLibrary('libvlc');
-
 				final sharePath:String = Path.join([homePath, '.share']);
 
 				if (!FileSystem.exists(Path.directory(sharePath)))
 					mkDirs(Path.directory(sharePath));
-
+				
 				for (file in library.list(null))
 				{
 					final savePath:String = Path.join([sharePath, file.substring(file.indexOf('/', 0) + 1, file.length)]);
@@ -218,9 +216,10 @@ class Handle
 					catch (e:Exception)
 						Log.warn('Failed to save file "$savePath", ${e.message}.');
 				}
-			}
-			else
-				Log.warn('Unable to find "libvlc" asset library');
+			}).onError(function(error:String):Void
+			{
+				Log.warn('Failed to load library: libvlc, Error: $error');
+			});
 
 			Sys.putEnv('HOME', homePath);
 			#elseif (windows || macos)
