@@ -200,7 +200,7 @@ class Handle
 
 				if (!FileSystem.exists(Path.directory(sharePath)))
 					mkDirs(Path.directory(sharePath));
-				
+
 				for (file in library.list(null))
 				{
 					final savePath:String = Path.join([sharePath, file.substring(file.indexOf('/', 0) + 1, file.length)]);
