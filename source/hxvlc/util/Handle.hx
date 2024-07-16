@@ -44,9 +44,7 @@ static void instance_logging(void *data, int level, const libvlc_log_t *ctx, con
 			__android_log_vprint(ANDROID_LOG_WARN, "HXVLC", fmt, args);
 			break;
 		case LIBVLC_DEBUG:
-			printf("[DEBUG] ");
-			vprintf(fmt, args);
-			printf("\\n");
+			__android_log_vprint(ANDROID_LOG_DEBUG, "HXVLC", fmt, args);
 			break;
 		default:
 			__android_log_vprint(ANDROID_LOG_UNKNOWN, "HXVLC", fmt, args);
