@@ -198,15 +198,13 @@ class Handle
 			{
 				final sharePath:String = Path.join([homePath, '.share']);
 
-				if (!FileSystem.exists(Path.directory(sharePath)))
-					mkDirs(Path.directory(sharePath));
+				mkDirs(Path.directory(sharePath));
 
 				for (file in library.list(null))
 				{
 					final savePath:String = Path.join([sharePath, file.substring(file.indexOf('/', 0) + 1, file.length)]);
 
-					if (!FileSystem.exists(Path.directory(savePath)))
-						mkDirs(Path.directory(savePath));
+					mkDirs(Path.directory(savePath));
 
 					try
 					{
@@ -307,6 +305,13 @@ class Handle
 	@:noCompletion
 	private static function mkDirs(directory:String):Void
 	{
+		try
+		{
+			if (FileSystem.exists(directory) && FileSystem.isDirectory(directory))
+				return;
+		}
+		catch (e:Dynamic) {}
+
 		var total:String = '';
 
 		if (directory.substr(0, 1) == '/')
@@ -328,6 +333,9 @@ class Handle
 
 				try
 				{
+					if (FileSystem.exists(total) && !FileSystem.isDirectory(total))
+						FileSystem.deleteFile(total);
+
 					if (!FileSystem.exists(total))
 						FileSystem.createDirectory(total);
 				}
