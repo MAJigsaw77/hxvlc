@@ -1413,8 +1413,8 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private function set_rate(value:Single):Single
 	{
-		if (mediaPlayer != null && LibVLC.media_player_set_rate(mediaPlayer, value) == -1)
-			Log.warn('Failed to set play rate');
+		if (mediaPlayer != null)
+			LibVLC.media_player_set_rate(mediaPlayer, value);
 
 		return value;
 	}
@@ -1466,8 +1466,8 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private function set_output(value:String):String
 	{
-		if (mediaPlayer != null && LibVLC.audio_output_set(mediaPlayer, value) != 0)
-			Log.warn('Failed to set audio output module');
+		if (mediaPlayer != null)
+			LibVLC.audio_output_set(mediaPlayer, value);
 
 		return value;
 	}
@@ -1496,8 +1496,8 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private function set_volume(value:Int):Int
 	{
-		if (mediaPlayer != null && LibVLC.audio_set_volume(mediaPlayer, value) == -1)
-			Log.warn('The volume is out of range');
+		if (mediaPlayer != null)
+			LibVLC.audio_set_volume(mediaPlayer, value);
 
 		return value;
 	}
@@ -1517,8 +1517,8 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private function set_track(value:Int):Int
 	{
-		if (mediaPlayer != null && LibVLC.audio_set_track(mediaPlayer, value) == -1)
-			Log.warn('Failed to set audio track');
+		if (mediaPlayer != null)
+			LibVLC.audio_set_track(mediaPlayer, value);
 
 		return value;
 	}
@@ -1562,8 +1562,8 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private function set_role(value:UInt):UInt
 	{
-		if (mediaPlayer != null && LibVLC.media_player_set_role(mediaPlayer, value) == -1)
-			Log.warn('Failed to media player\'s role');
+		if (mediaPlayer != null)
+			LibVLC.media_player_set_role(mediaPlayer, value);
 
 		return value;
 	}
