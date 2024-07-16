@@ -131,6 +131,9 @@ class Handle
 	 */
 	public static var clock(get, never):Int64;
 
+	@:noCompletion
+	private static var logFile:cpp.FILE;
+
 	/**
 	 * Initializes the LibVLC instance if it isn't already.
 	 *
@@ -179,6 +182,14 @@ class Handle
 			LibVLC.release(instance);
 			instance = null;
 		}
+
+		#if HXVLC_FILE_LOGGING
+		if (logFile != null)
+		{
+			cpp.Stdio.fclose(logFile);
+			logFile = null;
+		}
+		#end
 	}
 
 	@:noCompletion
@@ -248,7 +259,7 @@ class Handle
 			args.push_back("--text-renderer=dummy");
 			#if HXVLC_VERBOSE
 			args.push_back("--verbose=" + Define.getInt('HXVLC_VERBOSE', 0));
-			#elseif !HXVLC_LOGGING
+			#elseif (!HXVLC_LOGGING || !HXVLC_FILE_LOGGING)
 			args.push_back("--quiet");
 			#end
 
@@ -287,7 +298,21 @@ class Handle
 			}
 			else
 			{
-				#if HXVLC_LOGGING
+				#if HXVLC_FILE_LOGGING
+				if (logFile != null)
+					cpp.Stdio.fclose(logFile);
+
+				logFile = cpp.Stdio.fopen(Define.getString('HXVLC_FILE_LOGGING', 'libvlc-log.txt'), 'w');
+
+				if (logFile == null)
+				{
+					Log.warn('Failed to open log file for writing.');
+
+					LibVLC.log_set(instance, untyped __cpp__('instance_logging'), null);
+				}
+				else
+					LibVLC.log_set_file(instance, logFile);
+				#elseif HXVLC_LOGGING
 				LibVLC.log_set(instance, untyped __cpp__('instance_logging'), null);
 				#end
 			}
