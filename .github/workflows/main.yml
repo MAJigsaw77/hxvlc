@@ -57,11 +57,11 @@ jobs:
 
       - name: Build MacOS
         if: startsWith(matrix.os, 'macos')
-        run: cd samples/${{matrix.sample}} && haxelib run lime build mac -debug -D gl_stats && tar -zcvf build.tar.gz export/macos/bin
+        run: cd samples/${{matrix.sample}} && haxelib run lime build mac -debug -D gl_stats && tar -zcvf build.tar.gz -C export/macos/bin .
 
       - name: Build Linux
         if: startsWith(matrix.os, 'ubuntu')
-        run: cd samples/${{matrix.sample}} && haxelib run lime build linux -debug -D gl_stats && tar -zcvf build.tar.gz export/linux/bin
+        run: cd samples/${{matrix.sample}} && haxelib run lime build linux -debug -D gl_stats && tar -zcvf build.tar.gz -C export/linux/bin .
 
       - name: Upload Windows Artifact
         if: startsWith(matrix.os, 'windows')
@@ -136,7 +136,7 @@ jobs:
           haxelib run lime config ANDROID_SETUP true
 
       - name: Build Android
-        run: cd samples/${{matrix.sample}} && haxelib run lime build android -debug -D gl_stats && tar -zcvf build.tar.gz export/android/bin/app/build/outputs/apk/debug
+        run: cd samples/${{matrix.sample}} && haxelib run lime build android -debug -D gl_stats && tar -zcvf build.tar.gz -C export/android/bin/app/build/outputs/apk/debug .
 
       - name: Upload Android Artifact
         uses: actions/upload-artifact@main
