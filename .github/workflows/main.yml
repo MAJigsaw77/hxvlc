@@ -127,7 +127,7 @@ jobs:
       - name: List Installed Haxe Libraries
         run: haxelib list
 
-      - name: Configure Android Environment
+      - name: Configure Environment
         run: |
           haxelib run lime setup -alias -y
           haxelib run lime config ANDROID_SDK $ANDROID_HOME
@@ -135,12 +135,12 @@ jobs:
           haxelib run lime config JAVA_HOME $JAVA_HOME
           haxelib run lime config ANDROID_SETUP true
 
-      - name: Build Android
-        run: cd samples/${{matrix.sample}} && haxelib run lime build android -debug -D gl_stats && tar -zcvf build.tar.gz -C export/android/bin/app/build/outputs/apk/debug .
+      - name: Build
+        run: cd samples/${{matrix.sample}} && haxelib run lime build android -debug -D gl_stats
 
-      - name: Upload Android Artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@main
         with:
           name: androidBuild-${{matrix.sample}}
-          path: samples/${{matrix.sample}}/build.tar.gz
+          path: samples/${{matrix.sample}}/export/android/bin/app/build/outputs/apk/debug
           if-no-files-found: warn
