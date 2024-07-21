@@ -76,4 +76,8 @@
 	<!--Pretty Message Reporting-->
 
 	<haxedef name="message.reporting" value="pretty" />
+
+	<!--Analyzer Optimization-->
+
+	<haxedef name="analyzer-optimize" />
 </project>
