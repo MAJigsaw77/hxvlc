@@ -136,11 +136,11 @@ jobs:
           haxelib run lime config ANDROID_SETUP true
 
       - name: Build Android
-        run: cd samples/${{matrix.sample}} && haxelib run lime build android -debug -D gl_stats
+        run: cd samples/${{matrix.sample}} && haxelib run lime build android -debug -D gl_stats && tar -zcvf build.tar.gz export/android/bin/app/build/outputs/apk/debug
 
       - name: Upload Android Artifact
         uses: actions/upload-artifact@main
         with:
           name: androidBuild-${{matrix.sample}}
-          path: samples/${{matrix.sample}}/export/android/bin/app/build/outputs/apk/debug
+          path: samples/${{matrix.sample}}/build.tar.gz
           if-no-files-found: warn
