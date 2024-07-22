@@ -178,7 +178,7 @@ jobs:
         run: haxelib list
 
       - name: Build
-        run: cd samples/${{matrix.sample}} && haxelib run lime build ios -nosign -debug -D gl_stats
+        run: cd samples/${{matrix.sample}} && haxelib run lime build ios -debug -D gl_stats -D nosign
 
       - name: Create IPA
         run: |
