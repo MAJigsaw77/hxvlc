@@ -145,7 +145,7 @@ jobs:
           if-no-files-found: warn
 
   iOS:
-    runs-on: macos-14
+    runs-on: macos-13
     strategy:
       fail-fast: false
       matrix:
@@ -157,7 +157,7 @@ jobs:
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.5
+          haxe-version: 4.3.4
 
       - name: Install Haxe Libraries
         run: |
