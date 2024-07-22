@@ -36,7 +36,6 @@ class Main extends Sprite
 		#end
 
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
-		Lib.current.addChild(new Main());
 	}
 
 	public function new():Void
