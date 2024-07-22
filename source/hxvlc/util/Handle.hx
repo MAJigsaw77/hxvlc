@@ -34,25 +34,24 @@ static void instance_logging(void *data, int level, const libvlc_log_t *ctx, con
 	#ifdef __ANDROID__
 	switch (level)
 	{
-		case LIBVLC_DEBUG:
-			__android_log_vprint(ANDROID_LOG_DEBUG, "HXVLC", fmt, args);
-			break;
 		case LIBVLC_NOTICE:
 			__android_log_vprint(ANDROID_LOG_INFO, "HXVLC", fmt, args);
-			break;
-		case LIBVLC_WARNING:
-			__android_log_vprint(ANDROID_LOG_WARN, "HXVLC", fmt, args);
 			break;
 		case LIBVLC_ERROR:
 			__android_log_vprint(ANDROID_LOG_ERROR, "HXVLC", fmt, args);
 			break;
+		case LIBVLC_WARNING:
+			__android_log_vprint(ANDROID_LOG_WARN, "HXVLC", fmt, args);
+			break;
+		case LIBVLC_DEBUG:
+			__android_log_vprint(ANDROID_LOG_DEBUG, "HXVLC", fmt, args);
+			break;
 		default:
-			__android_log_vprint(ANDROID_LOG_VERBOSE, "HXVLC", fmt, args);
+			__android_log_vprint(ANDROID_LOG_UNKNOWN, "HXVLC", fmt, args);
 			break;
 	}
 	#else
 	vprintf(fmt, args);
-
 	printf("\\n");
 	#endif
 
@@ -104,6 +103,9 @@ class Handle
 	 */
 	public static var clock(get, never):Int64;
 
+	@:noCompletion
+	private static var logFile:cpp.FILE;
+
 	/**
 	 * Initializes the LibVLC instance if it isn't already.
 	 *
@@ -149,17 +151,20 @@ class Handle
 	{
 		if (instance != null)
 		{
-			#if HXVLC_LOGGING
-			LibVLC.log_unset(instance);
-			#end
 			LibVLC.release(instance);
 			instance = null;
 		}
+
+		#if HXVLC_FILE_LOGGING
+		if (logFile != null)
+		{
+			cpp.Stdio.fclose(logFile);
+			logFile = null;
+		}
+		#end
 	}
 
-	/**
-	 * This function exists to allow retrying the initialization after resetting plugins cache.
-	 */
+	@:noCompletion
 	private static function initWithRetry(?options:Array<String>, ?resetCache:Bool = false):Bool
 	{
 		if (loading)
@@ -176,15 +181,13 @@ class Handle
 			{
 				final sharePath:String = Path.join([homePath, '.share']);
 
-				if (!FileSystem.exists(Path.directory(sharePath)))
-					mkDirs(Path.directory(sharePath));
-				
+				mkDirs(Path.directory(sharePath));
+
 				for (file in library.list(null))
 				{
 					final savePath:String = Path.join([sharePath, file.substring(file.indexOf('/', 0) + 1, file.length)]);
 
-					if (!FileSystem.exists(Path.directory(savePath)))
-						mkDirs(Path.directory(savePath));
+					mkDirs(Path.directory(savePath));
 
 					try
 					{
@@ -198,15 +201,13 @@ class Handle
 			{
 				Log.warn('Failed to load library: libvlc, Error: $error');
 			});
- 
+
 			Sys.putEnv('HOME', homePath);
 			#elseif (windows || macos)
 			final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
-
-			Sys.putEnv('VLC_DATA_PATH', dataPath);
-
 			final pluginPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
 
+			Sys.putEnv('VLC_DATA_PATH', dataPath);
 			Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
 			#end
 
@@ -230,7 +231,7 @@ class Handle
 			args.push_back("--text-renderer=dummy");
 			#if HXVLC_VERBOSE
 			args.push_back("--verbose=" + Define.getInt('HXVLC_VERBOSE', 0));
-			#elseif !HXVLC_LOGGING
+			#elseif (!HXVLC_LOGGING || !HXVLC_FILE_LOGGING)
 			args.push_back("--quiet");
 			#end
 
@@ -269,7 +270,21 @@ class Handle
 			}
 			else
 			{
-				#if HXVLC_LOGGING
+				#if HXVLC_FILE_LOGGING
+				if (logFile != null)
+					cpp.Stdio.fclose(logFile);
+
+				logFile = cpp.Stdio.fopen(Define.getString('HXVLC_FILE_LOGGING', 'libvlc-log.txt'), 'w');
+
+				if (logFile == null)
+				{
+					Log.warn('Failed to open log file for writing.');
+
+					LibVLC.log_set(instance, untyped __cpp__('instance_logging'), null);
+				}
+				else
+					LibVLC.log_set_file(instance, logFile);
+				#elseif HXVLC_LOGGING
 				LibVLC.log_set(instance, untyped __cpp__('instance_logging'), null);
 				#end
 			}
@@ -284,8 +299,16 @@ class Handle
 	/**
 	 * @see https://github.com/openfl/hxp/blob/master/src/hxp/System.hx#L595
 	 */
-	public static function mkDirs(directory:String):Void
+	@:noCompletion
+	private static function mkDirs(directory:String):Void
 	{
+		try
+		{
+			if (FileSystem.exists(directory) && FileSystem.isDirectory(directory))
+				return;
+		}
+		catch (e:Dynamic) {}
+
 		var total:String = '';
 
 		if (directory.substr(0, 1) == '/')
@@ -307,12 +330,15 @@ class Handle
 
 				try
 				{
+					if (FileSystem.exists(total) && !FileSystem.isDirectory(total))
+						FileSystem.deleteFile(total);
+
 					if (!FileSystem.exists(total))
 						FileSystem.createDirectory(total);
 				}
 				catch (e:Exception)
 				{
-					Log.warn('Failed to create "$total" directory, ${e.message}.');
+					Log.warn('Failed to create "$total" directory, ${e.message}');
 
 					break;
 				}

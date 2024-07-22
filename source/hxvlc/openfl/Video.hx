@@ -1002,9 +1002,6 @@ class Video extends Bitmap implements IVideo
 		#end
 	}
 
-	/**
-	 * These events are not 100% accurate as they are called synchronously and the events from libVLC are called from another thread.
-	 */
 	@:noCompletion
 	private function update(deltaTime:Int):Void
 	{
@@ -1050,7 +1047,6 @@ class Video extends Bitmap implements IVideo
 		{
 			events[5] = false;
 
-			// TODO: Give this a better place as it should normally get called on the LibVLC thread.
 			final errmsg:String = cast(LibVLC.errmsg(), String);
 
 			if (errmsg != null && errmsg.length > 0)
@@ -1417,8 +1413,8 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private function set_rate(value:Single):Single
 	{
-		if (mediaPlayer != null && LibVLC.media_player_set_rate(mediaPlayer, value) == -1)
-			Log.warn('Failed to set play rate');
+		if (mediaPlayer != null)
+			LibVLC.media_player_set_rate(mediaPlayer, value);
 
 		return value;
 	}
@@ -1470,8 +1466,8 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private function set_output(value:String):String
 	{
-		if (mediaPlayer != null && LibVLC.audio_output_set(mediaPlayer, value) != 0)
-			Log.warn('Failed to set audio output module');
+		if (mediaPlayer != null)
+			LibVLC.audio_output_set(mediaPlayer, value);
 
 		return value;
 	}
@@ -1500,8 +1496,8 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private function set_volume(value:Int):Int
 	{
-		if (mediaPlayer != null && LibVLC.audio_set_volume(mediaPlayer, value) == -1)
-			Log.warn('The volume is out of range');
+		if (mediaPlayer != null)
+			LibVLC.audio_set_volume(mediaPlayer, value);
 
 		return value;
 	}
@@ -1521,8 +1517,8 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private function set_track(value:Int):Int
 	{
-		if (mediaPlayer != null && LibVLC.audio_set_track(mediaPlayer, value) == -1)
-			Log.warn('Failed to set audio track');
+		if (mediaPlayer != null)
+			LibVLC.audio_set_track(mediaPlayer, value);
 
 		return value;
 	}
@@ -1566,8 +1562,8 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private function set_role(value:UInt):UInt
 	{
-		if (mediaPlayer != null && LibVLC.media_player_set_role(mediaPlayer, value) == -1)
-			Log.warn('Failed to media player\'s role');
+		if (mediaPlayer != null)
+			LibVLC.media_player_set_role(mediaPlayer, value);
 
 		return value;
 	}
@@ -1581,11 +1577,6 @@ class Video extends Bitmap implements IVideo
 		return __bitmapData = value;
 	}
 
-	/**
-	 * Won't make these interfaces functions down below inlines so overriding them is possible for extensions.
-	 *
-	 * - Nex
-	 */
 	@:noCompletion
 	private function get_onOpening():Event<Void->Void>
 	{

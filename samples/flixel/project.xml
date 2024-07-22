@@ -14,10 +14,6 @@
 
 	<architecture exclude="armv7" if="android" />
 
-	<!--Icon Settings -->
-	
-	<icon path="icon.png" />
-
 	<!--Window Settings-->
 
 	<window orientation="landscape" width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false" fullscreen="false" resizable="true" />
@@ -27,8 +23,6 @@
 	<window fullscreen="true" resizable="false" if="mobile" />
 
 	<!--Path Settings-->
-
-	<assets path="assets" />
 
 	<source path="source" />
 
@@ -48,12 +42,6 @@
 
 	<haxedef name="FLX_NO_TOUCH" if="desktop" />
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
-
-	<section if="cpp">
-		<haxedef name="HXCPP_CHECK_POINTER" />
-		<haxedef name="HXCPP_STACK_LINE" />
-		<haxedef name="HXCPP_STACK_TRACE" />
-	</section>
 
 	<section if="debug">
 		<!--These defines are mostly for testing (aren't required to be used)-->
@@ -76,4 +64,8 @@
 	<!--Pretty Message Reporting-->
 
 	<haxedef name="message.reporting" value="pretty" />
+
+	<!--Analyzer Optimization-->
+
+	<haxedef name="analyzer-optimize" />
 </project>

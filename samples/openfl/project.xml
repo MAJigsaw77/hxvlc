@@ -14,17 +14,11 @@
 
 	<architecture exclude="armv7" if="android" />
 
-	<!--Icon Settings -->
-	
-	<icon path="icon.png" />
-
 	<!--Window Settings-->
 
 	<window allow-high-dpi="true" background="#131C1B" fps="60" />
 
 	<!--Path Settings-->
-
-	<assets path="assets" />
 
 	<source path="source" />
 
@@ -41,12 +35,6 @@
 	<haxelib name="hxcpp-debug-server" if="debug" unless="mobile" optional="true" />
 
 	<!--Libraries Settings-->
-
-	<section if="cpp">
-		<haxedef name="HXCPP_CHECK_POINTER" />
-		<haxedef name="HXCPP_STACK_LINE" />
-		<haxedef name="HXCPP_STACK_TRACE" />
-	</section>
 
 	<section if="debug">
 		<!--These defines are mostly for testing (aren't required to be used)-->
@@ -69,4 +57,8 @@
 	<!--Pretty Message Reporting-->
 
 	<haxedef name="message.reporting" value="pretty" />
+
+	<!--Analyzer Optimization-->
+
+	<haxedef name="analyzer-optimize" />
 </project>

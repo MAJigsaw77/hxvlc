@@ -1,24 +1,14 @@
 package;
 
-#if android
-import android.widget.Toast;
-#end
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import flixel.ui.FlxBar;
 import flixel.FlxG;
 import flixel.FlxState;
-import haxe.io.Path;
-import haxe.Exception;
 import hxvlc.flixel.FlxVideo;
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.util.Handle;
-import openfl.system.System;
-import openfl.utils.Assets;
-import openfl.Lib;
-import sys.io.File;
-import sys.FileSystem;
 
 class VideoState extends FlxState
 {
@@ -27,13 +17,10 @@ class VideoState extends FlxState
 
 	override function create():Void
 	{
-		#if mobile
-		copyFiles();
-		#end
-
 		FlxG.cameras.bgColor = 0xFF131C1B;
 
 		video = new FlxVideoSprite(0, 0);
+		video.antialiasing = true;
 		video.bitmap.onFormatSetup.add(function():Void
 		{
 			if (video.bitmap != null && video.bitmap.bitmapData != null)
@@ -51,8 +38,7 @@ class VideoState extends FlxState
 				videoPositionBar.value = position;
 		});
 		video.bitmap.onEndReached.add(video.destroy);
-		video.load('assets/video.mp4', [':input-repeat=2']);
-		video.antialiasing = true;
+		video.load('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
 		add(video);
 
 		var libvlcVersion:FlxText = new FlxText(10, FlxG.height - 30, 0, 'LibVLC ${Handle.version}', 16);
@@ -74,31 +60,4 @@ class VideoState extends FlxState
 
 		super.create();
 	}
-
-	#if mobile
-	private inline function copyFiles():Void
-	{
-		try
-		{
-			final path:String = 'assets/video.mp4';
-
-			if (!FileSystem.exists(Path.directory(path)))
-			{
-				FileSystem.createDirectory(Path.directory(path));
-
-				File.saveBytes(path, Assets.getBytes(path));
-			}
-			else if (!FileSystem.exists(path))
-				File.saveBytes(path, Assets.getBytes(path));
-
-			System.gc();
-		}
-		catch (e:Exception)
-		{
-			#if android
-			Toast.makeText(e.message, Toast.LENGTH_LONG);
-			#end
-		}
-	}
-	#end
 }
