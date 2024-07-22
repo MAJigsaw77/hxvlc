@@ -51,34 +51,8 @@ static void instance_logging(void *data, int level, const libvlc_log_t *ctx, con
 			break;
 	}
 	#else
-	switch (level)
-	{
-		case LIBVLC_NOTICE:
-			printf("[NOTICE] ");
-			vprintf(fmt, args);
-			printf("\\n");
-			break;
-		case LIBVLC_ERROR:
-			printf("[ERROR] ");
-			vprintf(fmt, args);
-			printf("\\n");
-			break;
-		case LIBVLC_WARNING:
-			printf("[WARNING] ");
-			vprintf(fmt, args);
-			printf("\\n");
-			break;
-		case LIBVLC_DEBUG:
-			printf("[DEBUG] ");
-			vprintf(fmt, args);
-			printf("\\n");
-			break;
-		default:
-			printf("[UNKNOWN] ");
-			vprintf(fmt, args);
-			printf("\\n");
-			break;
-	}
+	vprintf(fmt, args);
+	printf("\\n");
 	#endif
 
 	hx::SetTopOfStack((int *)0, true);
