@@ -27,10 +27,8 @@ class Main extends Sprite
 {
 	public static var fps:FPS;
 
-	public function new():Void
+	public static function main():Void
 	{
-		super();
-
 		#if android
 		Sys.setCwd(Path.addTrailingSlash(VERSION.SDK_INT > 30 ? Context.getObbDir() : Context.getExternalFilesDir()));
 		#elseif ios
@@ -38,14 +36,19 @@ class Main extends Sprite
 		#end
 
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
+		Lib.current.addChild(new Main());
+	}
 
-		#if (mobile && debug)
-		FlxG.log.redirectTraces = true;
-		#end
+	public function new():Void
+	{
+		super();
 
 		FlxG.signals.gameResized.add(onResizeGame);
 
-		final refreshRate:Int = #if linux 60 #else Lib.application.window.displayMode.refreshRate #end;
+		var refreshRate:Int = Lib.application.window.displayMode.refreshRate;
+
+		if (refreshRate < 60)
+			refreshRate = 60;
 
 		addChild(new FlxGame(1280, 720, VideoState, refreshRate, refreshRate));
 
@@ -99,7 +102,7 @@ class Main extends Sprite
 			File.saveContent('errors/' + Date.now().toString().replace(' ', '-').replace(':', "'") + '.txt', msg);
 		}
 		catch (e:Exception)
-			Log.trace('Couldn\'t save error message "${e.message}"', null);
+			Sys.println('Couldn\'t save error message "${e.message}"');
 
 		Sys.println(msg);
 		Lib.application.window.alert(msg, 'Error!');

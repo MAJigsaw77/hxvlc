@@ -14,10 +14,6 @@
 
 	<architecture exclude="armv7" if="android" />
 
-	<!--Icon Settings -->
-	
-	<icon path="icon.png" />
-
 	<!--Window Settings-->
 
 	<window orientation="landscape" width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false" fullscreen="false" resizable="true" />

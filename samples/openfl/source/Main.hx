@@ -8,16 +8,14 @@ import android.widget.Toast;
 import haxe.io.Path;
 import haxe.CallStack;
 import haxe.Exception;
-import haxe.Log;
 import hxvlc.openfl.Video;
-import lime.system.System as LimeSystem;
+import lime.system.System;
 import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.errors.Error;
 import openfl.events.ErrorEvent;
 import openfl.events.UncaughtErrorEvent;
 import openfl.events.Event;
-import openfl.system.System as OpenFLSystem;
 import openfl.utils.Assets;
 import openfl.Lib;
 import sys.io.File;
@@ -29,26 +27,29 @@ class Main extends Sprite
 {
 	private var video:Video;
 
+	public static function main():Void
+	{
+		#if android
+		Sys.setCwd(Path.addTrailingSlash(VERSION.SDK_INT > 30 ? Context.getObbDir() : Context.getExternalFilesDir()));
+		#elseif ios
+		Sys.setCwd(System.documentsDirectory);
+		#end
+
+		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
+		Lib.current.addChild(new Main());
+	}
+
 	public function new():Void
 	{
 		super();
 
-		#if android
-		Sys.setCwd(Path.addTrailingSlash(VERSION.SDK_INT > 30 ? Context.getObbDir() : Context.getExternalFilesDir()));
-		#elseif ios
-		Sys.setCwd(LimeSystem.documentsDirectory);
-		#end
+		var refreshRate:Int = Lib.application.window.displayMode.refreshRate;
 
-		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
+		if (refreshRate < 60)
+			refreshRate = 60;
 
-		#if !linux
-		Lib.current.stage.frameRate = Lib.application.window.displayMode.refreshRate;
-		#end
+		Lib.current.stage.frameRate = refreshRate;
 
-		#if mobile
-		copyFiles();
-		#end
-		
 		video = new Video();
 		video.onOpening.add(function():Void
 		{
@@ -65,17 +66,48 @@ class Main extends Sprite
 
 			video.dispose();
 
-			if (contains(video))
-				removeChild(video);
+			removeChild(video);
 		});
 		video.onFormatSetup.add(function():Void
 		{
 			stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
 		});
-		video.load(Path.join([Sys.getCwd(), 'assets/video.mp4']));
 		addChild(video);
 
-		video.play();
+		if (video.load('http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'))
+			video.play();
+	}
+
+	private inline function stage_onEnterFrame(event:Event):Void
+	{
+		if (video.bitmapData == null)
+			return;
+
+		final aspectRatio:Float = video.bitmapData.width / video.bitmapData.height;
+
+		if (stage.stageWidth / stage.stageHeight > aspectRatio)
+		{
+			video.width = stage.stageHeight * aspectRatio;
+			video.height = stage.stageHeight;
+		}
+		else
+		{
+			video.width = stage.stageWidth;
+			video.height = stage.stageWidth / aspectRatio;
+		}
+
+		video.x = (stage.stageWidth - video.width) / 2;
+		video.y = (stage.stageHeight - video.height) / 2;
+	}
+
+	private inline function stage_onActivate(event:Event):Void
+	{
+		video.resume();
+	}
+
+	private inline function stage_onDeactivate(event:Event):Void
+	{
+		video.pause();
 	}
 
 	private inline function onUncaughtError(event:UncaughtErrorEvent):Void
@@ -119,71 +151,10 @@ class Main extends Sprite
 			File.saveContent('errors/' + Date.now().toString().replace(' ', '-').replace(':', "'") + '.txt', msg);
 		}
 		catch (e:Exception)
-			Log.trace('Couldn\'t save error message "${e.message}"', null);
+			Sys.println('Couldn\'t save error message "${e.message}"');
 
-		Log.trace(msg, null);
+		Sys.println(msg);
 		Lib.application.window.alert(msg, 'Error!');
 		LimeSystem.exit(1);
 	}
-
-	private inline function stage_onEnterFrame(event:Event):Void
-	{
-		if (video.bitmapData == null)
-			return;
-
-		final aspectRatio:Float = video.bitmapData.width / video.bitmapData.height;
-
-		if (stage.stageWidth / stage.stageHeight > aspectRatio)
-		{
-			// stage is wider than video
-			video.width = stage.stageHeight * aspectRatio;
-			video.height = stage.stageHeight;
-		}
-		else
-		{
-			// stage is taller than video
-			video.width = stage.stageWidth;
-			video.height = stage.stageWidth / aspectRatio;
-		}
-
-		video.x = (stage.stageWidth - video.width) / 2;
-		video.y = (stage.stageHeight - video.height) / 2;
-	}
-
-	private inline function stage_onActivate(event:Event):Void
-	{
-		video.resume();
-	}
-
-	private inline function stage_onDeactivate(event:Event):Void
-	{
-		video.pause();
-	}
-
-	#if mobile
-	private inline function copyFiles():Void
-	{
-		try
-		{
-			final path:String = 'assets/video.mp4';
-
-			if (!FileSystem.exists(Path.directory(path)))
-			{
-				FileSystem.createDirectory(Path.directory(path));
-
-				File.saveBytes(path, Assets.getBytes(path));
-			}
-			else if (!FileSystem.exists(path))
-				File.saveBytes(path, Assets.getBytes(path));
-
-			OpenFLSystem.gc();
-		}
-		catch (e:Exception)
-		{
-			#if android
-			Toast.makeText(e.message, Toast.LENGTH_LONG);
-			#end
-		}
-	}
-	#end
 }
