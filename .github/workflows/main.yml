@@ -129,7 +129,6 @@ jobs:
 
       - name: Configure Environment
         run: |
-          haxelib run lime setup -alias -y
           haxelib run lime config ANDROID_SDK $ANDROID_HOME
           haxelib run lime config ANDROID_NDK_ROOT $ANDROID_NDK_LATEST_HOME
           haxelib run lime config JAVA_HOME $JAVA_HOME
@@ -143,4 +142,54 @@ jobs:
         with:
           name: androidBuild-${{matrix.sample}}
           path: samples/${{matrix.sample}}/export/android/bin/app/build/outputs/apk/debug
+          if-no-files-found: warn
+
+  iOS:
+    runs-on: macos-14
+    strategy:
+      fail-fast: false
+      matrix:
+        sample: [flixel, openfl]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Setup Haxe
+        uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: 4.3.5
+
+      - name: Install Haxe Libraries
+        run: |
+          haxelib install lime --quiet
+          haxelib install openfl --quiet
+          haxelib dev hxvlc .
+
+      - name: Setup Flixel Libraries
+        if: matrix.sample == 'flixel'
+        run: |
+          haxelib install flixel --quiet
+          haxelib install hscript --quiet
+
+      - name: Setup hxcpp Library
+        run: haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp.git --quiet && haxelib run lime rebuild hxcpp
+
+      - name: List Installed Haxe Libraries
+        run: haxelib list
+
+      - name: Build
+        run: cd samples/${{matrix.sample}} && haxelib run lime build ios -nosign -debug -D gl_stats
+
+      - name: Create IPA
+        run: |
+          samples/${{matrix.sample}}/export/ios/build/Debug-iphoneos
+          mkdir Payload
+          mv *.app Payload
+          zip -r Sample.ipa Payload
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: iOSBuild-${{matrix.sample}}
+          path: samples/${{matrix.sample}}/export/ios/build/Debug-iphoneos/Sample.ipa
           if-no-files-found: warn
