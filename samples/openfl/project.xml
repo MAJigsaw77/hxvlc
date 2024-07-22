@@ -36,12 +36,6 @@
 
 	<!--Libraries Settings-->
 
-	<section if="cpp">
-		<haxedef name="HXCPP_CHECK_POINTER" />
-		<haxedef name="HXCPP_STACK_LINE" />
-		<haxedef name="HXCPP_STACK_TRACE" />
-	</section>
-
 	<section if="debug">
 		<!--These defines are mostly for testing (aren't required to be used)-->
 		<haxedef name="HXVLC_VERBOSE" value="2" />
