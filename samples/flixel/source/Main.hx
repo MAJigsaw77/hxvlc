@@ -61,7 +61,7 @@ class Main extends Sprite
 		FlxG.game.addChild(fps);
 	}
 
-	private inline function onUncaughtError(event:UncaughtErrorEvent):Void
+	private static inline function onUncaughtError(event:UncaughtErrorEvent):Void
 	{
 		event.preventDefault();
 		event.stopImmediatePropagation();

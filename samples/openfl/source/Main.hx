@@ -110,7 +110,7 @@ class Main extends Sprite
 		video.pause();
 	}
 
-	private inline function onUncaughtError(event:UncaughtErrorEvent):Void
+	private static inline function onUncaughtError(event:UncaughtErrorEvent):Void
 	{
 		event.preventDefault();
 		event.stopImmediatePropagation();
@@ -155,6 +155,6 @@ class Main extends Sprite
 
 		Sys.println(msg);
 		Lib.application.window.alert(msg, 'Error!');
-		LimeSystem.exit(1);
+		System.exit(1);
 	}
 }
