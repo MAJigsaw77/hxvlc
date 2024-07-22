@@ -20,8 +20,6 @@
 
 	<!--Path Settings-->
 
-	<assets path="assets" />
-
 	<source path="source" />
 
 	<!--Libraries-->
