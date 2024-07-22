@@ -165,6 +165,12 @@ jobs:
           haxelib install openfl --quiet
           haxelib dev hxvlc .
 
+      - name: Rebuild Lime Tools
+        run: |
+          haxelib install hxp --quiet
+          haxelib install format --quiet
+          haxelib run lime rebuild tools
+
       - name: Setup Flixel Libraries
         if: matrix.sample == 'flixel'
         run: |
@@ -178,7 +184,7 @@ jobs:
         run: haxelib list
 
       - name: Build
-        run: cd samples/${{matrix.sample}} && haxelib run lime build ios -debug -D gl_stats -D nosign
+        run: cd samples/${{matrix.sample}} && haxelib run lime build ios -nosign -debug -D gl_stats
 
       - name: Create IPA
         run: |
