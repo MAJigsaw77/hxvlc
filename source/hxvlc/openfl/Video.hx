@@ -1157,8 +1157,6 @@ class Video extends Bitmap implements IVideo
 					bitmapData = new BitmapData(textureWidth, textureHeight, true, 0);
 				}
 
-				__setRenderDirty();
-
 				textureMutex.release();
 
 				onFormatSetup.dispatch();
@@ -1574,7 +1572,11 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private override function set_bitmapData(value:BitmapData):BitmapData
 	{
-		return __bitmapData = value;
+		__bitmapData = value;
+
+		__setRenderDirty();
+
+		return __bitmapData;
 	}
 
 	@:noCompletion
