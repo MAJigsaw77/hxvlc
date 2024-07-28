@@ -27,7 +27,7 @@ jobs:
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.4
+          haxe-version: 4.3.5
 
       - name: Install Dependencies
         if: startsWith(matrix.os, 'ubuntu')
@@ -106,7 +106,7 @@ jobs:
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.4
+          haxe-version: 4.3.5
 
       - name: Install Haxe Libraries
         run: |
@@ -157,7 +157,7 @@ jobs:
 #     - name: Setup Haxe
 #       uses: krdlab/setup-haxe@master
 #       with:
-#         haxe-version: 4.3.4
+#         haxe-version: 4.3.5
 # 
 #     - name: Install Haxe Libraries
 #       run: |
