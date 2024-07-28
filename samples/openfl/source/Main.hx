@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 #end
 import haxe.io.Path;
+import lime.system.System;
 import hxvlc.openfl.Video;
 import openfl.display.Sprite;
 import openfl.events.Event;
