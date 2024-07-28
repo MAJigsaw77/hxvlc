@@ -145,7 +145,7 @@ jobs:
           if-no-files-found: warn
 
 # iOS:
-#   runs-on: macos-13
+#   runs-on: macos-14
 #   strategy:
 #     fail-fast: false
 #     matrix:
@@ -182,7 +182,7 @@ jobs:
 # 
 #     - name: Create IPA
 #       run: |
-#         samples/${{matrix.sample}}/export/ios/build/Debug-iphoneos
+#         cd samples/${{matrix.sample}}/export/ios/build/Debug-iphoneos
 #         mkdir Payload
 #         mv *.app Payload
 #         zip -r Sample.ipa Payload
