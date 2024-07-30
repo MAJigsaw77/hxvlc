@@ -288,6 +288,11 @@ class Video extends Bitmap implements IVideo
 	public static var useTexture:Bool = true;
 
 	/**
+	 * Forces on the rendering of the bitmapData within this bitmap.
+	 */	
+	public var forceRendering:Bool = false;
+	
+	/**
 	 * The media resource locator (MRL).
 	 */
 	public var mrl(get, never):String;
@@ -1167,7 +1172,7 @@ class Video extends Bitmap implements IVideo
 		{
 			events[16] = false;
 
-			if (__renderable && texturePlanes != null)
+			if ((__renderable || forceRendering) && texturePlanes != null)
 			{
 				textureMutex.acquire();
 
@@ -1440,14 +1445,11 @@ class Video extends Bitmap implements IVideo
 			{
 				var temp:cpp.RawPointer<LibVLC_Audio_Output_T> = audioOutput;
 
-				var outputs:Array<{name:String, description:String}> = [];
+				final outputs:Array<{name:String, description:String}> = [];
 
 				while (temp != null)
 				{
-					outputs.push({
-						name: new String(untyped temp[0].psz_name),
-						description: new String(untyped temp[0].psz_description)
-					});
+					outputs.push({name: new String(untyped temp[0].psz_name), description: new String(untyped temp[0].psz_description)});
 
 					temp = temp[0].p_next;
 				}
