@@ -15,6 +15,7 @@ import hxvlc.util.Location;
 import hxvlc.util.Handle;
 import lime.app.Event;
 #if (HXVLC_OPENAL && lime_openal)
+import lime.media.openal.AL;
 import lime.media.openal.ALBuffer;
 import lime.media.openal.ALSource;
 import lime.media.AudioManager;
@@ -670,7 +671,11 @@ class Video extends Bitmap implements IVideo
 
 						alAudioContext = AudioManager.context.openal;
 						alBuffers = alAudioContext.genBuffers(128);
+
 						alSource = alAudioContext.createSource();
+						alAudioContext.sourcef(alSource, AL.GAIN, 1);
+						alAudioContext.source3f(alSource, AL.POSITION, 0, 0, 0);
+						alAudioContext.sourcef(alSource, AL.PITCH, 1);
 
 						alMutex.release();
 
@@ -1200,7 +1205,7 @@ class Video extends Bitmap implements IVideo
 		{
 			alMutex.acquire();
 
-			final processedBuffers:Int = alAudioContext.getSourcei(alSource, alAudioContext.BUFFERS_PROCESSED);
+			final processedBuffers:Int = alAudioContext.getSourcei(alSource, AL.BUFFERS_PROCESSED);
 
 			if (processedBuffers > 0)
 			{
@@ -1213,12 +1218,12 @@ class Video extends Bitmap implements IVideo
 				final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(samples).toUnmanagedArray(count));
 
 				final alBuffer:ALBuffer = alBuffers.shift();
-				alAudioContext.bufferData(alBuffer, alAudioContext.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length * 4, 44100);
+				alAudioContext.bufferData(alBuffer, AL.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length * 4, 44100);
 				alAudioContext.sourceQueueBuffer(alSource, alBuffer);
 
 				// TODO: Audio synchronisation in case of a sudden desync using pts.
 
-				if (alAudioContext.getSourcei(alSource, alAudioContext.SOURCE_STATE) != alAudioContext.PLAYING)
+				if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
 					alAudioContext.sourcePlay(alSource);
 			}
 
@@ -1237,7 +1242,7 @@ class Video extends Bitmap implements IVideo
 		{
 			alMutex.acquire();
 
-			if (alAudioContext.getSourcei(alSource, alAudioContext.SOURCE_STATE) == alAudioContext.PLAYING)
+			if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) == AL.PLAYING)
 				alAudioContext.sourcePause(alSource);
 
 			alMutex.release();
@@ -1255,7 +1260,7 @@ class Video extends Bitmap implements IVideo
 		{
 			alMutex.acquire();
 
-			if (alAudioContext.getSourcei(alSource, alAudioContext.SOURCE_STATE) != alAudioContext.PLAYING)
+			if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
 				alAudioContext.sourcePlay(alSource);
 
 			alMutex.release();
@@ -1273,7 +1278,7 @@ class Video extends Bitmap implements IVideo
 		{
 			alMutex.acquire();
 
-			alAudioContext.sourcef(alSource, alAudioContext.GAIN, mute ? 0 : volume);
+			alAudioContext.sourcef(alSource, AL.GAIN, mute ? 0 : volume);
 
 			alMutex.release();
 		}
