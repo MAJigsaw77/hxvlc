@@ -35,18 +35,18 @@ jobs:
 
       - name: Install Haxe Libraries
         run: |
-          haxelib install lime --quiet
-          haxelib install openfl --quiet
+          haxelib install lime --quiet --never --skip-dependencies
+          haxelib install openfl --quiet --never --skip-dependencies
           haxelib dev hxvlc .
 
       - name: Setup Flixel Libraries
         if: matrix.sample == 'flixel'
         run: |
-          haxelib install flixel --quiet
-          haxelib install hscript --quiet
+          haxelib install flixel --quiet --never --skip-dependencies
+          haxelib install hscript --quiet --never --skip-dependencies
 
       - name: Setup hxcpp Library
-        run: haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp.git --quiet && haxelib run lime rebuild hxcpp
+        run: haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp.git --quiet --never --skip-dependencies && haxelib run lime rebuild hxcpp
 
       - name: List Installed Haxe Libraries
         run: haxelib list
@@ -104,19 +104,19 @@ jobs:
 
       - name: Install Haxe Libraries
         run: |
-          haxelib install lime --quiet
-          haxelib install openfl --quiet
-          haxelib install extension-androidtools --quiet --skip-dependencies
+          haxelib install lime --quiet --never --skip-dependencies
+          haxelib install openfl --quiet --never --skip-dependencies
+          haxelib install extension-androidtools --quiet --never --skip-dependencies
           haxelib dev hxvlc .
 
       - name: Setup Flixel Libraries
         if: matrix.sample == 'flixel'
         run: |
-          haxelib install flixel --quiet
-          haxelib install hscript --quiet
+          haxelib install flixel --quiet --never --skip-dependencies
+          haxelib install hscript --quiet --never --skip-dependencies
 
       - name: Setup hxcpp Library
-        run: haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp.git --quiet && haxelib run lime rebuild hxcpp
+        run: haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp.git --quiet --never --skip-dependencies && haxelib run lime rebuild hxcpp
 
       - name: List Installed Haxe Libraries
         run: haxelib list
