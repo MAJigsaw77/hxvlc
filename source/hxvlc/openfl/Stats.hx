@@ -114,7 +114,7 @@ class Stats
 	 */
 	public function toString():String
 	{
-		var parts:Array<String> = [];
+		final parts:Array<String> = [];
 
 		parts.push('Bytes read: $i_read_bytes');
 		parts.push('Input bitrate: $f_input_bitrate bps');
@@ -148,7 +148,7 @@ class Stats
 	 */
 	public static function fromMediaStats(media_stats:cpp.Struct<LibVLC_Media_Stats_T>):Stats
 	{
-		var stats:Stats = new Stats();
+		final stats:Stats = new Stats();
 
 		if (media_stats != null)
 		{
