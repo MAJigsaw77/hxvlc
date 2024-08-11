@@ -212,6 +212,19 @@ static void audio_resume(void *data, int64_t pts)
 	hx::SetTopOfStack((int *)0, true);
 }
 
+static int audio_setup(void **data, char *format, unsigned *rate, unsigned *channels)
+{
+	Video_obj *self = reinterpret_cast<Video_obj *>(*opaque);
+
+	memcpy(chroma, "S16N", 4);
+
+	self->alSampleRate = (*rate);
+
+	(*channels) = 2;
+
+	return 0;
+}
+
 static void audio_set_volume(void *data, float volume, bool mute)
 {
 	hx::SetTopOfStack((int *)99, true);
@@ -290,9 +303,9 @@ class Video extends Bitmap implements IVideo
 
 	/**
 	 * Forces on the rendering of the bitmapData within this bitmap.
-	 */	
+	 */
 	public var forceRendering:Bool = false;
-	
+
 	/**
 	 * The media resource locator (MRL).
 	 */
@@ -496,6 +509,9 @@ class Video extends Bitmap implements IVideo
 
 	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
+	private var alSampleRate:cpp.UInt32 = 0;
+
+	@:noCompletion
 	private final alMutex:Mutex = new Mutex();
 
 	@:noCompletion
@@ -683,7 +699,8 @@ class Video extends Bitmap implements IVideo
 							untyped __cpp__('audio_resume'), null, null, untyped __cpp__('this'));
 
 						LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
-						LibVLC.audio_set_format(mediaPlayer, "S16N", 44100, 2);
+
+						LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), null);
 					default:
 						Log.warn('Unable to use a sound output.');
 				}
@@ -1218,7 +1235,7 @@ class Video extends Bitmap implements IVideo
 				final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(samples).toUnmanagedArray(count));
 
 				final alBuffer:ALBuffer = alBuffers.shift();
-				alAudioContext.bufferData(alBuffer, AL.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length * 4, 44100);
+				alAudioContext.bufferData(alBuffer, AL.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length * 4, alSampleRate);
 				alAudioContext.sourceQueueBuffer(alSource, alBuffer);
 
 				// TODO: Audio synchronisation in case of a sudden desync using pts.
