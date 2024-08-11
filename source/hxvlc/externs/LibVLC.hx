@@ -590,6 +590,16 @@ extern class LibVLC
 		pitch:cpp.UInt32):Void;
 
 	/**
+	 * Sets the audio format callback.
+	 *
+	 * @param mp Pointer to the media player.
+	 * @param callback Audio format callback.
+	 *        This callback is invoked when the audio format changes.
+	 */
+	@:native('libvlc_audio_set_format_callback')
+	static function audio_set_format_callback(mp:cpp.RawPointer<LibVLC_Media_Player_T>, callback:LibVLC_Audio_Format_CB):Void;
+
+	/**
 	 * Sets the audio callbacks.
 	 *
 	 * @param mp Pointer to the media player.
