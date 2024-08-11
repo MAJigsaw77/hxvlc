@@ -42,7 +42,7 @@ class VideoState extends FlxState
 
 		try
 		{
-			final file:String = FileSystem.readDirectory()[0];
+			final file:String = FileSystem.readDirectory('./')[0];
 
 			if (file == null || file.length == 0)
 				video.load(file);
