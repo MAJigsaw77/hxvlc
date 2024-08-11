@@ -216,7 +216,7 @@ static int audio_setup(void **data, char *format, unsigned *rate, unsigned *chan
 {
 	Video_obj *self = reinterpret_cast<Video_obj *>(*opaque);
 
-	memcpy(chroma, "S16N", 4);
+	memcpy(format, "S16N", 4);
 
 	self->alSampleRate = (*rate);
 
