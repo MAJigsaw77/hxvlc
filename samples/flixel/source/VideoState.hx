@@ -38,7 +38,19 @@ class VideoState extends FlxState
 				videoPositionBar.value = position;
 		});
 		video.bitmap.onEndReached.add(video.destroy);
-		video.load('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
+
+		try
+		{
+			final file:String = FileSystem.readDirectory()[0];
+
+			if (file == null || file.length == 0)
+				video.load(file);
+			else
+				video.load('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
+		}
+		catch (e:Dynamic)
+			video.load('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
+
 		add(video);
 
 		var libvlcVersion:FlxText = new FlxText(10, FlxG.height - 30, 0, 'LibVLC ${Handle.version}', 16);
