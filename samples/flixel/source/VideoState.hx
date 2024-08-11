@@ -9,6 +9,7 @@ import flixel.FlxState;
 import hxvlc.flixel.FlxVideo;
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.util.Handle;
+import sys.FileSystem;
 
 class VideoState extends FlxState
 {
