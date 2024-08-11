@@ -214,7 +214,7 @@ static void audio_resume(void *data, int64_t pts)
 
 static int audio_setup(void **data, char *format, unsigned *rate, unsigned *channels)
 {
-	Video_obj *self = reinterpret_cast<Video_obj *>(*opaque);
+	Video_obj *self = reinterpret_cast<Video_obj *>(*data);
 
 	memcpy(format, "S16N", 4);
 
