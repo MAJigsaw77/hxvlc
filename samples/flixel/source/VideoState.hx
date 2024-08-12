@@ -44,7 +44,7 @@ class VideoState extends FlxState
 		{
 			final file:String = FileSystem.readDirectory('./')[0];
 
-			if (file == null || file.length == 0)
+			if (file != null && file.length > 0)
 				video.load(file);
 			else
 				video.load('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
