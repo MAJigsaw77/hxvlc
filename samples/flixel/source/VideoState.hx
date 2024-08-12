@@ -9,6 +9,7 @@ import flixel.FlxState;
 import hxvlc.flixel.FlxVideo;
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.util.Handle;
+import sys.FileSystem;
 
 class VideoState extends FlxState
 {
@@ -38,10 +39,26 @@ class VideoState extends FlxState
 				videoPositionBar.value = position;
 		});
 		video.bitmap.onEndReached.add(video.destroy);
-		video.load('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
+
+		try
+		{
+			#if mobile
+			final file:String = FileSystem.readDirectory('./')[0];
+			#else
+			final file:String = FileSystem.readDirectory('videos')[0];
+			#end
+
+			if (file != null && file.length > 0)
+				video.load(file);
+			else
+				video.load('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
+		}
+		catch (e:Dynamic)
+			video.load('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
+
 		add(video);
 
-		var libvlcVersion:FlxText = new FlxText(10, FlxG.height - 30, 0, 'LibVLC ${Handle.version}', 16);
+		final libvlcVersion:FlxText = new FlxText(10, FlxG.height - 30, 0, 'LibVLC ${Handle.version}', 16);
 		libvlcVersion.setBorderStyle(OUTLINE, FlxColor.BLACK);
 		libvlcVersion.active = false;
 		libvlcVersion.antialiasing = true;
@@ -50,7 +67,7 @@ class VideoState extends FlxState
 		videoPositionBar = new FlxBar(10, FlxG.height - 50, LEFT_TO_RIGHT, FlxG.width - 20, 10, null, '', 0, 1);
 		videoPositionBar.createFilledBar(FlxColor.GRAY, FlxColor.CYAN, true, FlxColor.BLACK);
 		videoPositionBar.antialiasing = true;
-		videoPositionBar.numDivisions = 10000;
+		videoPositionBar.numDivisions = 999999;
 		add(videoPositionBar);
 
 		FlxTimer.wait(0.001, function():Void
