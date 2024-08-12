@@ -220,7 +220,12 @@ static int audio_setup(void **data, char *format, unsigned *rate, unsigned *chan
 
 	self->alSampleRate = (*rate);
 
-	(*channels) = 2;
+	const unsigned originalChannels = (*channels);
+
+	if (originalChannels > 2)
+		(*channels) = 2;
+
+	self->alChannels = (*channels);
 
 	return 0;
 }
@@ -510,6 +515,9 @@ class Video extends Bitmap implements IVideo
 	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
 	private var alSampleRate:cpp.UInt32 = 0;
+
+	@:noCompletion
+	private var alChannels:cpp.UInt32 = 0;
 
 	@:noCompletion
 	private final alMutex:Mutex = new Mutex();
@@ -1235,7 +1243,7 @@ class Video extends Bitmap implements IVideo
 				final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(samples).toUnmanagedArray(count));
 
 				final alBuffer:ALBuffer = alBuffers.shift();
-				alAudioContext.bufferData(alBuffer, AL.FORMAT_STEREO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length * 4, alSampleRate);
+				alAudioContext.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length * 2 * alChannels, alSampleRate);
 				alAudioContext.sourceQueueBuffer(alSource, alBuffer);
 
 				// TODO: Audio synchronisation in case of a sudden desync using pts.
