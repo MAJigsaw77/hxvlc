@@ -512,13 +512,13 @@ class Video extends Bitmap implements IVideo
 		false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
 	];
 
-	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
 	private var alSampleRate:cpp.UInt32 = 0;
 
 	@:noCompletion
 	private var alChannels:cpp.UInt32 = 0;
 
+	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
 	private final alMutex:Mutex = new Mutex();
 
