@@ -10,6 +10,7 @@ import hxvlc.openfl.Video;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.Lib;
+import sys.FileSystem;
 
 using StringTools;
 
@@ -74,8 +75,23 @@ class Main extends Sprite
 		});
 		addChild(video);
 
-		if (video.load('http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'))
-			video.play();
+		try
+		{
+			#if mobile
+			final file:String = FileSystem.readDirectory('./')[0];
+			#else
+			final file:String = FileSystem.readDirectory('videos')[0];
+			#end
+
+			if (file != null && file.length > 0)
+				video.load(file);
+			else
+				video.load('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
+		}
+		catch (e:Dynamic)
+			video.load('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
+
+		video.play();
 	}
 
 	private inline function stage_onEnterFrame(event:Event):Void
