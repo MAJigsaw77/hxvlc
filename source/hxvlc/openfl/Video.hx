@@ -214,9 +214,13 @@ static void audio_resume(void *data, int64_t pts)
 
 static int audio_setup(void **data, char *format, unsigned *rate, unsigned *channels)
 {
+	hx::SetTopOfStack((int *)99, true);
+
 	Video_obj *self = reinterpret_cast<Video_obj *>(*data);
 
 	memcpy(format, "S16N", 4);
+
+	self->alMutex->acquire();
 
 	self->alSampleRate = (*rate);
 
@@ -226,6 +230,10 @@ static int audio_setup(void **data, char *format, unsigned *rate, unsigned *chan
 		(*channels) = 2;
 
 	self->alChannels = (*channels);
+
+	self->alMutex->release();
+
+	hx::SetTopOfStack((int *)0, true);
 
 	return 0;
 }
@@ -513,15 +521,15 @@ class Video extends Bitmap implements IVideo
 	];
 
 	@:noCompletion
+	private final alMutex:Mutex = new Mutex();
+
+	@:noCompletion
 	private var alSampleRate:cpp.UInt32 = 0;
 
 	@:noCompletion
 	private var alChannels:cpp.UInt32 = 0;
 
 	#if (HXVLC_OPENAL && lime_openal)
-	@:noCompletion
-	private final alMutex:Mutex = new Mutex();
-
 	@:noCompletion
 	private var alAudioContext:OpenALAudioContext;
 
