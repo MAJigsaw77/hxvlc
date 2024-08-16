@@ -216,19 +216,21 @@ class Handle
 			args.push_back("--audio-resampler=soxr");
 			#end
 			args.push_back("--drop-late-frames");
-			args.push_back("--intf=dummy");
+			args.push_back("--ignore-config");
+			args.push_back("--intf=none");
 			args.push_back("--http-reconnect");
 			args.push_back("--no-interact");
 			args.push_back("--no-snapshot-preview");
 			args.push_back("--no-spu");
 			args.push_back("--no-sub-autodetect-file");
 			args.push_back("--no-video-title-show");
+			args.push_back("--no-volume-save");
 			args.push_back("--no-xlib");
 			#if (windows || macos)
 			args.push_back(!resetCache
 				&& FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])) ? "--no-plugins-scan" : "--reset-plugins-cache");
 			#end
-			args.push_back("--text-renderer=dummy");
+			args.push_back("--text-renderer=none");
 			#if HXVLC_VERBOSE
 			args.push_back("--verbose=" + Define.getInt('HXVLC_VERBOSE', 0));
 			#elseif (!HXVLC_LOGGING || !HXVLC_FILE_LOGGING)
