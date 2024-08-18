@@ -4,6 +4,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://lime.openfl.org/project/1.0.4 http://lime.openfl.org/xsd/project-1.0.4.xsd">
 
+	<section unless="HXVLC_PLAYLIST_PATH">
+		<set name="HXVLC_PLAYLIST_PATH" value="" />
+	</section>
 	<section if="windows">
 		<assets path="project/vlc/lib/Windows" rename="" exclude="*.lib" />
 		<section unless="HXVLC_NO_PLAYLIST">
