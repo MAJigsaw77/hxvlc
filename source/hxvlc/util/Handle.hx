@@ -222,6 +222,9 @@ class Handle
 			args.push_back("--no-interact");
 			args.push_back("--no-snapshot-preview");
 			args.push_back("--no-spu");
+			#if !HXVLC_NO_PLAYLIST
+			args.push_back("---no-lua");
+			#end
 			args.push_back("--no-sub-autodetect-file");
 			args.push_back("--no-video-title-show");
 			args.push_back("--no-volume-save");

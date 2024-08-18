@@ -4,22 +4,29 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://lime.openfl.org/project/1.0.4 http://lime.openfl.org/xsd/project-1.0.4.xsd">
 
-	<library name="libvlc" preload="false" if="windows || mac || android" />
+	<set name="HXVLC_PLAYLIST_PATH" value="" />
 
 	<section if="windows">
-		<assets path="project/vlc/lib/Windows" rename="" exclude="*.lib" library="libvlc" />
-		<assets path="project/vlc/plugins/Windows" rename="plugins" library="libvlc" />
-		<assets path="project/vlc/share" rename="" exclude="*.lua" library="libvlc" />
+		<assets path="project/vlc/lib/Windows" rename="" exclude="*.lib" />
+		<section unless="HXVLC_NO_PLAYLIST">
+			<assets path="project/vlc/share" rename="${HXVLC_PLAYLIST_PATH}" />
+		</section>
+		<assets path="project/vlc/plugins/Windows" rename="plugins" />
 	</section>
 
 	<section if="mac">
-		<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" library="libvlc" />
-		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" library="libvlc" />
-		<assets path="project/vlc/share" rename="../MacOS/share" exclude="*.lua" library="libvlc" />
+		<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" />
+		<section unless="HXVLC_NO_PLAYLIST">
+			<assets path="project/vlc/share" rename="../MacOS/share/${HXVLC_PLAYLIST_PATH}" exclude="*.lua" />
+		</section>
+		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" />
 	</section>
 
 	<section if="android">
-		<assets path="project/vlc/share" rename="share" exclude="*.luac" library="libvlc" />
+		<section unless="HXVLC_NO_PLAYLIST">
+			<library name="libvlc" preload="false" if="android" />
+			<assets path="project/vlc/share" rename="share/${HXVLC_PLAYLIST_PATH}" exclude="*.luac" library="libvlc" />
+		</section>
 
 		<ndll name="c++_shared" dir="project/vlc/lib" />
 		<ndll name="vlc" dir="project/vlc/lib" />

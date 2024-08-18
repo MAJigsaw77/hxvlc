@@ -254,7 +254,9 @@ extern class LibVLC
 	 * @param p_md Pointer to the media descriptor.
 	 * @return Pointer to the media list containing subitems.
 	 */
+	#if !HXVLC_NO_PLAYLIST
 	@:native('libvlc_media_subitems')
+	#end
 	static function media_subitems(p_md:cpp.RawPointer<LibVLC_Media_T>):cpp.RawPointer<LibVLC_Media_List_T>;
 
 	/**
@@ -308,7 +310,9 @@ extern class LibVLC
 	 *
 	 * @param p_ml Pointer to the media list.
 	 */
+	#if !HXVLC_NO_PLAYLIST
 	@:native('libvlc_media_list_release')
+	#end
 	static function media_list_release(p_ml:cpp.RawPointer<LibVLC_Media_List_T>):Void;
 
 	/**
@@ -317,7 +321,9 @@ extern class LibVLC
 	 * @param p_ml Pointer to the media list.
 	 * @return Number of items in the list.
 	 */
+	#if !HXVLC_NO_PLAYLIST
 	@:native('libvlc_media_list_count')
+	#end
 	static function media_list_count(p_ml:cpp.RawPointer<LibVLC_Media_List_T>):Int;
 
 	/**
@@ -327,7 +333,9 @@ extern class LibVLC
 	 * @param i_pos Index of the media item to retrieve.
 	 * @return Pointer to the media descriptor.
 	 */
+	#if !HXVLC_NO_PLAYLIST
 	@:native('libvlc_media_list_item_at_index')
+	#end
 	static function media_list_item_at_index(p_ml:cpp.RawPointer<LibVLC_Media_List_T>, i_pos:Int):cpp.RawPointer<LibVLC_Media_T>;
 
 	/**

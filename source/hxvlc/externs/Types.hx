@@ -30,10 +30,13 @@ extern abstract LibVLC_Time_T from cpp.Int64 to cpp.Int64 {}
 extern class LibVLC_Media_T {}
 
 @:dox(hide)
+#if !HXVLC_NO_PLAYLIST
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
 @:native('libvlc_media_list_t')
-extern class LibVLC_Media_List_T {}
+extern 
+#end
+class LibVLC_Media_List_T {}
 
 @:dox(hide)
 extern enum abstract LibVLC_Meta_T(LibVLC_Meta_T_Impl)

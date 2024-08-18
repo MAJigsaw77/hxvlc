@@ -143,7 +143,7 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 	 */
 	public function loadFromSubItem(index:Int, ?options:Array<String>):Bool
 	{
-		return bitmap == null ? false : bitmap.loadFromSubItem(index, options);
+		return #if HXVLC_NO_PLAYLIST false #else bitmap == null ? false : bitmap.loadFromSubItem(index, options) #end;
 	}
 
 	/**
