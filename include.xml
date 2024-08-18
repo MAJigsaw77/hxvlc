@@ -24,7 +24,7 @@
 
 	<section if="android">
 		<section unless="HXVLC_NO_PLAYLIST">
-			<library name="libvlc" preload="false" if="android" />
+			<library name="libvlc" preload="false" />
 			<assets path="project/vlc/share" rename="share/${HXVLC_PLAYLIST_PATH}" exclude="*.luac" library="libvlc" />
 		</section>
 
