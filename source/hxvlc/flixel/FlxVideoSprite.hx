@@ -10,6 +10,7 @@ import hxvlc.externs.Types;
 import hxvlc.util.macros.Define;
 import hxvlc.util.Location;
 import hxvlc.openfl.Video;
+import openfl.utils.Assets;
 import sys.FileSystem;
 
 using StringTools;
@@ -120,7 +121,9 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 			{
 				final absolutePath:String = FileSystem.absolutePath(location);
 
-				if (FileSystem.exists(absolutePath))
+				if (Assets.exists(location))
+					return bitmap.load(FileSystem.absolutePath(Assets.getPath(location)), options);
+				else if (FileSystem.exists(absolutePath))
 					return bitmap.load(absolutePath, options);
 				else
 				{

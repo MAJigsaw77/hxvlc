@@ -8,6 +8,7 @@ import hxvlc.externs.Types;
 import hxvlc.util.macros.Define;
 import hxvlc.util.Location;
 import hxvlc.openfl.Video;
+import openfl.utils.Assets;
 import sys.FileSystem;
 
 using StringTools;
@@ -98,7 +99,9 @@ class FlxVideo extends Video
 			{
 				final absolutePath:String = FileSystem.absolutePath(location);
 
-				if (FileSystem.exists(absolutePath))
+				if (Assets.exists(location))
+					return super.load(FileSystem.absolutePath(Assets.getPath(location)), options);
+				else if (FileSystem.exists(absolutePath))
 					return super.load(absolutePath, options);
 				else
 				{
