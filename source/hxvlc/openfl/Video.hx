@@ -15,6 +15,7 @@ import hxvlc.util.Location;
 import hxvlc.util.Handle;
 import lime.app.Event;
 #if (HXVLC_OPENAL && lime_openal)
+import lime.media.openal.AL;
 import lime.media.openal.ALBuffer;
 import lime.media.openal.ALSource;
 import lime.media.AudioManager;
@@ -209,6 +210,32 @@ static void audio_resume(void *data, int64_t pts)
 	reinterpret_cast<Video_obj *>(data)->audioResume(pts);
 
 	hx::SetTopOfStack((int *)0, true);
+}
+
+static int audio_setup(void **data, char *format, unsigned *rate, unsigned *channels)
+{
+	hx::SetTopOfStack((int *)99, true);
+
+	Video_obj *self = reinterpret_cast<Video_obj *>(*data);
+
+	memcpy(format, "S16N", 4);
+
+	self->alMutex->acquire();
+
+	self->alSampleRate = (*rate);
+
+	const unsigned originalChannels = (*channels);
+
+	if (originalChannels > 2)
+		(*channels) = 2;
+
+	self->alChannels = (*channels);
+
+	self->alMutex->release();
+
+	hx::SetTopOfStack((int *)0, true);
+
+	return 0;
 }
 
 static void audio_set_volume(void *data, float volume, bool mute)
