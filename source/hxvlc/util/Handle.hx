@@ -205,10 +205,14 @@ class Handle
 			Sys.putEnv('HOME', homePath);
 			#elseif (windows || macos)
 			final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
+
+			if (FileSystem.exists(dataPath))
+				Sys.putEnv('VLC_DATA_PATH', dataPath);
+
 			final pluginPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
 
-			Sys.putEnv('VLC_DATA_PATH', dataPath);
-			Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
+			if (FileSystem.exists(pluginPath))
+				Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
 			#end
 
 			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
