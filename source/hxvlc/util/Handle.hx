@@ -177,6 +177,7 @@ class Handle
 			#if android
 			final homePath:String = Path.join([Path.directory(System.applicationStorageDirectory), 'libvlc']);
 
+			#if !HXVLC_NO_SHARE_DIRECTORY
 			Assets.loadLibrary('libvlc').onComplete(function(library:AssetLibrary):Void
 			{
 				final sharePath:String = Path.join([homePath, '.share']);
@@ -201,6 +202,7 @@ class Handle
 			{
 				Log.warn('Failed to load library: libvlc, Error: $error');
 			});
+			#end
 
 			Sys.putEnv('HOME', homePath);
 			#elseif (windows || macos)
@@ -224,6 +226,9 @@ class Handle
 			args.push_back("--intf=none");
 			args.push_back("--http-reconnect");
 			args.push_back("--no-interact");
+			#if HXVLC_NO_SHARE_DIRECTORY
+			args.push_back("--no-lua");
+			#end
 			args.push_back("--no-snapshot-preview");
 			args.push_back("--no-spu");
 			args.push_back("--no-sub-autodetect-file");
