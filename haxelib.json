@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "1.8.0",
-	"releasenote": "Added loadFromSubItem, file logging, more online media playback similar to VLC, and various bug fixes.",
+	"version": "1.8.1",
+	"releasenote": "Removed unnecessary plugins, added a define to disable the playlist share folder, and made improvements.",
 	"contributors": [
 		"MAJigsaw77"
 	],
