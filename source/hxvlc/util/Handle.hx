@@ -205,7 +205,7 @@ class Handle
 			#end
 
 			Sys.putEnv('HOME', homePath);
-			#elseif (windows || macos)
+			#elseif macos
 			final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
 
 			if (FileSystem.exists(dataPath))
@@ -215,9 +215,14 @@ class Handle
 
 			if (FileSystem.exists(pluginPath))
 				Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
+			#elseif windows
+			final pluginPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
+
+			if (FileSystem.exists(pluginPath))
+				Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
 			#end
 
-			var args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
+			final args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
 			#if (android || ios || macos)
 			args.push_back("--audio-resampler=soxr");
 			#end
