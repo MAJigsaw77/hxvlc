@@ -26,7 +26,8 @@
 
 	<section if="android">
 		<assets path="project/vlc/share" rename="share" exclude="*.luac" library="libvlc" unless="HXVLC_NO_SHARE_DIRECTORY" />
-
+		
+		<ndll name="c++_shared" dir="project/vlc/lib" />
 		<ndll name="vlc" dir="project/vlc/lib" />
 	</section>
 
