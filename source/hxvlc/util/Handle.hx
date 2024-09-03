@@ -223,6 +223,9 @@ class Handle
 			#end
 
 			final args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
+			#if windows
+			args.push_back("--aout=waveout");
+			#end
 			#if (android || ios || macos)
 			args.push_back("--audio-resampler=soxr");
 			#end
