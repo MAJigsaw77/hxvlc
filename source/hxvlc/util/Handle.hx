@@ -278,7 +278,7 @@ class Handle
 				}
 				#end
 
-				final errmsg:String = cast(LibVLC.errmsg(), String);
+				final errmsg:String = LibVLC.errmsg();
 
 				if (errmsg != null && errmsg.length > 0)
 					Log.error('Failed to initialize the LibVLC instance, Error: $errmsg');
@@ -369,19 +369,19 @@ class Handle
 	@:noCompletion
 	private static function get_version():String
 	{
-		return cast(LibVLC.get_version(), String);
+		return LibVLC.get_version();
 	}
 
 	@:noCompletion
 	private static function get_compiler():String
 	{
-		return cast(LibVLC.get_compiler(), String);
+		return LibVLC.get_compiler();
 	}
 
 	@:noCompletion
 	private static function get_changeset():String
 	{
-		return cast(LibVLC.get_changeset(), String);
+		return LibVLC.get_changeset();
 	}
 
 	@:noCompletion

@@ -1090,7 +1090,7 @@ class Video extends Bitmap implements IVideo
 		{
 			events[5] = false;
 
-			final errmsg:String = cast(LibVLC.errmsg(), String);
+			final errmsg:String = LibVLC.errmsg();
 
 			if (errmsg != null && errmsg.length > 0)
 				onEncounteredError.dispatch(errmsg);
