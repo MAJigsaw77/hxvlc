@@ -740,11 +740,11 @@ class Video extends Bitmap implements IVideo
 			LibVLC.media_player_set_media(mediaPlayer, mediaItem);
 
 			LibVLC.media_release(mediaItem);
-		}
-		else
-			return false;
 
-		return true;
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
