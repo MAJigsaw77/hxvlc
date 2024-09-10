@@ -647,83 +647,100 @@ class Video extends Bitmap implements IVideo
 		{
 			mediaPlayer = LibVLC.media_player_new(Handle.instance);
 
-			final eventManager:cpp.RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_player_event_manager(mediaPlayer);
-
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (MediaPlayerOpening)');
-
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPlaying, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (MediaPlayerPlaying)');
-
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerStopped, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (MediaPlayerStopped)');
-
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (MediaPlayerPaused)');
-
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (MediaPlayerEndReached)');
-
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('event_manager_callbacks'),
-				untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (MediaPlayerEncounteredError)');
-
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (MediaPlayerMediaChanged)');
-
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (MediaPlayerCorked)');
-
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (MediaPlayerUncorked)');
-
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (MediaPlayerTimeChanged)');
-
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPositionChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (MediaPlayerPositionChanged)');
-
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerLengthChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (MediaPlayerLengthChanged)');
-
-			if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerChapterChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-				Log.warn('Failed to attach event (MediaPlayerChapterChanged)');
-
-			LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), untyped __cpp__('video_unlock'), untyped __cpp__('video_display'),
-				untyped __cpp__('this'));
-			LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), null);
-
-			#if (HXVLC_OPENAL && lime_openal)
-			if (AudioManager.context != null)
+			if (mediaPlayer != null)
 			{
-				switch (AudioManager.context.type)
+				final eventManager:cpp.RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_player_event_manager(mediaPlayer);
+
+				if (eventManager != null)
 				{
-					case OPENAL:
-						alMutex.acquire();
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaPlayerOpening)');
 
-						alAudioContext = AudioManager.context.openal;
-						alBuffers = alAudioContext.genBuffers(128);
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPlaying, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaPlayerPlaying)');
 
-						alSource = alAudioContext.createSource();
-						alAudioContext.sourcef(alSource, AL.GAIN, 1);
-						alAudioContext.source3f(alSource, AL.POSITION, 0, 0, 0);
-						alAudioContext.sourcef(alSource, AL.PITCH, 1);
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerStopped, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaPlayerStopped)');
 
-						alMutex.release();
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaPlayerPaused)');
 
-						LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'),
-							untyped __cpp__('audio_resume'), null, null, untyped __cpp__('this'));
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('event_manager_callbacks'),
+						untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaPlayerEndReached)');
 
-						LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('event_manager_callbacks'),
+						untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaPlayerEncounteredError)');
 
-						LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), null);
-					default:
-						Log.warn('Unable to use a sound output.');
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('event_manager_callbacks'),
+						untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaPlayerMediaChanged)');
+
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaPlayerCorked)');
+
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'),
+						untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaPlayerUncorked)');
+
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('event_manager_callbacks'),
+						untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaPlayerTimeChanged)');
+
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPositionChanged, untyped __cpp__('event_manager_callbacks'),
+						untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaPlayerPositionChanged)');
+
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerLengthChanged, untyped __cpp__('event_manager_callbacks'),
+						untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaPlayerLengthChanged)');
+
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerChapterChanged, untyped __cpp__('event_manager_callbacks'),
+						untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaPlayerChapterChanged)');
 				}
+				else
+					Log.warn('Unable to initialize the LibVLC media player event manager.');
+
+				LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), untyped __cpp__('video_unlock'), untyped __cpp__('video_display'),
+					untyped __cpp__('this'));
+				LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), null);
+
+				#if (HXVLC_OPENAL && lime_openal)
+				if (AudioManager.context != null)
+				{
+					switch (AudioManager.context.type)
+					{
+						case OPENAL:
+							alMutex.acquire();
+
+							alAudioContext = AudioManager.context.openal;
+							alBuffers = alAudioContext.genBuffers(128);
+
+							alSource = alAudioContext.createSource();
+							alAudioContext.sourcef(alSource, AL.GAIN, 1);
+							alAudioContext.source3f(alSource, AL.POSITION, 0, 0, 0);
+							alAudioContext.sourcef(alSource, AL.PITCH, 1);
+
+							alMutex.release();
+
+							LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'),
+								untyped __cpp__('audio_resume'), null, null, untyped __cpp__('this'));
+
+							LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
+
+							LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), null);
+						default:
+							Log.warn('Unable to use a sound output.');
+					}
+				}
+				else
+					Log.warn('AudioManager\'s context isn\'t available.');
+				#end
 			}
 			else
-				Log.warn('AudioManager\'s context isn\'t available.');
-			#end
+				Log.warn('Unable to initialize the LibVLC media player.');
 		}
 
 		if (mediaItem != null)
@@ -743,6 +760,8 @@ class Video extends Bitmap implements IVideo
 
 			return true;
 		}
+		else
+			Log.warn('Unable to initialize the LibVLC media item.');
 
 		return false;
 	}
@@ -1234,6 +1253,7 @@ class Video extends Bitmap implements IVideo
 	@:void
 	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32, pts:cpp.Int64):Void
 	{
+		// TODO: Audio synchronisation in case of a sudden desync using pts.
 		#if (HXVLC_OPENAL && lime_openal)
 		if (alAudioContext != null && alSource != null && alBuffers != null)
 		{
@@ -1252,10 +1272,9 @@ class Video extends Bitmap implements IVideo
 				final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(samples).toUnmanagedArray(count));
 
 				final alBuffer:ALBuffer = alBuffers.shift();
-				alAudioContext.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16, UInt8Array.fromBytes(samplesBytes), samplesBytes.length * 2 * alChannels, alSampleRate);
+				alAudioContext.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16, UInt8Array.fromBytes(samplesBytes),
+					samplesBytes.length * 2 * alChannels, alSampleRate);
 				alAudioContext.sourceQueueBuffer(alSource, alBuffer);
-
-				// TODO: Audio synchronisation in case of a sudden desync using pts.
 
 				if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
 					alAudioContext.sourcePlay(alSource);
