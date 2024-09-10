@@ -4,6 +4,7 @@ package hxvlc.util;
 #error 'The current target platform isn\'t supported by hxvlc.'
 #end
 import haxe.io.Path;
+import haxe.EntryPoint;
 import haxe.Exception;
 import haxe.Int64;
 import hxvlc.externs.LibVLC;
@@ -14,8 +15,6 @@ import lime.utils.AssetLibrary;
 import lime.utils.Assets;
 import lime.utils.Log;
 import sys.io.File;
-import sys.thread.Mutex;
-import sys.thread.Thread;
 import sys.FileSystem;
 
 using StringTools;
@@ -128,18 +127,15 @@ class Handle
 		if (loading)
 			return;
 
-		final mutex:Mutex = new Mutex();
-
-		Thread.create(function():Void
+		EntryPoint.addThread(function():Void
 		{
-			mutex.acquire();
-
 			final success:Bool = init(options);
 
-			if (finishCallback != null)
-				finishCallback(success);
-
-			mutex.release();
+			EntryPoint.runInMainThread(function():Void
+			{
+				if (finishCallback != null)
+					finishCallback(success);
+			});
 		});
 	}
 
