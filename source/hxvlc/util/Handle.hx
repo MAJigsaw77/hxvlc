@@ -4,7 +4,7 @@ package hxvlc.util;
 #error 'The current target platform isn\'t supported by hxvlc.'
 #end
 import haxe.io.Path;
-import haxe.EntryPoint;
+import haxe.MainLoop;
 import haxe.Exception;
 import haxe.Int64;
 import hxvlc.externs.LibVLC;
@@ -127,11 +127,11 @@ class Handle
 		if (loading)
 			return;
 
-		EntryPoint.addThread(function():Void
+		MainLoop.addThread(function():Void
 		{
 			final success:Bool = init(options);
 
-			EntryPoint.runInMainThread(function():Void
+			MainLoop.runInMainThread(function():Void
 			{
 				if (finishCallback != null)
 					finishCallback(success);
