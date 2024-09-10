@@ -515,12 +515,25 @@ class Video extends Bitmap implements IVideo
 	public var onFormatSetup(get, null):Event<Void->Void> = new Event<Void->Void>();
 
 	@:noCompletion
-	private var events:Array<Bool> = [
-		false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
-	];
+	private final events:Array<Bool> = [for (i in 0...17) false];
 
 	@:noCompletion
 	private final alMutex:Mutex = new Mutex();
+
+	@:noCompletion
+	private final textureMutex:Mutex = new Mutex();
+
+	@:noCompletion
+	private var mediaData:cpp.RawPointer<cpp.UInt8>;
+
+	@:noCompletion
+	private var mediaOffset:cpp.UInt64 = 0;
+
+	@:noCompletion
+	private var mediaSize:cpp.UInt64 = 0;
+
+	@:noCompletion
+	private var mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>;
 
 	@:noCompletion
 	private var alSampleRate:cpp.UInt32 = 0;
@@ -538,21 +551,6 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private var alSource:ALSource;
 	#end
-
-	@:noCompletion
-	private var mediaData:cpp.RawPointer<cpp.UInt8>;
-
-	@:noCompletion
-	private var mediaOffset:cpp.UInt64 = 0;
-
-	@:noCompletion
-	private var mediaSize:cpp.UInt64 = 0;
-
-	@:noCompletion
-	private var mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>;
-
-	@:noCompletion
-	private final textureMutex:Mutex = new Mutex();
 
 	@:noCompletion
 	private var texture:RectangleTexture;
