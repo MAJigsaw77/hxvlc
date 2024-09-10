@@ -26,8 +26,7 @@ using StringTools;
 #if android
 @:headerInclude('android/log.h')
 #end
-@:cppNamespaceCode('
-static void instance_logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
+@:cppNamespaceCode('static void instance_logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
 	hx::SetTopOfStack((int *)99, true);
 
