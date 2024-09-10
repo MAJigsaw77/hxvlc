@@ -4,9 +4,9 @@ package hxvlc.util;
 #error 'The current target platform isn\'t supported by hxvlc.'
 #end
 import haxe.io.Path;
-import haxe.MainLoop;
 import haxe.Exception;
 import haxe.Int64;
+import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.macros.Define;
