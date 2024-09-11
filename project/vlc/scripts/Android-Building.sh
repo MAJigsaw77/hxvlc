@@ -21,7 +21,7 @@ done
 
 # Proceed with setup only after all architectures are validated
 git clone https://code.videolan.org/videolan/libvlcjni.git --depth=1 --recursive -b libvlcjni-3.x
-sudo apt-get install gettext autopoint automake ant autopoint cmake build-essential libtool-bin lua5.2 liblua5.2-dev patch pkg-config protobuf-compiler ragel subversion unzip git flex python3 wget nasm meson ninja-build
+sudo apt-get install -y gettext autopoint automake ant autopoint cmake build-essential libtool-bin lua5.2 liblua5.2-dev patch pkg-config protobuf-compiler ragel subversion unzip git flex python3 wget nasm meson ninja-build
 cd libvlcjni
 mkdir ../build
 git apply ../patches/libvlcjni/*
