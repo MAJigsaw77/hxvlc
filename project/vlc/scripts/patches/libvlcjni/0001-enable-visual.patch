@@ -1,0 +1,12 @@
+diff --git a/buildsystem/compile-libvlc.sh b/buildsystem/compile-libvlc.sh
+index 58aeed2..a89c47e 100755
+--- a/buildsystem/compile-libvlc.sh
++++ b/buildsystem/compile-libvlc.sh
+@@ -426,7 +426,6 @@ VLC_MODULE_BLACKLIST="
+     gradient
+     dtstofloat32
+     logger
+-    visual
+     fb
+     aout_file
+     yuv
