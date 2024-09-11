@@ -23,6 +23,7 @@ done
 git clone https://code.videolan.org/videolan/libvlcjni.git --depth=1 --recursive -b libvlcjni-3.x
 sudo apt-get install gettext autopoint automake ant autopoint cmake build-essential libtool-bin lua5.2 liblua5.2-dev patch pkg-config protobuf-compiler ragel subversion unzip git flex python3 wget nasm meson ninja-build
 cd libvlcjni
+mkdir ../build
 git apply ../patches/libvlcjni/*
 buildsystem/get-vlc.sh
 
@@ -33,20 +34,20 @@ for arch in "$@"; do
   # Move and copy relevant files based on architecture
   case "$arch" in
     arm)
-      mv libvlcjni/libvlc/jni/libs/*/libvlc.so ../libvlc-v7.so
-      cp $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so ../libc++_shared-v7.so
+      mv libvlcjni/libvlc/jni/libs/*/libvlc.so ../build/libvlc-v7.so
+      cp $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so ../build/libc++_shared-v7.so
       ;;
     arm64)
-      mv libvlcjni/libvlc/jni/libs/*/libvlc.so ../libvlc-64.so
-      cp $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so ../libc++_shared-64.so
+      mv libvlcjni/libvlc/jni/libs/*/libvlc.so ../build/libvlc-64.so
+      cp $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so ../build/libc++_shared-64.so
       ;;
     x86)
-      mv libvlcjni/libvlc/jni/libs/*/libvlc.so ../libvlc-x86.so
-      cp $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/libc++_shared.so ../libc++_shared-x86.so
+      mv libvlcjni/libvlc/jni/libs/*/libvlc.so ../build/libvlc-x86.so
+      cp $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/libc++_shared.so ../build/libc++_shared-x86.so
       ;;
     x86_64)
-      mv libvlcjni/libvlc/jni/libs/*/libvlc.so ../libvlc-x86_64.so
-      cp $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android/libc++_shared.so ../libc++_shared-x86_64.so
+      mv libvlcjni/libvlc/jni/libs/*/libvlc.so ../build/libvlc-x86_64.so
+      cp $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android/libc++_shared.so ../build/libc++_shared-x86_64.so
       ;;
   esac
 done
