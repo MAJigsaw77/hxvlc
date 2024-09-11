@@ -1369,7 +1369,7 @@ class Video extends Bitmap implements IVideo
 
 			if (currentMediaItem != null)
 			{
-				var currentMediaStats:LibVLC_Media_Stats_T = LibVLC_Media_Stats_T.alloc();
+				final currentMediaStats:LibVLC_Media_Stats_T = LibVLC_Media_Stats_T.alloc();
 
 				if (LibVLC.media_get_stats(currentMediaItem, cpp.RawPointer.addressOf(currentMediaStats)) != 0)
 					return Stats.fromMediaStats(currentMediaStats);
@@ -1498,9 +1498,9 @@ class Video extends Bitmap implements IVideo
 
 			if (audioOutput != null)
 			{
-				var temp:cpp.RawPointer<LibVLC_Audio_Output_T> = audioOutput;
-
 				final outputs:Array<{name:String, description:String}> = [];
+
+				var temp:cpp.RawPointer<LibVLC_Audio_Output_T> = audioOutput;
 
 				while (temp != null)
 				{
