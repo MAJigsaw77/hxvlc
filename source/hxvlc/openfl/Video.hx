@@ -437,82 +437,82 @@ class Video extends Bitmap implements IVideo
 	/**
 	 * Event triggered when the media is opening.
 	 */
-	public var onOpening(get, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onOpening(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * Event triggered when playback starts.
 	 */
-	public var onPlaying(get, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onPlaying(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * Event triggered when playback stops.
 	 */
-	public var onStopped(get, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onStopped(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * Event triggered when playback is paused.
 	 */
-	public var onPaused(get, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onPaused(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * Event triggered when the end of the media is reached.
 	 */
-	public var onEndReached(get, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onEndReached(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * Event triggered when an error occurs.
 	 */
-	public var onEncounteredError(get, null):Event<String->Void> = new Event<String->Void>();
+	public var onEncounteredError(default, null):Event<String->Void> = new Event<String->Void>();
 
 	/**
 	 * Event triggered when the media changes.
 	 */
-	public var onMediaChanged(get, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onMediaChanged(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * Event triggered when the media is corked.
 	 */
-	public var onCorked(get, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onCorked(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * Event triggered when the media is uncorked.
 	 */
-	public var onUncorked(get, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onUncorked(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * Event triggered when the time changes.
 	 */
-	public var onTimeChanged(get, null):Event<Int64->Void> = new Event<Int64->Void>();
+	public var onTimeChanged(default, null):Event<Int64->Void> = new Event<Int64->Void>();
 
 	/**
 	 * Event triggered when the position changes.
 	 */
-	public var onPositionChanged(get, null):Event<Single->Void> = new Event<Single->Void>();
+	public var onPositionChanged(default, null):Event<Single->Void> = new Event<Single->Void>();
 
 	/**
 	 * Event triggered when the length changes.
 	 */
-	public var onLengthChanged(get, null):Event<Int64->Void> = new Event<Int64->Void>();
+	public var onLengthChanged(default, null):Event<Int64->Void> = new Event<Int64->Void>();
 
 	/**
 	 * Event triggered when the chapter changes.
 	 */
-	public var onChapterChanged(get, null):Event<Int->Void> = new Event<Int->Void>();
+	public var onChapterChanged(default, null):Event<Int->Void> = new Event<Int->Void>();
 
 	/**
 	 * Event triggered when the media metadata changes.
 	 */
-	public var onMediaMetaChanged(get, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onMediaMetaChanged(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * Event triggered when the media is parsed.
 	 */
-	public var onMediaParsedChanged(get, null):Event<Int->Void> = new Event<Int->Void>();
+	public var onMediaParsedChanged(default, null):Event<Int->Void> = new Event<Int->Void>();
 
 	/**
 	 * Event triggered when the format setup is initialized.
 	 */
-	public var onFormatSetup(get, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	@:noCompletion
 	private final events:Array<Bool> = [for (i in 0...17) false];
@@ -1635,102 +1635,6 @@ class Video extends Bitmap implements IVideo
 
 		return __bitmapData;
 	}
-
-	@:noCompletion
-	private function get_onOpening():Event<Void->Void>
-	{
-		return onOpening;
-	}
-
-	@:noCompletion
-	private function get_onPlaying():Event<Void->Void>
-	{
-		return onPlaying;
-	}
-
-	@:noCompletion
-	private function get_onStopped():Event<Void->Void>
-	{
-		return onStopped;
-	}
-
-	@:noCompletion
-	private function get_onPaused():Event<Void->Void>
-	{
-		return onPaused;
-	}
-
-	@:noCompletion
-	private function get_onEndReached():Event<Void->Void>
-	{
-		return onEndReached;
-	}
-
-	@:noCompletion
-	private function get_onEncounteredError():Event<String->Void>
-	{
-		return onEncounteredError;
-	}
-
-	@:noCompletion
-	private function get_onMediaChanged():Event<Void->Void>
-	{
-		return onMediaChanged;
-	}
-
-	@:noCompletion
-	private function get_onCorked():Event<Void->Void>
-	{
-		return onCorked;
-	}
-
-	@:noCompletion
-	private function get_onUncorked():Event<Void->Void>
-	{
-		return onUncorked;
-	}
-
-	@:noCompletion
-	private function get_onTimeChanged():Event<Int64->Void>
-	{
-		return onTimeChanged;
-	}
-
-	@:noCompletion
-	private function get_onPositionChanged():Event<Single->Void>
-	{
-		return onPositionChanged;
-	}
-
-	@:noCompletion
-	private function get_onLengthChanged():Event<Int64->Void>
-	{
-		return onLengthChanged;
-	}
-
-	@:noCompletion
-	private function get_onChapterChanged():Event<Int->Void>
-	{
-		return onChapterChanged;
-	}
-
-	@:noCompletion
-	private function get_onMediaMetaChanged():Event<Void->Void>
-	{
-		return onMediaMetaChanged;
-	}
-
-	@:noCompletion
-	private function get_onMediaParsedChanged():Event<Int->Void>
-	{
-		return onMediaParsedChanged;
-	}
-
-	@:noCompletion
-	private function get_onFormatSetup():Event<Void->Void>
-	{
-		return onFormatSetup;
-	}
 }
 
 /**
@@ -1857,82 +1761,82 @@ interface IVideo
 	/**
 	 * Event triggered when the media is opening.
 	 */
-	public var onOpening(get, null):Event<Void->Void>;
+	public var onOpening(default, null):Event<Void->Void>;
 
 	/**
 	 * Event triggered when playback starts.
 	 */
-	public var onPlaying(get, null):Event<Void->Void>;
+	public var onPlaying(default, null):Event<Void->Void>;
 
 	/**
 	 * Event triggered when playback stops.
 	 */
-	public var onStopped(get, null):Event<Void->Void>;
+	public var onStopped(default, null):Event<Void->Void>;
 
 	/**
 	 * Event triggered when playback is paused.
 	 */
-	public var onPaused(get, null):Event<Void->Void>;
+	public var onPaused(default, null):Event<Void->Void>;
 
 	/**
 	 * Event triggered when the end of the media is reached.
 	 */
-	public var onEndReached(get, null):Event<Void->Void>;
+	public var onEndReached(default, null):Event<Void->Void>;
 
 	/**
 	 * Event triggered when an error occurs.
 	 */
-	public var onEncounteredError(get, null):Event<String->Void>;
+	public var onEncounteredError(default, null):Event<String->Void>;
 
 	/**
 	 * Event triggered when the media changes.
 	 */
-	public var onMediaChanged(get, null):Event<Void->Void>;
+	public var onMediaChanged(default, null):Event<Void->Void>;
 
 	/**
 	 * Event triggered when the media is corked.
 	 */
-	public var onCorked(get, null):Event<Void->Void>;
+	public var onCorked(default, null):Event<Void->Void>;
 
 	/**
 	 * Event triggered when the media is uncorked.
 	 */
-	public var onUncorked(get, null):Event<Void->Void>;
+	public var onUncorked(default, null):Event<Void->Void>;
 
 	/**
 	 * Event triggered when the time changes.
 	 */
-	public var onTimeChanged(get, null):Event<Int64->Void>;
+	public var onTimeChanged(default, null):Event<Int64->Void>;
 
 	/**
 	 * Event triggered when the position changes.
 	 */
-	public var onPositionChanged(get, null):Event<Single->Void>;
+	public var onPositionChanged(default, null):Event<Single->Void>;
 
 	/**
 	 * Event triggered when the length changes.
 	 */
-	public var onLengthChanged(get, null):Event<Int64->Void>;
+	public var onLengthChanged(default, null):Event<Int64->Void>;
 
 	/**
 	 * Event triggered when the chapter changes.
 	 */
-	public var onChapterChanged(get, null):Event<Int->Void>;
+	public var onChapterChanged(default, null):Event<Int->Void>;
 
 	/**
 	 * Event triggered when the media metadata changes.
 	 */
-	public var onMediaMetaChanged(get, null):Event<Void->Void>;
+	public var onMediaMetaChanged(default, null):Event<Void->Void>;
 
 	/**
 	 * Event triggered when the media is parsed.
 	 */
-	public var onMediaParsedChanged(get, null):Event<Int->Void>;
+	public var onMediaParsedChanged(default, null):Event<Int->Void>;
 
 	/**
 	 * Event triggered when the format setup is initialized.
 	 */
-	public var onFormatSetup(get, null):Event<Void->Void>;
+	public var onFormatSetup(default, null):Event<Void->Void>;
 
 	/**
 	 * Loads media from the specified location.
