@@ -461,12 +461,6 @@ class Video extends Bitmap implements IVideo
 	private final events:Array<Bool> = [for (i in 0...17) false];
 
 	@:noCompletion
-	private final alMutex:Mutex = new Mutex();
-
-	@:noCompletion
-	private final textureMutex:Mutex = new Mutex();
-
-	@:noCompletion
 	private var mediaData:cpp.RawPointer<cpp.UInt8>;
 
 	@:noCompletion
@@ -486,6 +480,9 @@ class Video extends Bitmap implements IVideo
 
 	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
+	private final alMutex:Mutex = new Mutex();
+
+	@:noCompletion
 	private var alAudioContext:OpenALAudioContext;
 
 	@:noCompletion
@@ -494,6 +491,9 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private var alSource:ALSource;
 	#end
+
+	@:noCompletion
+	private final textureMutex:Mutex = new Mutex();
 
 	@:noCompletion
 	private var texture:RectangleTexture;
@@ -1323,6 +1323,7 @@ class Video extends Bitmap implements IVideo
 	@:unreflective
 	private function audioSetup(format:cpp.CastCharStar, rate:cpp.RawPointer<cpp.UInt32>, channels:cpp.RawPointer<cpp.UInt32>):Int
 	{
+		#if (HXVLC_OPENAL && lime_openal)
 		cpp.Stdlib.nativeMemcpy(cast format, cast cpp.CastCharStar.fromString("S16N"), 4);
 
 		alMutex.acquire();
@@ -1337,6 +1338,7 @@ class Video extends Bitmap implements IVideo
 		alChannels = channels[0];
 
 		alMutex.release();
+		#end
 
 		return 0;
 	}
