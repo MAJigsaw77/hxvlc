@@ -472,12 +472,6 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private var mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>;
 
-	@:noCompletion
-	private var alSampleRate:cpp.UInt32 = 0;
-
-	@:noCompletion
-	private var alChannels:cpp.UInt32 = 0;
-
 	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
 	private final alMutex:Mutex = new Mutex();
@@ -490,6 +484,12 @@ class Video extends Bitmap implements IVideo
 
 	@:noCompletion
 	private var alSource:ALSource;
+
+	@:noCompletion
+	private var alSampleRate:cpp.UInt32 = 0;
+
+	@:noCompletion
+	private var alChannels:cpp.UInt32 = 0;
 	#end
 
 	@:noCompletion
