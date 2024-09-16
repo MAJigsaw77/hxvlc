@@ -1154,18 +1154,21 @@ class Video extends Bitmap implements IVideo
 		{
 			textureMutex.acquire();
 
-			MainLoop.runInMainThread(function():Void
+			if (texture != null || (bitmapData != null && bitmapData.image != null))
 			{
-				final texturePlanesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(texturePlanes).toUnmanagedArray(textureWidth * textureHeight * 4));
+				MainLoop.runInMainThread(function():Void
+				{
+					final texturePlanesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(texturePlanes).toUnmanagedArray(textureWidth * textureHeight * 4));
 
-				if (texture != null)
-					texture.uploadFromTypedArray(UInt8Array.fromBytes(texturePlanesBytes));
-				else if (bitmapData != null && bitmapData.image != null)
-					bitmapData.setPixels(bitmapData.rect, texturePlanesBytes);
+					if (texture != null)
+						texture.uploadFromTypedArray(UInt8Array.fromBytes(texturePlanesBytes));
+					else if (bitmapData != null && bitmapData.image != null)
+						bitmapData.setPixels(bitmapData.rect, texturePlanesBytes);
 
-				if (__renderable)
-					__setRenderDirty();
-			});
+					if (__renderable)
+						__setRenderDirty();
+				});
+			}
 
 			textureMutex.release();
 		}
@@ -1208,12 +1211,12 @@ class Video extends Bitmap implements IVideo
 			texturePlanes = untyped __cpp__('new unsigned char[{0}]', textureWidth * textureHeight * 4);
 		}
 
-		MainLoop.runInMainThread(function():Void
+		@:privateAccess
+		if (bitmapData == null
+			|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
+			|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
 		{
-			@:privateAccess
-			if (bitmapData == null
-				|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
-				|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
+			MainLoop.runInMainThread(function():Void
 			{
 				if (bitmapData != null)
 					bitmapData.dispose();
@@ -1238,8 +1241,8 @@ class Video extends Bitmap implements IVideo
 				}
 
 				onFormatSetup.dispatch();
-			}
-		});
+			});
+		}
 
 		textureMutex.release();
 
