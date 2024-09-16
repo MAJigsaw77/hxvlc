@@ -173,7 +173,7 @@ static int audio_setup(void **data, char *format, unsigned *rate, unsigned *chan
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	int success = reinterpret_cast<Video_obj *>(*opaque)->audioSetup(format, rate, channels);
+	int success = reinterpret_cast<Video_obj *>(*data)->audioSetup(format, rate, channels);
 
 	hx::SetTopOfStack((int *)0, true);
 
