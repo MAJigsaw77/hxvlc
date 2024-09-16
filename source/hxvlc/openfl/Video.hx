@@ -135,7 +135,7 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(*opaque)->videoFormatSetup(chroma, width, height, pitches, lines):
+	reinterpret_cast<Video_obj *>(*opaque)->videoFormatSetup(chroma, width, height, pitches, lines);
 
 	hx::SetTopOfStack((int *)0, true);
 
