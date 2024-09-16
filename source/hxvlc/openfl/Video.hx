@@ -106,18 +106,18 @@ static void *video_lock(void *opaque, void **planes)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(opaque)->videoLock(planes);
+	void *picture = reinterpret_cast<Video_obj *>(opaque)->videoLock(planes);
 
 	hx::SetTopOfStack((int *)0, true);
 
-	return NULL;
+	return picture;
 }
 
 static void video_unlock(void *opaque, void *picture, void *const *planes)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(opaque)->textureMutex->release();
+	reinterpret_cast<Video_obj *>(opaque)->videoUnlock(planes);
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -135,11 +135,11 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(*opaque)->videoFormatSetup(chroma, width, height, pitches, lines);
+	int pictureBuffers = reinterpret_cast<Video_obj *>(*opaque)->videoFormatSetup(chroma, width, height, pitches, lines);
 
 	hx::SetTopOfStack((int *)0, true);
 
-	return 1;
+	return pictureBuffers;
 }
 
 static void audio_play(void *data, const void *samples, unsigned count, int64_t pts)
@@ -1144,18 +1144,25 @@ class Video extends Bitmap implements IVideo
 
 	@:noCompletion
 	@:unreflective
-	@:void
-	private function videoLock(planes:cpp.RawPointer<cpp.RawPointer<cpp.Void>>):Void
+	private function videoLock(planes:cpp.RawPointer<cpp.RawPointer<cpp.Void>>):cpp.RawPointer<cpp.Void>
 	{
 		textureMutex.acquire();
 
 		if (texturePlanes != null)
 			untyped __cpp__('(*{0}) = {1}', planes, texturePlanes);
+
+		return null;
 	}
 
 	@:noCompletion
 	@:unreflective
-	@:void
+	private function videoUnlock(planes:cpp.VoidStarConstStar):Void
+	{
+		textureMutex.release();
+	}
+
+	@:noCompletion
+	@:unreflective
 	private function videoDisplay():Void
 	{
 		if ((__renderable || forceRendering) && texturePlanes != null)
@@ -1181,9 +1188,8 @@ class Video extends Bitmap implements IVideo
 
 	@:noCompletion
 	@:unreflective
-	@:void
 	private function videoFormatSetup(chroma:cpp.CastCharStar, width:cpp.RawPointer<cpp.UInt32>,
-		height:cpp.RawPointer<cpp.UInt32>, pitches:cpp.RawPointer<cpp.UInt32>, lines:cpp.RawPointer<cpp.UInt32>):Void
+		height:cpp.RawPointer<cpp.UInt32>, pitches:cpp.RawPointer<cpp.UInt32>, lines:cpp.RawPointer<cpp.UInt32>):Int
 	{
 		cpp.Stdlib.nativeMemcpy(cast chroma, cast cpp.CastCharStar.fromString("RV32"), 4);
 
@@ -1253,11 +1259,12 @@ class Video extends Bitmap implements IVideo
 
 		untyped __cpp__('(*{0}) = {1}', pitches, textureWidth * 4);
 		untyped __cpp__('(*{0}) = {1}', lines, textureHeight);
+
+		return 1;
 	}
 
 	@:noCompletion
 	@:unreflective
-	@:void
 	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32, pts:cpp.Int64):Void
 	{
 		// TODO: Audio synchronisation in case of a sudden desync using pts.
@@ -1294,7 +1301,6 @@ class Video extends Bitmap implements IVideo
 
 	@:noCompletion
 	@:unreflective
-	@:void
 	private function audioPause(pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
@@ -1312,7 +1318,6 @@ class Video extends Bitmap implements IVideo
 
 	@:noCompletion
 	@:unreflective
-	@:void
 	private function audioResume(pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
@@ -1330,7 +1335,6 @@ class Video extends Bitmap implements IVideo
 
 	@:noCompletion
 	@:unreflective
-	@:void
 	private function audioSetVolume(volume:Single, mute:Bool):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
