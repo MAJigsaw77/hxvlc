@@ -8,6 +8,7 @@ import haxe.io.BytesData;
 import haxe.io.Path;
 import haxe.Exception;
 import haxe.Int64;
+import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Stats;
@@ -105,12 +106,7 @@ static void *video_lock(void *opaque, void **planes)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
-
-	self->textureMutex->acquire();
-
-	if (self->texturePlanes != NULL)
-		(*planes) = self->texturePlanes;
+	reinterpret_cast<Video_obj *>(opaque)->videoLock(planes);
 
 	hx::SetTopOfStack((int *)0, true);
 
@@ -130,7 +126,7 @@ static void video_display(void *opaque, void *picture)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(opaque)->events[16] = true;
+	reinterpret_cast<Video_obj *>(opaque)->videoDisplay();
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -1221,15 +1217,30 @@ class Video extends Bitmap implements IVideo
 				onFormatSetup.dispatch();
 			}
 		}
+	}
 
-		if (events[16])
+	@:noCompletion
+	@:unreflective
+	@:void
+	private function videoLock(planes:cpp.RawPointer<cpp.RawPointer<cpp.Void>>):Void
+	{
+		textureMutex.acquire();
+
+		if (texturePlanes != null)
+			untyped __cpp__('(*{0}) = {1}', planes, texturePlanes);
+	}
+
+	@:noCompletion
+	@:unreflective
+	@:void
+	private function videoDisplay():Void
+	{
+		if ((__renderable || forceRendering) && texturePlanes != null)
 		{
-			events[16] = false;
+			textureMutex.acquire();
 
-			if ((__renderable || forceRendering) && texturePlanes != null)
+			MainLoop.runInMainThread(function():Void
 			{
-				textureMutex.acquire();
-
 				final texturePlanesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(texturePlanes).toUnmanagedArray(textureWidth * textureHeight * 4));
 
 				if (texture != null)
@@ -1239,9 +1250,9 @@ class Video extends Bitmap implements IVideo
 
 				if (__renderable)
 					__setRenderDirty();
+			});
 
-				textureMutex.release();
-			}
+			textureMutex.release();
 		}
 	}
 
