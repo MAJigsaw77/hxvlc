@@ -135,45 +135,7 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	Video_obj *self = reinterpret_cast<Video_obj *>(*opaque);
-
-	memcpy(chroma, "RV32", 4);
-
-	const unsigned originalWidth = (*width);
-	const unsigned originalHeight = (*height);
-
-	self->textureMutex->acquire();
-
-	if (self->mediaPlayer != NULL && libvlc_video_get_size(self->mediaPlayer, 0, &self->textureWidth, &self->textureHeight) == 0)
-	{
-		(*width) = self->textureWidth;
-		(*height) = self->textureHeight;
-
-		if (self->texturePlanes == NULL || (originalWidth != self->textureWidth || originalHeight != self->textureHeight))
-		{
-			if (self->texturePlanes != NULL)
-				delete[] self->texturePlanes;
-
-			self->texturePlanes = new unsigned char[self->textureWidth * self->textureHeight * 4];
-		}
-	}
-	else
-	{
-		self->textureWidth = originalWidth;
-		self->textureHeight = originalHeight;
-
-		if (self->texturePlanes != NULL)
-			delete[] self->texturePlanes;
-
-		self->texturePlanes = new unsigned char[self->textureWidth * self->textureHeight * 4];
-	}
-
-	self->textureMutex->release();
-
-	(*pitches) = self->textureWidth * 4;
-	(*lines) = self->textureHeight;
-
-	self->events[15] = true;
+	reinterpret_cast<Video_obj *>(*opaque)->videoFormatSetup(chrome, width, height, pitches, lines):
 
 	hx::SetTopOfStack((int *)0, true);
 
@@ -1178,45 +1140,6 @@ class Video extends Bitmap implements IVideo
 					onMediaParsedChanged.dispatch(LibVLC.media_get_parsed_status(currentMediaItem));
 			}
 		}
-
-		if (events[15])
-		{
-			events[15] = false;
-
-			@:privateAccess
-			if (bitmapData == null
-				|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
-				|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
-			{
-				textureMutex.acquire();
-
-				if (bitmapData != null)
-					bitmapData.dispose();
-
-				if (texture != null)
-				{
-					texture.dispose();
-					texture = null;
-				}
-
-				if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
-				{
-					texture = Lib.current.stage.context3D.createRectangleTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, true);
-					bitmapData = BitmapData.fromTexture(texture);
-				}
-				else
-				{
-					if (useTexture)
-						Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
-
-					bitmapData = new BitmapData(textureWidth, textureHeight, true, 0);
-				}
-
-				textureMutex.release();
-
-				onFormatSetup.dispatch();
-			}
-		}
 	}
 
 	@:noCompletion
@@ -1254,6 +1177,82 @@ class Video extends Bitmap implements IVideo
 
 			textureMutex.release();
 		}
+	}
+
+	@:noCompletion
+	@:unreflective
+	@:void
+	private function videoFormatSetup(chroma:cpp.CastCharStar, width:cpp.RawPointer<cpp.UInt32>,
+		height:cpp.RawPointer<cpp.UInt32>, pitches:cpp.RawPointer<cpp.UInt32>, lines:cpp.RawPointer<cpp.UInt32>):Void
+	{
+		cpp.Stdlib.nativeMemcpy(cast chroma, cast cpp.CastCharStar.fromString("RV32"), 4);
+
+		final originalWidth:cpp.UInt8 = untyped __cpp__('(*{0})', width);
+		final originalHeight:cpp.UInt8 = untyped __cpp__('(*{0})', height);
+
+		textureMutex.acquire();
+
+		if (mediaPlayer != null && LibVLC.video_get_size(mediaPlayer, 0, cpp.RawPointer.addressOf(textureWidth), cpp.RawPointer.addressOf(textureHeight)) == 0)
+		{
+			untyped __cpp__('(*{0}) = {1}', width, textureWidth);
+			untyped __cpp__('(*{0}) = {1}', height, textureHeight);
+			
+			if (texturePlanes == null || (originalWidth != textureWidth || originalHeight != textureHeight))
+			{
+				if (texturePlanes != null)
+					untyped __cpp__('delete[] {0}', texturePlanes);
+
+				texturePlanes = untyped __cpp__('new unsigned char[{0}]', textureWidth * textureHeight * 4);
+			}
+		}
+		else
+		{
+			textureWidth = originalWidth;
+			textureHeight = originalHeight;
+
+			if (texturePlanes != null)
+				untyped __cpp__('delete[] {0}', texturePlanes);
+
+			texturePlanes = untyped __cpp__('new unsigned char[{0}]', textureWidth * textureHeight * 4);
+		}
+
+		MainLoop.runInMainThread(function():Void
+		{
+			@:privateAccess
+			if (bitmapData == null
+				|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
+				|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
+			{
+				if (bitmapData != null)
+					bitmapData.dispose();
+
+				if (texture != null)
+				{
+					texture.dispose();
+					texture = null;
+				}
+
+				if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
+				{
+					texture = Lib.current.stage.context3D.createRectangleTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, true);
+					bitmapData = BitmapData.fromTexture(texture);
+				}
+				else
+				{
+					if (useTexture)
+						Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
+
+					bitmapData = new BitmapData(textureWidth, textureHeight, true, 0);
+				}
+
+				onFormatSetup.dispatch();
+			}
+		});
+
+		textureMutex.release();
+
+		untyped __cpp__('(*{0}) = {1}', pitches, textureWidth * 4);
+		untyped __cpp__('(*{0}) = {1}', lines, textureHeight);
 	}
 
 	@:noCompletion
