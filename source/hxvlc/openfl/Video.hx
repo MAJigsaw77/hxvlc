@@ -173,26 +173,11 @@ static int audio_setup(void **data, char *format, unsigned *rate, unsigned *chan
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	Video_obj *self = reinterpret_cast<Video_obj *>(*data);
-
-	memcpy(format, "S16N", 4);
-
-	self->alMutex->acquire();
-
-	self->alSampleRate = (*rate);
-
-	const unsigned originalChannels = (*channels);
-
-	if (originalChannels > 2)
-		(*channels) = 2;
-
-	self->alChannels = (*channels);
-
-	self->alMutex->release();
+	int success = reinterpret_cast<Video_obj *>(*opaque)->audioSetup(format, rate, channels);
 
 	hx::SetTopOfStack((int *)0, true);
 
-	return 0;
+	return success;
 }
 
 static void audio_set_volume(void *data, float volume, bool mute)
@@ -1188,21 +1173,22 @@ class Video extends Bitmap implements IVideo
 
 	@:noCompletion
 	@:unreflective
-	private function videoFormatSetup(chroma:cpp.CastCharStar, width:cpp.RawPointer<cpp.UInt32>,
-		height:cpp.RawPointer<cpp.UInt32>, pitches:cpp.RawPointer<cpp.UInt32>, lines:cpp.RawPointer<cpp.UInt32>):Int
+	private function videoFormatSetup(chroma:cpp.CastCharStar, width:cpp.RawPointer<cpp.UInt32>, height:cpp.RawPointer<cpp.UInt32>,
+			pitches:cpp.RawPointer<cpp.UInt32>, lines:cpp.RawPointer<cpp.UInt32>):Int
 	{
 		cpp.Stdlib.nativeMemcpy(cast chroma, cast cpp.CastCharStar.fromString("RV32"), 4);
 
-		final originalWidth:cpp.UInt8 = untyped __cpp__('(*{0})', width);
-		final originalHeight:cpp.UInt8 = untyped __cpp__('(*{0})', height);
+		final originalWidth:cpp.UInt8 = width[0];
+		final originalHeight:cpp.UInt8 = height[0];
 
 		textureMutex.acquire();
 
-		if (mediaPlayer != null && LibVLC.video_get_size(mediaPlayer, 0, cpp.RawPointer.addressOf(textureWidth), cpp.RawPointer.addressOf(textureHeight)) == 0)
+		if (mediaPlayer != null
+			&& LibVLC.video_get_size(mediaPlayer, 0, cpp.RawPointer.addressOf(textureWidth), cpp.RawPointer.addressOf(textureHeight)) == 0)
 		{
-			untyped __cpp__('(*{0}) = {1}', width, textureWidth);
-			untyped __cpp__('(*{0}) = {1}', height, textureHeight);
-			
+			width[0] = textureWidth;
+			height[0] = textureHeight;
+
 			if (texturePlanes == null || (originalWidth != textureWidth || originalHeight != textureHeight))
 			{
 				if (texturePlanes != null)
@@ -1257,8 +1243,8 @@ class Video extends Bitmap implements IVideo
 
 		textureMutex.release();
 
-		untyped __cpp__('(*{0}) = {1}', pitches, textureWidth * 4);
-		untyped __cpp__('(*{0}) = {1}', lines, textureHeight);
+		pitches[0] = textureWidth * 4;
+		lines[0] = textureHeight;
 
 		return 1;
 	}
@@ -1331,6 +1317,28 @@ class Video extends Bitmap implements IVideo
 			alMutex.release();
 		}
 		#end
+	}
+
+	@:noCompletion
+	@:unreflective
+	private function audioSetup(format:cpp.CastCharStar, rate:cpp.RawPointer<cpp.UInt32>, channels:cpp.RawPointer<cpp.UInt32>):Int
+	{
+		cpp.Stdlib.nativeMemcpy(cast format, cast cpp.CastCharStar.fromString("S16N"), 4);
+
+		alMutex.acquire();
+
+		alSampleRate = rate[0];
+
+		final originalChannels:cpp.UInt32 = channels[0];
+
+		if (originalChannels > 2)
+			channels[0] = 2;
+
+		alChannels = channels[0];
+
+		alMutex.release();
+
+		return 0;
 	}
 
 	@:noCompletion
