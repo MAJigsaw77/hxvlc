@@ -1189,7 +1189,7 @@ class Video extends Bitmap implements IVideo
 
 		MainLoop.runInMainThread(function():Void
 		{
-			final eventType:LibVLC_Event_E = untyped __cpp__('{0}->type', p_event);
+			final eventType:Int = untyped __cpp__('{0}->type', p_event);
 
 			switch (eventType)
 			{
@@ -1232,7 +1232,6 @@ class Video extends Bitmap implements IVideo
 						if (currentMediaItem != null)
 							onMediaParsedChanged.dispatch(LibVLC.media_get_parsed_status(currentMediaItem));
 					}
-				default:
 			}
 		});
 	}
