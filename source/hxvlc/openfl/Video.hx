@@ -1193,38 +1193,38 @@ class Video extends Bitmap implements IVideo
 
 			switch (eventType)
 			{
-				case LibVLC_MediaPlayerOpening:
+				case eventType if (eventType == LibVLC_MediaPlayerOpening):
 					onOpening.dispatch();
-				case LibVLC_MediaPlayerPlaying:
+				case eventType if (eventType == LibVLC_MediaPlayerPlaying):
 					onPlaying.dispatch();
-				case LibVLC_MediaPlayerStopped:
+				case eventType if (eventType == LibVLC_MediaPlayerStopped):
 					onStopped.dispatch();
-				case LibVLC_MediaPlayerPaused:
+				case eventType if (eventType == LibVLC_MediaPlayerPaused):
 					onPaused.dispatch();
-				case LibVLC_MediaPlayerEndReached:
+				case eventType if (eventType == LibVLC_MediaPlayerEndReached):
 					onEndReached.dispatch();
-				case LibVLC_MediaPlayerEncounteredError:
+				case eventType if (eventType == LibVLC_MediaPlayerEncounteredError):
 					if (errmsg != null && errmsg.length > 0)
 						onEncounteredError.dispatch(errmsg);
 					else
 						onEncounteredError.dispatch('Unknown error');
-				case LibVLC_MediaPlayerMediaChanged:
+				case eventType if (eventType == LibVLC_MediaPlayerMediaChanged):
 					onMediaChanged.dispatch();
-				case LibVLC_MediaPlayerCorked:
+				case eventType if (eventType == LibVLC_MediaPlayerCorked):
 					onCorked.dispatch();
-				case LibVLC_MediaPlayerUncorked:
+				case eventType if (eventType == LibVLC_MediaPlayerUncorked):
 					onUncorked.dispatch();
-				case LibVLC_MediaPlayerTimeChanged:
+				case eventType if (eventType == LibVLC_MediaPlayerTimeChanged):
 					onTimeChanged.dispatch(time);
-				case LibVLC_MediaPlayerPositionChanged:
+				case eventType if (eventType == LibVLC_MediaPlayerPositionChanged):
 					onPositionChanged.dispatch(position);
-				case LibVLC_MediaPlayerLengthChanged:
+				case eventType if (eventType == LibVLC_MediaPlayerLengthChanged):
 					onLengthChanged.dispatch(length);
-				case LibVLC_MediaPlayerChapterChanged:
+				case eventType if (eventType == LibVLC_MediaPlayerChapterChanged):
 					onChapterChanged.dispatch(chapter);
-				case LibVLC_MediaMetaChanged:
+				case eventType if (eventType == LibVLC_MediaMetaChanged):
 					onMediaMetaChanged.dispatch();
-				case LibVLC_MediaParsedChanged:
+				case eventType if (eventType == LibVLC_MediaParsedChanged):
 					if (mediaPlayer != null)
 					{
 						final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
