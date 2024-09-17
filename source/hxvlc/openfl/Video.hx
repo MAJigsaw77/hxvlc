@@ -971,12 +971,12 @@ class Video extends Bitmap implements IVideo
 	{
 		if ((__renderable || forceRendering) && texturePlanes != null)
 		{
-			textureMutex.acquire();
-
 			if (texture != null || (bitmapData != null && bitmapData.image != null))
 			{
 				MainLoop.runInMainThread(function():Void
 				{
+					textureMutex.acquire();
+
 					final texturePlanesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(texturePlanes).toUnmanagedArray(textureWidth * textureHeight * 4));
 
 					if (texture != null)
@@ -986,10 +986,10 @@ class Video extends Bitmap implements IVideo
 
 					if (__renderable)
 						__setRenderDirty();
+
+					textureMutex.release();
 				});
 			}
-
-			textureMutex.release();
 		}
 	}
 
@@ -1030,6 +1030,8 @@ class Video extends Bitmap implements IVideo
 			texturePlanes = untyped __cpp__('new unsigned char[{0}]', textureWidth * textureHeight * 4);
 		}
 
+		textureMutex.release();
+
 		@:privateAccess
 		if (bitmapData == null
 			|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
@@ -1037,6 +1039,8 @@ class Video extends Bitmap implements IVideo
 		{
 			MainLoop.runInMainThread(function():Void
 			{
+				textureMutex.acquire();
+	
 				if (bitmapData != null)
 					bitmapData.dispose();
 
@@ -1060,10 +1064,10 @@ class Video extends Bitmap implements IVideo
 				}
 
 				onFormatSetup.dispatch();
+
+				textureMutex.release();
 			});
 		}
-
-		textureMutex.release();
 
 		pitches[0] = textureWidth * 4;
 		lines[0] = textureHeight;
