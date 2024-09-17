@@ -1139,7 +1139,7 @@ class Video extends Bitmap implements IVideo
 		textureMutex.acquire();
 
 		if (texturePlanes != null)
-			untyped __cpp__('(*{0}) = {1}', planes, texturePlanes);
+			planes[0] = untyped texturePlanes;
 
 		return null;
 	}
