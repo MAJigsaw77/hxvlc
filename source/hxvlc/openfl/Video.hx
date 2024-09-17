@@ -1231,7 +1231,7 @@ class Video extends Bitmap implements IVideo
 							onMediaParsedChanged.dispatch(LibVLC.media_get_parsed_status(currentMediaItem));
 					}
 			}
-		}
+		});
 	}
 
 	@:noCompletion
