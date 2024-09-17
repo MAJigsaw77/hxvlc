@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "1.8.2",
-	"releasenote": "Fixed the audio on windows modifying the volume mixer.",
+	"version": "1.8.3",
+	"releasenote": "Various fixes and improvements.",
 	"contributors": [
 		"MAJigsaw77"
 	],
