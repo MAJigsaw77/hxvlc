@@ -1189,40 +1189,42 @@ class Video extends Bitmap implements IVideo
 
 		MainLoop.runInMainThread(function():Void
 		{
-			switch (p_event.type)
+			final eventType:LibVLC_Event_E = untyped __cpp__('{0}->type', p_event);
+
+			switch (eventType)
 			{
-				case libvlc_MediaPlayerOpening:
+				case LibVLC_MediaPlayerOpening:
 					onOpening.dispatch();
-				case libvlc_MediaPlayerPlaying:
+				case LibVLC_MediaPlayerPlaying:
 					onPlaying.dispatch();
-				case libvlc_MediaPlayerStopped:
+				case LibVLC_MediaPlayerStopped:
 					onStopped.dispatch();
-				case libvlc_MediaPlayerPaused:
+				case LibVLC_MediaPlayerPaused:
 					onPaused.dispatch();
-				case libvlc_MediaPlayerEndReached:
+				case LibVLC_MediaPlayerEndReached:
 					onEndReached.dispatch();
-				case libvlc_MediaPlayerEncounteredError:
+				case LibVLC_MediaPlayerEncounteredError:
 					if (errmsg != null && errmsg.length > 0)
 						onEncounteredError.dispatch(errmsg);
 					else
 						onEncounteredError.dispatch('Unknown error');
-				case libvlc_MediaPlayerMediaChanged:
+				case LibVLC_MediaPlayerMediaChanged:
 					onMediaChanged.dispatch();
-				case libvlc_MediaPlayerCorked:
+				case LibVLC_MediaPlayerCorked:
 					onCorked.dispatch();
-				case libvlc_MediaPlayerUncorked:
+				case LibVLC_MediaPlayerUncorked:
 					onUncorked.dispatch();
-				case libvlc_MediaPlayerTimeChanged:
+				case LibVLC_MediaPlayerTimeChanged:
 					onTimeChanged.dispatch(time);
-				case libvlc_MediaPlayerPositionChanged:
+				case LibVLC_MediaPlayerPositionChanged:
 					onPositionChanged.dispatch(position);
-				case libvlc_MediaPlayerLengthChanged:
+				case LibVLC_MediaPlayerLengthChanged:
 					onLengthChanged.dispatch(length);
-				case libvlc_MediaPlayerChapterChanged:
+				case LibVLC_MediaPlayerChapterChanged:
 					onChapterChanged.dispatch(chapter);
-				case libvlc_MediaMetaChanged:
+				case LibVLC_MediaMetaChanged:
 					onMediaMetaChanged.dispatch();
-				case libvlc_MediaParsedChanged:
+				case LibVLC_MediaParsedChanged:
 					if (mediaPlayer != null)
 					{
 						final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
@@ -1230,6 +1232,7 @@ class Video extends Bitmap implements IVideo
 						if (currentMediaItem != null)
 							onMediaParsedChanged.dispatch(LibVLC.media_get_parsed_status(currentMediaItem));
 					}
+				default:
 			}
 		});
 	}
