@@ -590,6 +590,18 @@ extern class LibVLC
 		pitch:cpp.UInt32):Void;
 
 	/**
+	 * Gets the pixel dimensions of a video.
+	 *
+	 * @param mp Pointer to the media player.
+	 * @param num The index of the video (starting from 0, and most commonly 0).
+	 * @param px Pointer to store the width of the video in pixels [OUT].
+	 * @param py Pointer to store the height of the video in pixels [OUT].
+	 * @return 0 on success, -1 if the specified video does not exist.
+	 */
+	@:native('libvlc_video_get_size')
+	static function video_get_size(mp:cpp.RawPointer<LibVLC_Media_Player_T>, num:cpp.UInt32, px:cpp.RawPointer<cpp.UInt32>, py:cpp.RawPointer<cpp.UInt32>):Int;
+
+	/**
 	 * Sets the audio format callbacks.
 	 *
 	 * @param mp Pointer to the media player.

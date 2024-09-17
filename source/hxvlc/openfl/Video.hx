@@ -8,6 +8,7 @@ import haxe.io.BytesData;
 import haxe.io.Path;
 import haxe.Exception;
 import haxe.Int64;
+import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Stats;
@@ -105,23 +106,18 @@ static void *video_lock(void *opaque, void **planes)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
-
-	self->textureMutex->acquire();
-
-	if (self->texturePlanes != NULL)
-		(*planes) = self->texturePlanes;
+	void *picture = reinterpret_cast<Video_obj *>(opaque)->videoLock(planes);
 
 	hx::SetTopOfStack((int *)0, true);
 
-	return NULL;
+	return picture;
 }
 
 static void video_unlock(void *opaque, void *picture, void *const *planes)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(opaque)->textureMutex->release();
+	reinterpret_cast<Video_obj *>(opaque)->videoUnlock(planes);
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -130,7 +126,7 @@ static void video_display(void *opaque, void *picture)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(opaque)->events[16] = true;
+	reinterpret_cast<Video_obj *>(opaque)->videoDisplay();
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -139,49 +135,11 @@ static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width,
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	Video_obj *self = reinterpret_cast<Video_obj *>(*opaque);
-
-	memcpy(chroma, "RV32", 4);
-
-	const unsigned originalWidth = (*width);
-	const unsigned originalHeight = (*height);
-
-	self->textureMutex->acquire();
-
-	if (self->mediaPlayer != NULL && libvlc_video_get_size(self->mediaPlayer, 0, &self->textureWidth, &self->textureHeight) == 0)
-	{
-		(*width) = self->textureWidth;
-		(*height) = self->textureHeight;
-
-		if (self->texturePlanes == NULL || (originalWidth != self->textureWidth || originalHeight != self->textureHeight))
-		{
-			if (self->texturePlanes != NULL)
-				delete[] self->texturePlanes;
-
-			self->texturePlanes = new unsigned char[self->textureWidth * self->textureHeight * 4];
-		}
-	}
-	else
-	{
-		self->textureWidth = originalWidth;
-		self->textureHeight = originalHeight;
-
-		if (self->texturePlanes != NULL)
-			delete[] self->texturePlanes;
-
-		self->texturePlanes = new unsigned char[self->textureWidth * self->textureHeight * 4];
-	}
-
-	self->textureMutex->release();
-
-	(*pitches) = self->textureWidth * 4;
-	(*lines) = self->textureHeight;
-
-	self->events[15] = true;
+	int pictureBuffers = reinterpret_cast<Video_obj *>(*opaque)->videoFormatSetup(chroma, width, height, pitches, lines);
 
 	hx::SetTopOfStack((int *)0, true);
 
-	return 1;
+	return pictureBuffers;
 }
 
 static void audio_play(void *data, const void *samples, unsigned count, int64_t pts)
@@ -215,26 +173,11 @@ static int audio_setup(void **data, char *format, unsigned *rate, unsigned *chan
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	Video_obj *self = reinterpret_cast<Video_obj *>(*data);
-
-	memcpy(format, "S16N", 4);
-
-	self->alMutex->acquire();
-
-	self->alSampleRate = (*rate);
-
-	const unsigned originalChannels = (*channels);
-
-	if (originalChannels > 2)
-		(*channels) = 2;
-
-	self->alChannels = (*channels);
-
-	self->alMutex->release();
+	int success = reinterpret_cast<Video_obj *>(*data)->audioSetup(format, rate, channels);
 
 	hx::SetTopOfStack((int *)0, true);
 
-	return 0;
+	return success;
 }
 
 static void audio_set_volume(void *data, float volume, bool mute)
@@ -515,13 +458,7 @@ class Video extends Bitmap implements IVideo
 	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	@:noCompletion
-	private final events:Array<Bool> = [for (i in 0...17) false];
-
-	@:noCompletion
-	private final alMutex:Mutex = new Mutex();
-
-	@:noCompletion
-	private final textureMutex:Mutex = new Mutex();
+	private final events:Array<Bool> = [for (i in 0...15) false];
 
 	@:noCompletion
 	private var mediaData:cpp.RawPointer<cpp.UInt8>;
@@ -535,13 +472,10 @@ class Video extends Bitmap implements IVideo
 	@:noCompletion
 	private var mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>;
 
-	@:noCompletion
-	private var alSampleRate:cpp.UInt32 = 0;
-
-	@:noCompletion
-	private var alChannels:cpp.UInt32 = 0;
-
 	#if (HXVLC_OPENAL && lime_openal)
+	@:noCompletion
+	private final alMutex:Mutex = new Mutex();
+
 	@:noCompletion
 	private var alAudioContext:OpenALAudioContext;
 
@@ -550,7 +484,16 @@ class Video extends Bitmap implements IVideo
 
 	@:noCompletion
 	private var alSource:ALSource;
+
+	@:noCompletion
+	private var alSampleRate:cpp.UInt32 = 0;
+
+	@:noCompletion
+	private var alChannels:cpp.UInt32 = 0;
 	#end
+
+	@:noCompletion
+	private final textureMutex:Mutex = new Mutex();
 
 	@:noCompletion
 	private var texture:RectangleTexture;
@@ -832,11 +775,16 @@ class Video extends Bitmap implements IVideo
 			{
 				final eventManager:cpp.RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_event_manager(currentMediaItem);
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaParsedChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-					Log.warn('Failed to attach event (MediaParsedChanged)');
+				if (eventManager != null)
+				{
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaParsedChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaParsedChanged)');
 
-				if (LibVLC.event_attach(eventManager, LibVLC_MediaMetaChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-					Log.warn('Failed to attach event (MediaMetaChanged)');
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaMetaChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaMetaChanged)');
+				}
+				else
+					Log.warn('Unable to initialize the LibVLC media event manager.');
 
 				return LibVLC.media_parse_with_options(currentMediaItem, parse_flag, timeout) == 0;
 			}
@@ -1182,18 +1130,103 @@ class Video extends Bitmap implements IVideo
 					onMediaParsedChanged.dispatch(LibVLC.media_get_parsed_status(currentMediaItem));
 			}
 		}
+	}
 
-		if (events[15])
+	@:noCompletion
+	@:unreflective
+	private function videoLock(planes:cpp.RawPointer<cpp.RawPointer<cpp.Void>>):cpp.RawPointer<cpp.Void>
+	{
+		textureMutex.acquire();
+
+		if (texturePlanes != null)
+			untyped __cpp__('(*{0}) = {1}', planes, texturePlanes);
+
+		return null;
+	}
+
+	@:noCompletion
+	@:unreflective
+	private function videoUnlock(planes:cpp.VoidStarConstStar):Void
+	{
+		textureMutex.release();
+	}
+
+	@:noCompletion
+	@:unreflective
+	private function videoDisplay():Void
+	{
+		if ((__renderable || forceRendering) && texturePlanes != null)
 		{
-			events[15] = false;
+			if (texture != null || (bitmapData != null && bitmapData.image != null))
+			{
+				MainLoop.runInMainThread(function():Void
+				{
+					textureMutex.acquire();
 
-			@:privateAccess
-			if (bitmapData == null
-				|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
-				|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
+					final texturePlanesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(texturePlanes).toUnmanagedArray(textureWidth * textureHeight * 4));
+
+					if (texture != null)
+						texture.uploadFromTypedArray(UInt8Array.fromBytes(texturePlanesBytes));
+					else if (bitmapData != null && bitmapData.image != null)
+						bitmapData.setPixels(bitmapData.rect, texturePlanesBytes);
+
+					if (__renderable)
+						__setRenderDirty();
+
+					textureMutex.release();
+				});
+			}
+		}
+	}
+
+	@:noCompletion
+	@:unreflective
+	private function videoFormatSetup(chroma:cpp.CastCharStar, width:cpp.RawPointer<cpp.UInt32>, height:cpp.RawPointer<cpp.UInt32>,
+			pitches:cpp.RawPointer<cpp.UInt32>, lines:cpp.RawPointer<cpp.UInt32>):Int
+	{
+		cpp.Stdlib.nativeMemcpy(cast chroma, cast cpp.CastCharStar.fromString("RV32"), 4);
+
+		final originalWidth:cpp.UInt8 = width[0];
+		final originalHeight:cpp.UInt8 = height[0];
+
+		textureMutex.acquire();
+
+		if (mediaPlayer != null
+			&& LibVLC.video_get_size(mediaPlayer, 0, cpp.RawPointer.addressOf(textureWidth), cpp.RawPointer.addressOf(textureHeight)) == 0)
+		{
+			width[0] = textureWidth;
+			height[0] = textureHeight;
+
+			if (texturePlanes == null || (originalWidth != textureWidth || originalHeight != textureHeight))
+			{
+				if (texturePlanes != null)
+					untyped __cpp__('delete[] {0}', texturePlanes);
+
+				texturePlanes = untyped __cpp__('new unsigned char[{0}]', textureWidth * textureHeight * 4);
+			}
+		}
+		else
+		{
+			textureWidth = originalWidth;
+			textureHeight = originalHeight;
+
+			if (texturePlanes != null)
+				untyped __cpp__('delete[] {0}', texturePlanes);
+
+			texturePlanes = untyped __cpp__('new unsigned char[{0}]', textureWidth * textureHeight * 4);
+		}
+
+		textureMutex.release();
+
+		@:privateAccess
+		if (bitmapData == null
+			|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
+			|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
+		{
+			MainLoop.runInMainThread(function():Void
 			{
 				textureMutex.acquire();
-
+	
 				if (bitmapData != null)
 					bitmapData.dispose();
 
@@ -1216,38 +1249,20 @@ class Video extends Bitmap implements IVideo
 					bitmapData = new BitmapData(textureWidth, textureHeight, true, 0);
 				}
 
-				textureMutex.release();
-
 				onFormatSetup.dispatch();
-			}
-		}
-
-		if (events[16])
-		{
-			events[16] = false;
-
-			if ((__renderable || forceRendering) && texturePlanes != null)
-			{
-				textureMutex.acquire();
-
-				final texturePlanesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(texturePlanes).toUnmanagedArray(textureWidth * textureHeight * 4));
-
-				if (texture != null)
-					texture.uploadFromTypedArray(UInt8Array.fromBytes(texturePlanesBytes));
-				else if (bitmapData != null && bitmapData.image != null)
-					bitmapData.setPixels(bitmapData.rect, texturePlanesBytes);
-
-				if (__renderable)
-					__setRenderDirty();
 
 				textureMutex.release();
-			}
+			});
 		}
+
+		pitches[0] = textureWidth * 4;
+		lines[0] = textureHeight;
+
+		return 1;
 	}
 
 	@:noCompletion
 	@:unreflective
-	@:void
 	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32, pts:cpp.Int64):Void
 	{
 		// TODO: Audio synchronisation in case of a sudden desync using pts.
@@ -1284,7 +1299,6 @@ class Video extends Bitmap implements IVideo
 
 	@:noCompletion
 	@:unreflective
-	@:void
 	private function audioPause(pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
@@ -1302,7 +1316,6 @@ class Video extends Bitmap implements IVideo
 
 	@:noCompletion
 	@:unreflective
-	@:void
 	private function audioResume(pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
@@ -1320,7 +1333,30 @@ class Video extends Bitmap implements IVideo
 
 	@:noCompletion
 	@:unreflective
-	@:void
+	private function audioSetup(format:cpp.CastCharStar, rate:cpp.RawPointer<cpp.UInt32>, channels:cpp.RawPointer<cpp.UInt32>):Int
+	{
+		#if (HXVLC_OPENAL && lime_openal)
+		cpp.Stdlib.nativeMemcpy(cast format, cast cpp.CastCharStar.fromString("S16N"), 4);
+
+		alMutex.acquire();
+
+		alSampleRate = rate[0];
+
+		final originalChannels:cpp.UInt32 = channels[0];
+
+		if (originalChannels > 2)
+			channels[0] = 2;
+
+		alChannels = channels[0];
+
+		alMutex.release();
+		#end
+
+		return 0;
+	}
+
+	@:noCompletion
+	@:unreflective
 	private function audioSetVolume(volume:Single, mute:Bool):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
