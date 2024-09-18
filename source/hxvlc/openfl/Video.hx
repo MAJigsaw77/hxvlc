@@ -246,7 +246,6 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 
 	hx::SetTopOfStack((int *)0, true);
 }')
-@:keep
 class Video extends Bitmap implements IVideo
 {
 	/**
@@ -457,15 +456,19 @@ class Video extends Bitmap implements IVideo
 	 */
 	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
 
+	@:keep
 	@:noCompletion
 	private final events:Array<Bool> = [for (i in 0...15) false];
 
+	@:keep
 	@:noCompletion
 	private var mediaData:cpp.RawPointer<cpp.UInt8>;
 
+	@:keep
 	@:noCompletion
 	private var mediaOffset:cpp.UInt64 = 0;
 
+	@:keep
 	@:noCompletion
 	private var mediaSize:cpp.UInt64 = 0;
 
@@ -1133,245 +1136,6 @@ class Video extends Bitmap implements IVideo
 	}
 
 	@:noCompletion
-	@:unreflective
-	private function videoLock(planes:cpp.RawPointer<cpp.RawPointer<cpp.Void>>):cpp.RawPointer<cpp.Void>
-	{
-		textureMutex.acquire();
-
-		if (texturePlanes != null)
-			planes[0] = untyped texturePlanes;
-
-		return null;
-	}
-
-	@:noCompletion
-	@:unreflective
-	private function videoUnlock(planes:cpp.VoidStarConstStar):Void
-	{
-		textureMutex.release();
-	}
-
-	@:noCompletion
-	@:unreflective
-	private function videoDisplay():Void
-	{
-		if ((__renderable || forceRendering) && texturePlanes != null)
-		{
-			if (texture != null || (bitmapData != null && bitmapData.image != null))
-			{
-				MainLoop.runInMainThread(function():Void
-				{
-					textureMutex.acquire();
-
-					final texturePlanesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(texturePlanes).toUnmanagedArray(textureWidth * textureHeight * 4));
-
-					if (texture != null)
-						texture.uploadFromTypedArray(UInt8Array.fromBytes(texturePlanesBytes));
-					else if (bitmapData != null && bitmapData.image != null)
-						bitmapData.setPixels(bitmapData.rect, texturePlanesBytes);
-
-					if (__renderable)
-						__setRenderDirty();
-
-					textureMutex.release();
-				});
-			}
-		}
-	}
-
-	@:noCompletion
-	@:unreflective
-	private function videoFormatSetup(chroma:cpp.CastCharStar, width:cpp.RawPointer<cpp.UInt32>, height:cpp.RawPointer<cpp.UInt32>,
-			pitches:cpp.RawPointer<cpp.UInt32>, lines:cpp.RawPointer<cpp.UInt32>):Int
-	{
-		cpp.Stdlib.nativeMemcpy(cast chroma, cast cpp.CastCharStar.fromString("RV32"), 4);
-
-		final originalWidth:cpp.UInt8 = width[0];
-		final originalHeight:cpp.UInt8 = height[0];
-
-		textureMutex.acquire();
-
-		if (mediaPlayer != null
-			&& LibVLC.video_get_size(mediaPlayer, 0, cpp.RawPointer.addressOf(textureWidth), cpp.RawPointer.addressOf(textureHeight)) == 0)
-		{
-			width[0] = textureWidth;
-			height[0] = textureHeight;
-
-			if (texturePlanes == null || (originalWidth != textureWidth || originalHeight != textureHeight))
-			{
-				if (texturePlanes != null)
-					untyped __cpp__('delete[] {0}', texturePlanes);
-
-				texturePlanes = untyped __cpp__('new unsigned char[{0}]', textureWidth * textureHeight * 4);
-			}
-		}
-		else
-		{
-			textureWidth = originalWidth;
-			textureHeight = originalHeight;
-
-			if (texturePlanes != null)
-				untyped __cpp__('delete[] {0}', texturePlanes);
-
-			texturePlanes = untyped __cpp__('new unsigned char[{0}]', textureWidth * textureHeight * 4);
-		}
-
-		textureMutex.release();
-
-		@:privateAccess
-		if (bitmapData == null
-			|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
-			|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
-		{
-			MainLoop.runInMainThread(function():Void
-			{
-				textureMutex.acquire();
-	
-				if (bitmapData != null)
-					bitmapData.dispose();
-
-				if (texture != null)
-				{
-					texture.dispose();
-					texture = null;
-				}
-
-				if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
-				{
-					texture = Lib.current.stage.context3D.createRectangleTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, true);
-					bitmapData = BitmapData.fromTexture(texture);
-				}
-				else
-				{
-					if (useTexture)
-						Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
-
-					bitmapData = new BitmapData(textureWidth, textureHeight, true, 0);
-				}
-
-				onFormatSetup.dispatch();
-
-				textureMutex.release();
-			});
-		}
-
-		pitches[0] = textureWidth * 4;
-		lines[0] = textureHeight;
-
-		return 1;
-	}
-
-	@:noCompletion
-	@:unreflective
-	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32, pts:cpp.Int64):Void
-	{
-		// TODO: Audio synchronisation in case of a sudden desync using pts.
-		#if (HXVLC_OPENAL && lime_openal)
-		if (alAudioContext != null && alSource != null && alBuffers != null)
-		{
-			alMutex.acquire();
-
-			final processedBuffers:Int = alAudioContext.getSourcei(alSource, AL.BUFFERS_PROCESSED);
-
-			if (processedBuffers > 0)
-			{
-				for (alBuffer in alAudioContext.sourceUnqueueBuffers(alSource, processedBuffers))
-					alBuffers.push(alBuffer);
-			}
-
-			if (alBuffers.length > 0)
-			{
-				final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(samples).toUnmanagedArray(count));
-
-				final alBuffer:ALBuffer = alBuffers.shift();
-				alAudioContext.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16, UInt8Array.fromBytes(samplesBytes),
-					samplesBytes.length * 2 * alChannels, alSampleRate);
-				alAudioContext.sourceQueueBuffer(alSource, alBuffer);
-
-				if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
-					alAudioContext.sourcePlay(alSource);
-			}
-
-			alMutex.release();
-		}
-		#end
-	}
-
-	@:noCompletion
-	@:unreflective
-	private function audioPause(pts:cpp.Int64):Void
-	{
-		#if (HXVLC_OPENAL && lime_openal)
-		if (alAudioContext != null && alSource != null)
-		{
-			alMutex.acquire();
-
-			if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) == AL.PLAYING)
-				alAudioContext.sourcePause(alSource);
-
-			alMutex.release();
-		}
-		#end
-	}
-
-	@:noCompletion
-	@:unreflective
-	private function audioResume(pts:cpp.Int64):Void
-	{
-		#if (HXVLC_OPENAL && lime_openal)
-		if (alAudioContext != null && alSource != null)
-		{
-			alMutex.acquire();
-
-			if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
-				alAudioContext.sourcePlay(alSource);
-
-			alMutex.release();
-		}
-		#end
-	}
-
-	@:noCompletion
-	@:unreflective
-	private function audioSetup(format:cpp.CastCharStar, rate:cpp.RawPointer<cpp.UInt32>, channels:cpp.RawPointer<cpp.UInt32>):Int
-	{
-		#if (HXVLC_OPENAL && lime_openal)
-		cpp.Stdlib.nativeMemcpy(cast format, cast cpp.CastCharStar.fromString("S16N"), 4);
-
-		alMutex.acquire();
-
-		alSampleRate = rate[0];
-
-		final originalChannels:cpp.UInt32 = channels[0];
-
-		if (originalChannels > 2)
-			channels[0] = 2;
-
-		alChannels = channels[0];
-
-		alMutex.release();
-		#end
-
-		return 0;
-	}
-
-	@:noCompletion
-	@:unreflective
-	private function audioSetVolume(volume:Single, mute:Bool):Void
-	{
-		#if (HXVLC_OPENAL && lime_openal)
-		if (alAudioContext != null && alSource != null)
-		{
-			alMutex.acquire();
-
-			alAudioContext.sourcef(alSource, AL.GAIN, mute ? 0 : volume);
-
-			alMutex.release();
-		}
-		#end
-	}
-
-	@:noCompletion
 	private function get_mrl():String
 	{
 		if (mediaPlayer != null)
@@ -1670,6 +1434,269 @@ class Video extends Bitmap implements IVideo
 		__setRenderDirty();
 
 		return __bitmapData;
+	}
+
+// These functions act as Haxe interop methods that are called from the C++ glue code.
+// They handle critical operations for video and audio playback, including locking/unlocking
+// textures, managing memory for video planes, synchronizing with GPU or CPU-based rendering,
+// and interfacing with the audio subsystem for playback, pause, and volume control.
+// 
+// The functions interact with raw pointers from the C++ layer, handling tasks such as 
+// memory allocation, pointer manipulation, and format setup for video and audio streams. 
+// Mutexes are used to ensure thread-safe access to shared resources like textures and audio buffers.
+// The functions also coordinate between the Haxe main loop and the underlying C++ systems,
+// ensuring operations that need to run on the main thread (e.g., rendering) are properly synchronized.
+//
+// These interop methods allow the Haxe application to integrate with native libraries 
+// such as libVLC and OpenAL, providing efficient multimedia handling and playback control 
+// in the context of cross-platform Haxe applications.
+	
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private function videoLock(planes:cpp.RawPointer<cpp.RawPointer<cpp.Void>>):cpp.RawPointer<cpp.Void>
+	{
+		textureMutex.acquire();
+
+		if (texturePlanes != null)
+			planes[0] = untyped texturePlanes;
+
+		return null;
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private function videoUnlock(planes:cpp.VoidStarConstStar):Void
+	{
+		textureMutex.release();
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private function videoDisplay():Void
+	{
+		if ((__renderable || forceRendering) && texturePlanes != null)
+		{
+			if (texture != null || (bitmapData != null && bitmapData.image != null))
+			{
+				MainLoop.runInMainThread(function():Void
+				{
+					textureMutex.acquire();
+
+					final texturePlanesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(texturePlanes).toUnmanagedArray(textureWidth * textureHeight * 4));
+
+					if (texture != null)
+						texture.uploadFromTypedArray(UInt8Array.fromBytes(texturePlanesBytes));
+					else if (bitmapData != null && bitmapData.image != null)
+						bitmapData.setPixels(bitmapData.rect, texturePlanesBytes);
+
+					if (__renderable)
+						__setRenderDirty();
+
+					textureMutex.release();
+				});
+			}
+		}
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private function videoFormatSetup(chroma:cpp.CastCharStar, width:cpp.RawPointer<cpp.UInt32>, height:cpp.RawPointer<cpp.UInt32>,
+			pitches:cpp.RawPointer<cpp.UInt32>, lines:cpp.RawPointer<cpp.UInt32>):Int
+	{
+		cpp.Stdlib.nativeMemcpy(cast chroma, cast cpp.CastCharStar.fromString("RV32"), 4);
+
+		final originalWidth:cpp.UInt8 = width[0];
+		final originalHeight:cpp.UInt8 = height[0];
+
+		textureMutex.acquire();
+
+		if (mediaPlayer != null
+			&& LibVLC.video_get_size(mediaPlayer, 0, cpp.RawPointer.addressOf(textureWidth), cpp.RawPointer.addressOf(textureHeight)) == 0)
+		{
+			width[0] = textureWidth;
+			height[0] = textureHeight;
+
+			if (texturePlanes == null || (originalWidth != textureWidth || originalHeight != textureHeight))
+			{
+				if (texturePlanes != null)
+					untyped __cpp__('delete[] {0}', texturePlanes);
+
+				texturePlanes = untyped __cpp__('new unsigned char[{0}]', textureWidth * textureHeight * 4);
+			}
+		}
+		else
+		{
+			textureWidth = originalWidth;
+			textureHeight = originalHeight;
+
+			if (texturePlanes != null)
+				untyped __cpp__('delete[] {0}', texturePlanes);
+
+			texturePlanes = untyped __cpp__('new unsigned char[{0}]', textureWidth * textureHeight * 4);
+		}
+
+		textureMutex.release();
+
+		@:privateAccess
+		if (bitmapData == null
+			|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
+			|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
+		{
+			MainLoop.runInMainThread(function():Void
+			{
+				textureMutex.acquire();
+	
+				if (bitmapData != null)
+					bitmapData.dispose();
+
+				if (texture != null)
+				{
+					texture.dispose();
+					texture = null;
+				}
+
+				if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
+				{
+					texture = Lib.current.stage.context3D.createRectangleTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, true);
+					bitmapData = BitmapData.fromTexture(texture);
+				}
+				else
+				{
+					if (useTexture)
+						Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
+
+					bitmapData = new BitmapData(textureWidth, textureHeight, true, 0);
+				}
+
+				onFormatSetup.dispatch();
+
+				textureMutex.release();
+			});
+		}
+
+		pitches[0] = textureWidth * 4;
+		lines[0] = textureHeight;
+
+		return 1;
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32, pts:cpp.Int64):Void
+	{
+		// TODO: Audio synchronisation in case of a sudden desync using pts.
+		#if (HXVLC_OPENAL && lime_openal)
+		if (alAudioContext != null && alSource != null && alBuffers != null)
+		{
+			alMutex.acquire();
+
+			final processedBuffers:Int = alAudioContext.getSourcei(alSource, AL.BUFFERS_PROCESSED);
+
+			if (processedBuffers > 0)
+			{
+				for (alBuffer in alAudioContext.sourceUnqueueBuffers(alSource, processedBuffers))
+					alBuffers.push(alBuffer);
+			}
+
+			if (alBuffers.length > 0)
+			{
+				final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(samples).toUnmanagedArray(count));
+
+				final alBuffer:ALBuffer = alBuffers.shift();
+				alAudioContext.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16, UInt8Array.fromBytes(samplesBytes),
+					samplesBytes.length * 2 * alChannels, alSampleRate);
+				alAudioContext.sourceQueueBuffer(alSource, alBuffer);
+
+				if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
+					alAudioContext.sourcePlay(alSource);
+			}
+
+			alMutex.release();
+		}
+		#end
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private function audioPause(pts:cpp.Int64):Void
+	{
+		#if (HXVLC_OPENAL && lime_openal)
+		if (alAudioContext != null && alSource != null)
+		{
+			alMutex.acquire();
+
+			if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) == AL.PLAYING)
+				alAudioContext.sourcePause(alSource);
+
+			alMutex.release();
+		}
+		#end
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private function audioResume(pts:cpp.Int64):Void
+	{
+		#if (HXVLC_OPENAL && lime_openal)
+		if (alAudioContext != null && alSource != null)
+		{
+			alMutex.acquire();
+
+			if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
+				alAudioContext.sourcePlay(alSource);
+
+			alMutex.release();
+		}
+		#end
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private function audioSetup(format:cpp.CastCharStar, rate:cpp.RawPointer<cpp.UInt32>, channels:cpp.RawPointer<cpp.UInt32>):Int
+	{
+		#if (HXVLC_OPENAL && lime_openal)
+		cpp.Stdlib.nativeMemcpy(cast format, cast cpp.CastCharStar.fromString("S16N"), 4);
+
+		alMutex.acquire();
+
+		alSampleRate = rate[0];
+
+		final originalChannels:cpp.UInt32 = channels[0];
+
+		if (originalChannels > 2)
+			channels[0] = 2;
+
+		alChannels = channels[0];
+
+		alMutex.release();
+		#end
+
+		return 0;
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private function audioSetVolume(volume:Single, mute:Bool):Void
+	{
+		#if (HXVLC_OPENAL && lime_openal)
+		if (alAudioContext != null && alSource != null)
+		{
+			alMutex.acquire();
+
+			alAudioContext.sourcef(alSource, AL.GAIN, mute ? 0 : volume);
+
+			alMutex.release();
+		}
+		#end
 	}
 }
 
