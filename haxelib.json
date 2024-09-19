@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "1.8.4",
-	"releasenote": "Additional mutex fixes.",
+	"version": "1.8.5",
+	"releasenote": "Small mutex fixes.",
 	"contributors": [
 		"MAJigsaw77"
 	],
