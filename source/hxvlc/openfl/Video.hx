@@ -481,31 +481,32 @@ class Video extends Bitmap
 	private final eventsMutex:Mutex = new Mutex();
 
 	@:noCompletion
-	private final events:Array<Bool> = [for (i in 0...15) false];
-
-	@:keep
-	@:noCompletion
 	private final mediaMutex:Mutex = new Mutex();
 
-	@:keep
+	#if (HXVLC_OPENAL && lime_openal)
+	@:noCompletion
+	private final alMutex:Mutex = new Mutex();
+	#end
+
+	@:noCompletion
+	private final textureMutex:Mutex = new Mutex();
+
+	@:noCompletion
+	private final events:Array<Bool> = [for (i in 0...15) false];
+
 	@:noCompletion
 	private var mediaData:cpp.RawPointer<cpp.UInt8>;
 
-	@:keep
-	@:noCompletion
-	private var mediaOffset:cpp.UInt64 = 0;
-
-	@:keep
 	@:noCompletion
 	private var mediaSize:cpp.UInt64 = 0;
+
+	@:noCompletion
+	private var mediaOffset:cpp.UInt64 = 0;
 
 	@:noCompletion
 	private var mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>;
 
 	#if (HXVLC_OPENAL && lime_openal)
-	@:noCompletion
-	private final alMutex:Mutex = new Mutex();
-
 	@:noCompletion
 	private var alAudioContext:OpenALAudioContext;
 
@@ -521,9 +522,6 @@ class Video extends Bitmap
 	@:noCompletion
 	private var alChannels:cpp.UInt32 = 0;
 	#end
-
-	@:noCompletion
-	private final textureMutex:Mutex = new Mutex();
 
 	@:noCompletion
 	private var texture:RectangleTexture;
@@ -592,12 +590,17 @@ class Video extends Bitmap
 
 				if (data.length > 0)
 				{
+					mediaMutex.acquire();
+
 					mediaData = untyped __cpp__('new unsigned char[{0}]', data.length);
 
 					cpp.Stdlib.nativeMemcpy(cast mediaData, cast cpp.Pointer.ofArray(data).constRaw, data.length);
 
-					mediaOffset = 0;
 					mediaSize = data.length;
+					mediaOffset = 0;
+
+					mediaMutex.release();
+
 					mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
 						untyped __cpp__('media_seek'), null, untyped __cpp__('this'));
 				}
