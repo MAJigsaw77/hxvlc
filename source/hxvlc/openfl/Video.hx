@@ -42,9 +42,12 @@ using StringTools;
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
-	(*datap) = opaque;
+	self->mediaMutex->acquire();
 
+	(*datap) = opaque;
 	(*sizep) = self->mediaSize;
+
+	self->mediaMutex->release();
 
 	hx::SetTopOfStack((int *)0, true);
 
@@ -57,8 +60,12 @@ static ssize_t media_read(void *opaque, unsigned char *buf, size_t len)
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
+	self->mediaMutex->acquire();
+
 	if (self->mediaOffset >= self->mediaSize)
 	{
+		self->mediaMutex->release();
+
 		hx::SetTopOfStack((int *)0, true);
 
 		return 0;
@@ -68,6 +75,8 @@ static ssize_t media_read(void *opaque, unsigned char *buf, size_t len)
 
 	if (self->mediaData == NULL || (self->mediaOffset > self->mediaSize - toRead))
 	{
+		self->mediaMutex->release();
+
 		hx::SetTopOfStack((int *)0, true);
 
 		return -1;
@@ -76,6 +85,8 @@ static ssize_t media_read(void *opaque, unsigned char *buf, size_t len)
 	memcpy(buf, &self->mediaData[self->mediaOffset], (size_t) toRead);
 
 	self->mediaOffset += toRead;
+
+	self->mediaMutex->release();
 
 	hx::SetTopOfStack((int *)0, true);
 
@@ -88,14 +99,20 @@ static int media_seek(void *opaque, uint64_t offset)
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
 
+	self->mediaMutex->acquire();
+
 	if (offset > self->mediaSize)
 	{
+		self->mediaMutex->release();
+
 		hx::SetTopOfStack((int *)0, true);
 
 		return -1;
 	}
 
 	self->mediaOffset = offset;
+
+	self->mediaMutex->release();
 
 	hx::SetTopOfStack((int *)0, true);
 
@@ -195,6 +212,8 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 
 	Video_obj *self = reinterpret_cast<Video_obj *>(p_data);
 
+	self->eventsMutex->acquire();
+
 	switch (p_event->type)
 	{
 		case libvlc_MediaPlayerOpening:
@@ -243,6 +262,8 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 			self->events[14] = true;
 			break;
 	}
+
+	self->eventsMutex->release();
 
 	hx::SetTopOfStack((int *)0, true);
 }')
@@ -456,9 +477,15 @@ class Video extends Bitmap
 	 */
 	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
 
-	@:keep
+	@:noCompletion
+	private final eventsMutex:Mutex = new Mutex();
+
 	@:noCompletion
 	private final events:Array<Bool> = [for (i in 0...15) false];
+
+	@:keep
+	@:noCompletion
+	private final mediaMutex:Mutex = new Mutex();
 
 	@:keep
 	@:noCompletion
@@ -1015,8 +1042,13 @@ class Video extends Bitmap
 	@:noCompletion
 	private function update(deltaTime:Int):Void
 	{
+		eventsMutex.acquire();
+
 		if (!events.contains(true))
+		{
+			eventsMutex.release();
 			return;
+		}
 
 		if (events[0])
 		{
@@ -1133,6 +1165,8 @@ class Video extends Bitmap
 					onMediaParsedChanged.dispatch(LibVLC.media_get_parsed_status(currentMediaItem));
 			}
 		}
+
+		eventsMutex.release();
 	}
 
 	@:noCompletion
