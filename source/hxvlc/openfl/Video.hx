@@ -478,15 +478,15 @@ class Video extends Bitmap
 	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	@:noCompletion
-	private final eventsMutex:Mutex = new Mutex();
-
-	@:noCompletion
 	private final mediaMutex:Mutex = new Mutex();
 
 	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
 	private final alMutex:Mutex = new Mutex();
 	#end
+
+	@:noCompletion
+	private final eventsMutex:Mutex = new Mutex();
 
 	@:noCompletion
 	private final textureMutex:Mutex = new Mutex();
@@ -506,6 +506,18 @@ class Video extends Bitmap
 	@:noCompletion
 	private var mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>;
 
+	@:noCompletion
+	private var texture:RectangleTexture;
+
+	@:noCompletion
+	private var textureWidth:cpp.UInt32 = 0;
+
+	@:noCompletion
+	private var textureHeight:cpp.UInt32 = 0;
+
+	@:noCompletion
+	private var texturePlanes:cpp.RawPointer<cpp.UInt8>;
+
 	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
 	private var alAudioContext:OpenALAudioContext;
@@ -522,18 +534,6 @@ class Video extends Bitmap
 	@:noCompletion
 	private var alChannels:cpp.UInt32 = 0;
 	#end
-
-	@:noCompletion
-	private var texture:RectangleTexture;
-
-	@:noCompletion
-	private var textureWidth:cpp.UInt32 = 0;
-
-	@:noCompletion
-	private var textureHeight:cpp.UInt32 = 0;
-
-	@:noCompletion
-	private var texturePlanes:cpp.RawPointer<cpp.UInt8>;
 
 	/**
 	 * Initializes a Video object.
@@ -600,6 +600,8 @@ class Video extends Bitmap
 					mediaOffset = 0;
 
 					mediaMutex.release();
+
+					data.splice(0, data.length);
 
 					mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
 						untyped __cpp__('media_seek'), null, untyped __cpp__('this'));
@@ -690,8 +692,8 @@ class Video extends Bitmap
 
 							alAudioContext = AudioManager.context.openal;
 							alBuffers = alAudioContext.genBuffers(128);
-
 							alSource = alAudioContext.createSource();
+
 							alAudioContext.sourcef(alSource, AL.GAIN, 1);
 							alAudioContext.source3f(alSource, AL.POSITION, 0, 0, 0);
 							alAudioContext.sourcef(alSource, AL.PITCH, 1);
@@ -984,14 +986,17 @@ class Video extends Bitmap
 		if (Lib.application != null && Lib.application.onUpdate.has(update))
 			Lib.application.onUpdate.remove(update);
 
+		mediaMutex.acquire();
+		
 		if (mediaData != null)
 		{
 			untyped __cpp__('delete[] {0}', mediaData);
 			mediaData = null;
 		}
 
-		mediaOffset = 0;
-		mediaSize = 0;
+		mediaSize = mediaOffset = 0;
+
+		mediaMutex.release();
 
 		textureMutex.acquire();
 
