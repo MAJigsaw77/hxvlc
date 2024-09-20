@@ -10,77 +10,77 @@ import hxvlc.externs.Types;
  */
 class Stats
 {
-	/** 
+	/**
 	 * Number of bytes read from the input.
 	 */
 	public var i_read_bytes:Int;
 
-	/** 
+	/**
 	 * Bitrate of the input in bits per second.
 	 */
 	public var f_input_bitrate:Single;
 
-	/** 
+	/**
 	 * Number of bytes read by the demuxer.
 	 */
 	public var i_demux_read_bytes:Int;
 
-	/** 
+	/**
 	 * Bitrate of the demuxer in bits per second.
 	 */
 	public var f_demux_bitrate:Single;
 
-	/** 
+	/**
 	 * Number of corrupted packets encountered by the demuxer.
 	 */
 	public var i_demux_corrupted:Int;
 
-	/** 
+	/**
 	 * Number of discontinuities encountered by the demuxer.
 	 */
 	public var i_demux_discontinuity:Int;
 
-	/** 
+	/**
 	 * Number of video frames decoded.
 	 */
 	public var i_decoded_video:Int;
 
-	/** 
+	/**
 	 * Number of audio frames decoded.
 	 */
 	public var i_decoded_audio:Int;
 
-	/** 
+	/**
 	 * Number of pictures displayed.
 	 */
 	public var i_displayed_pictures:Int;
 
-	/** 
+	/**
 	 * Number of pictures lost.
 	 */
 	public var i_lost_pictures:Int;
 
-	/** 
+	/**
 	 * Number of audio buffers played.
 	 */
 	public var i_played_abuffers:Int;
 
-	/** 
+	/**
 	 * Number of audio buffers lost.
 	 */
 	public var i_lost_abuffers:Int;
 
-	/** 
+	/**
 	 * Number of packets sent by the stream output.
 	 */
 	public var i_sent_packets:Int;
 
-	/** 
+	/**
 	 * Number of bytes sent by the stream output.
 	 */
 	public var i_sent_bytes:Int;
 
-	/** 
+	/**
 	 * Bitrate of the stream output in bits per second.
 	 */
 	public var f_send_bitrate:Single;

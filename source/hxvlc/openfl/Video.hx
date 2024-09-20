@@ -82,7 +82,7 @@ static ssize_t media_read(void *opaque, unsigned char *buf, size_t len)
 		return -1;
 	}
 
-	memcpy(buf, &self->mediaData[self->mediaOffset], (size_t) toRead);
+	memcpy(buf, &self->mediaData[self->mediaOffset], (size_t)toRead);
 
 	self->mediaOffset += toRead;
 
@@ -90,7 +90,7 @@ static ssize_t media_read(void *opaque, unsigned char *buf, size_t len)
 
 	hx::SetTopOfStack((int *)0, true);
 
-	return (ssize_t) toRead;
+	return (ssize_t)toRead;
 }
 
 static int media_seek(void *opaque, uint64_t offset)
@@ -163,7 +163,7 @@ static void audio_play(void *data, const void *samples, unsigned count, int64_t 
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(data)->audioPlay((unsigned char *) samples, count, pts);
+	reinterpret_cast<Video_obj *>(data)->audioPlay((unsigned char *)samples, count, pts);
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -216,51 +216,51 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 
 	switch (p_event->type)
 	{
-		case libvlc_MediaPlayerOpening:
-			self->events[0] = true;
-			break;
-		case libvlc_MediaPlayerPlaying:
-			self->events[1] = true;
-			break;
-		case libvlc_MediaPlayerStopped:
-			self->events[2] = true;
-			break;
-		case libvlc_MediaPlayerPaused:
-			self->events[3] = true;
-			break;
-		case libvlc_MediaPlayerEndReached:
-			self->events[4] = true;
-			break;
-		case libvlc_MediaPlayerEncounteredError:
-			self->events[5] = true;
-			break;
-		case libvlc_MediaPlayerMediaChanged:
-			self->events[6] = true;
-			break;
-		case libvlc_MediaPlayerCorked:
-			self->events[7] = true;
-			break;
-		case libvlc_MediaPlayerUncorked:
-			self->events[8] = true;
-			break;
-		case libvlc_MediaPlayerTimeChanged:
-			self->events[9] = true;
-			break;
-		case libvlc_MediaPlayerPositionChanged:
-			self->events[10] = true;
-			break;
-		case libvlc_MediaPlayerLengthChanged:
-			self->events[11] = true;
-			break;
-		case libvlc_MediaPlayerChapterChanged:
-			self->events[12] = true;
-			break;
-		case libvlc_MediaMetaChanged:
-			self->events[13] = true;
-			break;
-		case libvlc_MediaParsedChanged:
-			self->events[14] = true;
-			break;
+	case libvlc_MediaPlayerOpening:
+		self->events[0] = true;
+		break;
+	case libvlc_MediaPlayerPlaying:
+		self->events[1] = true;
+		break;
+	case libvlc_MediaPlayerStopped:
+		self->events[2] = true;
+		break;
+	case libvlc_MediaPlayerPaused:
+		self->events[3] = true;
+		break;
+	case libvlc_MediaPlayerEndReached:
+		self->events[4] = true;
+		break;
+	case libvlc_MediaPlayerEncounteredError:
+		self->events[5] = true;
+		break;
+	case libvlc_MediaPlayerMediaChanged:
+		self->events[6] = true;
+		break;
+	case libvlc_MediaPlayerCorked:
+		self->events[7] = true;
+		break;
+	case libvlc_MediaPlayerUncorked:
+		self->events[8] = true;
+		break;
+	case libvlc_MediaPlayerTimeChanged:
+		self->events[9] = true;
+		break;
+	case libvlc_MediaPlayerPositionChanged:
+		self->events[10] = true;
+		break;
+	case libvlc_MediaPlayerLengthChanged:
+		self->events[11] = true;
+		break;
+	case libvlc_MediaPlayerChapterChanged:
+		self->events[12] = true;
+		break;
+	case libvlc_MediaMetaChanged:
+		self->events[13] = true;
+		break;
+	case libvlc_MediaParsedChanged:
+		self->events[14] = true;
+		break;
 	}
 
 	self->eventsMutex->release();
@@ -655,8 +655,7 @@ class Video extends Bitmap
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerCorked)');
 
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'),
-						untyped __cpp__('this')) != 0)
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerUncorked)');
 
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('event_manager_callbacks'),
@@ -987,7 +986,7 @@ class Video extends Bitmap
 			Lib.application.onUpdate.remove(update);
 
 		mediaMutex.acquire();
-		
+
 		if (mediaData != null)
 		{
 			untyped __cpp__('delete[] {0}', mediaData);
@@ -1482,13 +1481,13 @@ class Video extends Bitmap
 	// They handle critical operations for video and audio playback, including locking/unlocking
 	// textures, managing memory for video planes, synchronizing with GPU or CPU-based rendering,
 	// and interfacing with the audio subsystem for playback, pause, and volume control.
-	// 
-	// The functions interact with raw pointers from the C++ layer, handling tasks such as 
-	// memory allocation, pointer manipulation, and format setup for video and audio streams. 
+	//
+	// The functions interact with raw pointers from the C++ layer, handling tasks such as
+	// memory allocation, pointer manipulation, and format setup for video and audio streams.
 	// Mutexes are used to ensure thread-safe access to shared resources like textures and audio buffers.
 	// The functions also coordinate between the Haxe main loop and the underlying C++ systems,
 	// ensuring operations that need to run on the main thread (e.g., rendering) are properly synchronized.
-	
+
 	@:keep
 	@:noCompletion
 	@:unreflective
@@ -1578,7 +1577,6 @@ class Video extends Bitmap
 		}
 
 		textureMutex.release();
-
 		@:privateAccess
 		if (bitmapData == null
 			|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
@@ -1587,7 +1585,7 @@ class Video extends Bitmap
 			MainLoop.runInMainThread(function():Void
 			{
 				textureMutex.acquire();
-	
+
 				if (bitmapData != null)
 					bitmapData.dispose();
 
