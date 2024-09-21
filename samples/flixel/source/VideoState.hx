@@ -45,7 +45,7 @@ class VideoState extends FlxState
 			#if mobile
 			final file:String = FileSystem.readDirectory('./')[0];
 			#else
-			final file:String = FileSystem.readDirectory('videos')[0];
+			final file:String = haxe.io.Path.join(['videos', FileSystem.readDirectory('videos')[0]]);
 			#end
 
 			if (file != null && file.length > 0)
