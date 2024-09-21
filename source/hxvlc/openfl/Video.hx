@@ -144,7 +144,7 @@ static void video_display(void *opaque, void *picture)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(opaque)->videoDisplay();
+	reinterpret_cast<Video_obj *>(opaque)->videoDisplay(picture);
 
 	hx::SetTopOfStack((int *)0, true);
 }
@@ -1532,7 +1532,7 @@ class Video extends Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function videoDisplay():Void
+	private function videoDisplay(picture:cpp.RawPointer<cpp.Void>):Void
 	{
 		if ((__renderable || forceRendering) && texturePlanes != null)
 		{
