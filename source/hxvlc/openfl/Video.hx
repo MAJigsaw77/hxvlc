@@ -519,6 +519,9 @@ class Video extends Bitmap
 	@:noCompletion
 	private var texturePlanes:cpp.RawPointer<cpp.UInt8>;
 
+	@:noCompletion
+	private var texturePlanesBuffer:BytesData;
+
 	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
 	private var alAudioContext:OpenALAudioContext;
@@ -534,6 +537,9 @@ class Video extends Bitmap
 
 	@:noCompletion
 	private var alChannels:cpp.UInt32 = 0;
+
+	@:noCompletion
+	private var alSamplesBuffer:BytesData;
 	#end
 
 	/**
@@ -656,7 +662,8 @@ class Video extends Bitmap
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerCorked)');
 
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'),
+						untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerUncorked)');
 
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('event_manager_callbacks'),
@@ -1020,6 +1027,12 @@ class Video extends Bitmap
 			texturePlanes = null;
 		}
 
+		if (texturePlanesBuffer != null)
+		{
+			texturePlanesBuffer.splice(0, texturePlanesBuffer.length);
+			texturePlanesBuffer = null;
+		}
+
 		textureMutex.release();
 
 		#if (HXVLC_OPENAL && lime_openal)
@@ -1041,6 +1054,12 @@ class Video extends Bitmap
 			}
 
 			alAudioContext = null;
+		}
+
+		if (alSamplesBuffer != null)
+		{
+			alSamplesBuffer.splice(0, alSamplesBuffer.length);
+			alSamplesBuffer = null;
 		}
 
 		alMutex.release();
@@ -1523,12 +1542,15 @@ class Video extends Bitmap
 				{
 					textureMutex.acquire();
 
-					final texturePlanesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(texturePlanes).toUnmanagedArray(textureWidth * textureHeight * 4));
+					if (texturePlanesBuffer == null)
+						texturePlanesBuffer = new BytesData();
+
+					cpp.NativeArray.setUnmanagedData(texturePlanesBuffer, cast texturePlanes, textureWidth * textureHeight * 4);
 
 					if (texture != null)
-						texture.uploadFromTypedArray(UInt8Array.fromBytes(texturePlanesBytes));
+						texture.uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanesBuffer)));
 					else if (bitmapData != null && bitmapData.image != null)
-						bitmapData.setPixels(bitmapData.rect, texturePlanesBytes);
+						bitmapData.setPixels(bitmapData.rect, Bytes.ofData(texturePlanesBuffer));
 
 					if (__renderable)
 						__setRenderDirty();
@@ -1642,11 +1664,15 @@ class Video extends Bitmap
 
 			if (alBuffers.length > 0)
 			{
-				final samplesBytes:Bytes = Bytes.ofData(cpp.Pointer.fromRaw(samples).toUnmanagedArray(count));
+				if (alSamplesBuffer == null)
+					alSamplesBuffer = new BytesData();
+
+				cpp.NativeArray.setUnmanagedData(alSamplesBuffer, cast samples, count);
 
 				final alBuffer:ALBuffer = alBuffers.shift();
-				alAudioContext.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16, UInt8Array.fromBytes(samplesBytes),
-					samplesBytes.length * 2 * alChannels, alSampleRate);
+
+				alAudioContext.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16,
+					UInt8Array.fromBytes(Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * 2 * alChannels, alSampleRate);
 				alAudioContext.sourceQueueBuffer(alSource, alBuffer);
 
 				if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
