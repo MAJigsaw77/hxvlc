@@ -15,6 +15,7 @@ import lime.utils.AssetLibrary;
 import lime.utils.Assets;
 import lime.utils.Log;
 import sys.io.File;
+import sys.thread.Mutex;
 import sys.FileSystem;
 
 using StringTools;
@@ -102,6 +103,9 @@ class Handle
 	public static var clock(get, never):Int64;
 
 	@:noCompletion
+	private static final instanceMutex:Mutex = new Mutex();
+
+	@:noCompletion
 	private static var logFile:cpp.FILE;
 
 	/**
@@ -144,6 +148,8 @@ class Handle
 	 */
 	public static function dispose():Void
 	{
+		instanceMutex.acquire();
+
 		if (instance != null)
 		{
 			LibVLC.release(instance);
@@ -157,13 +163,21 @@ class Handle
 			logFile = null;
 		}
 		#end
+
+		instanceMutex.release();
 	}
 
 	@:noCompletion
 	private static function initWithRetry(?options:Array<String>, ?resetCache:Bool = false):Bool
 	{
+		instanceMutex.acquire();
+
 		if (loading)
+		{
+			instanceMutex.release();
+
 			return false;
+		}
 
 		loading = true;
 
@@ -264,6 +278,8 @@ class Handle
 			{
 				loading = false;
 
+				instanceMutex.release();
+
 				#if (windows || macos)
 				if (!resetCache)
 				{
@@ -305,6 +321,8 @@ class Handle
 		}
 
 		loading = false;
+
+		instanceMutex.release();
 
 		return true;
 	}
