@@ -233,7 +233,7 @@ class Handle
 
 			final args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
 			#if windows
-			args.push_back("--aout=waveout");
+			args.push_back("--aout=directsound");
 			#end
 			#if (android || ios || macos)
 			args.push_back("--audio-resampler=soxr");
@@ -250,6 +250,7 @@ class Handle
 			args.push_back("--no-spu");
 			args.push_back("--no-sub-autodetect-file");
 			args.push_back("--no-video-title-show");
+			args.push_back("--no-volume-save");
 			args.push_back("--no-xlib");
 			#if (windows || macos)
 			args.push_back(!resetCache
