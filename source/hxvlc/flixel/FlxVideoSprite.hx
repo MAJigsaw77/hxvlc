@@ -128,24 +128,29 @@ class FlxVideoSprite extends FlxSprite
 				{
 					final assetPath:String = Assets.getPath(location);
 
-					if (Path.isAbsolute(assetPath))
-						return bitmap.load(assetPath, options);
-					else
+					if (assetPath != null)
 					{
-						try
+						if (FileSystem.exists(assetPath) && Path.isAbsolute(assetPath))
+							return bitmap.load(assetPath, options);
+						else if (!Path.isAbsolute(assetPath))
 						{
-							final assetBytes:Bytes = Assets.getBytes(location);
+							try
+							{
+								final assetBytes:Bytes = Assets.getBytes(location);
 
-							if (assetBytes != null)
-								return bitmap.load(assetBytes, options);
-						}
-						catch (e:Dynamic)
-						{
-							FlxG.log.error('Error loading asset bytes from location "$location": $e');
+								if (assetBytes != null)
+									return bitmap.load(assetBytes, options);
+							}
+							catch (e:Dynamic)
+							{
+								FlxG.log.error('Error loading asset bytes from location "$location": $e');
 
-							return false;
+								return false;
+							}
 						}
 					}
+
+					return false;
 				}
 				else
 				{
