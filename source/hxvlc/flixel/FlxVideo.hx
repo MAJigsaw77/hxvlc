@@ -4,6 +4,7 @@ package hxvlc.flixel;
 import flixel.util.FlxAxes;
 import flixel.FlxG;
 import haxe.io.Bytes;
+import haxe.io.Path;
 import hxvlc.externs.Types;
 import hxvlc.util.macros.Define;
 import hxvlc.util.Location;
@@ -99,10 +100,31 @@ class FlxVideo extends Video
 			{
 				final absolutePath:String = FileSystem.absolutePath(location);
 
-				if (Assets.exists(location))
-					return super.load(FileSystem.absolutePath(Assets.getPath(location)), options);
-				else if (FileSystem.exists(absolutePath))
+				if (FileSystem.exists(absolutePath))
 					return super.load(absolutePath, options);
+				else if (Assets.exists(location))
+				{
+					final assetPath:String = Assets.getPath(location);
+
+					if (Path.isAbsolute(assetPath))
+						return super.load(assetPath, options);
+					else
+					{
+						try
+						{
+							final assetBytes:Bytes = Assets.getBytes(location);
+
+							if (assetBytes != null)
+								return super.load(assetBytes, options);
+						}
+						catch (e:Dynamic)
+						{
+							FlxG.log.error('Error loading asset bytes from location "$location": $e');
+
+							return false;
+						}
+					}
+				}
 				else
 				{
 					FlxG.log.warn('Unable to find the video file at location "$location".');
