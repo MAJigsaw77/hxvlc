@@ -148,6 +148,46 @@ class FlxVideoSprite extends FlxSprite implements IFlxVideoSprite
 	{
 		return bitmap == null ? false : bitmap.loadFromSubItem(index, options);
 	}
+	
+	/**
+	 * Gets the current playback time of the video in milliseconds.
+	 * 
+	 * @return The current time of the video as an Int64.
+	 */
+	public function getTime():Int64
+	{
+		if (bitmap != null)
+		{
+			var currentTime:Int64 = bitmap.time;
+			trace('Current video time: ' + Std.string(currentTime) + ' ms');
+			return currentTime;
+		}
+		else
+		{
+			trace('Error: bitmap is null, cannot get time.');
+			return 0;
+		}
+	}
+
+	/**
+	 * Sets the current playback time of the video (seeks to a specific time).
+	 * 
+	 * @param time The time in milliseconds to seek to, as an Int64.
+	 */
+	public function setTime(time:Int64):Void
+	{
+		if (bitmap != null)
+		{
+			bitmap.time = time;
+			trace('Video seeked to: ' + Std.string(time) + ' ms');
+		}
+		else
+		{
+			trace('Error: bitmap is null, cannot seek.');
+		}
+	}
+	
+	
 
 	/**
 	 * Parses the current media item with the specified options.
@@ -301,6 +341,20 @@ interface IFlxVideoSprite
 	 * @return `true` if the video loads successfully, `false` otherwise.
 	 */
 	public function load(location:Location, ?options:Array<String>):Bool;
+
+	/**
+	 * Gets the current playback time of the video in milliseconds.
+	 * 
+	 * @return The current time of the video as an Int64.
+	 */
+	public function getTime():Int64;
+
+	/**
+	 * Sets the current playback time of the video (seeks to a specific time).
+	 * 
+	 * @param time The time in milliseconds to seek to, as an Int64.
+	 */
+	public function setTime(time:Int64):Void;
 
 	/**
 	 * Loads a media subitem from the current media's subitems list at the specified index.
