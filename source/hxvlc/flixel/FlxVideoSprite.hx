@@ -290,3 +290,4 @@ class FlxVideoSprite extends FlxSprite
 		return antialiasing = (bitmap == null ? value : (bitmap.smoothing = value));
 	}
 }
+#end
