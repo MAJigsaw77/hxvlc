@@ -8,36 +8,32 @@ A Haxe/[OpenFL](https://www.openfl.org) library for @:native video playback usin
 
 ### Supported Platforms
 
+**Hashlink or Neko are not supported**
+
 - **Windows** (x86_64 only)
 - **MacOS** (x86_64 and arm64 only)
 - **Linux**
 - **Android** (arm64, armv7a, x86, and x86_64 only)
 - **iOS** (arm64 and simulator only)
 
-> [!CAUTION]
-> These platforms need to be compiled using [Lime](https://lime.openfl.org) targeting `cpp` to work.
-
 ### Installation
 
 To install **hxvlc**, follow these steps:
 
 1. **Haxelib Installation**
-   - Install the library using Haxelib:
-     ```bash
-     haxelib install hxvlc
-     ```
-2. **Git Installation (for latest updates)**
-   - Alternatively, clone the repository using Git:
-     ```bash
-     haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git
-     ```
-3. **Project Configuration**
-   - Add the following code to your **project.xml** file:
-     ```xml
-     <section if="cpp">
-     	<haxelib name="hxvlc" if="desktop || mobile" />
-     </section>
-     ```
+   ```bash
+   haxelib install hxvlc
+   ```
+2. **Haxelib Git Installation (for latest updates)**
+   ```bash
+   haxelib git hxvlc https://github.com/MAJigsaw77/hxvlc.git
+   ```
+3. **Project Configuration** (Add the following code to your **project.xml** file)
+   ```xml
+   <section if="cpp">
+   <haxelib name="hxvlc" if="desktop || mobile" />
+   </section>
+   ```
 
 ### Dependencies
 
