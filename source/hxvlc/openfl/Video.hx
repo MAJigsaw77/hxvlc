@@ -290,7 +290,7 @@ class Video extends Bitmap
 	/**
 	 * The media resource locator (MRL).
 	 */
-	public var mrl(get, never):String;
+	public var mrl(get, never):Null<String>;
 
 	/**
 	 * Statistics related to the media.
@@ -927,7 +927,7 @@ class Video extends Bitmap
 	 * @param e_meta The metadata type.
 	 * @return The metadata value as a string, or `null` if not available.
 	 */
-	public function getMeta(e_meta:Int):String
+	public function getMeta(e_meta:Int):Null<String>
 	{
 		if (mediaPlayer != null)
 		{
@@ -991,6 +991,7 @@ class Video extends Bitmap
 	 */
 	public function dispose():Void
 	{
+		@:nullSafety(Off)
 		if (mediaPlayer != null)
 		{
 			LibVLC.media_player_stop(mediaPlayer);
@@ -1016,6 +1017,7 @@ class Video extends Bitmap
 
 		textureMutex.acquire();
 
+		@:nullSafety(Off)
 		if (bitmapData != null)
 		{
 			bitmapData.dispose();
@@ -1207,7 +1209,7 @@ class Video extends Bitmap
 	}
 
 	@:noCompletion
-	private function get_mrl():String
+	private function get_mrl():Null<String>
 	{
 		if (mediaPlayer != null)
 		{
