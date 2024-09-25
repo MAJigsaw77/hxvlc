@@ -153,19 +153,22 @@ class Handle
 	{
 		instanceMutex.acquire();
 
-		if (instance != null)
+		@:nullSafety(Off)
 		{
-			LibVLC.release(instance);
-			instance = null;
-		}
+			if (instance != null)
+			{
+				LibVLC.release(instance);
+				instance = null;
+			}
 
-		#if HXVLC_FILE_LOGGING
-		if (logFile != null)
-		{
-			cpp.Stdio.fclose(logFile);
-			logFile = null;
+			#if HXVLC_FILE_LOGGING
+			if (logFile != null)
+			{
+				cpp.Stdio.fclose(logFile);
+				logFile = null;
+			}
+			#end
 		}
-		#end
 
 		instanceMutex.release();
 	}
