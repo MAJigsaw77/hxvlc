@@ -8,6 +8,7 @@ import hxvlc.externs.Types;
 /**
  * Represents various statistics related to media processing.
  */
+@:nullSafety
 class Stats
 {
 	/**

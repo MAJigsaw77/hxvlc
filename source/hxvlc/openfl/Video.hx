@@ -36,7 +36,8 @@ using StringTools;
 /**
  * This class is a video player that uses LibVLC for seamless integration with OpenFL display objects.
  */
-#if !openfl_debug
+@:nullSafety
+#if !debug
 @:fileXml('tags="haxe,release"')
 @:noDebug
 #end
