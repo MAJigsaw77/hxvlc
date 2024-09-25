@@ -1522,6 +1522,7 @@ class Video extends Bitmap
 
 	@:keep
 	@:noCompletion
+	@:nullSafety(Off)
 	@:unreflective
 	private function videoLock(planes:cpp.RawPointer<cpp.RawPointer<cpp.Void>>):cpp.RawPointer<cpp.Void>
 	{
@@ -1530,7 +1531,7 @@ class Video extends Bitmap
 		if (texturePlanes != null)
 			planes[0] = untyped texturePlanes;
 
-		return @:nullSafety(Off) null;
+		return null;
 	}
 
 	@:keep
