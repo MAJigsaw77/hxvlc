@@ -72,9 +72,6 @@ class FlxVideoSprite extends FlxSprite
 	{
 		super(x, y);
 
-		@:nullSafety(Off)
-		makeGraphic(1, 1, FlxColor.TRANSPARENT);
-
 		bitmap = new Video(antialiasing);
 		bitmap.forceRendering = true;
 		bitmap.onOpening.add(function():Void
@@ -96,6 +93,8 @@ class FlxVideoSprite extends FlxSprite
 		});
 		bitmap.visible = false;
 		FlxG.game.addChild(bitmap);
+
+		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 	}
 
 	/**
