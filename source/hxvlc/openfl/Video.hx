@@ -1530,7 +1530,7 @@ class Video extends Bitmap
 		if (texturePlanes != null)
 			planes[0] = untyped texturePlanes;
 
-		return null;
+		return @:nullSafety(Off) null;
 	}
 
 	@:keep
