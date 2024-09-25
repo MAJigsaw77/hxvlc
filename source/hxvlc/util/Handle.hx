@@ -62,6 +62,7 @@ class Handle
 	/**
 	 * The instance of LibVLC that is used globally.
 	 */
+	@:nullSafety(Off)
 	public static var instance(default, null):cpp.RawPointer<LibVLC_Instance_T>;
 
 	/**
@@ -107,6 +108,7 @@ class Handle
 	private static final instanceMutex:Mutex = new Mutex();
 
 	@:noCompletion
+	@:nullSafety(Off)
 	private static var logFile:cpp.FILE;
 
 	/**
@@ -194,6 +196,7 @@ class Handle
 
 				mkDirs(Path.directory(sharePath));
 
+				@:nullSafety(Off)
 				for (file in library.list(null))
 				{
 					final savePath:String = Path.join([sharePath, file.substring(file.indexOf('/', 0) + 1, file.length)]);
