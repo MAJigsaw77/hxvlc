@@ -1522,7 +1522,6 @@ class Video extends Bitmap
 
 	@:keep
 	@:noCompletion
-	@:nullSafety(Off)
 	@:unreflective
 	private function videoLock(planes:cpp.RawPointer<cpp.RawPointer<cpp.Void>>):cpp.RawPointer<cpp.Void>
 	{
@@ -1667,6 +1666,11 @@ class Video extends Bitmap
 		{
 			alMutex.acquire();
 
+			if (alSamplesBuffer == null)
+				alSamplesBuffer = new BytesData();
+
+			cpp.NativeArray.setUnmanagedData(alSamplesBuffer, cast samples, count);
+
 			final processedBuffers:Int = alAudioContext.getSourcei(alSource, AL.BUFFERS_PROCESSED);
 
 			if (processedBuffers > 0)
@@ -1677,16 +1681,14 @@ class Video extends Bitmap
 
 			if (alBuffers.length > 0)
 			{
-				if (alSamplesBuffer == null)
-					alSamplesBuffer = new BytesData();
+				final alBuffer:Null<ALBuffer> = alBuffers.shift();
 
-				cpp.NativeArray.setUnmanagedData(alSamplesBuffer, cast samples, count);
-
-				final alBuffer:ALBuffer = alBuffers.shift();
-
-				alAudioContext.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16,
-					UInt8Array.fromBytes(Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * 2 * alChannels, alSampleRate);
-				alAudioContext.sourceQueueBuffer(alSource, alBuffer);
+				if (alBuffer != null)
+				{
+					alAudioContext.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16,
+						UInt8Array.fromBytes(Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * 2 * alChannels, alSampleRate);
+					alAudioContext.sourceQueueBuffer(alSource, alBuffer);
+				}
 
 				if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
 					alAudioContext.sourcePlay(alSource);
