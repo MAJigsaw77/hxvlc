@@ -239,12 +239,15 @@ class Handle
 			#end
 
 			final args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
+
 			#if windows
 			args.push_back("--aout=directsound");
 			#end
+
 			#if (android || ios || macos)
 			args.push_back("--audio-resampler=soxr");
 			#end
+
 			args.push_back("--drop-late-frames");
 			args.push_back("--ignore-config");
 			args.push_back("--intf=none");
@@ -252,20 +255,27 @@ class Handle
 			args.push_back("--no-interact");
 			args.push_back("--no-keyboard-events");
 			args.push_back("--no-mouse-events");
+
 			#if HXVLC_NO_SHARE_DIRECTORY
 			args.push_back("--no-lua");
 			#end
+
 			args.push_back("--no-snapshot-preview");
 			args.push_back("--no-spu");
 			args.push_back("--no-sub-autodetect-file");
 			args.push_back("--no-video-title-show");
 			args.push_back("--no-volume-save");
 			args.push_back("--no-xlib");
+
 			#if (windows || macos)
-			args.push_back(!resetCache
-				&& FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])) ? "--no-plugins-scan" : "--reset-plugins-cache");
+			if (resetCache == false && FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])))
+				args.push_back("--no-plugins-scan");
+			else
+				args.push_back("--reset-plugins-cache");
 			#end
+
 			args.push_back("--text-renderer=none");
+
 			#if HXVLC_VERBOSE
 			args.push_back("--verbose=" + Define.getInt('HXVLC_VERBOSE', 0));
 			#elseif (!HXVLC_LOGGING || !HXVLC_FILE_LOGGING)
@@ -290,7 +300,7 @@ class Handle
 				instanceMutex.release();
 
 				#if (windows || macos)
-				if (!resetCache)
+				if (resetCache == false)
 				{
 					Log.warn('Failed to initialize the LibVLC instance, resetting plugins\'s cache');
 
