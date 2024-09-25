@@ -357,7 +357,7 @@ class Video extends Bitmap
 	/**
 	 * Available audio output modules.
 	 */
-	public var outputModules(get, never):Array<{name:String, description:String}>;
+	public var outputModules(get, never):Null<Array<{name:String, description:String}>>;
 
 	/**
 	 * Selected audio output module.
@@ -501,6 +501,7 @@ class Video extends Bitmap
 	private final events:Array<Bool> = [for (i in 0...15) false];
 
 	@:noCompletion
+	@:nullSafety(Off)
 	private var mediaData:cpp.RawPointer<cpp.UInt8>;
 
 	@:noCompletion
@@ -510,10 +511,11 @@ class Video extends Bitmap
 	private var mediaOffset:cpp.UInt64 = 0;
 
 	@:noCompletion
+	@:nullSafety(Off)
 	private var mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>;
 
 	@:noCompletion
-	private var texture:RectangleTexture;
+	private var texture:Null<RectangleTexture>;
 
 	@:noCompletion
 	private var textureWidth:cpp.UInt32 = 0;
@@ -522,20 +524,21 @@ class Video extends Bitmap
 	private var textureHeight:cpp.UInt32 = 0;
 
 	@:noCompletion
+	@:nullSafety(Off)
 	private var texturePlanes:cpp.RawPointer<cpp.UInt8>;
 
 	@:noCompletion
-	private var texturePlanesBuffer:BytesData;
+	private var texturePlanesBuffer:Null<BytesData>;
 
 	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
-	private var alAudioContext:OpenALAudioContext;
+	private var alAudioContext:Null<OpenALAudioContext>;
 
 	@:noCompletion
-	private var alBuffers:Array<ALBuffer> = [];
+	private var alBuffers:Null<Array<ALBuffer>> = [];
 
 	@:noCompletion
-	private var alSource:ALSource;
+	private var alSource:Null<ALSource>;
 
 	@:noCompletion
 	private var alSampleRate:cpp.UInt32 = 0;
@@ -544,7 +547,7 @@ class Video extends Bitmap
 	private var alChannels:cpp.UInt32 = 0;
 
 	@:noCompletion
-	private var alSamplesBuffer:BytesData;
+	private var alSamplesBuffer:Null<BytesData>;
 	#end
 
 	/**
@@ -1000,6 +1003,7 @@ class Video extends Bitmap
 
 		mediaMutex.acquire();
 
+		@:nullSafety(Off)
 		if (mediaData != null)
 		{
 			untyped __cpp__('delete[] {0}', mediaData);
@@ -1026,6 +1030,7 @@ class Video extends Bitmap
 
 		textureWidth = textureHeight = 0;
 
+		@:nullSafety(Off)
 		if (texturePlanes != null)
 		{
 			untyped __cpp__('delete[] {0}', texturePlanes);
@@ -1356,7 +1361,7 @@ class Video extends Bitmap
 	}
 
 	@:noCompletion
-	private function get_outputModules():Array<{name:String, description:String}>
+	private function get_outputModules():Null<Array<{name:String, description:String}>>
 	{
 		if (Handle.instance != null)
 		{
