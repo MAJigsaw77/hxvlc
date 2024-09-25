@@ -616,7 +616,7 @@ class Video extends Bitmap
 					data.splice(0, data.length);
 
 					mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
-						untyped __cpp__('media_seek'), null, untyped __cpp__('this'));
+						untyped __cpp__('media_seek'), untyped NULL, untyped __cpp__('this'));
 				}
 				else
 					return false;
@@ -692,7 +692,7 @@ class Video extends Bitmap
 
 				LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), untyped __cpp__('video_unlock'), untyped __cpp__('video_display'),
 					untyped __cpp__('this'));
-				LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), null);
+				LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), untyped NULL);
 
 				#if (HXVLC_OPENAL && lime_openal)
 				if (AudioManager.context != null)
@@ -713,11 +713,11 @@ class Video extends Bitmap
 							alMutex.release();
 
 							LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'),
-								untyped __cpp__('audio_resume'), null, null, untyped __cpp__('this'));
+								untyped __cpp__('audio_resume'), untyped NULL, untyped NULL, untyped __cpp__('this'));
 
 							LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 
-							LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), null);
+							LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
 						default:
 							Log.warn('Unable to use a sound output.');
 					}

@@ -319,12 +319,12 @@ class Handle
 				{
 					Log.warn('Failed to open log file for writing.');
 
-					LibVLC.log_set(instance, untyped __cpp__('instance_logging'), null);
+					LibVLC.log_set(instance, untyped __cpp__('instance_logging'), untyped NULL);
 				}
 				else
 					LibVLC.log_set_file(instance, logFile);
 				#elseif HXVLC_LOGGING
-				LibVLC.log_set(instance, untyped __cpp__('instance_logging'), null);
+				LibVLC.log_set(instance, untyped __cpp__('instance_logging'), untyped NULL);
 				#end
 			}
 		}

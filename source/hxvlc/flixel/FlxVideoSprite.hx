@@ -60,7 +60,7 @@ class FlxVideoSprite extends FlxSprite
 	/**
 	 * The video bitmap object.
 	 */
-	public var bitmap(default, null):Video;
+	public var bitmap(default, null):Null<Video>;
 
 	/**
 	 * Creates a `FlxVideoSprite` at a specified position.
@@ -72,6 +72,7 @@ class FlxVideoSprite extends FlxSprite
 	{
 		super(x, y);
 
+		@:nullSafety(Off)
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
 		bitmap = new Video(antialiasing);
