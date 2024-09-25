@@ -40,6 +40,7 @@ using StringTools;
  * 	FlxTimer.wait(0.001, () -> video.play());
  * ```
  */
+@:nullSafety
 class FlxVideoSprite extends FlxSprite
 {
 	/**
@@ -59,7 +60,7 @@ class FlxVideoSprite extends FlxSprite
 	/**
 	 * The video bitmap object.
 	 */
-	public var bitmap(default, null):Video;
+	public var bitmap(default, null):Null<Video>;
 
 	/**
 	 * Creates a `FlxVideoSprite` at a specified position.
@@ -71,18 +72,22 @@ class FlxVideoSprite extends FlxSprite
 	{
 		super(x, y);
 
+		@:nullSafety(Off)
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
 		bitmap = new Video(antialiasing);
 		bitmap.forceRendering = true;
 		bitmap.onOpening.add(function():Void
 		{
-			bitmap.role = LibVLC_Role_Game;
+			if (bitmap != null)
+			{
+				bitmap.role = LibVLC_Role_Game;
 
-			#if FLX_SOUND_SYSTEM
-			if (bitmap != null && autoVolumeHandle)
-				bitmap.volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
-			#end
+				#if FLX_SOUND_SYSTEM
+				if (autoVolumeHandle)
+					bitmap.volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+				#end
+			}
 		});
 		bitmap.onFormatSetup.add(function():Void
 		{

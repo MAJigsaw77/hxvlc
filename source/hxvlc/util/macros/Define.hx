@@ -8,6 +8,7 @@ import haxe.macro.Expr;
 /**
  * Utility class to retrieve values from compiler defines.
  */
+@:nullSafety
 class Define
 {
 	/**

@@ -36,7 +36,8 @@ using StringTools;
 /**
  * This class is a video player that uses LibVLC for seamless integration with OpenFL display objects.
  */
-#if !openfl_debug
+@:nullSafety
+#if !debug
 @:fileXml('tags="haxe,release"')
 @:noDebug
 #end
@@ -289,7 +290,7 @@ class Video extends Bitmap
 	/**
 	 * The media resource locator (MRL).
 	 */
-	public var mrl(get, never):String;
+	public var mrl(get, never):Null<String>;
 
 	/**
 	 * Statistics related to the media.
@@ -356,7 +357,7 @@ class Video extends Bitmap
 	/**
 	 * Available audio output modules.
 	 */
-	public var outputModules(get, never):Array<{name:String, description:String}>;
+	public var outputModules(get, never):Null<Array<{name:String, description:String}>>;
 
 	/**
 	 * Selected audio output module.
@@ -500,6 +501,7 @@ class Video extends Bitmap
 	private final events:Array<Bool> = [for (i in 0...15) false];
 
 	@:noCompletion
+	@:nullSafety(Off)
 	private var mediaData:cpp.RawPointer<cpp.UInt8>;
 
 	@:noCompletion
@@ -509,10 +511,11 @@ class Video extends Bitmap
 	private var mediaOffset:cpp.UInt64 = 0;
 
 	@:noCompletion
+	@:nullSafety(Off)
 	private var mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>;
 
 	@:noCompletion
-	private var texture:RectangleTexture;
+	private var texture:Null<RectangleTexture>;
 
 	@:noCompletion
 	private var textureWidth:cpp.UInt32 = 0;
@@ -521,20 +524,21 @@ class Video extends Bitmap
 	private var textureHeight:cpp.UInt32 = 0;
 
 	@:noCompletion
+	@:nullSafety(Off)
 	private var texturePlanes:cpp.RawPointer<cpp.UInt8>;
 
 	@:noCompletion
-	private var texturePlanesBuffer:BytesData;
+	private var texturePlanesBuffer:Null<BytesData>;
 
 	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
-	private var alAudioContext:OpenALAudioContext;
+	private var alAudioContext:Null<OpenALAudioContext>;
 
 	@:noCompletion
-	private var alBuffers:Array<ALBuffer> = [];
+	private var alBuffers:Null<Array<ALBuffer>> = [];
 
 	@:noCompletion
-	private var alSource:ALSource;
+	private var alSource:Null<ALSource>;
 
 	@:noCompletion
 	private var alSampleRate:cpp.UInt32 = 0;
@@ -543,7 +547,7 @@ class Video extends Bitmap
 	private var alChannels:cpp.UInt32 = 0;
 
 	@:noCompletion
-	private var alSamplesBuffer:BytesData;
+	private var alSamplesBuffer:Null<BytesData>;
 	#end
 
 	/**
@@ -615,7 +619,7 @@ class Video extends Bitmap
 					data.splice(0, data.length);
 
 					mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
-						untyped __cpp__('media_seek'), null, untyped __cpp__('this'));
+						untyped __cpp__('media_seek'), untyped NULL, untyped __cpp__('this'));
 				}
 				else
 					return false;
@@ -691,7 +695,7 @@ class Video extends Bitmap
 
 				LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), untyped __cpp__('video_unlock'), untyped __cpp__('video_display'),
 					untyped __cpp__('this'));
-				LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), null);
+				LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), untyped NULL);
 
 				#if (HXVLC_OPENAL && lime_openal)
 				if (AudioManager.context != null)
@@ -712,11 +716,11 @@ class Video extends Bitmap
 							alMutex.release();
 
 							LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'),
-								untyped __cpp__('audio_resume'), null, null, untyped __cpp__('this'));
+								untyped __cpp__('audio_resume'), untyped NULL, untyped NULL, untyped __cpp__('this'));
 
 							LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 
-							LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), null);
+							LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
 						default:
 							Log.warn('Unable to use a sound output.');
 					}
@@ -923,7 +927,7 @@ class Video extends Bitmap
 	 * @param e_meta The metadata type.
 	 * @return The metadata value as a string, or `null` if not available.
 	 */
-	public function getMeta(e_meta:Int):String
+	public function getMeta(e_meta:Int):Null<String>
 	{
 		if (mediaPlayer != null)
 		{
@@ -987,6 +991,7 @@ class Video extends Bitmap
 	 */
 	public function dispose():Void
 	{
+		@:nullSafety(Off)
 		if (mediaPlayer != null)
 		{
 			LibVLC.media_player_stop(mediaPlayer);
@@ -999,6 +1004,7 @@ class Video extends Bitmap
 
 		mediaMutex.acquire();
 
+		@:nullSafety(Off)
 		if (mediaData != null)
 		{
 			untyped __cpp__('delete[] {0}', mediaData);
@@ -1011,6 +1017,7 @@ class Video extends Bitmap
 
 		textureMutex.acquire();
 
+		@:nullSafety(Off)
 		if (bitmapData != null)
 		{
 			bitmapData.dispose();
@@ -1025,6 +1032,7 @@ class Video extends Bitmap
 
 		textureWidth = textureHeight = 0;
 
+		@:nullSafety(Off)
 		if (texturePlanes != null)
 		{
 			untyped __cpp__('delete[] {0}', texturePlanes);
@@ -1201,7 +1209,7 @@ class Video extends Bitmap
 	}
 
 	@:noCompletion
-	private function get_mrl():String
+	private function get_mrl():Null<String>
 	{
 		if (mediaPlayer != null)
 		{
@@ -1355,7 +1363,7 @@ class Video extends Bitmap
 	}
 
 	@:noCompletion
-	private function get_outputModules():Array<{name:String, description:String}>
+	private function get_outputModules():Null<Array<{name:String, description:String}>>
 	{
 		if (Handle.instance != null)
 		{
@@ -1522,7 +1530,7 @@ class Video extends Bitmap
 		if (texturePlanes != null)
 			planes[0] = untyped texturePlanes;
 
-		return null;
+		return untyped nullptr;
 	}
 
 	@:keep
@@ -1658,6 +1666,11 @@ class Video extends Bitmap
 		{
 			alMutex.acquire();
 
+			if (alSamplesBuffer == null)
+				alSamplesBuffer = new BytesData();
+
+			cpp.NativeArray.setUnmanagedData(alSamplesBuffer, cast samples, count);
+
 			final processedBuffers:Int = alAudioContext.getSourcei(alSource, AL.BUFFERS_PROCESSED);
 
 			if (processedBuffers > 0)
@@ -1668,16 +1681,14 @@ class Video extends Bitmap
 
 			if (alBuffers.length > 0)
 			{
-				if (alSamplesBuffer == null)
-					alSamplesBuffer = new BytesData();
+				final alBuffer:Null<ALBuffer> = alBuffers.shift();
 
-				cpp.NativeArray.setUnmanagedData(alSamplesBuffer, cast samples, count);
-
-				final alBuffer:ALBuffer = alBuffers.shift();
-
-				alAudioContext.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16,
-					UInt8Array.fromBytes(Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * 2 * alChannels, alSampleRate);
-				alAudioContext.sourceQueueBuffer(alSource, alBuffer);
+				if (alBuffer != null)
+				{
+					alAudioContext.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16,
+						UInt8Array.fromBytes(Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * 2 * alChannels, alSampleRate);
+					alAudioContext.sourceQueueBuffer(alSource, alBuffer);
+				}
 
 				if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
 					alAudioContext.sourcePlay(alSource);
