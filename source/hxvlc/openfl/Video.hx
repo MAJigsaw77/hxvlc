@@ -501,8 +501,7 @@ class Video extends Bitmap
 	private final events:Array<Bool> = [for (i in 0...15) false];
 
 	@:noCompletion
-	@:nullSafety(Off)
-	private var mediaData:cpp.RawPointer<cpp.UInt8>;
+	private var mediaData:Null<cpp.RawPointer<cpp.UInt8>>;
 
 	@:noCompletion
 	private var mediaSize:cpp.UInt64 = 0;
@@ -511,8 +510,7 @@ class Video extends Bitmap
 	private var mediaOffset:cpp.UInt64 = 0;
 
 	@:noCompletion
-	@:nullSafety(Off)
-	private var mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>;
+	private var mediaPlayer:Null<cpp.RawPointer<LibVLC_Media_Player_T>>;
 
 	@:noCompletion
 	private var texture:Null<RectangleTexture>;
@@ -524,8 +522,7 @@ class Video extends Bitmap
 	private var textureHeight:cpp.UInt32 = 0;
 
 	@:noCompletion
-	@:nullSafety(Off)
-	private var texturePlanes:cpp.RawPointer<cpp.UInt8>;
+	private var texturePlanes:Null<cpp.RawPointer<cpp.UInt8>>;
 
 	@:noCompletion
 	private var texturePlanesBuffer:Null<BytesData>;
@@ -991,7 +988,6 @@ class Video extends Bitmap
 	 */
 	public function dispose():Void
 	{
-		@:nullSafety(Off)
 		if (mediaPlayer != null)
 		{
 			LibVLC.media_player_stop(mediaPlayer);
@@ -1004,7 +1000,6 @@ class Video extends Bitmap
 
 		mediaMutex.acquire();
 
-		@:nullSafety(Off)
 		if (mediaData != null)
 		{
 			untyped __cpp__('delete[] {0}', mediaData);
@@ -1032,7 +1027,6 @@ class Video extends Bitmap
 
 		textureWidth = textureHeight = 0;
 
-		@:nullSafety(Off)
 		if (texturePlanes != null)
 		{
 			untyped __cpp__('delete[] {0}', texturePlanes);
