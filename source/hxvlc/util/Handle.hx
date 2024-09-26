@@ -62,8 +62,7 @@ class Handle
 	/**
 	 * The instance of LibVLC that is used globally.
 	 */
-	@:nullSafety(Off)
-	public static var instance(default, null):cpp.RawPointer<LibVLC_Instance_T>;
+	public static var instance(default, null):Null<cpp.RawPointer<LibVLC_Instance_T>>;
 
 	/**
 	 * Indicates whether the instance is still loading.
@@ -108,8 +107,7 @@ class Handle
 	private static final instanceMutex:Mutex = new Mutex();
 
 	@:noCompletion
-	@:nullSafety(Off)
-	private static var logFile:cpp.FILE;
+	private static var logFile:Null<cpp.FILE>;
 
 	/**
 	 * Initializes the LibVLC instance if it isn't already.
@@ -153,22 +151,19 @@ class Handle
 	{
 		instanceMutex.acquire();
 
-		@:nullSafety(Off)
+		if (instance != null)
 		{
-			if (instance != null)
-			{
-				LibVLC.release(instance);
-				instance = null;
-			}
-
-			#if HXVLC_FILE_LOGGING
-			if (logFile != null)
-			{
-				cpp.Stdio.fclose(logFile);
-				logFile = null;
-			}
-			#end
+			LibVLC.release(instance);
+			instance = null;
 		}
+
+		#if HXVLC_FILE_LOGGING
+		if (logFile != null)
+		{
+			cpp.Stdio.fclose(logFile);
+			logFile = null;
+		}
+		#end
 
 		instanceMutex.release();
 	}
