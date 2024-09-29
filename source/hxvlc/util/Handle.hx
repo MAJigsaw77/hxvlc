@@ -1,7 +1,7 @@
 package hxvlc.util;
 
 #if (!cpp && !(desktop || mobile))
-// #error 'The current target platform isn\'t supported by hxvlc.'
+#error 'The current target platform isn\'t supported by hxvlc.'
 #end
 import haxe.io.Path;
 import haxe.Exception;
