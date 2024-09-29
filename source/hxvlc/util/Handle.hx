@@ -1,7 +1,7 @@
 package hxvlc.util;
 
 #if (!cpp && !(desktop || mobile))
-#error 'The current target platform isn\'t supported by hxvlc.'
+// #error 'The current target platform isn\'t supported by hxvlc.'
 #end
 import haxe.io.Path;
 import haxe.Exception;
@@ -17,6 +17,7 @@ import lime.utils.Log;
 import sys.io.File;
 import sys.thread.Mutex;
 import sys.FileSystem;
+import hxvlc.util.macros.CodecSafety;
 
 using StringTools;
 
@@ -118,6 +119,7 @@ class Handle
 	 */
 	public static inline function init(?options:Array<String>):Bool
 	{
+		CodecSafety.checkCodec();
 		return initWithRetry(options, false);
 	}
 
