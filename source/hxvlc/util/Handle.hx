@@ -17,7 +17,6 @@ import lime.utils.Log;
 import sys.io.File;
 import sys.thread.Mutex;
 import sys.FileSystem;
-import hxvlc.util.macros.CodecSafety;
 
 using StringTools;
 
@@ -119,7 +118,9 @@ class Handle
 	 */
 	public static inline function init(?options:Array<String>):Bool
 	{
-		CodecSafety.checkCodec();
+		#if hxCodec
+		#error "hxvlc and hxCodec cannot be used in the same project."
+		#end
 		return initWithRetry(options, false);
 	}
 
