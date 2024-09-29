@@ -3,6 +3,9 @@ package hxvlc.util;
 #if (!cpp && !(desktop || mobile))
 #error 'The current target platform isn\'t supported by hxvlc.'
 #end
+#if hxCodec
+#error "hxvlc and hxCodec cannot be used in the same project."
+#end
 import haxe.io.Path;
 import haxe.Exception;
 import haxe.Int64;
@@ -118,9 +121,6 @@ class Handle
 	 */
 	public static inline function init(?options:Array<String>):Bool
 	{
-		#if hxCodec
-		#error "hxvlc and hxCodec cannot be used in the same project."
-		#end
 		return initWithRetry(options, false);
 	}
 
