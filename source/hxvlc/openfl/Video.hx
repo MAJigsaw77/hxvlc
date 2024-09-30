@@ -1033,11 +1033,7 @@ class Video extends Bitmap
 			texturePlanes = null;
 		}
 
-		if (texturePlanesBuffer != null)
-		{
-			texturePlanesBuffer.splice(0, texturePlanesBuffer.length);
-			texturePlanesBuffer = null;
-		}
+		texturePlanesBuffer = [];
 
 		textureMutex.release();
 
@@ -1062,11 +1058,7 @@ class Video extends Bitmap
 			alAudioContext = null;
 		}
 
-		if (alSamplesBuffer != null)
-		{
-			alSamplesBuffer.splice(0, alSamplesBuffer.length);
-			alSamplesBuffer = null;
-		}
+		alSamplesBuffer = [];
 
 		alMutex.release();
 		#end
