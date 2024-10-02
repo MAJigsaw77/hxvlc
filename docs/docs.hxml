@@ -7,4 +7,5 @@
 --cpp docs-bin
 --macro include('hxvlc')
 --no-output
+--define FLX_SOUND_SYSTEM
 -D doc-gen
