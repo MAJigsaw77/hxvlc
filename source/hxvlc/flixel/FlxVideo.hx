@@ -76,6 +76,7 @@ class FlxVideo extends Video
 		});
 	}
 
+	#if FLX_SOUND_SYSTEM
 	/**
 	 * Calculates and returns the current volume based on Flixel's sound settings by default.
 	 *
@@ -87,6 +88,7 @@ class FlxVideo extends Video
 	{
 		return (FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume;
 	}
+	#end
 
 	/**
 	 * Loads a video.
