@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "1.9.1",
-	"releasenote": "Implement Dynamic Volume Adjustment for the Flixel Backend.",
+	"version": "1.9.2",
+	"releasenote": "Fix compile issue with no flixel sound system.",
 	"contributors": [
 		"MAJigsaw77"
 	],
