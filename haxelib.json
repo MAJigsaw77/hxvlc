@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "1.9.0",
-	"releasenote": "Added nullSafety, improved the assets handling in the flixel backend and fixed some buffers crashes.",
+	"version": "1.9.1",
+	"releasenote": "Implement Dynamic Volume Adjustment for the Flixel Backend.",
 	"contributors": [
 		"MAJigsaw77"
 	],
