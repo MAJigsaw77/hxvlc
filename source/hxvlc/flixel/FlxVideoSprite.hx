@@ -2,6 +2,7 @@ package hxvlc.flixel;
 
 #if flixel
 import flixel.graphics.FlxGraphic;
+import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -82,7 +83,7 @@ class FlxVideoSprite extends FlxSprite
 
 				#if FLX_SOUND_SYSTEM
 				if (autoVolumeHandle)
-					bitmap.volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+					bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 				#end
 			}
 		});
@@ -247,6 +248,18 @@ class FlxVideoSprite extends FlxSprite
 			bitmap.togglePaused();
 	}
 
+	/**
+	 * Calculates and returns the current volume based on Flixel's sound settings by default.
+	 *
+	 * The volume is automatically clamped between `0` and `1` by the calling code. If the sound is muted, the volume is `0`.
+	 *
+	 * @return The calculated volume.
+	 */
+	public dynamic function getCalculatedVolume():Float
+	{
+		return (FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume;
+	}
+
 	public override function destroy():Void
 	{
 		if (FlxG.signals.focusGained.has(resume))
@@ -287,7 +300,7 @@ class FlxVideoSprite extends FlxSprite
 	{
 		#if FLX_SOUND_SYSTEM
 		if (bitmap != null && autoVolumeHandle)
-			bitmap.volume = Math.floor((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+			bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 		#end
 
 		super.update(elapsed);
