@@ -622,8 +622,20 @@ class Video extends Bitmap
 		else
 			return false;
 
-		if (Lib.application != null && !Lib.application.onUpdate.has(update))
-			Lib.application.onUpdate.add(update);
+		if (Lib.application != null)
+		{
+			if (!Lib.application.onUpdate.has(update))
+				Lib.application.onUpdate.add(update);
+
+			if (Lib.application.window != null)
+			{
+				if (!Lib.application.window.onActivate.has(resume))
+					Lib.application.window.onActivate.add(resume);
+
+				if (!Lib.application.window.onDeactivate.has(pause))
+					Lib.application.window.onDeactivate.add(pause);
+			}
+		}
 
 		if (mediaPlayer == null)
 		{
@@ -990,8 +1002,20 @@ class Video extends Bitmap
 			mediaPlayer = null;
 		}
 
-		if (Lib.application != null && Lib.application.onUpdate.has(update))
-			Lib.application.onUpdate.remove(update);
+		if (Lib.application != null)
+		{
+			if (Lib.application.onUpdate.has(update))
+				Lib.application.onUpdate.add(update);
+
+			if (Lib.application.window != null)
+			{
+				if (Lib.application.window.onActivate.has(resume))
+					Lib.application.window.onActivate.remove(resume);
+
+				if (Lib.application.window.onDeactivate.has(pause))
+					Lib.application.window.onDeactivate.remove(pause);
+			}
+		}
 
 		mediaMutex.acquire();
 
