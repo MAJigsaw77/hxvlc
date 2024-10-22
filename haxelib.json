@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "1.9.2",
-	"releasenote": "Fix compile issue with no flixel sound system.",
+	"version": "1.9.3",
+	"releasenote": "Fixed some pausing issues.",
 	"contributors": [
 		"MAJigsaw77"
 	],
