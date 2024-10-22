@@ -1005,7 +1005,7 @@ class Video extends Bitmap
 		if (Lib.application != null)
 		{
 			if (Lib.application.onUpdate.has(update))
-				Lib.application.onUpdate.add(update);
+				Lib.application.onUpdate.remove(update);
 
 			if (Lib.application.window != null)
 			{
