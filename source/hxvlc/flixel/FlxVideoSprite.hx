@@ -176,7 +176,7 @@ class FlxVideoSprite extends FlxSprite
 	 * @param options Additional options to configure the loaded subitem.
 	 * @return `true` if the subitem was loaded successfully, `false` otherwise.
 	 */
-	public function loadFromSubItem(index:Int, ?options:Array<String>):Bool
+	public inline function loadFromSubItem(index:Int, ?options:Array<String>):Bool
 	{
 		return bitmap == null ? false : bitmap.loadFromSubItem(index, options);
 	}
@@ -188,7 +188,7 @@ class FlxVideoSprite extends FlxSprite
 	 * @param timeout The timeout in milliseconds.
 	 * @return `true` if parsing succeeded, `false` otherwise.
 	 */
-	public function parseWithOptions(parse_flag:Int, timeout:Int):Bool
+	public inline function parseWithOptions(parse_flag:Int, timeout:Int):Bool
 	{
 		return bitmap == null ? false : bitmap.parseWithOptions(parse_flag, timeout);
 	}
@@ -196,10 +196,9 @@ class FlxVideoSprite extends FlxSprite
 	/**
 	 * Stops parsing the current media item.
 	 */
-	public function parseStop():Void
+	public inline function parseStop():Void
 	{
-		if (bitmap != null)
-			bitmap.parseStop();
+		bitmap?.parseStop();
 	}
 
 	/**
@@ -207,7 +206,7 @@ class FlxVideoSprite extends FlxSprite
 	 *
 	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
-	public function play():Bool
+	public inline function play():Bool
 	{
 		return bitmap == null ? false : bitmap.play();
 	}
@@ -215,37 +214,33 @@ class FlxVideoSprite extends FlxSprite
 	/**
 	 * Stops video playback.
 	 */
-	public function stop():Void
+	public inline function stop():Void
 	{
-		if (bitmap != null)
-			bitmap.stop();
+		bitmap?.stop();
 	}
 
 	/**
 	 * Pauses video playback.
 	 */
-	public function pause():Void
+	public inline function pause():Void
 	{
-		if (bitmap != null)
-			bitmap.pause();
+		bitmap?.pause();
 	}
 
 	/**
 	 * Resumes playback of a paused video.
 	 */
-	public function resume():Void
+	public inline function resume():Void
 	{
-		if (bitmap != null)
-			bitmap.resume();
+		bitmap?.resume();
 	}
 
 	/**
 	 * Toggles between play and pause states of the video.
 	 */
-	public function togglePaused():Void
+	public inline function togglePaused():Void
 	{
-		if (bitmap != null)
-			bitmap.togglePaused();
+		bitmap?.togglePaused();
 	}
 
 	#if FLX_SOUND_SYSTEM
@@ -284,8 +279,7 @@ class FlxVideoSprite extends FlxSprite
 
 	public override function kill():Void
 	{
-		if (bitmap != null)
-			bitmap.pause();
+		bitmap?.pause();
 
 		super.kill();
 	}
@@ -294,8 +288,7 @@ class FlxVideoSprite extends FlxSprite
 	{
 		super.revive();
 
-		if (bitmap != null)
-			bitmap.resume();
+		bitmap?.resume();
 	}
 
 	public override function update(elapsed:Float):Void
