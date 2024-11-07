@@ -7,8 +7,9 @@ package cpp;
 @:native('std::vector')
 extern class StdVector<T> implements ArrayAccess<Reference<T>>
 {
-	//function new():Void;
-	function new(?size:Int);
+	@:overload(function(size:Int):Void {})
+	function new():Void;
+
 	function at(index:Int):T;
 	function back():T;
 	function data():RawPointer<T>;
