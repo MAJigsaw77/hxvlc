@@ -236,7 +236,7 @@ class Handle
 				Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
 			#end
 
-			final args:cpp.VectorConstCharStar = cpp.VectorConstCharStar.alloc();
+			final args:cpp.StdVector<cpp.ConstCharStar> = new cpp.StdVector<cpp.ConstCharStar>();
 
 			#if windows
 			args.push_back("--aout=directsound");
