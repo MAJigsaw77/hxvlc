@@ -54,13 +54,13 @@ class Main extends Sprite
 		video = new Video();
 		video.onOpening.add(function():Void
 		{
-			stage.addEventListener(Event.ACTIVATE, stage_onActivate);
-			stage.addEventListener(Event.DEACTIVATE, stage_onDeactivate);
+			stage.nativeWindow.addEventListener(Event.ACTIVATE, stage_onActivate);
+			stage.nativeWindow.addEventListener(Event.DEACTIVATE, stage_onDeactivate);
 		});
 		video.onEndReached.add(function():Void
 		{
-			stage.removeEventListener(Event.ACTIVATE, stage_onActivate);
-			stage.removeEventListener(Event.DEACTIVATE, stage_onDeactivate);
+			stage.nativeWindow.removeEventListener(Event.ACTIVATE, stage_onActivate);
+			stage.nativeWindow.removeEventListener(Event.DEACTIVATE, stage_onDeactivate);
 
 			if (stage.hasEventListener(Event.ENTER_FRAME))
 				stage.removeEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
