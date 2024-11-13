@@ -2,7 +2,6 @@ package hxvlc.macros;
 
 #if macro
 import haxe.macro.Context;
-import haxe.macro.Compiler;
 
 class CheckMacro
 {
