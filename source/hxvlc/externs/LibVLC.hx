@@ -1,8 +1,5 @@
 package hxvlc.externs;
 
-#if !cpp
-#error 'LibVLC supports only C++ target platforms.'
-#end
 import hxvlc.externs.Types;
 
 /**
