@@ -3,9 +3,6 @@ package hxvlc.externs;
 /**
  * Dummy class for importing LibVLC native structures.
  */
-#if !cpp
-#error 'LibVLC supports only C++ target platforms.'
-#end
 class Types {}
 
 @:dox(hide)
