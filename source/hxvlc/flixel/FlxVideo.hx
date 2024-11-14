@@ -65,19 +65,16 @@ class FlxVideo extends Video
 	{
 		super(smoothing);
 
+		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+		FlxG.sound.onVolumeChange.add(onVolumeChange);
+		#end
+
 		onOpening.add(function():Void
 		{
 			role = LibVLC_Role_Game;
 
 			#if FLX_SOUND_SYSTEM
-			if (autoVolumeHandle)
-			{
-				#if (flixel >= "5.9.0")
-				FlxG.sound.onVolumeChange.add(onVolumeChange);
-				#else
-				volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
-				#end
-			}
+			onVolumeChange();
 			#end
 		});
 	}
@@ -173,7 +170,8 @@ class FlxVideo extends Video
 			FlxG.signals.focusLost.remove(pause);
 
 		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
-		FlxG.sound.onVolumeChange.remove(onVolumeChange);
+		if (FlxG.sound.onVolumeChange.has(onVolumeChange))
+			FlxG.sound.onVolumeChange.remove(onVolumeChange);
 		#end
 
 		super.dispose();
@@ -189,19 +187,19 @@ class FlxVideo extends Video
 		}
 
 		#if (FLX_SOUND_SYSTEM && flixel < "5.9.0")
-		if (autoVolumeHandle)
-			volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		onVolumeChange();
 		#end
 
 		super.update(deltaTime);
 	}
 
-	#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
 	@:noCompletion
-	private function onVolumeChange(volume:Float):Void
+	private function onVolumeChange(_):Void
 	{
-		this.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		if (!autoVolumeHandle)
+			return;
+
+		volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 	}
-	#end
 }
 #end
