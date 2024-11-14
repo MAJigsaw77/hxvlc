@@ -200,7 +200,7 @@ class FlxVideo extends Video
 	@:noCompletion
 	private function onVolumeChange(volume:Float):Void
 	{
-		volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		this.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 	}
 	#end
 }
