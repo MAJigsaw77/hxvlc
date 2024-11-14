@@ -83,7 +83,13 @@ class FlxVideoSprite extends FlxSprite
 
 				#if FLX_SOUND_SYSTEM
 				if (autoVolumeHandle)
+				{
+					#if (flixel >= "5.9.0")
+					FlxG.sound.onVolumeChange.add(onVolumeChange);
+					#else
 					bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+					#end
+				}
 				#end
 			}
 		});
@@ -265,6 +271,10 @@ class FlxVideoSprite extends FlxSprite
 		if (FlxG.signals.focusLost.has(pause))
 			FlxG.signals.focusLost.remove(pause);
 
+		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+		FlxG.sound.onVolumeChange.remove(onVolumeChange);
+		#end
+
 		super.destroy();
 
 		if (bitmap != null)
@@ -293,13 +303,24 @@ class FlxVideoSprite extends FlxSprite
 
 	public override function update(elapsed:Float):Void
 	{
-		#if FLX_SOUND_SYSTEM
+		#if (FLX_SOUND_SYSTEM && flixel < "5.9.0")
 		if (bitmap != null && autoVolumeHandle)
+		{
 			bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		}
 		#end
 
 		super.update(elapsed);
 	}
+
+	#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+	@:noCompletion
+	private function onVolumeChange(volume:Float):Void
+	{
+		if (bitmap != null)
+			bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+	}
+	#end
 
 	@:noCompletion
 	private override function set_antialiasing(value:Bool):Bool
