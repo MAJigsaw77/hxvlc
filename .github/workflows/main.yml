@@ -87,7 +87,7 @@ jobs:
           path: samples/${{matrix.sample}}/build.tar.gz
           if-no-files-found: warn
   Android:
-    runs-on: macos-latest
+    runs-on: macos-14
     strategy:
       fail-fast: false
       matrix:
@@ -137,7 +137,7 @@ jobs:
           path: samples/${{matrix.sample}}/export/android/bin/app/build/outputs/apk/debug
           if-no-files-found: warn
   iOS:
-    runs-on: macos-latest
+    runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
