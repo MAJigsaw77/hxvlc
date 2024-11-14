@@ -313,12 +313,14 @@ class FlxVideoSprite extends FlxSprite
 		super.update(elapsed);
 	}
 
+	#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
 	@:noCompletion
 	private function onVolumeChange(volume:Float):Void
 	{
 		if (bitmap != null)
 			bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 	}
+	#end
 
 	@:noCompletion
 	private override function set_antialiasing(value:Bool):Bool
