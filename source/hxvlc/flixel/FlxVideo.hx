@@ -74,7 +74,8 @@ class FlxVideo extends Video
 			role = LibVLC_Role_Game;
 
 			#if FLX_SOUND_SYSTEM
-			onVolumeChange(_);
+			if (autoVolumeHandle)
+				volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 			#end
 		});
 	}
@@ -187,7 +188,8 @@ class FlxVideo extends Video
 		}
 
 		#if (FLX_SOUND_SYSTEM && flixel < "5.9.0")
-		onVolumeChange(_);
+		if (autoVolumeHandle)
+			volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 		#end
 
 		super.update(deltaTime);
