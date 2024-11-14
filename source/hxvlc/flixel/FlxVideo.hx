@@ -74,7 +74,7 @@ class FlxVideo extends Video
 			role = LibVLC_Role_Game;
 
 			#if FLX_SOUND_SYSTEM
-			onVolumeChange();
+			onVolumeChange(_);
 			#end
 		});
 	}
@@ -187,7 +187,7 @@ class FlxVideo extends Video
 		}
 
 		#if (FLX_SOUND_SYSTEM && flixel < "5.9.0")
-		onVolumeChange();
+		onVolumeChange(_);
 		#end
 
 		super.update(deltaTime);
