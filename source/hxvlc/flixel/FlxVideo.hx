@@ -195,6 +195,7 @@ class FlxVideo extends Video
 		super.update(deltaTime);
 	}
 
+	#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
 	@:noCompletion
 	private function onVolumeChange(_):Void
 	{
@@ -203,5 +204,6 @@ class FlxVideo extends Video
 
 		volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 	}
+	#end
 }
 #end
