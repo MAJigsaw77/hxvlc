@@ -57,7 +57,7 @@
 				<lib name="${haxelib:hxvlc}/project/vlc/lib/iOS/libvlc_device.a" if="HXCPP_ARM64" />
 			</section>
 
-			<section if="iphonesim">
+			<section if="iphonesim || simulator">
 				<lib name="${haxelib:hxvlc}/project/vlc/lib/iOS/libvlc_sim.a" if="HXCPP_M64" />
 			</section>
 		</section>
