@@ -93,8 +93,11 @@ class FlxVideoSprite extends FlxSprite
 		});
 		bitmap.onFormatSetup.add(function():Void
 		{
-			if (bitmap != null && bitmap.bitmapData != null)
-				loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
+			if (bitmap != null)
+			{
+				if (bitmap.bitmapData != null)
+					loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
+			}
 		});
 		bitmap.visible = false;
 		FlxG.game.addChild(bitmap);
@@ -278,10 +281,8 @@ class FlxVideoSprite extends FlxSprite
 
 		if (bitmap != null)
 		{
-			bitmap.dispose();
-
 			FlxG.removeChild(bitmap);
-
+			bitmap.dispose();
 			bitmap = null;
 		}
 	}
@@ -303,8 +304,11 @@ class FlxVideoSprite extends FlxSprite
 	public override function update(elapsed:Float):Void
 	{
 		#if (FLX_SOUND_SYSTEM && flixel < "5.9.0")
-		if (bitmap != null && autoVolumeHandle)
-			bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		if (bitmap != null)
+		{
+			if (autoVolumeHandle)
+				bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		}
 		#end
 
 		super.update(elapsed);
@@ -314,8 +318,11 @@ class FlxVideoSprite extends FlxSprite
 	@:noCompletion
 	private function onVolumeChange(_):Void
 	{
-		if (bitmap != null && autoVolumeHandle)
-			bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		if (bitmap != null)
+		{
+			if (autoVolumeHandle)
+				bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		}
 	}
 	#end
 
