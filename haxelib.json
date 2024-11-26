@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "1.9.3",
-	"releasenote": "Fixed some pausing issues.",
+	"version": "1.9.4",
+	"releasenote": "Use onVolumeChange on newer Flixel versions and fixed some things.",
 	"contributors": [
 		"MAJigsaw77"
 	],
