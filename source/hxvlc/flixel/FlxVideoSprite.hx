@@ -64,6 +64,11 @@ class FlxVideoSprite extends FlxSprite
 	public var bitmap(default, null):Null<Video>;
 
 	/**
+	 * Internal tracker for whether the video is paused or not.
+	 */
+	private var paused:Bool = false;
+
+	/**
 	 * Creates a `FlxVideoSprite` at a specified position.
 	 *
 	 * @param x The initial X position of the sprite.
@@ -119,11 +124,11 @@ class FlxVideoSprite extends FlxSprite
 
 		if (autoPause)
 		{
-			if (!FlxG.signals.focusGained.has(resume))
-				FlxG.signals.focusGained.add(resume);
+			if (!FlxG.signals.focusGained.has(onFocusGained))
+				FlxG.signals.focusGained.add(onFocusGained);
 
-			if (!FlxG.signals.focusLost.has(pause))
-				FlxG.signals.focusLost.add(pause);
+			if (!FlxG.signals.focusLost.has(onFocusLost))
+				FlxG.signals.focusLost.add(onFocusLost);
 		}
 
 		if (location != null && !(location is Int) && !(location is Bytes) && (location is String))
@@ -266,11 +271,14 @@ class FlxVideoSprite extends FlxSprite
 
 	public override function destroy():Void
 	{
-		if (FlxG.signals.focusGained.has(resume))
-			FlxG.signals.focusGained.remove(resume);
+		if (autoPause)
+		{
+			if (!FlxG.signals.focusGained.has(onFocusGained))
+				FlxG.signals.focusGained.add(onFocusGained);
 
-		if (FlxG.signals.focusLost.has(pause))
-			FlxG.signals.focusLost.remove(pause);
+			if (!FlxG.signals.focusLost.has(onFocusLost))
+				FlxG.signals.focusLost.add(onFocusLost);
+		}
 
 		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
 		if (FlxG.sound.onVolumeChange.has(onVolumeChange))
@@ -312,6 +320,21 @@ class FlxVideoSprite extends FlxSprite
 		#end
 
 		super.update(elapsed);
+	}
+
+	@:noCompletion
+	private function onFocusGained():Void
+	{
+		if (!paused)
+			resume();
+	}
+
+	@:noCompletion
+	private function onFocusLost():Void
+	{
+		paused = bitmap == null ? false : !bitmap.isPlaying;
+		
+		pause();
 	}
 
 	#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
