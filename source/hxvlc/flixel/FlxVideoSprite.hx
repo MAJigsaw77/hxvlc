@@ -273,11 +273,11 @@ class FlxVideoSprite extends FlxSprite
 	{
 		if (autoPause)
 		{
-			if (!FlxG.signals.focusGained.has(onFocusGained))
-				FlxG.signals.focusGained.add(onFocusGained);
+			if (FlxG.signals.focusGained.has(onFocusGained))
+				FlxG.signals.focusGained.remove(onFocusGained);
 
-			if (!FlxG.signals.focusLost.has(onFocusLost))
-				FlxG.signals.focusLost.add(onFocusLost);
+			if (FlxG.signals.focusLost.has(onFocusLost))
+				FlxG.signals.focusLost.remove(onFocusLost);
 		}
 
 		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
