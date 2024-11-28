@@ -59,7 +59,7 @@ class FlxVideo extends Video
 	/**
 	 * Internal tracker for whether the video is paused or not.
 	 */
-	private var paused:Bool = false;
+	private var alreadyPaused:Bool = false;
 
 	/**
 	 * Initializes a FlxVideo object.
@@ -203,14 +203,14 @@ class FlxVideo extends Video
 	@:noCompletion
 	private function onFocusGained():Void
 	{
-		if (!paused)
+		if (!alreadyPaused)
 			resume();
 	}
 
 	@:noCompletion
 	private function onFocusLost():Void
 	{
-		paused = !isPlaying;
+		alreadyPaused = !isPlaying;
 		
 		pause();
 	}
