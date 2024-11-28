@@ -66,7 +66,7 @@ class FlxVideoSprite extends FlxSprite
 	/**
 	 * Internal tracker for whether the video is paused or not.
 	 */
-	private var paused:Bool = false;
+	private var alreadyPaused:Bool = false;
 
 	/**
 	 * Creates a `FlxVideoSprite` at a specified position.
@@ -322,14 +322,14 @@ class FlxVideoSprite extends FlxSprite
 	@:noCompletion
 	private function onFocusGained():Void
 	{
-		if (!paused)
+		if (!alreadyPaused)
 			resume();
 	}
 
 	@:noCompletion
 	private function onFocusLost():Void
 	{
-		paused = bitmap == null ? false : !bitmap.isPlaying;
+		alreadyPaused = bitmap == null ? false : !bitmap.isPlaying;
 		
 		pause();
 	}
