@@ -57,6 +57,11 @@ class FlxVideo extends Video
 	#end
 
 	/**
+	 * Internal tracker for whether the video is paused or not.
+	 */
+	private var paused:Bool = false;
+
+	/**
 	 * Initializes a FlxVideo object.
 	 *
 	 * @param smoothing Whether or not the video is smoothed when scaled.
@@ -105,11 +110,11 @@ class FlxVideo extends Video
 	{
 		if (autoPause)
 		{
-			if (!FlxG.signals.focusGained.has(resume))
-				FlxG.signals.focusGained.add(resume);
+			if (!FlxG.signals.focusGained.has(onFocusGained))
+				FlxG.signals.focusGained.add(onFocusGained);
 
-			if (!FlxG.signals.focusLost.has(pause))
-				FlxG.signals.focusLost.add(pause);
+			if (!FlxG.signals.focusLost.has(onFocusLost))
+				FlxG.signals.focusLost.add(onFocusLost);
 		}
 
 		if (location != null && !(location is Int) && !(location is Bytes) && (location is String))
@@ -164,11 +169,11 @@ class FlxVideo extends Video
 
 	public override function dispose():Void
 	{
-		if (FlxG.signals.focusGained.has(resume))
-			FlxG.signals.focusGained.remove(resume);
+		if (FlxG.signals.focusGained.has(onFocusGained))
+			FlxG.signals.focusGained.remove(onFocusGained);
 
-		if (FlxG.signals.focusLost.has(pause))
-			FlxG.signals.focusLost.remove(pause);
+		if (FlxG.signals.focusLost.has(onFocusLost))
+			FlxG.signals.focusLost.remove(onFocusLost);
 
 		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
 		if (FlxG.sound.onVolumeChange.has(onVolumeChange))
@@ -205,5 +210,20 @@ class FlxVideo extends Video
 		volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 	}
 	#end
+
+	@:noCompletion
+	private function onFocusGained():Void
+	{
+		if (!paused)
+			resume();
+	}
+
+	@:noCompletion
+	private function onFocusLost():Void
+	{
+		paused = !isPlaying;
+		
+		pause();
+	}
 }
 #end
