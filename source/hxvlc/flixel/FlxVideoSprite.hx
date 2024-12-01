@@ -66,6 +66,7 @@ class FlxVideoSprite extends FlxSprite
 	/**
 	 * Internal tracker for whether the video is paused or not.
 	 */
+	@:noCompletion
 	private var alreadyPaused:Bool = false;
 
 	/**
