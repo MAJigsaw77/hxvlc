@@ -51,7 +51,11 @@ class Main extends Sprite
 		if (refreshRate < 60)
 			refreshRate = 60;
 
+		#if mobile
+		addChild(new FlxGame(0, 0, VideoState, refreshRate, refreshRate));
+		#else
 		addChild(new FlxGame(1280, 720, VideoState, refreshRate, refreshRate));
+		#end
 
 		#if FLX_MOUSE
 		FlxG.mouse.useSystemCursor = true;
