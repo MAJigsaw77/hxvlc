@@ -80,7 +80,7 @@ class FlxVideo extends Video
 
 			#if FLX_SOUND_SYSTEM
 			if (autoVolumeHandle)
-				volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+				volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 			#end
 		});
 	}
@@ -89,7 +89,7 @@ class FlxVideo extends Video
 	/**
 	 * Calculates and returns the current volume based on Flixel's sound settings by default.
 	 *
-	 * The volume is automatically clamped between `0` and `1` by the calling code. If the sound is muted, the volume is `0`.
+	 * The volume is automatically clamped between `0` and `2.55` by the calling code. If the sound is muted, the volume is `0`.
 	 *
 	 * @return The calculated volume.
 	 */
@@ -194,7 +194,7 @@ class FlxVideo extends Video
 
 		#if (FLX_SOUND_SYSTEM && flixel < "5.9.0")
 		if (autoVolumeHandle)
-			volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+			volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 		#end
 
 		super.update(deltaTime);
@@ -222,7 +222,7 @@ class FlxVideo extends Video
 		if (!autoVolumeHandle)
 			return;
 
-		volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 1) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 	}
 	#end
 }
