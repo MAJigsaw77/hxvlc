@@ -7,8 +7,8 @@ package cpp;
 @:structAccess
 extern class StdVector<T> implements ArrayAccess<Reference<T>>
 {
-	@:overload(function(size:Int):Void {})
-	function new():Void;
+	overload function new():Void;
+	overload function new(size:Int):Void;
 
 	function at(index:Int):T;
 	function front():T;
