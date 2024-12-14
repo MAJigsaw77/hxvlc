@@ -208,60 +208,7 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	Video_obj *self = reinterpret_cast<Video_obj *>(p_data);
-
-	self->eventsMutex->acquire();
-
-	switch (p_event->type)
-	{
-	case libvlc_MediaPlayerOpening:
-		self->events[0] = true;
-		break;
-	case libvlc_MediaPlayerPlaying:
-		self->events[1] = true;
-		break;
-	case libvlc_MediaPlayerStopped:
-		self->events[2] = true;
-		break;
-	case libvlc_MediaPlayerPaused:
-		self->events[3] = true;
-		break;
-	case libvlc_MediaPlayerEndReached:
-		self->events[4] = true;
-		break;
-	case libvlc_MediaPlayerEncounteredError:
-		self->events[5] = true;
-		break;
-	case libvlc_MediaPlayerMediaChanged:
-		self->events[6] = true;
-		break;
-	case libvlc_MediaPlayerCorked:
-		self->events[7] = true;
-		break;
-	case libvlc_MediaPlayerUncorked:
-		self->events[8] = true;
-		break;
-	case libvlc_MediaPlayerTimeChanged:
-		self->events[9] = true;
-		break;
-	case libvlc_MediaPlayerPositionChanged:
-		self->events[10] = true;
-		break;
-	case libvlc_MediaPlayerLengthChanged:
-		self->events[11] = true;
-		break;
-	case libvlc_MediaPlayerChapterChanged:
-		self->events[12] = true;
-		break;
-	case libvlc_MediaMetaChanged:
-		self->events[13] = true;
-		break;
-	case libvlc_MediaParsedChanged:
-		self->events[14] = true;
-		break;
-	}
-
-	self->eventsMutex->release();
+	reinterpret_cast<Video_obj *>(p_data)->eventManagerCallbacks(p_event);
 
 	hx::SetTopOfStack((int *)0, true);
 }')
@@ -625,12 +572,12 @@ class Video extends Bitmap
 				Lib.application.onUpdate.add(update);
 
 			/*if (Lib.application.window != null)
-			{
-				if (!Lib.application.window.onActivate.has(resume))
-					Lib.application.window.onActivate.add(resume);
+				{
+					if (!Lib.application.window.onActivate.has(resume))
+						Lib.application.window.onActivate.add(resume);
 
-				if (!Lib.application.window.onDeactivate.has(pause))
-					Lib.application.window.onDeactivate.add(pause);
+					if (!Lib.application.window.onDeactivate.has(pause))
+						Lib.application.window.onDeactivate.add(pause);
 			}*/
 		}
 
@@ -1005,12 +952,12 @@ class Video extends Bitmap
 				Lib.application.onUpdate.remove(update);
 
 			/*if (Lib.application.window != null)
-			{
-				if (Lib.application.window.onActivate.has(resume))
-					Lib.application.window.onActivate.remove(resume);
+				{
+					if (Lib.application.window.onActivate.has(resume))
+						Lib.application.window.onActivate.remove(resume);
 
-				if (Lib.application.window.onDeactivate.has(pause))
-					Lib.application.window.onDeactivate.remove(pause);
+					if (Lib.application.window.onDeactivate.has(pause))
+						Lib.application.window.onDeactivate.remove(pause);
 			}*/
 		}
 
@@ -1778,5 +1725,49 @@ class Video extends Bitmap
 			alMutex.release();
 		}
 		#end
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private function eventManagerCallbacks(p_event:cpp.RawConstPointer<LibVLC_Event_T>):Void
+	{
+		eventsMutex.acquire();
+
+		switch (p_event[0].type)
+		{
+			case event if (event == LibVLC_MediaPlayerOpening):
+				events[0] = true;
+			case event if (event == LibVLC_MediaPlayerPlaying):
+				events[1] = true;
+			case event if (event == LibVLC_MediaPlayerStopped):
+				events[2] = true;
+			case event if (event == LibVLC_MediaPlayerPaused):
+				events[3] = true;
+			case event if (event == LibVLC_MediaPlayerEndReached):
+				events[4] = true;
+			case event if (event == LibVLC_MediaPlayerEncounteredError):
+				events[5] = true;
+			case event if (event == LibVLC_MediaPlayerMediaChanged):
+				events[6] = true;
+			case event if (event == LibVLC_MediaPlayerCorked):
+				events[7] = true;
+			case event if (event == LibVLC_MediaPlayerUncorked):
+				events[8] = true;
+			case event if (event == LibVLC_MediaPlayerTimeChanged):
+				events[9] = true;
+			case event if (event == LibVLC_MediaPlayerPositionChanged):
+				events[10] = true;
+			case event if (event == LibVLC_MediaPlayerLengthChanged):
+				events[11] = true;
+			case event if (event == LibVLC_MediaPlayerChapterChanged):
+				events[12] = true;
+			case event if (event == LibVLC_MediaMetaChanged):
+				events[13] = true;
+			case event if (event == LibVLC_MediaParsedChanged):
+				events[14] = true;
+		}
+
+		eventsMutex.release();
 	}
 }
