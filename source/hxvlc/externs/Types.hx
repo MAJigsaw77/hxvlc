@@ -252,8 +252,16 @@ extern class LibVLC_Event_Manager_T {}
 @:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
+@:unreflective
+@:structAccess
 @:native('libvlc_event_t')
-extern class LibVLC_Event_T {}
+extern class LibVLC_Event_T
+{
+	@:native('libvlc_event_t')
+	static function alloc():LibVLC_Event_T;
+
+	var type:Int;
+}
 
 @:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
