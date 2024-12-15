@@ -1568,46 +1568,38 @@ class Video extends Bitmap
 		switch (p_event[0].type)
 		{
 			case event if (event == LibVLC_MediaPlayerOpening):
-				MainLoop.runInMainThread(() -> onOpening.dispatch());
+				MainLoop.runInMainThread(onOpening.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerPlaying):
-				MainLoop.runInMainThread(() -> onPlaying.dispatch());
+				MainLoop.runInMainThread(onPlaying.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerStopped):
-				MainLoop.runInMainThread(() -> onStopped.dispatch());
+				MainLoop.runInMainThread(onStopped.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerPaused):
-				MainLoop.runInMainThread(() -> onPaused.dispatch());
+				MainLoop.runInMainThread(onPaused.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerEndReached):
-				MainLoop.runInMainThread(() -> onEndReached.dispatch());
+				MainLoop.runInMainThread(onEndReached.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerEncounteredError):
-				final errmsg:String = LibVLC.errmsg();
+				final errmsg:Null<String> = LibVLC.errmsg();
 
-				if (errmsg != null && errmsg.length > 0)
-					MainLoop.runInMainThread(() -> onEncounteredError.dispatch(errmsg));
-				else
-					MainLoop.runInMainThread(() -> onEncounteredError.dispatch('Unknown error'));
+				if (errmsg != null)
+					MainLoop.runInMainThread(onEncounteredError.dispatch.bind(errmsg));
 			case event if (event == LibVLC_MediaPlayerMediaChanged):
-				MainLoop.runInMainThread(() -> onMediaChanged.dispatch());
+				MainLoop.runInMainThread(onMediaChanged.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerCorked):
-				MainLoop.runInMainThread(() -> onCorked.dispatch());
+				MainLoop.runInMainThread(onCorked.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerUncorked):
-				MainLoop.runInMainThread(() -> onUncorked.dispatch());
+				MainLoop.runInMainThread(onUncorked.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerTimeChanged):
-				MainLoop.runInMainThread(() -> onTimeChanged.dispatch(time));
+				MainLoop.runInMainThread(onTimeChanged.dispatch.bind((untyped __cpp__('{0}->u.media_player_time_changed.new_time', p_event[0]) : Int64)));
 			case event if (event == LibVLC_MediaPlayerPositionChanged):
-				MainLoop.runInMainThread(() -> onPositionChanged.dispatch(position));
+				MainLoop.runInMainThread(onPositionChanged.dispatch.bind(untyped __cpp__('{0}->u.media_player_position_changed.new_position', p_event[0])));
 			case event if (event == LibVLC_MediaPlayerLengthChanged):
-				MainLoop.runInMainThread(() -> onLengthChanged.dispatch(length));
+				MainLoop.runInMainThread(onLengthChanged.dispatch.bind((untyped __cpp__('{0}->u.media_player_length_changed.new_length', p_event[0]) : Int64)));
 			case event if (event == LibVLC_MediaPlayerChapterChanged):
-				MainLoop.runInMainThread(() -> onChapterChanged.dispatch(chapter));
+				MainLoop.runInMainThread(onChapterChanged.dispatch.bind(untyped __cpp__('{0}->u.media_player_chapter_changed.new_chapter', p_event[0])));
 			case event if (event == LibVLC_MediaMetaChanged):
-				MainLoop.runInMainThread(() -> onMediaMetaChanged.dispatch());
+				MainLoop.runInMainThread(onMediaMetaChanged.dispatch.bind());
 			case event if (event == LibVLC_MediaParsedChanged):
-				if (mediaPlayer != null)
-				{
-					final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
-
-					if (currentMediaItem != null)
-						MainLoop.runInMainThread(() -> onMediaParsedChanged.dispatch(LibVLC.media_get_parsed_status(currentMediaItem)));
-				}
+				MainLoop.runInMainThread(onMediaParsedChanged.dispatch.bind(untyped __cpp__('{0}->u.media_parsed_changed.new_status', p_event[0])));
 		}
 	}
 }
