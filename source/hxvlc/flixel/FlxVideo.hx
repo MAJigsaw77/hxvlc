@@ -78,9 +78,16 @@ class FlxVideo extends Video
 		{
 			role = LibVLC_Role_Game;
 
+			#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+			if (!FlxG.sound.onVolumeChange.has(onVolumeChange))
+				FlxG.sound.onVolumeChange.add(onVolumeChange);
+			#elseif (FLX_SOUND_SYSTEM && flixel < "5.9.0")
+			if (!FlxG.signals.postUpdate.has(onVolumeUpdate))
+				FlxG.signals.postUpdate.add(onVolumeUpdate);
+			#end
+
 			#if FLX_SOUND_SYSTEM
-			if (autoVolumeHandle)
-				volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+			onVolumeChange(0.0);
 			#end
 		});
 	}
@@ -178,12 +185,15 @@ class FlxVideo extends Video
 		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
 		if (FlxG.sound.onVolumeChange.has(onVolumeChange))
 			FlxG.sound.onVolumeChange.remove(onVolumeChange);
+		#elseif (FLX_SOUND_SYSTEM && flixel < "5.9.0")
+		if (FlxG.signals.postUpdate.has(onVolumeUpdate))
+			FlxG.signals.postUpdate.remove(onVolumeUpdate);
 		#end
 
 		super.dispose();
 	}
 
-	@:noCompletion
+	/*@:noCompletion
 	private override function update(deltaTime:Int):Void
 	{
 		if ((autoResizeMode.x || autoResizeMode.y) && bitmapData != null)
@@ -192,13 +202,8 @@ class FlxVideo extends Video
 			height = autoResizeMode.y ? FlxG.scaleMode.gameSize.y : bitmapData.height;
 		}
 
-		#if (FLX_SOUND_SYSTEM && flixel < "5.9.0")
-		if (autoVolumeHandle)
-			volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
-		#end
-
 		super.update(deltaTime);
-	}
+	}*/
 
 	@:noCompletion
 	private function onFocusGained():Void
@@ -219,9 +224,17 @@ class FlxVideo extends Video
 		pause();
 	}
 
-	#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+	#if FLX_SOUND_SYSTEM
+	#if (flixel < "5.9.0")
 	@:noCompletion
-	private function onVolumeChange(_):Void
+	private function onVolumeUpdate():Void
+	{
+		onVolumeChange(0.0);
+	}
+	#end
+
+	@:noCompletion
+	private function onVolumeChange(vol:Float):Void
 	{
 		if (!autoVolumeHandle)
 			return;
