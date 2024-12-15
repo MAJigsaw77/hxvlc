@@ -1589,13 +1589,13 @@ class Video extends Bitmap
 			case event if (event == LibVLC_MediaPlayerUncorked):
 				MainLoop.runInMainThread(onUncorked.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerTimeChanged):
-				MainLoop.runInMainThread(onTimeChanged.dispatch.bind((untyped __cpp__('{0}->u.media_player_time_changed.new_time', p_event[0]) : Int64)));
+				MainLoop.runInMainThread(onTimeChanged.dispatch.bind((untyped __cpp__('{0}->u.media_player_time_changed.new_time', p_event) : Int64)));
 			case event if (event == LibVLC_MediaPlayerPositionChanged):
-				MainLoop.runInMainThread(onPositionChanged.dispatch.bind(untyped __cpp__('{0}->u.media_player_position_changed.new_position', p_event[0])));
+				MainLoop.runInMainThread(onPositionChanged.dispatch.bind(untyped __cpp__('{0}->u.media_player_position_changed.new_position', p_event)));
 			case event if (event == LibVLC_MediaPlayerLengthChanged):
-				MainLoop.runInMainThread(onLengthChanged.dispatch.bind((untyped __cpp__('{0}->u.media_player_length_changed.new_length', p_event[0]) : Int64)));
+				MainLoop.runInMainThread(onLengthChanged.dispatch.bind((untyped __cpp__('{0}->u.media_player_length_changed.new_length', p_event) : Int64)));
 			case event if (event == LibVLC_MediaPlayerChapterChanged):
-				MainLoop.runInMainThread(onChapterChanged.dispatch.bind(untyped __cpp__('{0}->u.media_player_chapter_changed.new_chapter', p_event[0])));
+				MainLoop.runInMainThread(onChapterChanged.dispatch.bind(untyped __cpp__('{0}->u.media_player_chapter_changed.new_chapter', p_event)));
 			case event if (event == LibVLC_MediaMetaChanged):
 				MainLoop.runInMainThread(onMediaMetaChanged.dispatch.bind());
 			case event if (event == LibVLC_MediaParsedChanged):
