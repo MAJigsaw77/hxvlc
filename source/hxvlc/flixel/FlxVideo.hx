@@ -32,7 +32,6 @@ using StringTools;
  * 	FlxTimer.wait(0.001, () -> video.play());
  * ```
  */
-@:nullSafety
 class FlxVideo extends Video
 {
 	/**

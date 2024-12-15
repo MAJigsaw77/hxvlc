@@ -33,7 +33,6 @@ using StringTools;
 /**
  * This class is a video player that uses LibVLC for seamless integration with OpenFL display objects.
  */
-@:nullSafety
 @:cppNamespaceCode('static int media_open(void *opaque, void **datap, uint64_t *sizep)
 {
 	hx::SetTopOfStack((int *)99, true);
