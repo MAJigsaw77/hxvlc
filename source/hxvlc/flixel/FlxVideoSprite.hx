@@ -41,6 +41,7 @@ using StringTools;
  * 	FlxTimer.wait(0.001, () -> video.play());
  * ```
  */
+@:nullSafety
 class FlxVideoSprite extends FlxSprite
 {
 	/**
@@ -78,10 +79,6 @@ class FlxVideoSprite extends FlxSprite
 	{
 		super(x, y);
 
-		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
-		FlxG.sound.onVolumeChange.add(onVolumeChange);
-		#end
-
 		bitmap = new Video(antialiasing);
 		bitmap.forceRendering = true;
 		bitmap.onOpening.add(function():Void
@@ -90,9 +87,16 @@ class FlxVideoSprite extends FlxSprite
 			{
 				bitmap.role = LibVLC_Role_Game;
 
+				#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+				if (!FlxG.sound.onVolumeChange.has(onVolumeChange))
+					FlxG.sound.onVolumeChange.add(onVolumeChange);
+				#elseif (FLX_SOUND_SYSTEM && flixel < "5.9.0")
+				if (!FlxG.signals.postUpdate.has(onVolumeUpdate))
+					FlxG.signals.postUpdate.add(onVolumeUpdate);
+				#end
+
 				#if FLX_SOUND_SYSTEM
-				if (autoVolumeHandle)
-					bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+				onVolumeChange(0.0);
 				#end
 			}
 		});
@@ -280,6 +284,9 @@ class FlxVideoSprite extends FlxSprite
 		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
 		if (FlxG.sound.onVolumeChange.has(onVolumeChange))
 			FlxG.sound.onVolumeChange.remove(onVolumeChange);
+		#elseif (FLX_SOUND_SYSTEM && flixel < "5.9.0")
+		if (FlxG.signals.postUpdate.has(onVolumeUpdate))
+			FlxG.signals.postUpdate.remove(onVolumeUpdate);
 		#end
 
 		super.destroy();
@@ -306,19 +313,6 @@ class FlxVideoSprite extends FlxSprite
 		bitmap?.resume();
 	}
 
-	public override function update(elapsed:Float):Void
-	{
-		#if (FLX_SOUND_SYSTEM && flixel < "5.9.0")
-		if (bitmap != null)
-		{
-			if (autoVolumeHandle)
-				bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
-		}
-		#end
-
-		super.update(elapsed);
-	}
-
 	@:noCompletion
 	private function onFocusGained():Void
 	{
@@ -338,9 +332,16 @@ class FlxVideoSprite extends FlxSprite
 		pause();
 	}
 
-	#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+	#if FLX_SOUND_SYSTEM
+	#if (flixel < "5.9.0")
+	private function onVolumeUpdate():Void
+	{
+		onVolumeChange(0.0);
+	}
+	#end
+
 	@:noCompletion
-	private function onVolumeChange(_):Void
+	private function onVolumeChange(vol:Float):Void
 	{
 		if (bitmap != null)
 		{
