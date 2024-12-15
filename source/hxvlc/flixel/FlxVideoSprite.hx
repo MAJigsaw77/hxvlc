@@ -334,6 +334,7 @@ class FlxVideoSprite extends FlxSprite
 
 	#if FLX_SOUND_SYSTEM
 	#if (flixel < "5.9.0")
+	@:noCompletion
 	private function onVolumeUpdate():Void
 	{
 		onVolumeChange(0.0);
