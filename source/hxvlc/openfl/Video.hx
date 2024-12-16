@@ -1580,8 +1580,7 @@ class Video extends Bitmap
 			case event if (event == LibVLC_MediaPlayerEncounteredError):
 				final errmsg:String = LibVLC.errmsg();
 
-				if (errmsg != null)
-					MainLoop.runInMainThread(onEncounteredError.dispatch.bind(errmsg));
+				MainLoop.runInMainThread(onEncounteredError.dispatch.bind(errmsg));
 			case event if (event == LibVLC_MediaPlayerCorked):
 				MainLoop.runInMainThread(onCorked.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerUncorked):
