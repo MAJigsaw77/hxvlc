@@ -90,6 +90,13 @@ class FlxVideo extends Video
 			onVolumeChange(0.0);
 			#end
 		});
+		onFormatSetup.add(function():Void
+		{
+			if (!FlxG.signals.gameResized.has(onGameResized))
+				FlxG.signals.gameResized.add(onGameResized);
+
+			onGameResized(0, 0);
+		});
 	}
 
 	#if FLX_SOUND_SYSTEM
@@ -182,6 +189,9 @@ class FlxVideo extends Video
 		if (FlxG.signals.focusLost.has(onFocusLost))
 			FlxG.signals.focusLost.remove(onFocusLost);
 
+		if (FlxG.signals.gameResized.has(onGameResized))
+			FlxG.signals.gameResized.remove(onGameResized);
+
 		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
 		if (FlxG.sound.onVolumeChange.has(onVolumeChange))
 			FlxG.sound.onVolumeChange.remove(onVolumeChange);
@@ -193,17 +203,15 @@ class FlxVideo extends Video
 		super.dispose();
 	}
 
-	/*@:noCompletion
-	private override function update(deltaTime:Int):Void
+	@:noCompletion
+	private function onGameResized(width:Int, height:Int):Void
 	{
 		if ((autoResizeMode.x || autoResizeMode.y) && bitmapData != null)
 		{
-			width = autoResizeMode.x ? FlxG.scaleMode.gameSize.x : bitmapData.width;
-			height = autoResizeMode.y ? FlxG.scaleMode.gameSize.y : bitmapData.height;
+			this.width = autoResizeMode.x ? FlxG.scaleMode.gameSize.x : bitmapData.width;
+			this.height = autoResizeMode.y ? FlxG.scaleMode.gameSize.y : bitmapData.height;
 		}
-
-		super.update(deltaTime);
-	}*/
+	}
 
 	@:noCompletion
 	private function onFocusGained():Void
@@ -236,7 +244,7 @@ class FlxVideo extends Video
 	@:noCompletion
 	private function onVolumeChange(vol:Float):Void
 	{
-		if (!autoVolumeHandle)
+		if (autoVolumeHandle)
 			return;
 
 		volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
