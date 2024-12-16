@@ -70,10 +70,6 @@ class FlxVideo extends Video
 	{
 		super(smoothing);
 
-		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
-		FlxG.sound.onVolumeChange.add(onVolumeChange);
-		#end
-
 		onOpening.add(function():Void
 		{
 			role = LibVLC_Role_Game;
