@@ -44,7 +44,7 @@ class FlxVideo extends Video
 	/**
 	 * Determines the automatic resizing behavior for the video.
 	 *
-	 * WARNING: Must be set before loading a video if you want to set it to `NONE`.
+	 * WARNING: Must be set before loading a video.
 	 */
 	public var autoResizeMode:FlxAxes = FlxAxes.XY;
 
