@@ -20,7 +20,6 @@ using StringTools;
 /**
  * This class manages the global instance of LibVLC, providing methods for initialization, disposal, and retrieving version information.
  */
-@:nullSafety
 #if android
 @:headerInclude('android/log.h')
 #end

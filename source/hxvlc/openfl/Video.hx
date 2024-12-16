@@ -33,7 +33,6 @@ using StringTools;
 /**
  * This class is a video player that uses LibVLC for seamless integration with OpenFL display objects.
  */
-@:nullSafety
 @:cppNamespaceCode('static int media_open(void *opaque, void **datap, uint64_t *sizep)
 {
 	hx::SetTopOfStack((int *)99, true);
@@ -208,60 +207,7 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	Video_obj *self = reinterpret_cast<Video_obj *>(p_data);
-
-	self->eventsMutex->acquire();
-
-	switch (p_event->type)
-	{
-	case libvlc_MediaPlayerOpening:
-		self->events[0] = true;
-		break;
-	case libvlc_MediaPlayerPlaying:
-		self->events[1] = true;
-		break;
-	case libvlc_MediaPlayerStopped:
-		self->events[2] = true;
-		break;
-	case libvlc_MediaPlayerPaused:
-		self->events[3] = true;
-		break;
-	case libvlc_MediaPlayerEndReached:
-		self->events[4] = true;
-		break;
-	case libvlc_MediaPlayerEncounteredError:
-		self->events[5] = true;
-		break;
-	case libvlc_MediaPlayerMediaChanged:
-		self->events[6] = true;
-		break;
-	case libvlc_MediaPlayerCorked:
-		self->events[7] = true;
-		break;
-	case libvlc_MediaPlayerUncorked:
-		self->events[8] = true;
-		break;
-	case libvlc_MediaPlayerTimeChanged:
-		self->events[9] = true;
-		break;
-	case libvlc_MediaPlayerPositionChanged:
-		self->events[10] = true;
-		break;
-	case libvlc_MediaPlayerLengthChanged:
-		self->events[11] = true;
-		break;
-	case libvlc_MediaPlayerChapterChanged:
-		self->events[12] = true;
-		break;
-	case libvlc_MediaMetaChanged:
-		self->events[13] = true;
-		break;
-	case libvlc_MediaParsedChanged:
-		self->events[14] = true;
-		break;
-	}
-
-	self->eventsMutex->release();
+	reinterpret_cast<Video_obj *>(p_data)->eventManagerCallbacks(p_event);
 
 	hx::SetTopOfStack((int *)0, true);
 }')
@@ -484,13 +430,7 @@ class Video extends Bitmap
 	#end
 
 	@:noCompletion
-	private final eventsMutex:Mutex = new Mutex();
-
-	@:noCompletion
 	private final textureMutex:Mutex = new Mutex();
-
-	@:noCompletion
-	private final events:Array<Bool> = [for (i in 0...15) false];
 
 	@:noCompletion
 	private var mediaData:Null<cpp.RawPointer<cpp.UInt8>>;
@@ -618,21 +558,6 @@ class Video extends Bitmap
 		}
 		else
 			return false;
-
-		if (Lib.application != null)
-		{
-			if (!Lib.application.onUpdate.has(update))
-				Lib.application.onUpdate.add(update);
-
-			/*if (Lib.application.window != null)
-			{
-				if (!Lib.application.window.onActivate.has(resume))
-					Lib.application.window.onActivate.add(resume);
-
-				if (!Lib.application.window.onDeactivate.has(pause))
-					Lib.application.window.onDeactivate.add(pause);
-			}*/
-		}
 
 		if (mediaPlayer == null)
 		{
@@ -999,21 +924,6 @@ class Video extends Bitmap
 			mediaPlayer = null;
 		}
 
-		if (Lib.application != null)
-		{
-			if (Lib.application.onUpdate.has(update))
-				Lib.application.onUpdate.remove(update);
-
-			/*if (Lib.application.window != null)
-			{
-				if (Lib.application.window.onActivate.has(resume))
-					Lib.application.window.onActivate.remove(resume);
-
-				if (Lib.application.window.onDeactivate.has(pause))
-					Lib.application.window.onDeactivate.remove(pause);
-			}*/
-		}
-
 		mediaMutex.acquire();
 
 		if (mediaData != null)
@@ -1078,136 +988,6 @@ class Video extends Bitmap
 
 		alMutex.release();
 		#end
-	}
-
-	@:noCompletion
-	private function update(deltaTime:Int):Void
-	{
-		eventsMutex.acquire();
-
-		if (!events.contains(true))
-		{
-			eventsMutex.release();
-			return;
-		}
-
-		if (events[0])
-		{
-			events[0] = false;
-
-			onOpening.dispatch();
-		}
-
-		if (events[1])
-		{
-			events[1] = false;
-
-			onPlaying.dispatch();
-		}
-
-		if (events[2])
-		{
-			events[2] = false;
-
-			onStopped.dispatch();
-		}
-
-		if (events[3])
-		{
-			events[3] = false;
-
-			onPaused.dispatch();
-		}
-
-		if (events[4])
-		{
-			events[4] = false;
-
-			onEndReached.dispatch();
-		}
-
-		if (events[5])
-		{
-			events[5] = false;
-
-			final errmsg:String = LibVLC.errmsg();
-
-			if (errmsg != null && errmsg.length > 0)
-				onEncounteredError.dispatch(errmsg);
-			else
-				onEncounteredError.dispatch('Unknown error');
-		}
-
-		if (events[6])
-		{
-			events[6] = false;
-
-			onMediaChanged.dispatch();
-		}
-
-		if (events[7])
-		{
-			events[7] = false;
-
-			onCorked.dispatch();
-		}
-
-		if (events[8])
-		{
-			events[8] = false;
-
-			onUncorked.dispatch();
-		}
-
-		if (events[9])
-		{
-			events[9] = false;
-
-			onTimeChanged.dispatch(time);
-		}
-
-		if (events[10])
-		{
-			events[10] = false;
-
-			onPositionChanged.dispatch(position);
-		}
-
-		if (events[11])
-		{
-			events[11] = false;
-
-			onLengthChanged.dispatch(length);
-		}
-
-		if (events[12])
-		{
-			events[12] = false;
-
-			onChapterChanged.dispatch(chapter);
-		}
-
-		if (events[13])
-		{
-			events[13] = false;
-
-			onMediaMetaChanged.dispatch();
-		}
-
-		if (events[14])
-		{
-			events[14] = false;
-
-			if (mediaPlayer != null)
-			{
-				final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
-
-				if (currentMediaItem != null)
-					onMediaParsedChanged.dispatch(LibVLC.media_get_parsed_status(currentMediaItem));
-			}
-		}
-
-		eventsMutex.release();
 	}
 
 	@:noCompletion
@@ -1778,5 +1558,57 @@ class Video extends Bitmap
 			alMutex.release();
 		}
 		#end
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private function eventManagerCallbacks(p_event:cpp.RawConstPointer<LibVLC_Event_T>):Void
+	{
+		switch (p_event[0].type)
+		{
+			case event if (event == LibVLC_MediaPlayerOpening):
+				MainLoop.runInMainThread(onOpening.dispatch.bind());
+			case event if (event == LibVLC_MediaPlayerPlaying):
+				MainLoop.runInMainThread(onPlaying.dispatch.bind());
+			case event if (event == LibVLC_MediaPlayerStopped):
+				MainLoop.runInMainThread(onStopped.dispatch.bind());
+			case event if (event == LibVLC_MediaPlayerPaused):
+				MainLoop.runInMainThread(onPaused.dispatch.bind());
+			case event if (event == LibVLC_MediaPlayerEndReached):
+				MainLoop.runInMainThread(onEndReached.dispatch.bind());
+			case event if (event == LibVLC_MediaPlayerEncounteredError):
+				final errmsg:String = LibVLC.errmsg();
+
+				MainLoop.runInMainThread(onEncounteredError.dispatch.bind(errmsg));
+			case event if (event == LibVLC_MediaPlayerCorked):
+				MainLoop.runInMainThread(onCorked.dispatch.bind());
+			case event if (event == LibVLC_MediaPlayerUncorked):
+				MainLoop.runInMainThread(onUncorked.dispatch.bind());
+			case event if (event == LibVLC_MediaPlayerTimeChanged):
+				final newTime:Int64 = (untyped __cpp__('{0}.u.media_player_time_changed.new_time', p_event[0]) : cpp.Int64);
+
+				MainLoop.runInMainThread(onTimeChanged.dispatch.bind(newTime));
+			case event if (event == LibVLC_MediaPlayerPositionChanged):
+				final newPosition:Single = untyped __cpp__('{0}.u.media_player_position_changed.new_position', p_event[0]);
+
+				MainLoop.runInMainThread(onPositionChanged.dispatch.bind(newPosition));
+			case event if (event == LibVLC_MediaPlayerLengthChanged):
+				final newLength:Int64 = (untyped __cpp__('{0}.u.media_player_length_changed.new_length', p_event[0]) : cpp.Int64);
+
+				MainLoop.runInMainThread(onLengthChanged.dispatch.bind(newLength));
+			case event if (event == LibVLC_MediaPlayerChapterChanged):
+				final newChapter:Int = untyped __cpp__('{0}.u.media_player_chapter_changed.new_chapter', p_event[0]);
+
+				MainLoop.runInMainThread(onChapterChanged.dispatch.bind(newChapter));
+			case event if (event == LibVLC_MediaParsedChanged):
+				final newStatus:Int = untyped __cpp__('{0}.u.media_parsed_changed.new_status', p_event[0]);
+
+				MainLoop.runInMainThread(onMediaParsedChanged.dispatch.bind(newStatus));
+			case event if (event == LibVLC_MediaMetaChanged):
+				MainLoop.runInMainThread(onMediaMetaChanged.dispatch.bind());
+			case event if (event == LibVLC_MediaPlayerMediaChanged):
+				MainLoop.runInMainThread(onMediaChanged.dispatch.bind());
+		}
 	}
 }
