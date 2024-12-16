@@ -1578,28 +1578,38 @@ class Video extends Bitmap
 			case event if (event == LibVLC_MediaPlayerEndReached):
 				MainLoop.runInMainThread(onEndReached.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerEncounteredError):
-				final errmsg:Null<String> = LibVLC.errmsg();
+				final errmsg:String = LibVLC.errmsg();
 
 				if (errmsg != null)
 					MainLoop.runInMainThread(onEncounteredError.dispatch.bind(errmsg));
-			case event if (event == LibVLC_MediaPlayerMediaChanged):
-				MainLoop.runInMainThread(onMediaChanged.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerCorked):
 				MainLoop.runInMainThread(onCorked.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerUncorked):
 				MainLoop.runInMainThread(onUncorked.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerTimeChanged):
-				MainLoop.runInMainThread(onTimeChanged.dispatch.bind((untyped __cpp__('{0}.u.media_player_time_changed.new_time', p_event[0]) : Int64)));
+				final newTime:Int64 = (untyped __cpp__('{0}.u.media_player_time_changed.new_time', p_event[0]) : cpp.Int64);
+
+				MainLoop.runInMainThread(onTimeChanged.dispatch.bind(newTime));
 			case event if (event == LibVLC_MediaPlayerPositionChanged):
-				MainLoop.runInMainThread(onPositionChanged.dispatch.bind(untyped __cpp__('{0}.u.media_player_position_changed.new_position', p_event[0])));
+				final newPosition:Single = untyped __cpp__('{0}.u.media_player_position_changed.new_position', p_event[0]);
+
+				MainLoop.runInMainThread(onPositionChanged.dispatch.bind(newPosition));
 			case event if (event == LibVLC_MediaPlayerLengthChanged):
-				MainLoop.runInMainThread(onLengthChanged.dispatch.bind((untyped __cpp__('{0}.u.media_player_length_changed.new_length', p_event[0]) : Int64)));
+				final newLength:Int64 = (untyped __cpp__('{0}.u.media_player_length_changed.new_length', p_event[0]) : cpp.Int64);
+
+				MainLoop.runInMainThread(onLengthChanged.dispatch.bind(newLength));
 			case event if (event == LibVLC_MediaPlayerChapterChanged):
-				MainLoop.runInMainThread(onChapterChanged.dispatch.bind(untyped __cpp__('{0}.u.media_player_chapter_changed.new_chapter', p_event[0])));
+				final newChapter:Int = untyped __cpp__('{0}.u.media_player_chapter_changed.new_chapter', p_event[0]);
+
+				MainLoop.runInMainThread(onChapterChanged.dispatch.bind(newChapter));
+			case event if (event == LibVLC_MediaParsedChanged):
+				final newStatus:Int = untyped __cpp__('{0}.u.media_parsed_changed.new_status', p_event[0]);
+
+				MainLoop.runInMainThread(onMediaParsedChanged.dispatch.bind(newStatus));
 			case event if (event == LibVLC_MediaMetaChanged):
 				MainLoop.runInMainThread(onMediaMetaChanged.dispatch.bind());
-			case event if (event == LibVLC_MediaParsedChanged):
-				MainLoop.runInMainThread(onMediaParsedChanged.dispatch.bind(untyped __cpp__('{0}.u.media_parsed_changed.new_status', p_event[0])));
+			case event if (event == LibVLC_MediaPlayerMediaChanged):
+				MainLoop.runInMainThread(onMediaChanged.dispatch.bind());
 		}
 	}
 }
