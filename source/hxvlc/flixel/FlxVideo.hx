@@ -62,6 +62,12 @@ class FlxVideo extends Video
 	private var resumeOnFocus:Bool = false;
 
 	/**
+	 * Internal tracker for the resize mode so it doesn't get changed while the video is running.
+	 */
+	@:noCompletion
+	private var currentResizeMode:Null<FlxAxes>;
+
+	/**
 	 * Initializes a FlxVideo object.
 	 *
 	 * @param smoothing Whether or not the video is smoothed when scaled.
@@ -126,6 +132,8 @@ class FlxVideo extends Video
 			if (!FlxG.signals.focusLost.has(onFocusLost))
 				FlxG.signals.focusLost.add(onFocusLost);
 		}
+
+		currentResizeMode = autoResizeMode;
 
 		if (location != null && !(location is Int) && !(location is Bytes) && (location is String))
 		{
@@ -202,10 +210,13 @@ class FlxVideo extends Video
 	@:noCompletion
 	private function onGameResized(width:Int, height:Int):Void
 	{
-		if ((autoResizeMode.x || autoResizeMode.y) && bitmapData != null)
+		if (currentResizeMode != null)
 		{
-			this.width = autoResizeMode.x ? FlxG.scaleMode.gameSize.x : bitmapData.width;
-			this.height = autoResizeMode.y ? FlxG.scaleMode.gameSize.y : bitmapData.height;
+			if ((currentResizeMode.x || currentResizeMode.y) && bitmapData != null)
+			{
+				this.width = currentResizeMode.x ? FlxG.scaleMode.gameSize.x : bitmapData.width;
+				this.height = currentResizeMode.y ? FlxG.scaleMode.gameSize.y : bitmapData.height;
+			}
 		}
 	}
 
@@ -240,7 +251,7 @@ class FlxVideo extends Video
 	@:noCompletion
 	private function onVolumeChange(vol:Float):Void
 	{
-		if (autoVolumeHandle)
+		if (!autoVolumeHandle)
 			return;
 
 		volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
