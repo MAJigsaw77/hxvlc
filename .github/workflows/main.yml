@@ -43,7 +43,7 @@ jobs:
       - name: Setup Flixel Libraries
         if: matrix.sample == 'flixel'
         run: |
-          haxelib git flixel https://github.com/HaxeFlixel/flixel.git --quiet --never --skip-dependencies
+          haxelib install flixel --quiet --never --skip-dependencies
           haxelib install hscript --quiet --never --skip-dependencies
 
       - name: Setup hxcpp Library
@@ -112,7 +112,7 @@ jobs:
       - name: Setup Flixel Libraries
         if: matrix.sample == 'flixel'
         run: |
-          haxelib git flixel https://github.com/HaxeFlixel/flixel.git --quiet --never --skip-dependencies
+          haxelib install flixel --quiet --never --skip-dependencies
           haxelib install hscript --quiet --never --skip-dependencies
 
       - name: Setup hxcpp Library
