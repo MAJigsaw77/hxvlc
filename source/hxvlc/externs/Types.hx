@@ -109,8 +109,7 @@ private extern class LibVLC_Meta_T_Impl {}
 @:native('libvlc_media_stats_t')
 extern class LibVLC_Media_Stats_T
 {
-	@:native('libvlc_media_stats_t')
-	static function alloc():LibVLC_Media_Stats_T;
+	function new():Void;
 
 	/* Input */
 	var i_read_bytes:Int;
@@ -206,8 +205,7 @@ extern class LibVLC_Media_Player_T {}
 @:native('libvlc_audio_output_t')
 extern class LibVLC_Audio_Output_T
 {
-	@:native('libvlc_audio_output_t')
-	static function alloc():LibVLC_Audio_Output_T;
+	function new():Void;
 
 	var psz_name:cpp.CastCharStar;
 	var psz_description:cpp.CastCharStar;
@@ -257,8 +255,7 @@ extern class LibVLC_Event_Manager_T {}
 @:native('libvlc_event_t')
 extern class LibVLC_Event_T
 {
-	@:native('libvlc_event_t')
-	static function alloc():LibVLC_Event_T;
+	function new():Void;
 
 	var type:Int;
 }

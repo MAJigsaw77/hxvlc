@@ -1024,7 +1024,7 @@ class Video extends Bitmap
 
 			if (currentMediaItem != null)
 			{
-				final currentMediaStats:LibVLC_Media_Stats_T = LibVLC_Media_Stats_T.alloc();
+				final currentMediaStats:LibVLC_Media_Stats_T = new LibVLC_Media_Stats_T();
 
 				if (LibVLC.media_get_stats(currentMediaItem, cpp.RawPointer.addressOf(currentMediaStats)) != 0)
 					return Stats.fromMediaStats(currentMediaStats);
