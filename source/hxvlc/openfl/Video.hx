@@ -492,6 +492,8 @@ class Video extends Bitmap
 			Sys.sleep(0.05);
 
 		Handle.init();
+
+		cpp.vm.Gc.setFinalizer(this, cpp.Function.fromStaticFunction(finalize));
 	}
 
 	/**
@@ -1610,5 +1612,14 @@ class Video extends Bitmap
 			case event if (event == LibVLC_MediaPlayerMediaChanged):
 				MainLoop.runInMainThread(onMediaChanged.dispatch.bind());
 		}
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private static function finalize(video:Video):Void
+	{
+		if (video != null)
+			video.dispose();
 	}
 }
