@@ -488,6 +488,10 @@ class Video extends Bitmap
 	{
 		super(null, AUTO, smoothing);
 
+		#if HXVLC_VIDEO_FINALIZER
+		cpp.vm.Gc.setFinalizer(this, cpp.Function.fromStaticFunction(finalize));
+		#end
+
 		while (Handle.loading)
 			Sys.sleep(0.05);
 
@@ -1611,4 +1615,11 @@ class Video extends Bitmap
 				MainLoop.runInMainThread(onMediaChanged.dispatch.bind());
 		}
 	}
+
+	#if HXVLC_VIDEO_FINALIZER
+	private static function finalize(video:Video):Void
+	{
+		video.dispose();
+	}
+	#end
 }
