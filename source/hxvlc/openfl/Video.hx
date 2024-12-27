@@ -527,7 +527,7 @@ class Video extends openfl.display.Bitmap
 			}
 			else if ((location is haxe.io.Bytes))
 			{
-				final data:BytesData = cast(location, Bytes).getData();
+				final data:BytesData = cast(location, haxe.io.Bytes).getData();
 
 				if (data.length > 0)
 				{
