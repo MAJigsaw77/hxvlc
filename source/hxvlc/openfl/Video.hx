@@ -1,15 +1,11 @@
 package hxvlc.openfl;
 
-import haxe.io.Bytes;
 import haxe.io.BytesData;
-import haxe.io.Path;
-import haxe.Exception;
 import haxe.Int64;
 import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.openfl.Stats;
-import hxvlc.util.Location;
 import hxvlc.util.Handle;
 import lime.app.Event;
 #if (HXVLC_OPENAL && lime_openal)
@@ -20,11 +16,8 @@ import lime.media.AudioManager;
 import lime.media.OpenALAudioContext;
 #end
 import lime.utils.Log;
-import lime.utils.UInt8Array;
-import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.RectangleTexture;
-import openfl.display3D.Context3DTextureFormat;
 import openfl.Lib;
 import sys.thread.Mutex;
 
@@ -211,7 +204,7 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 
 	hx::SetTopOfStack((int *)0, true);
 }')
-class Video extends Bitmap
+class Video extends openfl.display.Bitmap
 {
 	/**
 	 * Indicates whether to use GPU texture for rendering.
@@ -505,7 +498,7 @@ class Video extends Bitmap
 	 * @param options Additional options to configure the media.
 	 * @return `true` if the media was loaded successfully, `false` otherwise.
 	 */
-	public function load(location:Location, ?options:Array<String>):Bool
+	public function load(location:hxvlc.util.Location, ?options:Array<String>):Bool
 	{
 		if (Handle.instance == null)
 			return false;
@@ -523,7 +516,7 @@ class Video extends Bitmap
 				else if (location.length > 0)
 				{
 					mediaItem = LibVLC.media_new_path(Handle.instance,
-						#if windows Path.normalize(location).split('/').join('\\') #else Path.normalize(location) #end);
+						#if windows haxe.io.Path.normalize(location).split('/').join('\\') #else haxe.io.Path.normalize(location) #end);
 				}
 				else
 					return false;
@@ -1346,9 +1339,9 @@ class Video extends Bitmap
 					cpp.NativeArray.setUnmanagedData(texturePlanesBuffer, cast texturePlanes, textureWidth * textureHeight * 4);
 
 					if (texture != null)
-						texture.uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanesBuffer)));
+						texture.uploadFromTypedArray(lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(texturePlanesBuffer)));
 					else if (bitmapData != null && bitmapData.image != null)
-						bitmapData.setPixels(bitmapData.rect, Bytes.ofData(texturePlanesBuffer));
+						bitmapData.setPixels(bitmapData.rect, haxe.io.Bytes.ofData(texturePlanesBuffer));
 
 					if (__renderable)
 						__setRenderDirty();
@@ -1419,7 +1412,9 @@ class Video extends Bitmap
 
 				if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
 				{
-					texture = Lib.current.stage.context3D.createRectangleTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, true);
+					texture = Lib.current.stage.context3D.createRectangleTexture(textureWidth, textureHeight, openfl.display3D.Context3DTextureFormat.BGRA,
+						true);
+
 					bitmapData = BitmapData.fromTexture(texture);
 				}
 				else
@@ -1473,7 +1468,7 @@ class Video extends Bitmap
 				if (alBuffer != null)
 				{
 					alAudioContext.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16,
-						UInt8Array.fromBytes(Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * 2 * alChannels, alSampleRate);
+						lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * 2 * alChannels, alSampleRate);
 
 					alAudioContext.sourceQueueBuffer(alSource, alBuffer);
 
