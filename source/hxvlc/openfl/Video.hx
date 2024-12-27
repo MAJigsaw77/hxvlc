@@ -525,7 +525,7 @@ class Video extends openfl.display.Bitmap
 			{
 				mediaItem = LibVLC.media_new_fd(Handle.instance, cast(location, Int));
 			}
-			else if ((location is Bytes))
+			else if ((location is haxe.io.Bytes))
 			{
 				final data:BytesData = cast(location, Bytes).getData();
 
