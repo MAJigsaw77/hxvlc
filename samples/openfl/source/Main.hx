@@ -68,6 +68,8 @@ class Main extends Sprite
 			video.dispose();
 
 			removeChild(video);
+
+			video = null;
 		});
 		video.onFormatSetup.add(function():Void
 		{
@@ -96,21 +98,13 @@ class Main extends Sprite
 
 	private inline function stage_onEnterFrame(event:Event):Void
 	{
-		if (video.bitmapData == null)
+		if (video == null || video.bitmapData == null)
 			return;
 
 		final aspectRatio:Float = video.bitmapData.width / video.bitmapData.height;
 
-		if (stage.stageWidth / stage.stageHeight > aspectRatio)
-		{
-			video.width = stage.stageHeight * aspectRatio;
-			video.height = stage.stageHeight;
-		}
-		else
-		{
-			video.width = stage.stageWidth;
-			video.height = stage.stageWidth / aspectRatio;
-		}
+		video.width = stage.stageWidth / stage.stageHeight > aspectRatio ? stage.stageHeight * aspectRatio : stage.stageWidth;
+		video.height = stage.stageWidth / stage.stageHeight > aspectRatio ? stage.stageHeight : stage.stageWidth / aspectRatio;
 
 		video.x = (stage.stageWidth - video.width) / 2;
 		video.y = (stage.stageHeight - video.height) / 2;
@@ -118,11 +112,11 @@ class Main extends Sprite
 
 	private inline function stage_onActivate(event:Event):Void
 	{
-		video.resume();
+		video?.resume();
 	}
 
 	private inline function stage_onDeactivate(event:Event):Void
 	{
-		video.pause();
+		video?.pause();
 	}
 }
