@@ -1474,11 +1474,12 @@ class Video extends Bitmap
 				{
 					alAudioContext.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16,
 						UInt8Array.fromBytes(Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * 2 * alChannels, alSampleRate);
-					alAudioContext.sourceQueueBuffer(alSource, alBuffer);
-				}
 
-				if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
-					alAudioContext.sourcePlay(alSource);
+					alAudioContext.sourceQueueBuffer(alSource, alBuffer);
+
+					if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
+						alAudioContext.sourcePlay(alSource);
+				}
 			}
 
 			alMutex.release();
