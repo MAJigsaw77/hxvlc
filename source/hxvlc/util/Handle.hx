@@ -48,7 +48,7 @@ using StringTools;
 	}
 #else
 	vprintf(fmt, args);
-	printf("\\n");
+	putchar(\'\\n\');
 #endif
 
 	hx::SetTopOfStack((int *)0, true);
