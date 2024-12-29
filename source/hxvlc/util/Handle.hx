@@ -132,11 +132,8 @@ class Handle
 		{
 			final success:Bool = init(options);
 
-			MainLoop.runInMainThread(function():Void
-			{
-				if (finishCallback != null)
-					finishCallback(success);
-			});
+			if (finishCallback != null)
+				MainLoop.runInMainThread(finishCallback.bind(success));
 		});
 	}
 
