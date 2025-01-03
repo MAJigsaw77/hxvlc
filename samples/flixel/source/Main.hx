@@ -13,6 +13,7 @@ import lime.system.System;
 import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
+import openfl.text.TextFormat;
 import openfl.Lib;
 
 class Main extends Sprite
@@ -53,10 +54,8 @@ class Main extends Sprite
 		FlxG.mouse.useSystemCursor = true;
 		#end
 
-		fps = new FPS(10, 10, FlxColor.WHITE);
-		fps.defaultTextFormat.font = FlxAssets.FONT_DEBUGGER;
-		fps.defaultTextFormat.align = JUSTIFY;
-		fps.defaultTextFormat.size = 16;
+		fps = new FPS(10, 10);
+		fps.defaultTextFormat = new TextFormat(FlxAssets.FONT_DEBUGGER, 16, FlxColor.WHITE, JUSTIFY);
 		FlxG.game.addChild(fps);
 	}
 
