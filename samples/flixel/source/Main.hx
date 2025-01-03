@@ -4,6 +4,7 @@ package;
 import android.content.Context;
 import android.os.Build;
 #end
+import flixel.system.FlxAssets;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxGame;
@@ -12,6 +13,7 @@ import lime.system.System;
 import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
+import openfl.text.TextFormat;
 import openfl.Lib;
 
 class Main extends Sprite
@@ -44,33 +46,14 @@ class Main extends Sprite
 		if (hasEventListener(Event.ADDED_TO_STAGE))
 			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 
-		FlxG.signals.gameResized.add(onResizeGame);
-
-		var refreshRate:Int = Lib.application.window.displayMode.refreshRate;
-
-		if (refreshRate < 60)
-			refreshRate = 60;
-
-		#if mobile
-		addChild(new FlxGame(0, 0, VideoState, refreshRate, refreshRate));
-		#else
-		addChild(new FlxGame(1280, 720, VideoState, refreshRate, refreshRate));
-		#end
+		addChild(new FlxGame(1280, 720, VideoState, 999, 999));
 
 		#if FLX_MOUSE
 		FlxG.mouse.useSystemCursor = true;
 		#end
 
-		fps = new FPS(10, 10, FlxColor.WHITE);
-		fps.defaultTextFormat.size = 16;
+		fps = new FPS(10, 10);
+		fps.defaultTextFormat = new TextFormat(FlxAssets.FONT_DEBUGGER, 16, FlxColor.WHITE, JUSTIFY);
 		FlxG.game.addChild(fps);
-	}
-
-	private function onResizeGame(width:Int, height:Int):Void
-	{
-		final scale:Float = Math.min(FlxG.stage.stageWidth / FlxG.width, FlxG.stage.stageHeight / FlxG.height);
-
-		if (fps != null)
-			fps.scaleX = fps.scaleY = (scale > 1 ? scale : 1);
 	}
 }
