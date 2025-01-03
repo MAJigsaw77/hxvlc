@@ -15,8 +15,6 @@ import openfl.Lib;
 
 class Main extends Sprite
 {
-	public static var fps:FPS;
-
 	public static function main():Void
 	{
 		#if android
