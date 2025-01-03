@@ -51,10 +51,11 @@ class VideoState extends FlxState
 
 		add(video);
 
-		final libvlcVersion:FlxText = new FlxText(10, FlxG.height - 30, 0, 'LibVLC ${Handle.version}', 16);
+		final libvlcVersion:FlxText = new FlxText(10, FlxG.height - 10, 0, 'LibVLC ${Handle.version}', 16);
 		libvlcVersion.font = FlxAssets.FONT_DEBUGGER;
 		libvlcVersion.active = false;
 		libvlcVersion.antialiasing = true;
+		libvlcVersion.y -= libvlcVersion.height;
 		add(libvlcVersion);
 
 		FlxTimer.wait(0.001, function():Void
