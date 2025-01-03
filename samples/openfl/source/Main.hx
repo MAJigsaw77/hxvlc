@@ -7,6 +7,7 @@ import android.os.Build;
 import haxe.io.Path;
 import lime.system.System;
 import hxvlc.openfl.Video;
+import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.Lib;
@@ -17,6 +18,7 @@ using StringTools;
 class Main extends Sprite
 {
 	private var video:Video;
+	private var fps:FPS;
 
 	public static function main():Void
 	{
@@ -44,12 +46,7 @@ class Main extends Sprite
 		if (hasEventListener(Event.ADDED_TO_STAGE))
 			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 
-		var refreshRate:Int = Lib.application.window.displayMode.refreshRate;
-
-		if (refreshRate < 60)
-			refreshRate = 60;
-
-		Lib.current.stage.frameRate = refreshRate;
+		Lib.current.stage.frameRate = 999;
 
 		video = new Video();
 		video.onOpening.add(function():Void
@@ -77,6 +74,10 @@ class Main extends Sprite
 		});
 		addChild(video);
 
+		fps = new FPS(0, 0, 0xFFFFFF);
+		fps.border = true;
+		addChild(fps);
+
 		try
 		{
 			#if mobile
@@ -98,9 +99,8 @@ class Main extends Sprite
 
 	private inline function stage_onEnterFrame(event:Event):Void
 	{
-		if (video == null || video.bitmapData == null)
-			return;
-
+		if (video != null && video.bitmapData != null)
+		{
 		final aspectRatio:Float = video.bitmapData.width / video.bitmapData.height;
 
 		video.width = stage.stageWidth / stage.stageHeight > aspectRatio ? stage.stageHeight * aspectRatio : stage.stageWidth;
@@ -108,6 +108,10 @@ class Main extends Sprite
 
 		video.x = (stage.stageWidth - video.width) / 2;
 		video.y = (stage.stageHeight - video.height) / 2;
+
+		fps.x = video.x + 10;
+		fps.y = video.y + 10;
+		}
 	}
 
 	private inline function stage_onActivate(event:Event):Void
