@@ -75,7 +75,8 @@ class Main extends Sprite
 		addChild(video);
 
 		fps = new FPS(0, 0, 0xFFFFFF);
-		fps.border = true;
+		fps.defaultTextFormat.align = JUSTIFY;
+		fps.defaultTextFormat.size = 16;
 		addChild(fps);
 
 		try
@@ -101,16 +102,16 @@ class Main extends Sprite
 	{
 		if (video != null && video.bitmapData != null)
 		{
-		final aspectRatio:Float = video.bitmapData.width / video.bitmapData.height;
+			final aspectRatio:Float = video.bitmapData.width / video.bitmapData.height;
 
-		video.width = stage.stageWidth / stage.stageHeight > aspectRatio ? stage.stageHeight * aspectRatio : stage.stageWidth;
-		video.height = stage.stageWidth / stage.stageHeight > aspectRatio ? stage.stageHeight : stage.stageWidth / aspectRatio;
+			video.width = stage.stageWidth / stage.stageHeight > aspectRatio ? stage.stageHeight * aspectRatio : stage.stageWidth;
+			video.height = stage.stageWidth / stage.stageHeight > aspectRatio ? stage.stageHeight : stage.stageWidth / aspectRatio;
 
-		video.x = (stage.stageWidth - video.width) / 2;
-		video.y = (stage.stageHeight - video.height) / 2;
+			video.x = (stage.stageWidth - video.width) / 2;
+			video.y = (stage.stageHeight - video.height) / 2;
 
-		fps.x = video.x + 10;
-		fps.y = video.y + 10;
+			fps.x = video.x + 10;
+			fps.y = video.y + 10;
 		}
 	}
 
