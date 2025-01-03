@@ -54,6 +54,7 @@ class VideoState extends FlxState
 		final libvlcVersion:FlxText = new FlxText(10, FlxG.height - 10, 0, 'LibVLC ${Handle.version}', 16);
 		libvlcVersion.font = FlxAssets.FONT_DEBUGGER;
 		libvlcVersion.active = false;
+		libvlcVersion.alignment = JUSTIFY;
 		libvlcVersion.antialiasing = true;
 		libvlcVersion.y -= libvlcVersion.height;
 		add(libvlcVersion);
