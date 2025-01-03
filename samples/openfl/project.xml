@@ -16,7 +16,7 @@
 
 	<!--Window Settings-->
 
-	<window allow-high-dpi="true" background="#131C1B" fps="60" />
+	<window orientation="landscape" allow-high-dpi="true" background="#131C1B" />
 
 	<!--Path Settings-->
 
