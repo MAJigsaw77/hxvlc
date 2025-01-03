@@ -46,22 +46,14 @@ class Main extends Sprite
 
 		FlxG.signals.gameResized.add(onResizeGame);
 
-		var refreshRate:Int = Lib.application.window.displayMode.refreshRate;
-
-		if (refreshRate < 60)
-			refreshRate = 60;
-
-		#if mobile
-		addChild(new FlxGame(0, 0, VideoState, refreshRate, refreshRate));
-		#else
-		addChild(new FlxGame(1280, 720, VideoState, refreshRate, refreshRate));
-		#end
+		addChild(new FlxGame(1280, 720, VideoState, 999, 999));
 
 		#if FLX_MOUSE
 		FlxG.mouse.useSystemCursor = true;
 		#end
 
 		fps = new FPS(10, 10, FlxColor.WHITE);
+		fps.defaultTextFormat.align = JUSTIFY;
 		fps.defaultTextFormat.size = 16;
 		FlxG.game.addChild(fps);
 	}
