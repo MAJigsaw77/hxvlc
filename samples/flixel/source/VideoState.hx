@@ -68,7 +68,7 @@ class VideoState extends FlxState
 		fpsInfo.active = false;
 		fpsInfo.alignment = JUSTIFY;
 		fpsInfo.antialiasing = true;
-		add(versionInfo);
+		add(fpsInfo);
 
 		fps = new FPS();
 		fps.visible = false;
