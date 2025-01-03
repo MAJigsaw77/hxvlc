@@ -46,8 +46,6 @@ class Main extends Sprite
 		if (hasEventListener(Event.ADDED_TO_STAGE))
 			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 
-		FlxG.signals.gameResized.add(onResizeGame);
-
 		addChild(new FlxGame(1280, 720, VideoState, 999, 999));
 
 		#if FLX_MOUSE
@@ -57,13 +55,5 @@ class Main extends Sprite
 		fps = new FPS(10, 10);
 		fps.defaultTextFormat = new TextFormat(FlxAssets.FONT_DEBUGGER, 16, FlxColor.WHITE, JUSTIFY);
 		FlxG.game.addChild(fps);
-	}
-
-	private function onResizeGame(width:Int, height:Int):Void
-	{
-		final scale:Float = Math.min(FlxG.stage.stageWidth / FlxG.width, FlxG.stage.stageHeight / FlxG.height);
-
-		if (fps != null)
-			fps.scaleX = fps.scaleY = (scale > 1 ? scale : 1);
 	}
 }
