@@ -4,6 +4,7 @@ package;
 import android.content.Context;
 import android.os.Build;
 #end
+import flixel.system.FlxAssets;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxGame;
@@ -53,6 +54,7 @@ class Main extends Sprite
 		#end
 
 		fps = new FPS(10, 10, FlxColor.WHITE);
+		fps.defaultTextFormat.font = FlxAssets.FONT_DEBUGGER;
 		fps.defaultTextFormat.align = JUSTIFY;
 		fps.defaultTextFormat.size = 16;
 		FlxG.game.addChild(fps);
