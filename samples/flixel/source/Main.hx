@@ -4,22 +4,17 @@ package;
 import android.content.Context;
 import android.os.Build;
 #end
-import flixel.system.FlxAssets;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxGame;
 import haxe.io.Path;
 import lime.system.System;
-import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
-import openfl.text.TextFormat;
 import openfl.Lib;
 
 class Main extends Sprite
 {
-	public static var fps:FPS;
-
 	public static function main():Void
 	{
 		#if android
@@ -51,9 +46,5 @@ class Main extends Sprite
 		#if FLX_MOUSE
 		FlxG.mouse.useSystemCursor = true;
 		#end
-
-		fps = new FPS(10, 10);
-		fps.defaultTextFormat = new TextFormat(FlxAssets.FONT_DEBUGGER, 16, FlxColor.WHITE, JUSTIFY);
-		FlxG.game.addChild(fps);
 	}
 }

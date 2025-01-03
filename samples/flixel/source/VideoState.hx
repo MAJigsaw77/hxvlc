@@ -9,11 +9,15 @@ import flixel.FlxState;
 import hxvlc.flixel.FlxVideo;
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.util.Handle;
+import openfl.display.FPS;
 import sys.FileSystem;
 
 class VideoState extends FlxState
 {
 	var video:FlxVideoSprite;
+	var versionInfo:FlxText;
+	var fpsInfo:FlxText;
+	var fps:FPS;
 
 	override function create():Void
 	{
@@ -51,13 +55,24 @@ class VideoState extends FlxState
 
 		add(video);
 
-		final libvlcVersion:FlxText = new FlxText(10, FlxG.height - 10, 0, 'LibVLC ${Handle.version}', 16);
-		libvlcVersion.font = FlxAssets.FONT_DEBUGGER;
-		libvlcVersion.active = false;
-		libvlcVersion.alignment = JUSTIFY;
-		libvlcVersion.antialiasing = true;
-		libvlcVersion.y -= libvlcVersion.height;
-		add(libvlcVersion);
+		versionInfo = new FlxText(10, FlxG.height - 10, 0, 'LibVLC ${Handle.version}', 16);
+		versionInfo.font = FlxAssets.FONT_DEBUGGER;
+		versionInfo.active = false;
+		versionInfo.alignment = JUSTIFY;
+		versionInfo.antialiasing = true;
+		versionInfo.y -= versionInfo.height;
+		add(versionInfo);
+
+		fpsInfo = new FlxText(10, 10, 0, 'FPS 0', 16);
+		fpsInfo.font = FlxAssets.FONT_DEBUGGER;
+		fpsInfo.active = false;
+		fpsInfo.alignment = JUSTIFY;
+		fpsInfo.antialiasing = true;
+		add(fpsInfo);
+
+		fps = new FPS();
+		fps.visible = false;
+		FlxG.stage.addChild(fps);
 
 		FlxTimer.wait(0.001, function():Void
 		{
@@ -65,5 +80,13 @@ class VideoState extends FlxState
 		});
 
 		super.create();
+	}
+
+	override function update(elapsed:Float):Void
+	{
+		if (fpsInfo != null)
+			fpsInfo.text = 'FPS ${fps.currentFPS}';
+
+		super.update(elapsed);
 	}
 }
