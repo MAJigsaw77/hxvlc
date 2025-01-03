@@ -184,5 +184,5 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: iOSBuild-${{matrix.sample}}
-          path: samples/${{matrix.sample}}/export/ios/build/Debug-iphoneos/Sample.ipa
+          path: samples/${{matrix.sample}}/export/ios/build/Release-iphoneos/Sample.ipa
           if-no-files-found: warn
