@@ -175,7 +175,7 @@ jobs:
 
       - name: Create IPA
         run: |
-          cd samples/${{matrix.sample}}/export/ios/build/Debug-iphoneos
+          cd samples/${{matrix.sample}}/export/ios/build/Release-iphoneos
           mkdir Payload
           mv *.app Payload
           zip -r Sample.ipa Payload
