@@ -54,15 +54,15 @@ jobs:
 
       - name: Build Windows
         if: startsWith(matrix.os, 'windows')
-        run: cd samples/${{matrix.sample}} && haxelib run lime build windows -debug
+        run: cd samples/${{matrix.sample}} && haxelib run lime build windows
 
       - name: Build MacOS
         if: startsWith(matrix.os, 'macos')
-        run: cd samples/${{matrix.sample}} && haxelib run lime build mac -debug && tar -zcvf build.tar.gz -C export/macos/bin .
+        run: cd samples/${{matrix.sample}} && haxelib run lime build mac && tar -zcvf build.tar.gz -C export/macos/bin .
 
       - name: Build Linux
         if: startsWith(matrix.os, 'ubuntu')
-        run: cd samples/${{matrix.sample}} && haxelib run lime build linux -debug && tar -zcvf build.tar.gz -C export/linux/bin .
+        run: cd samples/${{matrix.sample}} && haxelib run lime build linux && tar -zcvf build.tar.gz -C export/linux/bin .
 
       - name: Upload Windows Artifact
         if: startsWith(matrix.os, 'windows')
@@ -129,7 +129,7 @@ jobs:
           haxelib run lime config ANDROID_SETUP true
 
       - name: Build
-        run: cd samples/${{matrix.sample}} && haxelib run lime build android -debug
+        run: cd samples/${{matrix.sample}} && haxelib run lime build android
 
       - name: Upload Artifact
         uses: actions/upload-artifact@main
@@ -171,7 +171,7 @@ jobs:
         run: haxelib list
 
       - name: Build
-        run: cd samples/${{matrix.sample}} && haxelib run lime build ios -nosign -debug
+        run: cd samples/${{matrix.sample}} && haxelib run lime build ios -nosign
 
       - name: Create IPA
         run: |
