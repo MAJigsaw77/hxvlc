@@ -63,7 +63,7 @@ class VideoState extends FlxState
 		versionInfo.y -= versionInfo.height;
 		add(versionInfo);
 
-		fpsInfo = new FlxText(10, 10, 0, '0 FPS', 16);
+		fpsInfo = new FlxText(10, 10, 0, 'FPS 0', 16);
 		fpsInfo.font = FlxAssets.FONT_DEBUGGER;
 		fpsInfo.active = false;
 		fpsInfo.alignment = JUSTIFY;
@@ -85,7 +85,7 @@ class VideoState extends FlxState
 	override function update(elapsed:Float):Void
 	{
 		if (fpsInfo != null)
-			fpsInfo.text = fps.currentFPS + ' FPS';
+			fpsInfo.text = 'FPS ${fps.currentFPS}';
 
 		super.update(elapsed);
 	}
