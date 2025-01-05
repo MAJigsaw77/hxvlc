@@ -457,7 +457,7 @@ class Video extends openfl.display.Bitmap
 	private var alAudioContext:Null<OpenALAudioContext>;
 
 	@:noCompletion
-	private var alBuffers:Null<Array<ALBuffer>> = [];
+	private var alBuffers:Null<Array<ALBuffer>>;
 
 	@:noCompletion
 	private var alSource:Null<ALSource>;
@@ -621,32 +621,11 @@ class Video extends openfl.display.Bitmap
 				LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), untyped NULL);
 
 				#if (HXVLC_OPENAL && lime_openal)
-				if (AudioManager.context != null)
+				if (AudioManager.context != null && AudioManager.context.openal != null)
 				{
-					switch (AudioManager.context.type)
-					{
-						case OPENAL:
-							alMutex.acquire();
-
-							alAudioContext = AudioManager.context.openal;
-							alBuffers = alAudioContext.genBuffers(128);
-							alSource = alAudioContext.createSource();
-
-							alAudioContext.sourcef(alSource, AL.GAIN, 1);
-							alAudioContext.source3f(alSource, AL.POSITION, 0, 0, 0);
-							alAudioContext.sourcef(alSource, AL.PITCH, 1);
-
-							alMutex.release();
-
-							LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'),
-								untyped __cpp__('audio_resume'), untyped NULL, untyped NULL, untyped __cpp__('this'));
-
-							LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
-
-							LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
-						default:
-							Log.warn('Unable to use a sound output.');
-					}
+					LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'), untyped NULL, untyped NULL, untyped __cpp__('this'));
+					LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
+					LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
 				}
 				else
 					Log.warn('AudioManager\'s context isn\'t available.');
@@ -1527,6 +1506,15 @@ class Video extends openfl.display.Bitmap
 		cpp.Stdlib.nativeMemcpy(cast format, cast cpp.CastCharStar.fromString("S16N"), 4);
 
 		alMutex.acquire();
+
+		if (alAudioContext == null)
+			alAudioContext = AudioManager.context.openal;
+
+		if (alBuffers == null)
+			alBuffers = alAudioContext.genBuffers(128);
+
+		if (alSource == null)
+			alSource = alAudioContext.createSource();
 
 		alSampleRate = rate[0];
 
