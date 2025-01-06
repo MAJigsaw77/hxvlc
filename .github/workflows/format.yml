@@ -29,7 +29,7 @@ jobs:
             hxformat.json
           if-no-files-found: error
   Publisher:
-    needs: [Formatter]
+    needs: Formatter
     runs-on: ubuntu-latest
     permissions:
       contents: write
