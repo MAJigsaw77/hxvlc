@@ -1,7 +1,7 @@
 name: Formatter
 on: workflow_dispatch
 jobs:
-  Job:
+  Formatter:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -23,5 +23,32 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: formattedSource
-          path: source
+          path: |
+            source
+            !**/.gitignore
+            hxformat.json
           if-no-files-found: error
+  Publisher:
+    needs: [Formatter]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Delete source
+        run: rm -rf source
+
+      - name: Download artifact
+        uses: actions/download-artifact@main
+        with:
+          path: .
+          name: formattedSource
+
+      - name: Push to GitHub
+        uses: stefanzweifel/git-auto-commit-action@master
+        with:
+          commit_message: "Formatted the source files."
