@@ -210,7 +210,7 @@ class Handle
 				}
 			}).onError(function(error:String):Void
 			{
-				Log.warn('Failed to load library: libvlc, Error: $error');
+					Log.warn('Failed to load library: libvlc, Error: $error');
 			});
 			#end
 

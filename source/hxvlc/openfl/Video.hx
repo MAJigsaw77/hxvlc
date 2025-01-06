@@ -588,8 +588,7 @@ class Video extends openfl.display.Bitmap
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerCorked)');
 
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'),
-						untyped __cpp__('this')) != 0)
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerUncorked)');
 
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('event_manager_callbacks'),
@@ -618,7 +617,8 @@ class Video extends openfl.display.Bitmap
 				#if (HXVLC_OPENAL && lime_openal)
 				if (AudioManager.context != null && AudioManager.context.openal != null)
 				{
-					LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'), untyped NULL, untyped NULL, untyped __cpp__('this'));
+					LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'),
+						untyped NULL, untyped NULL, untyped __cpp__('this'));
 					LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 					LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
 				}
@@ -908,7 +908,6 @@ class Video extends openfl.display.Bitmap
 		mediaMutex.release();
 
 		textureMutex.acquire();
-
 		@:nullSafety(Off)
 		if (bitmapData != null)
 		{
