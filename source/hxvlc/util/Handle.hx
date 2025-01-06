@@ -7,6 +7,7 @@ import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.macros.Define;
+import hxvlc.util.AudioOutput;
 import lime.system.System;
 import lime.utils.AssetLibrary;
 import lime.utils.Assets;
@@ -102,7 +103,7 @@ class Handle
 	/**
 	 * Available audio output modules.
 	 */
-	public static var outputModules(get, never):Null<Array<{name:String, description:String}>>;
+	public static var outputModules(get, never):Null<Array<AudioOutput>>;
 
 	@:noCompletion
 	private static final instanceMutex:Mutex = new Mutex();
@@ -416,32 +417,14 @@ class Handle
 	}
 
 	@:noCompletion
-	private static function get_outputModules():Null<Array<{name:String, description:String}>>
+	private static function get_outputModules():Null<Array<AudioOutput>>
 	{
 		if (instance != null)
 		{
 			final audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T> = LibVLC.audio_output_list_get(instance);
 
 			if (audioOutput != null)
-			{
-				final outputs:Array<{name:String, description:String}> = [];
-
-				var temp:cpp.RawPointer<LibVLC_Audio_Output_T> = audioOutput;
-
-				while (temp != null)
-				{
-					outputs.push({
-						name: new String(untyped temp[0].psz_name),
-						description: new String(untyped temp[0].psz_description)
-					});
-
-					temp = temp[0].p_next;
-				}
-
-				LibVLC.audio_output_list_release(audioOutput);
-
-				return outputs;
-			}
+				return AudioOutput.fromAudioOutputList(audioOutput);
 		}
 
 		return null;
