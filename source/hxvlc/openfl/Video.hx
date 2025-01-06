@@ -286,11 +286,6 @@ class Video extends openfl.display.Bitmap
 	public var canPause(get, never):Bool;
 
 	/**
-	 * Available audio output modules.
-	 */
-	public var outputModules(get, never):Null<Array<{name:String, description:String}>>;
-
-	/**
 	 * Selected audio output module.
 	 *
 	 * Note: Changes take effect only after restarting playback.
@@ -1118,35 +1113,6 @@ class Video extends openfl.display.Bitmap
 	private function get_canPause():Bool
 	{
 		return mediaPlayer != null && LibVLC.media_player_can_pause(mediaPlayer) != 0;
-	}
-
-	@:noCompletion
-	private function get_outputModules():Null<Array<{name:String, description:String}>>
-	{
-		if (Handle.instance != null)
-		{
-			final audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T> = LibVLC.audio_output_list_get(Handle.instance);
-
-			if (audioOutput != null)
-			{
-				final outputs:Array<{name:String, description:String}> = [];
-
-				var temp:cpp.RawPointer<LibVLC_Audio_Output_T> = audioOutput;
-
-				while (temp != null)
-				{
-					outputs.push({name: new String(untyped temp[0].psz_name), description: new String(untyped temp[0].psz_description)});
-
-					temp = temp[0].p_next;
-				}
-
-				LibVLC.audio_output_list_release(audioOutput);
-
-				return outputs;
-			}
-		}
-
-		return null;
 	}
 
 	@:noCompletion
