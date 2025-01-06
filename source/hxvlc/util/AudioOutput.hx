@@ -1,5 +1,6 @@
 package hxvlc.util;
 
+import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 
 /**
