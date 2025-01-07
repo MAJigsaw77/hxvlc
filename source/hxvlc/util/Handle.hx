@@ -424,13 +424,13 @@ class Handle
 		#if android
 		switch (level)
 		{
-			case lvl if (lvl == LIBVLC_NOTICE):
+			case lvl if (lvl == untyped LIBVLC_NOTICE):
 				untyped __android_log_vprint(ANDROID_LOG_INFO, "HXVLC", fmt, args);
-			case lvl if (lvl == LIBVLC_ERROR):
+			case lvl if (lvl == untyped LIBVLC_ERROR):
 				untyped __android_log_vprint(ANDROID_LOG_ERROR, "HXVLC", fmt, args);
-			case lvl if (lvl == LIBVLC_WARNING):
+			case lvl if (lvl == untyped LIBVLC_WARNING):
 				untyped __android_log_vprint(ANDROID_LOG_WARN, "HXVLC", fmt, args);
-			case lvl if (lvl == LIBVLC_DEBUG):
+			case lvl if (lvl == untyped LIBVLC_DEBUG):
 				untyped __android_log_vprint(ANDROID_LOG_DEBUG, "HXVLC", fmt, args);
 			default:
 				untyped __android_log_vprint(ANDROID_LOG_UNKNOWN, "HXVLC", fmt, args);
