@@ -58,18 +58,18 @@ jobs:
 
       - name: Build MacOS
         if: startsWith(matrix.os, 'macos')
-        run: cd samples/${{matrix.sample}} && haxelib run lime build mac && tar -zcvf build.tar.gz -C export/macos/bin .
+        run: cd samples/${{matrix.sample}} && haxelib run lime build mac
 
       - name: Build Linux
         if: startsWith(matrix.os, 'ubuntu')
-        run: cd samples/${{matrix.sample}} && haxelib run lime build linux && tar -zcvf build.tar.gz -C export/linux/bin .
+        run: cd samples/${{matrix.sample}} && haxelib run lime build linux
 
       - name: Upload Windows Artifact
         if: startsWith(matrix.os, 'windows')
         uses: actions/upload-artifact@main
         with:
           name: windowsBuild-${{matrix.sample}}
-          path: samples/${{matrix.sample}}/export/windows/bin
+          path: samples/${{matrix.sample}}/export/windows
           if-no-files-found: warn
 
       - name: Upload MacOS Artifact
@@ -77,15 +77,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: macBuild-${{matrix.sample}}
-          path: samples/${{matrix.sample}}/build.tar.gz
-          if-no-files-found: warn
-
-      - name: Upload Linux Handle
-        if: startsWith(matrix.os, 'ubuntu')
-        uses: actions/upload-artifact@main
-        with:
-          name: linuxHandle-${{matrix.sample}}
-          path: samples/${{matrix.sample}}/export/linux/src/hxvlc/util/Handle.cpp
+          path: samples/${{matrix.sample}}/export/macos
           if-no-files-found: warn
 
       - name: Upload Linux Artifact
@@ -93,7 +85,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: linuxBuild-${{matrix.sample}}
-          path: samples/${{matrix.sample}}/build.tar.gz
+          path: samples/${{matrix.sample}}/export/linux
           if-no-files-found: warn
   Android:
     runs-on: macos-14
