@@ -110,6 +110,7 @@ class Stats
 	 *
 	 * @return A string containing all the properties of the Stats object.
 	 */
+	@:keep
 	public function toString():String
 	{
 		final parts:Array<String> = [];

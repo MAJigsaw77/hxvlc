@@ -32,6 +32,7 @@ class AudioOutput
 	 *
 	 * @return A string containing the name and description of the AudioOutput object.
 	 */
+	@:keep
 	public function toString():String
 	{
 		final parts:Array<String> = [];
