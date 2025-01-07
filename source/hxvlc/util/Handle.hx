@@ -21,7 +21,7 @@ using StringTools;
 /**
  * This class manages the global instance of LibVLC, providing methods for initialization, disposal, and retrieving version information.
  */
-#if (HXVLC_LOGGING || HXVLC_FILE_LOGGING)
+#if (HXVLC_FILE_LOGGING || HXVLC_LOGGING)
 #if android
 @:headerInclude('android/log.h')
 #end
@@ -29,7 +29,29 @@ using StringTools;
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Handle_obj *>(data)->instanceLogging(level, ctx, fmt, args);
+#ifdef __ANDROID__
+	switch (level)
+	{
+	case LIBVLC_NOTICE:
+		__android_log_vprint(ANDROID_LOG_INFO, "HXVLC", fmt, args);
+		break;
+	case LIBVLC_ERROR:
+		__android_log_vprint(ANDROID_LOG_ERROR, "HXVLC", fmt, args);
+		break;
+	case LIBVLC_WARNING:
+		__android_log_vprint(ANDROID_LOG_WARN, "HXVLC", fmt, args);
+		break;
+	case LIBVLC_DEBUG:
+		__android_log_vprint(ANDROID_LOG_DEBUG, "HXVLC", fmt, args);
+		break;
+	default:
+		__android_log_vprint(ANDROID_LOG_UNKNOWN, "HXVLC", fmt, args);
+		break;
+	}
+#else
+	vprintf(fmt, args);
+	putchar(\'\\n\');
+#endif
 
 	hx::SetTopOfStack((int *)0, true);
 }')
@@ -190,7 +212,7 @@ class Handle
 				}
 			}).onError(function(error:String):Void
 			{
-				Log.warn('Failed to load library: libvlc, Error: $error');
+					Log.warn('Failed to load library: libvlc, Error: $error');
 			});
 			#end
 
@@ -308,12 +330,12 @@ class Handle
 				{
 					Log.warn('Failed to open log file for writing.');
 
-					LibVLC.log_set(instance, untyped __cpp__('instance_logging'), untyped __cpp__('this'));
+					LibVLC.log_set(instance, untyped __cpp__('instance_logging'), untyped NULL);
 				}
 				else
 					LibVLC.log_set_file(instance, logFile);
 				#elseif HXVLC_LOGGING
-				LibVLC.log_set(instance, untyped __cpp__('instance_logging'), untyped __cpp__('this'));
+				LibVLC.log_set(instance, untyped __cpp__('instance_logging'), untyped NULL);
 				#end
 			}
 		}
@@ -414,31 +436,4 @@ class Handle
 
 		return null;
 	}
-
-	#if (HXVLC_LOGGING || HXVLC_FILE_LOGGING)
-	@:keep
-	@:noCompletion
-	@:unreflective
-	private static function instanceLogging(level:Int, ctx:cpp.RawConstPointer<LibVLC_Log_T>, fmt:cpp.ConstCharStar, args:cpp.VarList):Void
-	{
-		#if android
-		switch (level)
-		{
-			case lvl if (lvl == untyped LIBVLC_NOTICE):
-				untyped __android_log_vprint(ANDROID_LOG_INFO, "HXVLC", fmt, args);
-			case lvl if (lvl == untyped LIBVLC_ERROR):
-				untyped __android_log_vprint(ANDROID_LOG_ERROR, "HXVLC", fmt, args);
-			case lvl if (lvl == untyped LIBVLC_WARNING):
-				untyped __android_log_vprint(ANDROID_LOG_WARN, "HXVLC", fmt, args);
-			case lvl if (lvl == untyped LIBVLC_DEBUG):
-				untyped __android_log_vprint(ANDROID_LOG_DEBUG, "HXVLC", fmt, args);
-			default:
-				untyped __android_log_vprint(ANDROID_LOG_UNKNOWN, "HXVLC", fmt, args);
-		}
-		#else
-		untyped vprintf(fmt, args);
-		untyped putchar('\n');
-		#end
-	}
-	#end
 }
