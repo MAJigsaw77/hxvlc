@@ -223,10 +223,12 @@ class Video extends openfl.display.Bitmap
 	 */
 	public var mrl(get, never):Null<String>;
 
+	#if HXVLC_ENABLE_STATS
 	/**
 	 * Statistics related to the media.
 	 */
 	public var stats(get, never):Null<Stats>;
+	#end
 
 	/**
 	 * Duration of the media in microseconds.
@@ -985,6 +987,7 @@ class Video extends openfl.display.Bitmap
 		return null;
 	}
 
+	#if HXVLC_ENABLE_STATS
 	@:noCompletion
 	private function get_stats():Null<Stats>
 	{
@@ -1003,6 +1006,7 @@ class Video extends openfl.display.Bitmap
 
 		return null;
 	}
+	#end
 
 	@:noCompletion
 	private function get_duration():Int64

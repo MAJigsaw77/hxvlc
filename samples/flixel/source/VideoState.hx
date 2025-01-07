@@ -88,10 +88,14 @@ class VideoState extends FlxState
 	{
 		if (fpsInfo != null)
 		{
+			#if HXVLC_ENABLE_STATS
 			if (video != null && video.bitmap != null && video.bitmap.stats != null)
 				fpsInfo.text = 'FPS ${fps.currentFPS}\n${video.bitmap.stats.toString()}';
 			else
 				fpsInfo.text = 'FPS ${fps.currentFPS}';
+			#else
+			fpsInfo.text = 'FPS ${fps.currentFPS}';
+			#end
 		}
 
 		super.update(elapsed);
