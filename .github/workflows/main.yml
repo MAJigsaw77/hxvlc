@@ -80,6 +80,14 @@ jobs:
           path: samples/${{matrix.sample}}/build.tar.gz
           if-no-files-found: warn
 
+      - name: Upload Linux Handle
+        if: startsWith(matrix.os, 'ubuntu')
+        uses: actions/upload-artifact@main
+        with:
+          name: linuxHandle-${{matrix.sample}}
+          path: samples/${{matrix.sample}}/export/linux/src/hxvlc/util/Handle.cpp
+          if-no-files-found: warn
+
       - name: Upload Linux Artifact
         if: startsWith(matrix.os, 'ubuntu')
         uses: actions/upload-artifact@main
