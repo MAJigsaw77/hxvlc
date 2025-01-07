@@ -54,15 +54,15 @@ jobs:
 
       - name: Build Windows
         if: startsWith(matrix.os, 'windows')
-        run: cd samples/${{matrix.sample}} && haxelib run lime build windows
+        run: cd samples/${{matrix.sample}} && haxelib run lime build windows -D HXVLC_ENABLE_STATS
 
       - name: Build MacOS
         if: startsWith(matrix.os, 'macos')
-        run: cd samples/${{matrix.sample}} && haxelib run lime build mac
+        run: cd samples/${{matrix.sample}} && haxelib run lime build mac -D HXVLC_ENABLE_STATS
 
       - name: Build Linux
         if: startsWith(matrix.os, 'ubuntu')
-        run: cd samples/${{matrix.sample}} && haxelib run lime build linux
+        run: cd samples/${{matrix.sample}} && haxelib run lime build linux -D HXVLC_ENABLE_STATS
 
       - name: Upload Windows Artifact
         if: startsWith(matrix.os, 'windows')
@@ -129,7 +129,7 @@ jobs:
           haxelib run lime config ANDROID_SETUP true
 
       - name: Build
-        run: cd samples/${{matrix.sample}} && haxelib run lime build android
+        run: cd samples/${{matrix.sample}} && haxelib run lime build android -D HXVLC_ENABLE_STATS
 
       - name: Upload Artifact
         uses: actions/upload-artifact@main
@@ -171,7 +171,7 @@ jobs:
         run: haxelib list
 
       - name: Build
-        run: cd samples/${{matrix.sample}} && haxelib run lime build ios -nosign
+        run: cd samples/${{matrix.sample}} && haxelib run lime build ios -nosign -D HXVLC_ENABLE_STATS
 
       - name: Create IPA
         run: |
