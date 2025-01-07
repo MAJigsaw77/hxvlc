@@ -7,6 +7,7 @@ import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.macros.Define;
+import hxvlc.util.AudioOutput;
 import lime.system.System;
 import lime.utils.AssetLibrary;
 import lime.utils.Assets;
@@ -20,6 +21,7 @@ using StringTools;
 /**
  * This class manages the global instance of LibVLC, providing methods for initialization, disposal, and retrieving version information.
  */
+#if (HXVLC_FILE_LOGGING || HXVLC_LOGGING)
 #if android
 @:headerInclude('android/log.h')
 #end
@@ -53,6 +55,7 @@ using StringTools;
 
 	hx::SetTopOfStack((int *)0, true);
 }')
+#end
 class Handle
 {
 	/**
@@ -98,6 +101,11 @@ class Handle
 	 * Note: On systems that support it, the POSIX monotonic clock is used.
 	 */
 	public static var clock(get, never):Int64;
+
+	/**
+	 * Available audio output modules.
+	 */
+	public static var outputModules(get, never):Null<Array<AudioOutput>>;
 
 	@:noCompletion
 	private static final instanceMutex:Mutex = new Mutex();
@@ -204,7 +212,7 @@ class Handle
 				}
 			}).onError(function(error:String):Void
 			{
-				Log.warn('Failed to load library: libvlc, Error: $error');
+					Log.warn('Failed to load library: libvlc, Error: $error');
 			});
 			#end
 
@@ -250,6 +258,11 @@ class Handle
 
 			args.push_back("--no-snapshot-preview");
 			args.push_back("--no-spu");
+
+			#if !HXVLC_ENABLE_STATS
+			args.push_back("--no-stats");
+			#end
+
 			args.push_back("--no-sub-autodetect-file");
 			args.push_back("--no-video-title-show");
 			args.push_back("--no-volume-save");
@@ -408,5 +421,19 @@ class Handle
 	private static function get_clock():Int64
 	{
 		return LibVLC.clock();
+	}
+
+	@:noCompletion
+	private static function get_outputModules():Null<Array<AudioOutput>>
+	{
+		if (instance != null)
+		{
+			final audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T> = LibVLC.audio_output_list_get(instance);
+
+			if (audioOutput != null)
+				return AudioOutput.fromAudioOutputList(audioOutput);
+		}
+
+		return null;
 	}
 }

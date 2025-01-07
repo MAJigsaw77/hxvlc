@@ -5,7 +5,7 @@ import haxe.Int64;
 import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
-import hxvlc.openfl.Stats;
+import hxvlc.util.Stats;
 import hxvlc.util.Handle;
 import lime.app.Event;
 #if (HXVLC_OPENAL && lime_openal)
@@ -223,10 +223,12 @@ class Video extends openfl.display.Bitmap
 	 */
 	public var mrl(get, never):Null<String>;
 
+	#if HXVLC_ENABLE_STATS
 	/**
 	 * Statistics related to the media.
 	 */
 	public var stats(get, never):Null<Stats>;
+	#end
 
 	/**
 	 * Duration of the media in microseconds.
@@ -284,11 +286,6 @@ class Video extends openfl.display.Bitmap
 	 * Indicates whether pausing is supported.
 	 */
 	public var canPause(get, never):Bool;
-
-	/**
-	 * Available audio output modules.
-	 */
-	public var outputModules(get, never):Null<Array<{name:String, description:String}>>;
 
 	/**
 	 * Selected audio output module.
@@ -593,8 +590,7 @@ class Video extends openfl.display.Bitmap
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerCorked)');
 
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'),
-						untyped __cpp__('this')) != 0)
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerUncorked)');
 
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('event_manager_callbacks'),
@@ -623,7 +619,8 @@ class Video extends openfl.display.Bitmap
 				#if (HXVLC_OPENAL && lime_openal)
 				if (AudioManager.context != null && AudioManager.context.openal != null)
 				{
-					LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'), untyped NULL, untyped NULL, untyped __cpp__('this'));
+					LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'),
+						untyped NULL, untyped NULL, untyped __cpp__('this'));
 					LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 					LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
 				}
@@ -913,7 +910,6 @@ class Video extends openfl.display.Bitmap
 		mediaMutex.release();
 
 		textureMutex.acquire();
-
 		@:nullSafety(Off)
 		if (bitmapData != null)
 		{
@@ -991,6 +987,7 @@ class Video extends openfl.display.Bitmap
 		return null;
 	}
 
+	#if HXVLC_ENABLE_STATS
 	@:noCompletion
 	private function get_stats():Null<Stats>
 	{
@@ -1009,6 +1006,7 @@ class Video extends openfl.display.Bitmap
 
 		return null;
 	}
+	#end
 
 	@:noCompletion
 	private function get_duration():Int64
@@ -1118,35 +1116,6 @@ class Video extends openfl.display.Bitmap
 	private function get_canPause():Bool
 	{
 		return mediaPlayer != null && LibVLC.media_player_can_pause(mediaPlayer) != 0;
-	}
-
-	@:noCompletion
-	private function get_outputModules():Null<Array<{name:String, description:String}>>
-	{
-		if (Handle.instance != null)
-		{
-			final audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T> = LibVLC.audio_output_list_get(Handle.instance);
-
-			if (audioOutput != null)
-			{
-				final outputs:Array<{name:String, description:String}> = [];
-
-				var temp:cpp.RawPointer<LibVLC_Audio_Output_T> = audioOutput;
-
-				while (temp != null)
-				{
-					outputs.push({name: new String(untyped temp[0].psz_name), description: new String(untyped temp[0].psz_description)});
-
-					temp = temp[0].p_next;
-				}
-
-				LibVLC.audio_output_list_release(audioOutput);
-
-				return outputs;
-			}
-		}
-
-		return null;
 	}
 
 	@:noCompletion
