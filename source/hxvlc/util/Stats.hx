@@ -137,7 +137,8 @@ class Stats
 	 * @param media_stats The LibVLC media statistics.
 	 * @return A Stats object populated with the provided media statistics.
 	 */
-	public static function fromMediaStats(media_stats:cpp.Struct<LibVLC_Media_Stats_T>):Stats
+	@:unreflective
+	public static function fromMediaStats(media_stats:LibVLC_Media_Stats_T):Stats
 	{
 		final stats:Stats = new Stats();
 
