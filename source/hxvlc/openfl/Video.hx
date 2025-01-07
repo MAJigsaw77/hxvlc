@@ -5,7 +5,7 @@ import haxe.Int64;
 import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
-import hxvlc.openfl.Stats;
+import hxvlc.util.Stats;
 import hxvlc.util.Handle;
 import lime.app.Event;
 #if (HXVLC_OPENAL && lime_openal)
