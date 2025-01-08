@@ -204,6 +204,11 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 }')
 class Video extends openfl.display.Bitmap
 {
+	#if (HXVLC_OPENAL && lime_openal)
+	@:noCompletion
+	private static final OPENAL_AUDIO_BUFFERS:Int = 128;
+	#end
+
 	/**
 	 * Indicates whether to use GPU texture for rendering.
 	 *
@@ -1401,7 +1406,7 @@ class Video extends openfl.display.Bitmap
 				if (alBuffer != null)
 				{
 					AL.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16,
-						lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * 2 * alChannels, alSampleRate);
+						lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * untyped __cpp__('sizeof(short)') * alChannels, alSampleRate);
 
 					AL.sourceQueueBuffer(alSource, alBuffer);
 
@@ -1461,11 +1466,11 @@ class Video extends openfl.display.Bitmap
 
 		alMutex.acquire();
 
-		if (alBuffers == null)
-			alBuffers = AL.genBuffers(128);
-
 		if (alSource == null)
 			alSource = AL.createSource();
+
+		if (alBuffers == null)
+			alBuffers = AL.genBuffers(OPENAL_AUDIO_BUFFERS);
 
 		alSampleRate = rate[0];
 
