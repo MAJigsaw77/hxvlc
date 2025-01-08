@@ -1406,7 +1406,7 @@ class Video extends openfl.display.Bitmap
 				if (alBuffer != null)
 				{
 					AL.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16,
-						lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * untyped __cpp__('sizeof(short)') * alChannels, alSampleRate);
+						lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * untyped __cpp__('sizeof(int16_t)') * alChannels, alSampleRate);
 
 					AL.sourceQueueBuffer(alSource, alBuffer);
 
