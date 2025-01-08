@@ -12,8 +12,6 @@ import lime.app.Event;
 import lime.media.openal.AL;
 import lime.media.openal.ALBuffer;
 import lime.media.openal.ALSource;
-import lime.media.AudioManager;
-import lime.media.OpenALAudioContext;
 #end
 import lime.utils.Log;
 import openfl.display.BitmapData;
@@ -414,14 +412,6 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private final mediaMutex:Mutex = new Mutex();
 
-	#if (HXVLC_OPENAL && lime_openal)
-	@:noCompletion
-	private final alMutex:Mutex = new Mutex();
-	#end
-
-	@:noCompletion
-	private final textureMutex:Mutex = new Mutex();
-
 	@:noCompletion
 	private var mediaData:Null<cpp.RawPointer<cpp.UInt8>>;
 
@@ -435,7 +425,7 @@ class Video extends openfl.display.Bitmap
 	private var mediaPlayer:Null<cpp.RawPointer<LibVLC_Media_Player_T>>;
 
 	@:noCompletion
-	private var texture:Null<RectangleTexture>;
+	private final textureMutex:Mutex = new Mutex();
 
 	@:noCompletion
 	private var textureWidth:cpp.UInt32 = 0;
@@ -449,15 +439,18 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private var texturePlanesBuffer:Null<BytesData>;
 
+	@:noCompletion
+	private var texture:Null<RectangleTexture>;
+
 	#if (HXVLC_OPENAL && lime_openal)
 	@:noCompletion
-	private var alAudioContext:Null<OpenALAudioContext>;
+	private final alMutex:Mutex = new Mutex();
 
 	@:noCompletion
 	private var alBuffers:Null<Array<ALBuffer>>;
 
 	@:noCompletion
-	private var alSource:Null<ALSource>;
+	private var alSamplesBuffer:Null<BytesData>;
 
 	@:noCompletion
 	private var alSampleRate:cpp.UInt32 = 0;
@@ -466,7 +459,7 @@ class Video extends openfl.display.Bitmap
 	private var alChannels:cpp.UInt32 = 0;
 
 	@:noCompletion
-	private var alSamplesBuffer:Null<BytesData>;
+	private var alSource:Null<ALSource>;
 	#end
 
 	/**
@@ -590,7 +583,8 @@ class Video extends openfl.display.Bitmap
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerCorked)');
 
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'),
+						untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerUncorked)');
 
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('event_manager_callbacks'),
@@ -617,15 +611,10 @@ class Video extends openfl.display.Bitmap
 				LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), untyped NULL);
 
 				#if (HXVLC_OPENAL && lime_openal)
-				if (AudioManager.context != null && AudioManager.context.openal != null)
-				{
-					LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'),
-						untyped NULL, untyped NULL, untyped __cpp__('this'));
-					LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
-					LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
-				}
-				else
-					Log.warn('AudioManager\'s context isn\'t available.');
+				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'),
+					untyped NULL, untyped NULL, untyped __cpp__('this'));
+				LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
+				LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
 				#end
 			}
 			else
@@ -888,6 +877,7 @@ class Video extends openfl.display.Bitmap
 	/**
 	 * Frees the memory that is used to store the Video object.
 	 */
+	@:nullSafety(Off)
 	public function dispose():Void
 	{
 		if (mediaPlayer != null)
@@ -910,7 +900,7 @@ class Video extends openfl.display.Bitmap
 		mediaMutex.release();
 
 		textureMutex.acquire();
-		@:nullSafety(Off)
+
 		if (bitmapData != null)
 		{
 			bitmapData.dispose();
@@ -938,22 +928,17 @@ class Video extends openfl.display.Bitmap
 		#if (HXVLC_OPENAL && lime_openal)
 		alMutex.acquire();
 
-		if (alAudioContext != null)
+		if (alSource != null)
 		{
-			if (alSource != null)
-			{
-				alAudioContext.sourceStop(alSource);
-				alAudioContext.deleteSource(alSource);
-				alSource = null;
-			}
+			AL.sourceStop(alSource);
+			AL.deleteSource(alSource);
+			alSource = null;
+		}
 
-			if (alBuffers != null)
-			{
-				alAudioContext.deleteBuffers(alBuffers);
-				alBuffers = null;
-			}
-
-			alAudioContext = null;
+		if (alBuffers != null)
+		{
+			AL.deleteBuffers(alBuffers);
+			alBuffers = null;
 		}
 
 		alSamplesBuffer = [];
@@ -1392,7 +1377,7 @@ class Video extends openfl.display.Bitmap
 	{
 		// TODO: Audio synchronisation in case of a sudden desync using pts.
 		#if (HXVLC_OPENAL && lime_openal)
-		if (alAudioContext != null && alSource != null && alBuffers != null)
+		if (alSource != null && alBuffers != null)
 		{
 			alMutex.acquire();
 
@@ -1401,11 +1386,11 @@ class Video extends openfl.display.Bitmap
 
 			cpp.NativeArray.setUnmanagedData(alSamplesBuffer, cast samples, count);
 
-			final processedBuffers:Int = alAudioContext.getSourcei(alSource, AL.BUFFERS_PROCESSED);
+			final processedBuffers:Int = AL.getSourcei(alSource, AL.BUFFERS_PROCESSED);
 
 			if (processedBuffers > 0)
 			{
-				for (alBuffer in alAudioContext.sourceUnqueueBuffers(alSource, processedBuffers))
+				for (alBuffer in AL.sourceUnqueueBuffers(alSource, processedBuffers))
 					alBuffers.push(alBuffer);
 			}
 
@@ -1415,13 +1400,13 @@ class Video extends openfl.display.Bitmap
 
 				if (alBuffer != null)
 				{
-					alAudioContext.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16,
+					AL.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16,
 						lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * 2 * alChannels, alSampleRate);
 
-					alAudioContext.sourceQueueBuffer(alSource, alBuffer);
+					AL.sourceQueueBuffer(alSource, alBuffer);
 
-					if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
-						alAudioContext.sourcePlay(alSource);
+					if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
+						AL.sourcePlay(alSource);
 				}
 			}
 
@@ -1436,12 +1421,12 @@ class Video extends openfl.display.Bitmap
 	private function audioPause(pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
-		if (alAudioContext != null && alSource != null)
+		if (alSource != null)
 		{
 			alMutex.acquire();
 
-			if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) == AL.PLAYING)
-				alAudioContext.sourcePause(alSource);
+			if (AL.getSourcei(alSource, AL.SOURCE_STATE) == AL.PLAYING)
+				AL.sourcePause(alSource);
 
 			alMutex.release();
 		}
@@ -1454,12 +1439,12 @@ class Video extends openfl.display.Bitmap
 	private function audioResume(pts:cpp.Int64):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
-		if (alAudioContext != null && alSource != null)
+		if (alSource != null)
 		{
 			alMutex.acquire();
 
-			if (alAudioContext.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
-				alAudioContext.sourcePlay(alSource);
+			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
+				AL.sourcePlay(alSource);
 
 			alMutex.release();
 		}
@@ -1476,14 +1461,11 @@ class Video extends openfl.display.Bitmap
 
 		alMutex.acquire();
 
-		if (alAudioContext == null)
-			alAudioContext = AudioManager.context.openal;
-
 		if (alBuffers == null)
-			alBuffers = alAudioContext.genBuffers(128);
+			alBuffers = AL.genBuffers(128);
 
 		if (alSource == null)
-			alSource = alAudioContext.createSource();
+			alSource = AL.createSource();
 
 		alSampleRate = rate[0];
 
@@ -1506,11 +1488,11 @@ class Video extends openfl.display.Bitmap
 	private function audioSetVolume(volume:Single, mute:Bool):Void
 	{
 		#if (HXVLC_OPENAL && lime_openal)
-		if (alAudioContext != null && alSource != null)
+		if (alSource != null)
 		{
 			alMutex.acquire();
 
-			alAudioContext.sourcef(alSource, AL.GAIN, mute ? 0 : volume);
+			AL.sourcef(alSource, AL.GAIN, mute ? 0 : volume);
 
 			alMutex.release();
 		}
@@ -1558,14 +1540,14 @@ class Video extends openfl.display.Bitmap
 				final newChapter:Int = untyped __cpp__('{0}.u.media_player_chapter_changed.new_chapter', p_event[0]);
 
 				MainLoop.runInMainThread(onChapterChanged.dispatch.bind(newChapter));
+			case event if (event == LibVLC_MediaPlayerMediaChanged):
+				MainLoop.runInMainThread(onMediaChanged.dispatch.bind());
 			case event if (event == LibVLC_MediaParsedChanged):
 				final newStatus:Int = untyped __cpp__('{0}.u.media_parsed_changed.new_status', p_event[0]);
 
 				MainLoop.runInMainThread(onMediaParsedChanged.dispatch.bind(newStatus));
 			case event if (event == LibVLC_MediaMetaChanged):
 				MainLoop.runInMainThread(onMediaMetaChanged.dispatch.bind());
-			case event if (event == LibVLC_MediaPlayerMediaChanged):
-				MainLoop.runInMainThread(onMediaChanged.dispatch.bind());
 		}
 	}
 
