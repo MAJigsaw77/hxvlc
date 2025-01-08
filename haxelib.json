@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "1.9.5",
-	"releasenote": "Various fixes and improvements.",
+	"version": "1.9.6",
+	"releasenote": "Various improvements.",
 	"contributors": [
 		"MAJigsaw77"
 	],
