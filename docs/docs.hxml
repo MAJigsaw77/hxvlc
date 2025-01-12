@@ -8,4 +8,5 @@
 --macro include('hxvlc')
 --no-output
 --define FLX_SOUND_SYSTEM
+--define FLX_CUSTOM_ASSETS_DIRECTORY
 -D doc-gen
