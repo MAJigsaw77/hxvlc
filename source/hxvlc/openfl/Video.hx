@@ -26,85 +26,37 @@ using StringTools;
  */
 @:cppNamespaceCode('static int media_open(void *opaque, void **datap, uint64_t *sizep)
 {
+	(*datap) = opaque;
+
 	hx::SetTopOfStack((int *)99, true);
 
-	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
-
-	self->mediaMutex->acquire();
-
-	(*datap) = opaque;
-	(*sizep) = self->mediaSize;
-
-	self->mediaMutex->release();
+	int result = reinterpret_cast<Video_obj *>(opaque)->mediaOpen(sizep);
 
 	hx::SetTopOfStack((int *)0, true);
 
-	return 0;
+	return result;
 }
 
 static ssize_t media_read(void *opaque, unsigned char *buf, size_t len)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
-
-	self->mediaMutex->acquire();
-
-	if (self->mediaOffset >= self->mediaSize)
-	{
-		self->mediaMutex->release();
-
-		hx::SetTopOfStack((int *)0, true);
-
-		return 0;
-	}
-
-	uint64_t toRead = len < (self->mediaSize - self->mediaOffset) ? len : (self->mediaSize - self->mediaOffset);
-
-	if (self->mediaData == NULL || (self->mediaOffset > self->mediaSize - toRead))
-	{
-		self->mediaMutex->release();
-
-		hx::SetTopOfStack((int *)0, true);
-
-		return -1;
-	}
-
-	memcpy(buf, &self->mediaData[self->mediaOffset], (size_t)toRead);
-
-	self->mediaOffset += toRead;
-
-	self->mediaMutex->release();
+	ssize_t bytesToRead = reinterpret_cast<Video_obj *>(opaque)->mediaRead(buf, len);
 
 	hx::SetTopOfStack((int *)0, true);
 
-	return (ssize_t)toRead;
+	return bytesToRead;
 }
 
 static int media_seek(void *opaque, uint64_t offset)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	Video_obj *self = reinterpret_cast<Video_obj *>(opaque);
-
-	self->mediaMutex->acquire();
-
-	if (offset > self->mediaSize)
-	{
-		self->mediaMutex->release();
-
-		hx::SetTopOfStack((int *)0, true);
-
-		return -1;
-	}
-
-	self->mediaOffset = offset;
-
-	self->mediaMutex->release();
+	int success = reinterpret_cast<Video_obj *>(opaque)->mediaSeek(offset);
 
 	hx::SetTopOfStack((int *)0, true);
 
-	return 0;
+	return success;
 }
 
 static void *video_lock(void *opaque, void **planes)
@@ -178,11 +130,11 @@ static int audio_setup(void **data, char *format, unsigned *rate, unsigned *chan
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	int success = reinterpret_cast<Video_obj *>(*data)->audioSetup(format, rate, channels);
+	int result = reinterpret_cast<Video_obj *>(*data)->audioSetup(format, rate, channels);
 
 	hx::SetTopOfStack((int *)0, true);
 
-	return success;
+	return result;
 }
 
 static void audio_set_volume(void *data, float volume, bool mute)
@@ -530,7 +482,7 @@ class Video extends openfl.display.Bitmap
 
 					mediaData = untyped __cpp__('new unsigned char[{0}]', data.length);
 
-					cpp.Stdlib.nativeMemcpy(cast mediaData, cast cpp.Pointer.ofArray(data).constRaw, data.length);
+					cpp.Stdlib.nativeMemcpy(untyped mediaData, untyped cpp.Pointer.ofArray(data).constRaw, data.length);
 
 					mediaSize = data.length;
 					mediaOffset = 0;
@@ -1236,6 +1188,73 @@ class Video extends openfl.display.Bitmap
 	// Mutexes are used to ensure thread-safe access to shared resources like textures and audio buffers.
 	// The functions also coordinate between the Haxe main loop and the underlying C++ systems,
 	// ensuring operations that need to run on the main thread (e.g., rendering) are properly synchronized.
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private function mediaOpen(sizep:cpp.RawPointer<cpp.UInt64>):Int
+	{
+		mediaMutex.acquire();
+
+		sizep[0] = untyped mediaSize;
+
+		mediaMutex.release();
+
+		return 0;
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private function mediaRead(buf:cpp.RawPointer<cpp.UInt8>, len:cpp.SizeT):cpp.SSizeT
+	{
+		mediaMutex.acquire();
+
+		if (untyped __cpp__('{0} >= {1}', mediaOffset, mediaSize))
+		{
+			mediaMutex.release();
+
+			return 0;
+		}
+
+		final toRead:cpp.UInt64 = untyped __cpp__('{0} < ({1} - {2}) ? {0} : ({1} - {2})', len, mediaSize, mediaOffset);
+
+		if (mediaData == null || untyped __cpp__('{0} > {1} - {2}', mediaOffset, mediaSize, toRead))
+		{
+			mediaMutex.release();
+
+			return -1;
+		}
+
+		cpp.Stdlib.nativeMemcpy(untyped buf, untyped cpp.RawPointer.addressOf(mediaData[untyped __cpp__('{0}', mediaOffset)]), untyped __cpp__('{0}', toRead));
+
+		untyped __cpp__('{0} += {1}', mediaOffset, toRead);
+
+		mediaMutex.release();
+
+		return cast toRead;
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private function mediaSeek(offset:cpp.UInt64):Int
+	{
+		mediaMutex.acquire();
+
+		if (untyped __cpp__('{0} > {1}', offset, mediaSize))
+		{
+			mediaMutex.release();
+
+			return -1;
+		}
+
+		mediaOffset = offset;
+
+		mediaMutex.release();
+
+		return 0;
+	}
 
 	@:keep
 	@:noCompletion
