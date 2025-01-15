@@ -482,7 +482,7 @@ class Video extends openfl.display.Bitmap
 
 					mediaData = untyped __cpp__('new unsigned char[{0}]', data.length);
 
-					cpp.Stdlib.nativeMemcpy(cast mediaData, cast cpp.Pointer.ofArray(data).constRaw, data.length);
+					cpp.Stdlib.nativeMemcpy(untyped mediaData, untyped cpp.Pointer.ofArray(data).constRaw, data.length);
 
 					mediaSize = data.length;
 					mediaOffset = 0;
@@ -1217,7 +1217,7 @@ class Video extends openfl.display.Bitmap
 			return 0;
 		}
 
-		final toRead:cpp.UInt64 = untyped len < (untyped mediaSize - mediaOffset) ? len : (untyped mediaSize - mediaOffset);
+		final toRead:cpp.UInt64 = untyped __cpp__('{0} < ({1} - {2}) ? {0} : ({1} - {2})', len, mediaSize, mediaOffset);
 
 		if (mediaData == null || untyped __cpp__('{0} > {1} - {2}', mediaOffset, mediaSize, toRead))
 		{
@@ -1226,7 +1226,7 @@ class Video extends openfl.display.Bitmap
 			return -1;
 		}
 
-		cpp.Stdlib.nativeMemcpy(cast buf, cast cpp.RawPointer.addressOf(mediaData[untyped mediaOffset]), cast toRead);
+		cpp.Stdlib.nativeMemcpy(untyped buf, untyped cpp.RawPointer.addressOf(mediaData[untyped __cpp__('{0}', mediaOffset)]), untyped __cpp__('{0}', toRead));
 
 		untyped __cpp__('{0} += {1}', mediaOffset, toRead);
 
