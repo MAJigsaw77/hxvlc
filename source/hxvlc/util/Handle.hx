@@ -210,10 +210,7 @@ class Handle
 					catch (e:Exception)
 						Log.warn('Failed to save file "$savePath", ${e.message}.');
 				}
-			}).onError(function(error:String):Void
-			{
-					Log.warn('Failed to load library: libvlc, Error: $error');
-			});
+			}).onError((error:String) -> Log.warn('Failed to load library: libvlc, Error: $error'));
 			#end
 
 			Sys.putEnv('HOME', homePath);

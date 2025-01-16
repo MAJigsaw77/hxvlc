@@ -242,12 +242,14 @@ class Video extends openfl.display.Bitmap
 	 */
 	public var canPause(get, never):Bool;
 
+	#if !(HXVLC_OPENAL && lime_openal)
 	/**
 	 * Selected audio output module.
 	 *
 	 * Note: Changes take effect only after restarting playback.
 	 */
 	public var output(never, set):String;
+	#end
 
 	/**
 	 * Mute status of the audio.
@@ -1060,6 +1062,7 @@ class Video extends openfl.display.Bitmap
 		return mediaPlayer != null && LibVLC.media_player_can_pause(mediaPlayer) != 0;
 	}
 
+	#if !(HXVLC_OPENAL && lime_openal)
 	@:noCompletion
 	private function set_output(value:String):String
 	{
@@ -1068,6 +1071,7 @@ class Video extends openfl.display.Bitmap
 
 		return value;
 	}
+	#end
 
 	@:noCompletion
 	private function get_mute():Bool
