@@ -368,6 +368,14 @@ class Video extends openfl.display.Bitmap
 	 */
 	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
 
+	/**
+	 * Event triggered when the first frame of a video has beeen rendererd
+	 */
+	public var onFirstFrameRendered(default, null):Event<Void->Void> = new Event<Void->Void>();
+	
+	@:noCompletion
+	private var firstFrameRendered:Bool = false;
+
 	@:noCompletion
 	private final mediaMutex:Mutex = new Mutex();
 
@@ -456,6 +464,7 @@ class Video extends openfl.display.Bitmap
 
 		if (location != null)
 		{
+			
 			if ((location is String))
 			{
 				final location:String = cast(location, String);
@@ -590,7 +599,7 @@ class Video extends openfl.display.Bitmap
 						LibVLC.media_add_option(mediaItem, option);
 				}
 			}
-
+			firstFrameRendered = false;
 			LibVLC.media_player_set_media(mediaPlayer, mediaItem);
 
 			LibVLC.media_release(mediaItem);
@@ -1308,6 +1317,12 @@ class Video extends openfl.display.Bitmap
 						__setRenderDirty();
 
 					textureMutex.release();
+
+					if (!firstFrameRendered)
+					{
+						firstFrameRendered = true;
+						onFirstFrameRendered.dispatch();
+					}
 				});
 			}
 		}
