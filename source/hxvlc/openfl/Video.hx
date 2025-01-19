@@ -368,6 +368,11 @@ class Video extends openfl.display.Bitmap
 	 */
 	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
 
+	/**
+	 * Event triggered when the video is being rendered.
+	 */
+	public var onDisplay(default, null):Event<Void->Void> = new Event<Void->Void>();
+
 	@:noCompletion
 	private final mediaMutex:Mutex = new Mutex();
 
@@ -542,8 +547,7 @@ class Video extends openfl.display.Bitmap
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerCorked)');
 
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'),
-						untyped __cpp__('this')) != 0)
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerUncorked)');
 
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('event_manager_callbacks'),
@@ -1307,6 +1311,8 @@ class Video extends openfl.display.Bitmap
 					if (__renderable)
 						__setRenderDirty();
 
+					onDisplay.dispatch();
+
 					textureMutex.release();
 				});
 			}
@@ -1429,7 +1435,8 @@ class Video extends openfl.display.Bitmap
 				if (alBuffer != null)
 				{
 					AL.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16,
-						lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * untyped __cpp__('sizeof(int16_t)') * alChannels, alSampleRate);
+						lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(alSamplesBuffer)),
+						alSamplesBuffer.length * untyped __cpp__('sizeof(int16_t)') * alChannels, alSampleRate);
 
 					AL.sourceQueueBuffer(alSource, alBuffer);
 
