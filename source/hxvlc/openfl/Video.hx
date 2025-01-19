@@ -364,12 +364,12 @@ class Video extends openfl.display.Bitmap
 	public var onMediaParsedChanged(default, null):Event<Int->Void> = new Event<Int->Void>();
 
 	/**
-	 * Event triggered when the format setup is initialized.
+	 * Event triggered when the media format setup is initialized.
 	 */
 	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * Event triggered when the video is being rendered.
+	 * Event triggered when the media is being rendered.
 	 */
 	public var onDisplay(default, null):Event<Void->Void> = new Event<Void->Void>();
 
