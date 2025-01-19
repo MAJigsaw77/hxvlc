@@ -1326,12 +1326,15 @@ class Video extends openfl.display.Bitmap
 	private function videoFormatSetup(chroma:cpp.CastCharStar, width:cpp.RawPointer<cpp.UInt32>, height:cpp.RawPointer<cpp.UInt32>,
 			pitches:cpp.RawPointer<cpp.UInt32>, lines:cpp.RawPointer<cpp.UInt32>):Int
 	{
-		cpp.Stdlib.nativeMemcpy(cast chroma, cast cpp.CastCharStar.fromString("RV32"), 4);
+		textureMutex.acquire();
+
+		final currentChroma:String = new String(untyped chroma);
+
+		if (currentChroma != 'RV32')
+			cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('RV32'), 4);
 
 		final originalWidth:cpp.UInt32 = width[0];
 		final originalHeight:cpp.UInt32 = height[0];
-
-		textureMutex.acquire();
 
 		if (mediaPlayer != null
 			&& LibVLC.video_get_size(mediaPlayer, 0, cpp.RawPointer.addressOf(textureWidth), cpp.RawPointer.addressOf(textureHeight)) == 0)
@@ -1357,6 +1360,9 @@ class Video extends openfl.display.Bitmap
 
 			texturePlanes = untyped __cpp__('new unsigned char[{0}]', textureWidth * textureHeight * 4);
 		}
+
+		pitches[0] = textureWidth * 4;
+		lines[0] = textureHeight;
 
 		textureMutex.release();
 
@@ -1398,9 +1404,6 @@ class Video extends openfl.display.Bitmap
 			});
 		}
 
-		pitches[0] = textureWidth * 4;
-		lines[0] = textureHeight;
-
 		return 1;
 	}
 
@@ -1409,7 +1412,6 @@ class Video extends openfl.display.Bitmap
 	@:unreflective
 	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32, pts:cpp.Int64):Void
 	{
-		// TODO: Audio synchronisation in case of a sudden desync using pts.
 		#if (HXVLC_OPENAL && lime_openal)
 		if (alSource != null && alBuffers != null)
 		{
@@ -1434,9 +1436,10 @@ class Video extends openfl.display.Bitmap
 
 				if (alBuffer != null)
 				{
-					AL.bufferData(alBuffer, alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16,
-						lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(alSamplesBuffer)),
-						alSamplesBuffer.length * untyped __cpp__('sizeof(int16_t)') * alChannels, alSampleRate);
+					final format:Int = alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
+					final size:Int = alSamplesBuffer.length * untyped __cpp__('sizeof(int16_t)') * alChannels;
+
+					AL.bufferData(alBuffer, format, lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(alSamplesBuffer)), size, alSampleRate);
 
 					AL.sourceQueueBuffer(alSource, alBuffer);
 
@@ -1492,9 +1495,12 @@ class Video extends openfl.display.Bitmap
 	private function audioSetup(format:cpp.CastCharStar, rate:cpp.RawPointer<cpp.UInt32>, channels:cpp.RawPointer<cpp.UInt32>):Int
 	{
 		#if (HXVLC_OPENAL && lime_openal)
-		cpp.Stdlib.nativeMemcpy(cast format, cast cpp.CastCharStar.fromString("S16N"), 4);
-
 		alMutex.acquire();
+
+		final currentFormat:String = new String(untyped format);
+
+		if (currentFormat != 'S16N')
+			cpp.Stdlib.nativeMemcpy(untyped format, untyped cpp.CastCharStar.fromString('S16N'), 4);
 
 		if (alSource == null)
 			alSource = AL.createSource();
