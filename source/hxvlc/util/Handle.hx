@@ -244,7 +244,6 @@ class Handle
 			args.push_back("--drop-late-frames");
 			args.push_back("--ignore-config");
 			args.push_back("--intf=none");
-			args.push_back("--http-reconnect");
 			args.push_back("--no-interact");
 			args.push_back("--no-keyboard-events");
 			args.push_back("--no-mouse-events");
