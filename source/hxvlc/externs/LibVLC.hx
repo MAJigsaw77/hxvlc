@@ -136,12 +136,11 @@ extern class LibVLC
 	/**
 	 * Creates a new media descriptor from a location.
 	 *
-	 * @param p_instance Pointer to the LibVLC instance.
 	 * @param psz_mrl The location string.
 	 * @return Pointer to the new media descriptor.
 	 */
 	@:native('libvlc_media_new_location')
-	static function media_new_location(p_instance:cpp.RawPointer<LibVLC_Instance_T>, psz_mrl:cpp.ConstCharStar):cpp.RawPointer<LibVLC_Media_T>;
+	static function media_new_location(psz_mrl:cpp.ConstCharStar):cpp.RawPointer<LibVLC_Media_T>;
 
 	/**
 	 * Creates a new media descriptor from a file path.
@@ -151,7 +150,7 @@ extern class LibVLC
 	 * @return Pointer to the new media descriptor.
 	 */
 	@:native('libvlc_media_new_path')
-	static function media_new_path(p_instance:cpp.RawPointer<LibVLC_Instance_T>, path:cpp.ConstCharStar):cpp.RawPointer<LibVLC_Media_T>;
+	static function media_new_path(path:cpp.ConstCharStar):cpp.RawPointer<LibVLC_Media_T>;
 
 	/**
 	 * Creates a new media descriptor from a file descriptor.
@@ -161,7 +160,7 @@ extern class LibVLC
 	 * @return Pointer to the new media descriptor.
 	 */
 	@:native('libvlc_media_new_fd')
-	static function media_new_fd(p_instance:cpp.RawPointer<LibVLC_Instance_T>, fd:Int):cpp.RawPointer<LibVLC_Media_T>;
+	static function media_new_fd(fd:Int):cpp.RawPointer<LibVLC_Media_T>;
 
 	/**
 	 * Creates a new media descriptor from custom callbacks.
@@ -175,8 +174,8 @@ extern class LibVLC
 	 * @return Pointer to the new media descriptor.
 	 */
 	@:native('libvlc_media_new_callbacks')
-	static function media_new_callbacks(p_instance:cpp.RawPointer<LibVLC_Instance_T>, open_cb:LibVLC_Media_Open_CB, read_cb:LibVLC_Media_Read_CB,
-		seek_cb:LibVLC_Media_Seek_CB, close_cb:LibVLC_Media_Close_CB, opaque:cpp.RawPointer<cpp.Void>):cpp.RawPointer<LibVLC_Media_T>;
+	static function media_new_callbacks(open_cb:LibVLC_Media_Open_CB, read_cb:LibVLC_Media_Read_CB, seek_cb:LibVLC_Media_Seek_CB,
+		close_cb:LibVLC_Media_Close_CB, opaque:cpp.RawPointer<cpp.Void>):cpp.RawPointer<LibVLC_Media_T>;
 
 	/**
 	 * Adds an option to a media descriptor.
@@ -229,11 +228,12 @@ extern class LibVLC
 	 *
 	 * This function commits any metadata modifications to the underlying storage, if applicable.
 	 *
+	 * @param p_instance Pointer to the LibVLC instance.
 	 * @param p_md Pointer to the media descriptor.
 	 * @return 0 on failure, a non-zero value if the metadata was saved successfully.
 	 */
 	@:native('libvlc_media_save_meta')
-	static function media_save_meta(p_md:cpp.RawPointer<LibVLC_Media_T>):Int;
+	static function media_save_meta(p_instance:cpp.RawPointer<LibVLC_Instance_T>, p_md:cpp.RawPointer<LibVLC_Media_T>):Int;
 
 	/**
 	 * Gets the statistics of a media descriptor.
@@ -275,21 +275,24 @@ extern class LibVLC
 	/**
 	 * Parses a media descriptor with options.
 	 *
+	 * @param p_instance Pointer to the LibVLC instance.
 	 * @param p_md Pointer to the media descriptor.
 	 * @param parse_flag Parse flags.
 	 * @param timeout Timeout in milliseconds.
 	 * @return 0 on success, -1 on failure.
 	 */
-	@:native('libvlc_media_parse_with_options')
-	static function media_parse_with_options(p_md:cpp.RawPointer<LibVLC_Media_T>, parse_flag:LibVLC_Media_Parse_Flag_T, timeout:Int):Int;
+	@:native('libvlc_media_parse_request')
+	static function media_parse_request(p_instance:cpp.RawPointer<LibVLC_Instance_T>, p_md:cpp.RawPointer<LibVLC_Media_T>,
+		parse_flag:LibVLC_Media_Parse_Flag_T, timeout:Int):Int;
 
 	/**
 	 * Stops the parsing of a media descriptor.
 	 *
+	 * @param p_instance Pointer to the LibVLC instance.
 	 * @param p_md Pointer to the media descriptor.
 	 */
 	@:native('libvlc_media_parse_stop')
-	static function media_parse_stop(p_md:cpp.RawPointer<LibVLC_Media_T>):Void;
+	static function media_parse_stop(p_instance:cpp.RawPointer<LibVLC_Instance_T>, p_md:cpp.RawPointer<LibVLC_Media_T>):Void;
 
 	/**
 	 * Gets the parsed status of a media descriptor.
@@ -359,8 +362,8 @@ extern class LibVLC
 	 *
 	 * @param p_mi Pointer to the media player.
 	 */
-	@:native('libvlc_media_player_stop')
-	static function media_player_stop(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Void;
+	@:native('libvlc_media_player_stop_async')
+	static function media_player_stop_async(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Void;
 
 	/**
 	 * Pauses playback of the media player.
@@ -384,37 +387,28 @@ extern class LibVLC
 	 * Checks if the media player is playing.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 * @return 1 if playing, 0 otherwise.
+	 * @return true if playing, false otherwise.
 	 */
 	@:native('libvlc_media_player_is_playing')
-	static function media_player_is_playing(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
+	static function media_player_is_playing(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Bool;
 
 	/**
 	 * Checks if the media player is seekable.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 * @return 1 if seekable, 0 otherwise.
+	 * @return true if seekable, false otherwise.
 	 */
 	@:native('libvlc_media_player_is_seekable')
-	static function media_player_is_seekable(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
+	static function media_player_is_seekable(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Bool;
 
 	/**
 	 * Checks if the media player can pause.
 	 *
 	 * @param p_mi Pointer to the media player.
-	 * @return 1 if can pause, 0 otherwise.
+	 * @return true if can pause, false otherwise.
 	 */
 	@:native('libvlc_media_player_can_pause')
-	static function media_player_can_pause(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
-
-	/**
-	 * Checks if the media player will play.
-	 *
-	 * @param p_mi Pointer to the media player.
-	 * @return 1 if will play, 0 otherwise.
-	 */
-	@:native('libvlc_media_player_will_play')
-	static function media_player_will_play(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
+	static function media_player_can_pause(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Bool;
 
 	/**
 	 * Releases a media player.
@@ -447,10 +441,11 @@ extern class LibVLC
 	 *
 	 * @param p_mi Pointer to the media player.
 	 * @param i_time The new playback time in milliseconds.
+	 * @param b_fast Whether to use fast seeking or precise seeking.
 	 * @return 0 on success, -1 on failure.
 	 */
 	@:native('libvlc_media_player_set_time')
-	static function media_player_set_time(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_time:LibVLC_Time_T):Int;
+	static function media_player_set_time(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_time:LibVLC_Time_T, b_fast:Bool):Int;
 
 	/**
 	 * Gets the current playback position.
@@ -466,9 +461,10 @@ extern class LibVLC
 	 *
 	 * @param p_mi Pointer to the media player.
 	 * @param f_pos The new playback position as a float between 0.0 and 1.0.
+	 * @param b_fast Whether to use fast seeking or precise seeking.
 	 */
 	@:native('libvlc_media_player_set_position')
-	static function media_player_set_position(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, f_pos:Single):Void;
+	static function media_player_set_position(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, f_pos:Single, b_fast:Bool):Void;
 
 	/**
 	 * Gets the current chapter.
@@ -711,34 +707,6 @@ extern class LibVLC
 	static function audio_set_volume(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_volume:Int):Int;
 
 	/**
-	 * Gets the number of audio tracks.
-	 *
-	 * @param p_mi Pointer to the media player.
-	 * @return The number of audio tracks.
-	 */
-	@:native('libvlc_audio_get_track_count')
-	static function audio_get_track_count(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
-
-	/**
-	 * Gets the current audio track.
-	 *
-	 * @param p_mi Pointer to the media player.
-	 * @return The current audio track.
-	 */
-	@:native('libvlc_audio_get_track')
-	static function audio_get_track(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
-
-	/**
-	 * Sets the current audio track.
-	 *
-	 * @param p_mi Pointer to the media player.
-	 * @param i_track The new audio track.
-	 * @return 0 on success, -1 on failure.
-	 */
-	@:native('libvlc_audio_set_track')
-	static function audio_set_track(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_track:Int):Int;
-
-	/**
 	 * Gets the mute status.
 	 *
 	 * @param p_mi Pointer to the media player.
@@ -756,25 +724,6 @@ extern class LibVLC
 	 */
 	@:native('libvlc_audio_set_mute')
 	static function audio_set_mute(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_status:Int):Int;
-
-	/**
-	 * Gets the current audio channel.
-	 *
-	 * @param p_mi Pointer to the media player.
-	 * @return The current audio channel.
-	 */
-	@:native('libvlc_audio_get_channel')
-	static function audio_get_channel(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
-
-	/**
-	 * Sets the current audio channel.
-	 *
-	 * @param p_mi Pointer to the media player.
-	 * @param channel The new audio channel.
-	 * @return 0 on success, -1 on failure.
-	 */
-	@:native('libvlc_audio_set_channel')
-	static function audio_set_channel(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, channel:Int):Int;
 
 	/**
 	 * Gets the role of the media player.

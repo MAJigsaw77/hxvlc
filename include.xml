@@ -32,8 +32,6 @@
 	</section>
 
 	<section if="ios">
-		<define name="HXVLC_OPENAL" />
-
 		<dependency name="CFNetwork.framework" />
 		<dependency name="CoreFoundation.framework" />
 		<dependency name="CoreMedia.framework" />
@@ -42,7 +40,6 @@
 		<dependency name="Security.framework" />
 		<dependency name="VideoToolbox.framework" />
 		<dependency name="CoreImage.framework" />
-
 		<dependency name="libiconv.tbd" />
 	</section>
 

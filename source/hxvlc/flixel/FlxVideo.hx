@@ -20,7 +20,7 @@ using StringTools;
  *
  * ```haxe
  * var video:FlxVideo = new FlxVideo();
- * video.onEndReached.add(function():Void
+ * video.onStopping.add(function():Void
  * {
  * 	video.dispose();
  *

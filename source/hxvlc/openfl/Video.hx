@@ -5,10 +5,12 @@ import haxe.Int64;
 import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
+#if HXVLC_ENABLE_STATS
 import hxvlc.util.Stats;
+#end
 import hxvlc.util.Handle;
 import lime.app.Event;
-#if (HXVLC_OPENAL && lime_openal)
+#if lime_openal
 import lime.media.openal.AL;
 import lime.media.openal.ALBuffer;
 import lime.media.openal.ALSource;
@@ -16,6 +18,7 @@ import lime.media.openal.ALSource;
 import lime.utils.Log;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.RectangleTexture;
+import openfl.display3D.textures.TextureBase;
 import openfl.Lib;
 import sys.thread.Mutex;
 
@@ -37,11 +40,11 @@ using StringTools;
 	return result;
 }
 
-static ssize_t media_read(void *opaque, unsigned char *buf, size_t len)
+static ptrdiff_t media_read(void *opaque, unsigned char *buf, size_t len)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-	ssize_t bytesToRead = reinterpret_cast<Video_obj *>(opaque)->mediaRead(buf, len);
+	ptrdiff_t bytesToRead = reinterpret_cast<Video_obj *>(opaque)->mediaRead(buf, len);
 
 	hx::SetTopOfStack((int *)0, true);
 
@@ -156,11 +159,6 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 }')
 class Video extends openfl.display.Bitmap
 {
-	#if (HXVLC_OPENAL && lime_openal)
-	@:noCompletion
-	private static final OPENAL_AUDIO_BUFFERS:Int = 128;
-	#end
-
 	/**
 	 * Indicates whether to use GPU texture for rendering.
 	 *
@@ -221,11 +219,6 @@ class Video extends openfl.display.Bitmap
 	public var chapterCount(get, never):Int;
 
 	/**
-	 * Indicates whether playback will start automatically once loaded.
-	 */
-	public var willPlay(get, never):Bool;
-
-	/**
 	 * Playback rate of the video.
 	 *
 	 * Note: The actual rate may vary depending on the media.
@@ -242,15 +235,6 @@ class Video extends openfl.display.Bitmap
 	 */
 	public var canPause(get, never):Bool;
 
-	#if !(HXVLC_OPENAL && lime_openal)
-	/**
-	 * Selected audio output module.
-	 *
-	 * Note: Changes take effect only after restarting playback.
-	 */
-	public var output(never, set):String;
-	#end
-
 	/**
 	 * Mute status of the audio.
 	 *
@@ -262,21 +246,6 @@ class Video extends openfl.display.Bitmap
 	 * Volume level (0 to 100).
 	 */
 	public var volume(get, set):Int;
-
-	/**
-	 * Total number of available audio tracks.
-	 */
-	public var trackCount(get, never):Int;
-
-	/**
-	 * Selected audio track.
-	 */
-	public var track(get, set):Int;
-
-	/**
-	 * Selected audio channel.
-	 */
-	public var channel(get, set):Int;
 
 	/**
 	 * Audio delay in microseconds.
@@ -309,9 +278,9 @@ class Video extends openfl.display.Bitmap
 	public var onPaused(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
-	 * Event triggered when the end of the media is reached.
+	 * Event triggered when playback is stopping.
 	 */
-	public var onEndReached(default, null):Event<Void->Void> = new Event<Void->Void>();
+	public var onStopping(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/**
 	 * Event triggered when an error occurs.
@@ -406,7 +375,7 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private var texture:Null<RectangleTexture>;
 
-	#if (HXVLC_OPENAL && lime_openal)
+	#if lime_openal
 	@:noCompletion
 	private final alMutex:Mutex = new Mutex();
 
@@ -420,10 +389,19 @@ class Video extends openfl.display.Bitmap
 	private var alSampleRate:cpp.UInt32 = 0;
 
 	@:noCompletion
-	private var alChannels:cpp.UInt32 = 0;
+	private var alFormat:Int = 0;
+
+	@:noCompletion
+	private var alFrameSize:cpp.UInt32 = 0;
 
 	@:noCompletion
 	private var alSource:Null<ALSource>;
+
+	@:noCompletion
+	private var alUseEXTFloat32:Null<Bool>;
+
+	@:noCompletion
+	private var alUseEXTMCFORMATS:Null<Bool>;
 	#end
 
 	/**
@@ -466,18 +444,21 @@ class Video extends openfl.display.Bitmap
 				final location:String = cast(location, String);
 
 				if (location.contains('://'))
-					mediaItem = LibVLC.media_new_location(Handle.instance, location);
+					mediaItem = LibVLC.media_new_location(location);
 				else if (location.length > 0)
 				{
-					mediaItem = LibVLC.media_new_path(Handle.instance,
-						#if windows haxe.io.Path.normalize(location).split('/').join('\\') #else haxe.io.Path.normalize(location) #end);
+					#if windows
+					mediaItem = LibVLC.media_new_path(haxe.io.Path.normalize(location).split('/').join('\\'));
+					#else
+					mediaItem = LibVLC.media_new_path(haxe.io.Path.normalize(location));
+					#end
 				}
 				else
 					return false;
 			}
 			else if ((location is Int))
 			{
-				mediaItem = LibVLC.media_new_fd(Handle.instance, cast(location, Int));
+				mediaItem = LibVLC.media_new_fd(cast(location, Int));
 			}
 			else if ((location is haxe.io.Bytes))
 			{
@@ -498,8 +479,8 @@ class Video extends openfl.display.Bitmap
 
 					data.splice(0, data.length);
 
-					mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
-						untyped __cpp__('media_seek'), untyped NULL, untyped __cpp__('this'));
+					mediaItem = LibVLC.media_new_callbacks(untyped __cpp__('media_open'), untyped __cpp__('media_read'), untyped __cpp__('media_seek'),
+						untyped NULL, untyped __cpp__('this'));
 				}
 				else
 					return false;
@@ -532,9 +513,8 @@ class Video extends openfl.display.Bitmap
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerPaused)');
 
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('event_manager_callbacks'),
-						untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaPlayerEndReached)');
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerStopping, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+						Log.warn('Failed to attach event (MediaPlayerStopping)');
 
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('event_manager_callbacks'),
 						untyped __cpp__('this')) != 0)
@@ -573,12 +553,10 @@ class Video extends openfl.display.Bitmap
 					untyped __cpp__('this'));
 				LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), untyped NULL);
 
-				#if (HXVLC_OPENAL && lime_openal)
 				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'),
 					untyped NULL, untyped NULL, untyped __cpp__('this'));
 				LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 				LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
-				#end
 			}
 			else
 				Log.warn('Unable to initialize the LibVLC media player.');
@@ -666,8 +644,11 @@ class Video extends openfl.display.Bitmap
 	 * @param timeout The timeout in milliseconds.
 	 * @return `true` if parsing succeeded, `false` otherwise.
 	 */
-	public function parseWithOptions(parse_flag:Int, timeout:Int):Bool
+	public function parseRequest(parse_flag:Int, timeout:Int):Bool
 	{
+		if (Handle.instance == null)
+			return false;
+
 		if (mediaPlayer != null)
 		{
 			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
@@ -687,7 +668,7 @@ class Video extends openfl.display.Bitmap
 				else
 					Log.warn('Unable to initialize the LibVLC media event manager.');
 
-				return LibVLC.media_parse_with_options(currentMediaItem, parse_flag, timeout) == 0;
+				return LibVLC.media_parse_request(Handle.instance, currentMediaItem, parse_flag, timeout) == 0;
 			}
 		}
 
@@ -699,12 +680,15 @@ class Video extends openfl.display.Bitmap
 	 */
 	public function parseStop():Void
 	{
+		if (Handle.instance == null)
+			return;
+
 		if (mediaPlayer != null)
 		{
 			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
-				LibVLC.media_parse_stop(currentMediaItem);
+				LibVLC.media_parse_stop(Handle.instance, currentMediaItem);
 		}
 	}
 
@@ -721,10 +705,10 @@ class Video extends openfl.display.Bitmap
 	/**
 	 * Stops playback.
 	 */
-	public function stop():Void
+	public function stopAsync():Void
 	{
 		if (mediaPlayer != null)
-			LibVLC.media_player_stop(mediaPlayer);
+			LibVLC.media_player_stop_async(mediaPlayer);
 	}
 
 	/**
@@ -826,12 +810,15 @@ class Video extends openfl.display.Bitmap
 	 */
 	public function saveMeta():Bool
 	{
+		if (Handle.instance == null)
+			return false;
+
 		if (mediaPlayer != null)
 		{
 			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
-				return LibVLC.media_save_meta(currentMediaItem) != 0;
+				return LibVLC.media_save_meta(Handle.instance, currentMediaItem) != 0;
 		}
 
 		return false;
@@ -845,7 +832,6 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			LibVLC.media_player_stop(mediaPlayer);
 			LibVLC.media_player_release(mediaPlayer);
 			mediaPlayer = null;
 		}
@@ -888,7 +874,7 @@ class Video extends openfl.display.Bitmap
 
 		textureMutex.release();
 
-		#if (HXVLC_OPENAL && lime_openal)
+		#if lime_openal
 		alMutex.acquire();
 
 		if (alSource != null)
@@ -973,7 +959,7 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private function get_isPlaying():Bool
 	{
-		return mediaPlayer != null && LibVLC.media_player_is_playing(mediaPlayer) != 0;
+		return mediaPlayer != null && LibVLC.media_player_is_playing(mediaPlayer);
 	}
 
 	@:noCompletion
@@ -992,7 +978,7 @@ class Video extends openfl.display.Bitmap
 	private function set_time(value:Int64):Int64
 	{
 		if (mediaPlayer != null)
-			LibVLC.media_player_set_time(mediaPlayer, value);
+			LibVLC.media_player_set_time(mediaPlayer, value, #if HXVLC_FAST_SEEKING true #else false #end);
 
 		return value;
 	}
@@ -1007,7 +993,7 @@ class Video extends openfl.display.Bitmap
 	private function set_position(value:Single):Single
 	{
 		if (mediaPlayer != null)
-			LibVLC.media_player_set_position(mediaPlayer, value);
+			LibVLC.media_player_set_position(mediaPlayer, value, #if HXVLC_FAST_SEEKING true #else false #end);
 
 		return value;
 	}
@@ -1034,12 +1020,6 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:noCompletion
-	private function get_willPlay():Bool
-	{
-		return mediaPlayer != null && LibVLC.media_player_will_play(mediaPlayer) != 0;
-	}
-
-	@:noCompletion
 	private function get_rate():Single
 	{
 		return mediaPlayer != null ? LibVLC.media_player_get_rate(mediaPlayer) : 1;
@@ -1057,25 +1037,14 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private function get_isSeekable():Bool
 	{
-		return mediaPlayer != null && LibVLC.media_player_is_seekable(mediaPlayer) != 0;
+		return mediaPlayer != null && LibVLC.media_player_is_seekable(mediaPlayer);
 	}
 
 	@:noCompletion
 	private function get_canPause():Bool
 	{
-		return mediaPlayer != null && LibVLC.media_player_can_pause(mediaPlayer) != 0;
+		return mediaPlayer != null && LibVLC.media_player_can_pause(mediaPlayer);
 	}
-
-	#if !(HXVLC_OPENAL && lime_openal)
-	@:noCompletion
-	private function set_output(value:String):String
-	{
-		if (mediaPlayer != null)
-			LibVLC.audio_output_set(mediaPlayer, value);
-
-		return value;
-	}
-	#end
 
 	@:noCompletion
 	private function get_mute():Bool
@@ -1103,42 +1072,6 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 			LibVLC.audio_set_volume(mediaPlayer, value);
-
-		return value;
-	}
-
-	@:noCompletion
-	private function get_trackCount():Int
-	{
-		return mediaPlayer != null ? LibVLC.audio_get_track_count(mediaPlayer) : -1;
-	}
-
-	@:noCompletion
-	private function get_track():Int
-	{
-		return mediaPlayer != null ? LibVLC.audio_get_track(mediaPlayer) : -1;
-	}
-
-	@:noCompletion
-	private function set_track(value:Int):Int
-	{
-		if (mediaPlayer != null)
-			LibVLC.audio_set_track(mediaPlayer, value);
-
-		return value;
-	}
-
-	@:noCompletion
-	private function get_channel():Int
-	{
-		return mediaPlayer != null ? LibVLC.audio_get_channel(mediaPlayer) : 0;
-	}
-
-	@:noCompletion
-	private function set_channel(value:Int):Int
-	{
-		if (mediaPlayer != null)
-			LibVLC.audio_set_channel(mediaPlayer, value);
 
 		return value;
 	}
@@ -1214,7 +1147,7 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function mediaRead(buf:cpp.RawPointer<cpp.UInt8>, len:cpp.SizeT):cpp.SSizeT
+	private function mediaRead(buf:cpp.RawPointer<cpp.UInt8>, len:cpp.SizeT):cpp.PtrDiffT
 	{
 		mediaMutex.acquire();
 
@@ -1320,6 +1253,7 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:access(openfl.display.BitmapData)
+	@:access(openfl.display3D.textures.TextureBase)
 	@:keep
 	@:noCompletion
 	@:unreflective
@@ -1330,8 +1264,16 @@ class Video extends openfl.display.Bitmap
 
 		final currentChroma:String = new String(untyped chroma);
 
-		if (currentChroma != 'RV32')
-			cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('RV32'), 4);
+		if (TextureBase.__supportsBGRA == true)
+		{
+			if (currentChroma != 'BGRA')
+				cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('BGRA'), 4);
+		}
+		else
+		{
+			if (currentChroma != 'RGBA')
+				cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('RGBA'), 4);
+		}
 
 		final originalWidth:cpp.UInt32 = width[0];
 		final originalHeight:cpp.UInt32 = height[0];
@@ -1412,7 +1354,7 @@ class Video extends openfl.display.Bitmap
 	@:unreflective
 	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32, pts:cpp.Int64):Void
 	{
-		#if (HXVLC_OPENAL && lime_openal)
+		#if lime_openal
 		if (alSource != null && alBuffers != null)
 		{
 			alMutex.acquire();
@@ -1436,10 +1378,8 @@ class Video extends openfl.display.Bitmap
 
 				if (alBuffer != null)
 				{
-					final format:Int = alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
-					final size:Int = alSamplesBuffer.length * untyped __cpp__('sizeof(int16_t)') * alChannels;
-
-					AL.bufferData(alBuffer, format, lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(alSamplesBuffer)), size, alSampleRate);
+					AL.bufferData(alBuffer, alFormat, lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(alSamplesBuffer)),
+						alSamplesBuffer.length * alFrameSize, alSampleRate);
 
 					AL.sourceQueueBuffer(alSource, alBuffer);
 
@@ -1458,7 +1398,7 @@ class Video extends openfl.display.Bitmap
 	@:unreflective
 	private function audioPause(pts:cpp.Int64):Void
 	{
-		#if (HXVLC_OPENAL && lime_openal)
+		#if lime_openal
 		if (alSource != null)
 		{
 			alMutex.acquire();
@@ -1476,7 +1416,7 @@ class Video extends openfl.display.Bitmap
 	@:unreflective
 	private function audioResume(pts:cpp.Int64):Void
 	{
-		#if (HXVLC_OPENAL && lime_openal)
+		#if lime_openal
 		if (alSource != null)
 		{
 			alMutex.acquire();
@@ -1494,33 +1434,62 @@ class Video extends openfl.display.Bitmap
 	@:unreflective
 	private function audioSetup(format:cpp.CastCharStar, rate:cpp.RawPointer<cpp.UInt32>, channels:cpp.RawPointer<cpp.UInt32>):Int
 	{
-		#if (HXVLC_OPENAL && lime_openal)
+		#if lime_openal
 		alMutex.acquire();
 
 		final currentFormat:String = new String(untyped format);
 
-		if (currentFormat != 'S16N')
-			cpp.Stdlib.nativeMemcpy(untyped format, untyped cpp.CastCharStar.fromString('S16N'), 4);
+		if (alUseEXTFloat32 == null)
+			alUseEXTFloat32 = AL.isExtensionPresent('AL_EXT_FLOAT32');
+
+		if (alUseEXTMCFORMATS == null)
+			alUseEXTMCFORMATS = AL.isExtensionPresent('AL_EXT_MCFORMATS');
+
+		if (alUseEXTFloat32 == true)
+		{
+			if (currentFormat != 'FL32')
+				cpp.Stdlib.nativeMemcpy(cast format, cast cpp.CastCharStar.fromString('FL32'), 4);
+		}
+		else
+		{
+			if (currentFormat != 'S16N')
+				cpp.Stdlib.nativeMemcpy(cast format, cast cpp.CastCharStar.fromString('S16N'), 4);
+		}
 
 		if (alSource == null)
 			alSource = AL.createSource();
 
 		if (alBuffers == null)
-			alBuffers = AL.genBuffers(OPENAL_AUDIO_BUFFERS);
+			alBuffers = AL.genBuffers(128);
 
 		alSampleRate = rate[0];
 
-		final originalChannels:cpp.UInt32 = channels[0];
+		if (alUseEXTMCFORMATS != true)
+		{
+			if (channels[0] > 2)
+				channels[0] = 2;
+		}
 
-		if (originalChannels > 2)
-			channels[0] = 2;
+		switch (channels[0])
+		{
+			case 1:
+				alFormat = alUseEXTFloat32 == true ? AL.getEnumValue('AL_FORMAT_MONO_FLOAT32') : AL.FORMAT_MONO16;
+			case 2:
+				alFormat = alUseEXTFloat32 == true ? AL.getEnumValue('AL_FORMAT_STEREO_FLOAT32') : AL.FORMAT_STEREO16;
+			case 4:
+				alFormat = alUseEXTFloat32 == true ? AL.getEnumValue('AL_FORMAT_QUAD32') : AL.getEnumValue('AL_FORMAT_QUAD16');
+			case 6:
+				alFormat = alUseEXTFloat32 == true ? AL.getEnumValue('AL_FORMAT_51CHN32') : AL.getEnumValue('AL_FORMAT_51CHN16');
+			case 8:
+				alFormat = alUseEXTFloat32 == true ? AL.getEnumValue('AL_FORMAT_71CHN32') : AL.getEnumValue('AL_FORMAT_71CHN16');
+		}
 
-		alChannels = channels[0];
+		alFrameSize = alUseEXTFloat32 == true ? untyped __cpp__('sizeof(float)') * channels[0] : untyped __cpp__('sizeof(int16_t)') * channels[0];
 
 		alMutex.release();
-		#end
 
 		return 0;
+		#end
 	}
 
 	@:keep
@@ -1528,7 +1497,6 @@ class Video extends openfl.display.Bitmap
 	@:unreflective
 	private function audioSetVolume(volume:Single, mute:Bool):Void
 	{
-		#if (HXVLC_OPENAL && lime_openal)
 		if (alSource != null)
 		{
 			alMutex.acquire();
@@ -1537,7 +1505,6 @@ class Video extends openfl.display.Bitmap
 
 			alMutex.release();
 		}
-		#end
 	}
 
 	@:keep
@@ -1555,8 +1522,8 @@ class Video extends openfl.display.Bitmap
 				MainLoop.runInMainThread(onStopped.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerPaused):
 				MainLoop.runInMainThread(onPaused.dispatch.bind());
-			case event if (event == LibVLC_MediaPlayerEndReached):
-				MainLoop.runInMainThread(onEndReached.dispatch.bind());
+			case event if (event == LibVLC_MediaPlayerStopping):
+				MainLoop.runInMainThread(onStopping.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerEncounteredError):
 				final errmsg:String = LibVLC.errmsg();
 

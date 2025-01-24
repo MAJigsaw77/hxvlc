@@ -54,7 +54,7 @@ class Main extends Sprite
 			stage.nativeWindow.addEventListener(Event.ACTIVATE, stage_onActivate);
 			stage.nativeWindow.addEventListener(Event.DEACTIVATE, stage_onDeactivate);
 		});
-		video.onEndReached.add(function():Void
+		video.onStopping.add(function():Void
 		{
 			stage.nativeWindow.removeEventListener(Event.ACTIVATE, stage_onActivate);
 			stage.nativeWindow.removeEventListener(Event.DEACTIVATE, stage_onDeactivate);

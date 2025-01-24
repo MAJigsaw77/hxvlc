@@ -7,7 +7,6 @@ import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.macros.Define;
-import hxvlc.util.AudioOutput;
 import lime.system.System;
 import lime.utils.AssetLibrary;
 import lime.utils.Assets;
@@ -101,11 +100,6 @@ class Handle
 	 * Note: On systems that support it, the POSIX monotonic clock is used.
 	 */
 	public static var clock(get, never):Int64;
-
-	/**
-	 * Available audio output modules.
-	 */
-	public static var outputModules(get, never):Null<Array<AudioOutput>>;
 
 	@:noCompletion
 	private static final instanceMutex:Mutex = new Mutex();
@@ -233,33 +227,25 @@ class Handle
 
 			final args:cpp.StdVector<cpp.ConstCharStar> = new cpp.StdVector<cpp.ConstCharStar>();
 
-			#if windows
-			args.push_back("--aout=directsound");
-			#end
-
-			#if (android || ios || macos)
-			args.push_back("--audio-resampler=soxr");
-			#end
+			args.push_back("--aout=amem");
+			args.push_back("--vout=vmem");
 
 			args.push_back("--drop-late-frames");
 			args.push_back("--ignore-config");
 			args.push_back("--intf=none");
 			args.push_back("--http-reconnect");
+
 			args.push_back("--no-interact");
 			args.push_back("--no-keyboard-events");
 			args.push_back("--no-mouse-events");
-
 			#if HXVLC_NO_SHARE_DIRECTORY
 			args.push_back("--no-lua");
 			#end
-
 			args.push_back("--no-snapshot-preview");
 			args.push_back("--no-spu");
-
 			#if !HXVLC_ENABLE_STATS
 			args.push_back("--no-stats");
 			#end
-
 			args.push_back("--no-sub-autodetect-file");
 			args.push_back("--no-video-title-show");
 			args.push_back("--no-volume-save");
@@ -418,19 +404,5 @@ class Handle
 	private static function get_clock():Int64
 	{
 		return LibVLC.clock();
-	}
-
-	@:noCompletion
-	private static function get_outputModules():Null<Array<AudioOutput>>
-	{
-		if (instance != null)
-		{
-			final audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T> = LibVLC.audio_output_list_get(instance);
-
-			if (audioOutput != null)
-				return AudioOutput.fromAudioOutputList(audioOutput);
-		}
-
-		return null;
 	}
 }

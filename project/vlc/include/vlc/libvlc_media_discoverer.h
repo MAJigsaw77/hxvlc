@@ -2,7 +2,6 @@
  * libvlc_media_discoverer.h:  libvlc external API
  *****************************************************************************
  * Copyright (C) 1998-2009 VLC authors and VideoLAN
- * $Id$
  *
  * Authors: Clément Stenac <zorglub@videolan.org>
  *          Jean-Paul Saman <jpsaman@videolan.org>
@@ -29,6 +28,8 @@
 # ifdef __cplusplus
 extern "C" {
 # endif
+
+typedef struct libvlc_media_list_t libvlc_media_list_t;
 
 /**
  * Category of a media discoverer
@@ -79,7 +80,6 @@ typedef struct libvlc_media_discoverer_t libvlc_media_discoverer_t;
  * discovery.
  *
  * \see libvlc_media_discoverer_media_list
- * \see libvlc_media_discoverer_event_manager
  * \see libvlc_media_discoverer_start
  *
  * \param p_inst libvlc instance
@@ -140,12 +140,12 @@ libvlc_media_discoverer_media_list( libvlc_media_discoverer_t * p_mdis );
  * Query if media service discover object is running.
  *
  * \param p_mdis media service discover object
- * \return true if running, false if not
  *
- * \libvlc_return_bool
+ * \retval true running
+ * \retval false not running
  */
-LIBVLC_API int
-libvlc_media_discoverer_is_running( libvlc_media_discoverer_t * p_mdis );
+LIBVLC_API bool
+libvlc_media_discoverer_is_running(libvlc_media_discoverer_t *p_mdis);
 
 /**
  * Get media discoverer services by category

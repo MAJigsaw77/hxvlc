@@ -12,7 +12,7 @@
 
 	<!--Architecture Settings-->
 
-	<architecture exclude="armv7" if="android" />
+	<architecture name="arm64" exclude="armv7" if="android" />
 
 	<!--Window Settings-->
 
@@ -59,7 +59,7 @@
 
 	<!--Full Dead Code Elimination-->
 
-	<haxeflag name="-dce" value="full" />
+	<haxeflag name="-dce" value="no" />
 
 	<!--Pretty Message Reporting-->
 

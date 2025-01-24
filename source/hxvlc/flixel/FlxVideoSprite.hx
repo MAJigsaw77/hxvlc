@@ -34,7 +34,7 @@ using StringTools;
  * 		video.screenCenter();
  * 	}
  * });
- * video.bitmap.onEndReached.add(video.destroy);
+ * video.bitmap.onStopping.add(video.destroy);
  * add(video);
  *
  * if (video.load('assets/videos/video.mp4'))
@@ -204,9 +204,9 @@ class FlxVideoSprite extends FlxSprite
 	 * @param timeout The timeout in milliseconds.
 	 * @return `true` if parsing succeeded, `false` otherwise.
 	 */
-	public inline function parseWithOptions(parse_flag:Int, timeout:Int):Bool
+	public inline function parseRequest(parse_flag:Int, timeout:Int):Bool
 	{
-		return bitmap == null ? false : bitmap.parseWithOptions(parse_flag, timeout);
+		return bitmap == null ? false : bitmap.parseRequest(parse_flag, timeout);
 	}
 
 	/**
@@ -230,9 +230,9 @@ class FlxVideoSprite extends FlxSprite
 	/**
 	 * Stops video playback.
 	 */
-	public inline function stop():Void
+	public inline function stopAsync():Void
 	{
-		bitmap?.stop();
+		bitmap?.stopAsync();
 	}
 
 	/**

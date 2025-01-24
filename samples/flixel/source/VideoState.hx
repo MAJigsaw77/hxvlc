@@ -21,6 +21,8 @@ class VideoState extends FlxState
 
 	override function create():Void
 	{
+		Handle.initAsync();
+
 		video = new FlxVideoSprite(0, 0);
 		video.active = false;
 		video.antialiasing = true;
@@ -35,7 +37,7 @@ class VideoState extends FlxState
 				video.screenCenter();
 			}
 		});
-		video.bitmap.onEndReached.add(video.destroy);
+		video.bitmap.onStopping.add(video.destroy);
 
 		try
 		{
