@@ -265,10 +265,13 @@ class Handle
 			args.push_back("--no-xlib");
 
 			#if (windows || macos)
-			if (resetCache == false && FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])))
-				args.push_back("--no-plugins-scan");
-			else
-				args.push_back("--reset-plugins-cache");
+			if (FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])))
+			{
+				if (resetCache == true)
+					args.push_back("--reset-plugins-cache");
+				else
+					args.push_back("--no-plugins-scan");
+			}
 			#end
 
 			args.push_back("--text-renderer=none");
