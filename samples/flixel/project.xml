@@ -12,7 +12,7 @@
 
 	<!--Architecture Settings-->
 
-	<architecture exclude="armv7" if="android" />
+	<architecture name="arm64" exclude="armv7" if="android" />
 
 	<!--Window Settings-->
 
@@ -44,7 +44,6 @@
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
 
 	<section if="debug">
-		<!--These defines are mostly for testing (aren't required to be used)-->
 		<haxedef name="HXVLC_VERBOSE" value="2" />
 		<haxedef name="HXVLC_LOGGING" />
 	</section>

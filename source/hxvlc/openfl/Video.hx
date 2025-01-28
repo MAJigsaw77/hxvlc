@@ -5,10 +5,12 @@ import haxe.Int64;
 import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
+#if HXVLC_ENABLE_STATS
 import hxvlc.util.Stats;
+#end
 import hxvlc.util.Handle;
 import lime.app.Event;
-#if (HXVLC_OPENAL && lime_openal)
+#if lime_openal
 import lime.media.openal.AL;
 import lime.media.openal.ALBuffer;
 import lime.media.openal.ALSource;
@@ -16,6 +18,7 @@ import lime.media.openal.ALSource;
 import lime.utils.Log;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.RectangleTexture;
+import openfl.display3D.textures.TextureBase;
 import openfl.Lib;
 import sys.thread.Mutex;
 
@@ -156,11 +159,6 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 }')
 class Video extends openfl.display.Bitmap
 {
-	#if (HXVLC_OPENAL && lime_openal)
-	@:noCompletion
-	private static final OPENAL_AUDIO_BUFFERS:Int = 128;
-	#end
-
 	/**
 	 * Indicates whether to use GPU texture for rendering.
 	 *
@@ -241,15 +239,6 @@ class Video extends openfl.display.Bitmap
 	 * Indicates whether pausing is supported.
 	 */
 	public var canPause(get, never):Bool;
-
-	#if !(HXVLC_OPENAL && lime_openal)
-	/**
-	 * Selected audio output module.
-	 *
-	 * Note: Changes take effect only after restarting playback.
-	 */
-	public var output(never, set):String;
-	#end
 
 	/**
 	 * Mute status of the audio.
@@ -406,7 +395,7 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private var texture:Null<RectangleTexture>;
 
-	#if (HXVLC_OPENAL && lime_openal)
+	#if lime_openal
 	@:noCompletion
 	private final alMutex:Mutex = new Mutex();
 
@@ -420,7 +409,10 @@ class Video extends openfl.display.Bitmap
 	private var alSampleRate:cpp.UInt32 = 0;
 
 	@:noCompletion
-	private var alChannels:cpp.UInt32 = 0;
+	private var alFormat:Int = 0;
+
+	@:noCompletion
+	private var alFrameSize:cpp.UInt32 = 0;
 
 	@:noCompletion
 	private var alSource:Null<ALSource>;
@@ -573,12 +565,10 @@ class Video extends openfl.display.Bitmap
 					untyped __cpp__('this'));
 				LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), untyped NULL);
 
-				#if (HXVLC_OPENAL && lime_openal)
 				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'),
 					untyped NULL, untyped NULL, untyped __cpp__('this'));
 				LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 				LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
-				#end
 			}
 			else
 				Log.warn('Unable to initialize the LibVLC media player.');
@@ -888,7 +878,7 @@ class Video extends openfl.display.Bitmap
 
 		textureMutex.release();
 
-		#if (HXVLC_OPENAL && lime_openal)
+		#if lime_openal
 		alMutex.acquire();
 
 		if (alSource != null)
@@ -1065,17 +1055,6 @@ class Video extends openfl.display.Bitmap
 	{
 		return mediaPlayer != null && LibVLC.media_player_can_pause(mediaPlayer) != 0;
 	}
-
-	#if !(HXVLC_OPENAL && lime_openal)
-	@:noCompletion
-	private function set_output(value:String):String
-	{
-		if (mediaPlayer != null)
-			LibVLC.audio_output_set(mediaPlayer, value);
-
-		return value;
-	}
-	#end
 
 	@:noCompletion
 	private function get_mute():Bool
@@ -1320,6 +1299,7 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:access(openfl.display.BitmapData)
+	@:access(openfl.display3D.textures.TextureBase)
 	@:keep
 	@:noCompletion
 	@:unreflective
@@ -1330,8 +1310,16 @@ class Video extends openfl.display.Bitmap
 
 		final currentChroma:String = new String(untyped chroma);
 
-		if (currentChroma != 'RV32')
-			cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('RV32'), 4);
+		if (TextureBase.__supportsBGRA == true)
+		{
+			if (currentChroma != 'BGRA')
+				cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('BGRA'), 4);
+		}
+		else
+		{
+			if (currentChroma != 'RGBA')
+				cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('RGBA'), 4);
+		}
 
 		final originalWidth:cpp.UInt32 = width[0];
 		final originalHeight:cpp.UInt32 = height[0];
@@ -1412,7 +1400,7 @@ class Video extends openfl.display.Bitmap
 	@:unreflective
 	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32, pts:cpp.Int64):Void
 	{
-		#if (HXVLC_OPENAL && lime_openal)
+		#if lime_openal
 		if (alSource != null && alBuffers != null)
 		{
 			alMutex.acquire();
@@ -1436,10 +1424,8 @@ class Video extends openfl.display.Bitmap
 
 				if (alBuffer != null)
 				{
-					final format:Int = alChannels == 2 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
-					final size:Int = alSamplesBuffer.length * untyped __cpp__('sizeof(int16_t)') * alChannels;
-
-					AL.bufferData(alBuffer, format, lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(alSamplesBuffer)), size, alSampleRate);
+					AL.bufferData(alBuffer, alFormat, lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(alSamplesBuffer)),
+						alSamplesBuffer.length * alFrameSize, alSampleRate);
 
 					AL.sourceQueueBuffer(alSource, alBuffer);
 
@@ -1458,7 +1444,7 @@ class Video extends openfl.display.Bitmap
 	@:unreflective
 	private function audioPause(pts:cpp.Int64):Void
 	{
-		#if (HXVLC_OPENAL && lime_openal)
+		#if lime_openal
 		if (alSource != null)
 		{
 			alMutex.acquire();
@@ -1476,7 +1462,7 @@ class Video extends openfl.display.Bitmap
 	@:unreflective
 	private function audioResume(pts:cpp.Int64):Void
 	{
-		#if (HXVLC_OPENAL && lime_openal)
+		#if lime_openal
 		if (alSource != null)
 		{
 			alMutex.acquire();
@@ -1494,7 +1480,7 @@ class Video extends openfl.display.Bitmap
 	@:unreflective
 	private function audioSetup(format:cpp.CastCharStar, rate:cpp.RawPointer<cpp.UInt32>, channels:cpp.RawPointer<cpp.UInt32>):Int
 	{
-		#if (HXVLC_OPENAL && lime_openal)
+		#if lime_openal
 		alMutex.acquire();
 
 		final currentFormat:String = new String(untyped format);
@@ -1506,16 +1492,19 @@ class Video extends openfl.display.Bitmap
 			alSource = AL.createSource();
 
 		if (alBuffers == null)
-			alBuffers = AL.genBuffers(OPENAL_AUDIO_BUFFERS);
+			alBuffers = AL.genBuffers(128);
 
 		alSampleRate = rate[0];
+	
+		switch (channels[0])
+		{
+			case 1:
+				alFormat = AL.FORMAT_MONO16;
+			case 2:
+				alFormat = AL.FORMAT_STEREO16;
+		}
 
-		final originalChannels:cpp.UInt32 = channels[0];
-
-		if (originalChannels > 2)
-			channels[0] = 2;
-
-		alChannels = channels[0];
+		alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * channels[0];
 
 		alMutex.release();
 		#end
@@ -1528,7 +1517,7 @@ class Video extends openfl.display.Bitmap
 	@:unreflective
 	private function audioSetVolume(volume:Single, mute:Bool):Void
 	{
-		#if (HXVLC_OPENAL && lime_openal)
+		#if lime_openal
 		if (alSource != null)
 		{
 			alMutex.acquire();
