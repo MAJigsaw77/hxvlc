@@ -363,8 +363,6 @@ class Handle
 				catch (e:Exception)
 					Log.warn('Failed to save file "$savePath", ${e.message}.');
 			}
-
-			libvlcLibrary.
 		});
 		libvlcLibrary.onError(function(error:String):Void
 		{
