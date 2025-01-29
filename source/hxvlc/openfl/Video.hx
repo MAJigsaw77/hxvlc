@@ -129,6 +129,15 @@ static void audio_resume(void *data, int64_t pts)
 	hx::SetTopOfStack((int *)0, true);
 }
 
+static void audio_flush(void *data, int64_t pts)
+{
+	hx::SetTopOfStack((int *)99, true);
+
+	reinterpret_cast<Video_obj *>(data)->audioFlush(pts);
+
+	hx::SetTopOfStack((int *)0, true);
+}
+
 static int audio_setup(void **data, char *format, unsigned *rate, unsigned *channels)
 {
 	hx::SetTopOfStack((int *)99, true);
@@ -400,13 +409,13 @@ class Video extends openfl.display.Bitmap
 	private final alMutex:Mutex = new Mutex();
 
 	@:noCompletion
-	private var alBuffers:Null<Array<ALBuffer>>;
-
-	@:noCompletion
-	private var alSamplesBuffer:Null<BytesData>;
-
-	@:noCompletion
 	private var alSampleRate:cpp.UInt32 = 0;
+
+	@:noCompletion
+	private var alSource:Null<ALSource>;
+
+	@:noCompletion
+	private var alBuffers:Null<Array<ALBuffer>>;
 
 	@:noCompletion
 	private var alFormat:Int = 0;
@@ -415,7 +424,7 @@ class Video extends openfl.display.Bitmap
 	private var alFrameSize:cpp.UInt32 = 0;
 
 	@:noCompletion
-	private var alSource:Null<ALSource>;
+	private var alSamplesBuffer:Null<BytesData>;
 	#end
 
 	/**
@@ -566,7 +575,7 @@ class Video extends openfl.display.Bitmap
 				LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), untyped NULL);
 
 				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'),
-					untyped NULL, untyped NULL, untyped __cpp__('this'));
+					untyped __cpp__('audio_flush'), untyped NULL, untyped __cpp__('this'));
 				LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 				LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
 			}
@@ -835,7 +844,6 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			LibVLC.media_player_stop(mediaPlayer);
 			LibVLC.media_player_release(mediaPlayer);
 			mediaPlayer = null;
 		}
@@ -883,7 +891,17 @@ class Video extends openfl.display.Bitmap
 
 		if (alSource != null)
 		{
-			AL.sourceStop(alSource);
+			if (AL.getSourcei(alSource, AL.SOURCE_STATE) == AL.PLAYING)
+				AL.sourceStop(alSource);
+
+			final queuedBuffers:Int = AL.getSourcei(alSource, AL.BUFFERS_QUEUED);
+
+			if (queuedBuffers > 0)
+			{
+				for (alBuffer in AL.sourceUnqueueBuffers(alSource, queuedBuffers))
+					AL.deleteBuffer(alBuffer);
+			}
+
 			AL.deleteSource(alSource);
 			alSource = null;
 		}
@@ -1478,6 +1496,32 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
+	private function audioFlush(pts:cpp.Int64):Void
+	{
+		#if lime_openal
+		if (alSource != null && alBuffers != null)
+		{
+			alMutex.acquire();
+
+			if (AL.getSourcei(alSource, AL.SOURCE_STATE) == AL.PLAYING)
+				AL.sourceStop(alSource);
+
+			final processedBuffers:Int = AL.getSourcei(alSource, AL.BUFFERS_PROCESSED);
+
+			if (processedBuffers > 0)
+			{
+				for (alBuffer in AL.sourceUnqueueBuffers(alSource, processedBuffers))
+					alBuffers.push(alBuffer);
+			}
+
+			alMutex.release();
+		}
+		#end
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
 	private function audioSetup(format:cpp.CastCharStar, rate:cpp.RawPointer<cpp.UInt32>, channels:cpp.RawPointer<cpp.UInt32>):Int
 	{
 		#if lime_openal
@@ -1495,7 +1539,7 @@ class Video extends openfl.display.Bitmap
 			alBuffers = AL.genBuffers(128);
 
 		alSampleRate = rate[0];
-	
+
 		switch (channels[0])
 		{
 			case 1:
