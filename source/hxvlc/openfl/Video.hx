@@ -1551,9 +1551,11 @@ class Video extends openfl.display.Bitmap
 		alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * channels[0];
 
 		alMutex.release();
-		#end
 
 		return 0;
+		#else
+		return 1;
+		#end
 	}
 
 	@:keep
