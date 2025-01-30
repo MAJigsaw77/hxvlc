@@ -88,9 +88,7 @@ class FlxVideo extends Video
 				FlxG.signals.postUpdate.add(onVolumeUpdate);
 			#end
 
-			#if FLX_SOUND_SYSTEM
-			onVolumeChange(0.0);
-			#end
+			onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
 		});
 		onFormatSetup.add(function():Void
 		{
@@ -100,20 +98,6 @@ class FlxVideo extends Video
 			onGameResized(0, 0);
 		});
 	}
-
-	#if FLX_SOUND_SYSTEM
-	/**
-	 * Calculates and returns the current volume based on Flixel's sound settings by default.
-	 *
-	 * The volume is automatically clamped between `0` and `2.55` by the calling code. If the sound is muted, the volume is `0`.
-	 *
-	 * @return The calculated volume.
-	 */
-	public dynamic function getCalculatedVolume():Float
-	{
-		return (FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume;
-	}
-	#end
 
 	/**
 	 * Loads a video.
@@ -240,21 +224,17 @@ class FlxVideo extends Video
 	}
 
 	#if FLX_SOUND_SYSTEM
-	#if (flixel < "5.9.0")
 	@:noCompletion
 	private function onVolumeUpdate():Void
 	{
-		onVolumeChange(0.0);
+		onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
 	}
-	#end
 
 	@:noCompletion
 	private function onVolumeChange(vol:Float):Void
 	{
-		if (!autoVolumeHandle)
-			return;
-
-		volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		if (autoVolumeHandle)
+			volume = Math.floor(vol * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 	}
 	#end
 }
