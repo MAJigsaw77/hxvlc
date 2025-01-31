@@ -1,5 +1,6 @@
 package;
 
+import flixel.input.touch.FlxTouch;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -16,10 +17,10 @@ class VideoState extends FlxState
 {
 	static final bigBuckBunny:String = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
-	var video:FlxVideoSprite;
-	var versionInfo:FlxText;
-	var fpsInfo:FlxText;
-	var fps:FPS;
+	var video:Null<FlxVideoSprite>;
+	var versionInfo:Null<FlxText>;
+	var fpsInfo:Null<FlxText>;
+	var fps:Null<FPS>;
 
 	override function create():Void
 	{
@@ -32,7 +33,7 @@ class VideoState extends FlxState
 
 	override function update(elapsed:Float):Void
 	{
-		if (fpsInfo != null)
+		if (fps != null && fpsInfo != null)
 		{
 			#if HXVLC_ENABLE_STATS
 			if (video != null && video.bitmap != null && video.bitmap.stats != null)
@@ -46,7 +47,16 @@ class VideoState extends FlxState
 
 		if (video != null && video.bitmap != null)
 		{
-			if (FlxG.keys.justPressed.SPACE)
+			var justPressed:Bool = FlxG.keys.justPressed.SPACE;
+
+			#if FLX_TOUCH
+			final firstTouch:Null<FlxTouch> = FlxG.touches.getFirst();
+
+			if (firstTouch != null)
+				justPressed = firstTouch.justPressed;
+			#end
+
+			if (justPressed)
 				video.bitmap.togglePaused();
 		}
 
@@ -92,18 +102,18 @@ class VideoState extends FlxState
 				if (video.bitmap != null && video.bitmap.bitmapData != null)
 				{
 					final scale:Float = Math.min(FlxG.width / video.bitmap.bitmapData.width, FlxG.height / video.bitmap.bitmapData.height);
-	
+
 					video.setGraphicSize(video.bitmap.bitmapData.width * scale, video.bitmap.bitmapData.height * scale);
 					video.updateHitbox();
 					video.screenCenter();
 				}
 			});
 			video.bitmap.onEndReached.add(video.destroy);
-	
+
 			try
 			{
 				final file:String = haxe.io.Path.join(['videos', FileSystem.readDirectory('videos')[0]]);
-	
+
 				if (file != null && file.length > 0)
 					video.load(file);
 				else
@@ -111,8 +121,9 @@ class VideoState extends FlxState
 			}
 			catch (e:Dynamic)
 				video.load(bigBuckBunny);
-	
-			insert(members.indexOf(versionInfo), video);
+
+			if (versionInfo != null)
+				insert(members.indexOf(versionInfo), video);
 
 			FlxTimer.wait(0.001, function():Void
 			{
