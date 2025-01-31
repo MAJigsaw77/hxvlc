@@ -44,7 +44,6 @@
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
 
 	<section if="debug">
-		<haxedef name="HXVLC_VERBOSE" value="2" />
 		<haxedef name="HXVLC_LOGGING" />
 	</section>
 

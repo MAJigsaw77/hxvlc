@@ -1,5 +1,6 @@
 package hxvlc.openfl;
 
+import haxe.io.Bytes;
 import haxe.io.BytesData;
 import haxe.Int64;
 import haxe.MainLoop;
@@ -16,6 +17,7 @@ import lime.media.openal.ALBuffer;
 import lime.media.openal.ALSource;
 #end
 import lime.utils.Log;
+import lime.utils.UInt8Array;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.RectangleTexture;
 import openfl.display3D.textures.TextureBase;
@@ -1301,9 +1303,9 @@ class Video extends openfl.display.Bitmap
 					cpp.NativeArray.setUnmanagedData(texturePlanesBuffer, cast texturePlanes, textureWidth * textureHeight * 4);
 
 					if (texture != null)
-						texture.uploadFromTypedArray(lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(texturePlanesBuffer)));
+						texture.uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanesBuffer)));
 					else if (bitmapData != null && bitmapData.image != null)
-						bitmapData.setPixels(bitmapData.rect, haxe.io.Bytes.ofData(texturePlanesBuffer));
+						bitmapData.setPixels(bitmapData.rect, Bytes.ofData(texturePlanesBuffer));
 
 					if (__renderable)
 						__setRenderDirty();
@@ -1442,8 +1444,7 @@ class Video extends openfl.display.Bitmap
 
 				if (alBuffer != null)
 				{
-					AL.bufferData(alBuffer, alFormat, lime.utils.UInt8Array.fromBytes(haxe.io.Bytes.ofData(alSamplesBuffer)),
-						alSamplesBuffer.length * alFrameSize, alSampleRate);
+					AL.bufferData(alBuffer, alFormat, UInt8Array.fromBytes(Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * alFrameSize, alSampleRate);
 
 					AL.sourceQueueBuffer(alSource, alBuffer);
 

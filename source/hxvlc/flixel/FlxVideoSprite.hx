@@ -2,7 +2,6 @@ package hxvlc.flixel;
 
 #if flixel
 import flixel.graphics.FlxGraphic;
-import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -44,20 +43,6 @@ using StringTools;
 @:nullSafety
 class FlxVideoSprite extends FlxSprite
 {
-	/**
-	 * Indicates whether the video should automatically pause when focus is lost.
-	 *
-	 * Must be set before loading a video.
-	 */
-	public var autoPause:Bool = FlxG.autoPause;
-
-	#if FLX_SOUND_SYSTEM
-	/**
-	 * Determines if Flixel automatically adjusts the volume based on the Flixel sound system's current volume.
-	 */
-	public var autoVolumeHandle:Bool = true;
-	#end
-
 	/**
 	 * The video bitmap object.
 	 */
@@ -124,14 +109,11 @@ class FlxVideoSprite extends FlxSprite
 		if (bitmap == null)
 			return false;
 
-		if (autoPause)
-		{
-			if (!FlxG.signals.focusGained.has(onFocusGained))
-				FlxG.signals.focusGained.add(onFocusGained);
+		if (!FlxG.signals.focusGained.has(onFocusGained))
+			FlxG.signals.focusGained.add(onFocusGained);
 
-			if (!FlxG.signals.focusLost.has(onFocusLost))
-				FlxG.signals.focusLost.add(onFocusLost);
-		}
+		if (!FlxG.signals.focusLost.has(onFocusLost))
+			FlxG.signals.focusLost.add(onFocusLost);
 
 		if (location != null && !(location is Int) && !(location is Bytes) && (location is String))
 		{
@@ -331,11 +313,8 @@ class FlxVideoSprite extends FlxSprite
 	@:noCompletion
 	private function onVolumeChange(vol:Float):Void
 	{
-		if (autoVolumeHandle)
-		{
-			if (bitmap != null)
-				bitmap.volume = Math.floor(vol * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
-		}
+		if (bitmap != null)
+			bitmap.volume = Math.floor(vol * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
 	}
 	#end
 
