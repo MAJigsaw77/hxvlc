@@ -34,6 +34,11 @@ using StringTools;
 class FlxVideo extends Video
 {
 	/**
+	 * The volume adjustment.
+	 */
+	public var volumeAdjust(default, set):Float = 1.0;
+
+	/**
 	 * Determines the resizing behavior for the video.
 	 */
 	public var resizeMode(default, set):FlxAxes = FlxAxes.XY;
@@ -193,18 +198,31 @@ class FlxVideo extends Video
 	}
 
 	#if FLX_SOUND_SYSTEM
+	#if (flixel < "5.9.0")
 	@:noCompletion
 	private function onVolumeUpdate():Void
 	{
 		onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
 	}
+	#end
 
 	@:noCompletion
 	private function onVolumeChange(vol:Float):Void
 	{
-		volume = Math.floor(vol * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		final currentVolume:Int = Math.floor((vol * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100)) * volumeAdjust);
+
+		if (volume != currentVolume)
+			volume = currentVolume;
 	}
 	#end
+
+	@:noCompletion
+	private function set_volumeAdjust(value:Float):Float
+	{
+		onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
+
+		return volumeAdjust = value;
+	}
 
 	@:noCompletion
 	private function set_resizeMode(value:FlxAxes):FlxAxes

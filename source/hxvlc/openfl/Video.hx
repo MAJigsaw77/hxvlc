@@ -252,13 +252,6 @@ class Video extends openfl.display.Bitmap
 	public var canPause(get, never):Bool;
 
 	/**
-	 * Mute status of the audio.
-	 *
-	 * Note: May not be supported under certain conditions (e.g., digital pass-through).
-	 */
-	public var mute(get, set):Bool;
-
-	/**
 	 * Volume level (0 to 100).
 	 */
 	public var volume(get, set):Int;
@@ -575,6 +568,14 @@ class Video extends openfl.display.Bitmap
 				LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), untyped __cpp__('video_unlock'), untyped __cpp__('video_display'),
 					untyped __cpp__('this'));
 				LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), untyped NULL);
+
+				#if lime_openal
+				if (alSource == null)
+					alSource = AL.createSource();
+
+				if (alBuffers == null)
+					alBuffers = AL.genBuffers(128);
+				#end
 
 				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'),
 					untyped __cpp__('audio_flush'), untyped NULL, untyped __cpp__('this'));
@@ -1077,31 +1078,16 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:noCompletion
-	private function get_mute():Bool
-	{
-		return mediaPlayer != null && LibVLC.audio_get_mute(mediaPlayer) > 0;
-	}
-
-	@:noCompletion
-	private function set_mute(value:Bool):Bool
-	{
-		if (mediaPlayer != null)
-			LibVLC.audio_set_mute(mediaPlayer, value ? 1 : 0);
-
-		return value;
-	}
-
-	@:noCompletion
 	private function get_volume():Int
 	{
-		return mediaPlayer != null ? LibVLC.audio_get_volume(mediaPlayer) : -1;
+		return alSource != null ? Math.floor(AL.getSourcef(alSource, AL.GAIN) * 100) : -1;
 	}
 
 	@:noCompletion
 	private function set_volume(value:Int):Int
 	{
-		if (mediaPlayer != null)
-			LibVLC.audio_set_volume(mediaPlayer, value);
+		if (alSource != null)
+			AL.sourcef(alSource, AL.GAIN, Math.abs(value / 100));
 
 		return value;
 	}
@@ -1295,24 +1281,25 @@ class Video extends openfl.display.Bitmap
 			{
 				MainLoop.runInMainThread(function():Void
 				{
-					textureMutex.acquire();
+					if (textureMutex.tryAcquire())
+					{
+						if (texturePlanesBuffer == null)
+							texturePlanesBuffer = new BytesData();
 
-					if (texturePlanesBuffer == null)
-						texturePlanesBuffer = new BytesData();
+						cpp.NativeArray.setUnmanagedData(texturePlanesBuffer, cast texturePlanes, textureWidth * textureHeight * 4);
 
-					cpp.NativeArray.setUnmanagedData(texturePlanesBuffer, cast texturePlanes, textureWidth * textureHeight * 4);
+						if (texture != null)
+							texture.uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanesBuffer)));
+						else if (bitmapData != null && bitmapData.image != null)
+							bitmapData.setPixels(bitmapData.rect, Bytes.ofData(texturePlanesBuffer));
 
-					if (texture != null)
-						texture.uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanesBuffer)));
-					else if (bitmapData != null && bitmapData.image != null)
-						bitmapData.setPixels(bitmapData.rect, Bytes.ofData(texturePlanesBuffer));
+						if (__renderable)
+							__setRenderDirty();
 
-					if (__renderable)
-						__setRenderDirty();
+						onDisplay.dispatch();
 
-					onDisplay.dispatch();
-
-					textureMutex.release();
+						textureMutex.release();
+					}
 				});
 			}
 		}
@@ -1393,8 +1380,7 @@ class Video extends openfl.display.Bitmap
 
 				if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
 				{
-					texture = Lib.current.stage.context3D.createRectangleTexture(textureWidth, textureHeight, openfl.display3D.Context3DTextureFormat.BGRA,
-						true);
+					texture = Lib.current.stage.context3D.createRectangleTexture(textureWidth, textureHeight, openfl.display3D.Context3DTextureFormat.BGRA, true);
 
 					bitmapData = BitmapData.fromTexture(texture);
 				}
@@ -1423,37 +1409,39 @@ class Video extends openfl.display.Bitmap
 		#if lime_openal
 		if (alSource != null && alBuffers != null)
 		{
-			alMutex.acquire();
-
-			if (alSamplesBuffer == null)
-				alSamplesBuffer = new BytesData();
-
-			cpp.NativeArray.setUnmanagedData(alSamplesBuffer, cast samples, count);
-
-			final processedBuffers:Int = AL.getSourcei(alSource, AL.BUFFERS_PROCESSED);
-
-			if (processedBuffers > 0)
+			if (alMutex.tryAcquire())
 			{
-				for (alBuffer in AL.sourceUnqueueBuffers(alSource, processedBuffers))
-					alBuffers.push(alBuffer);
-			}
+				if (alSamplesBuffer == null)
+					alSamplesBuffer = new BytesData();
 
-			if (alBuffers.length > 0)
-			{
-				final alBuffer:Null<ALBuffer> = alBuffers.shift();
+				cpp.NativeArray.setUnmanagedData(alSamplesBuffer, cast samples, count);
 
-				if (alBuffer != null)
+				final processedBuffers:Int = AL.getSourcei(alSource, AL.BUFFERS_PROCESSED);
+
+				if (processedBuffers > 0)
 				{
-					AL.bufferData(alBuffer, alFormat, UInt8Array.fromBytes(Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * alFrameSize, alSampleRate);
-
-					AL.sourceQueueBuffer(alSource, alBuffer);
-
-					if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
-						AL.sourcePlay(alSource);
+					for (alBuffer in AL.sourceUnqueueBuffers(alSource, processedBuffers))
+						alBuffers.push(alBuffer);
 				}
-			}
 
-			alMutex.release();
+				if (alBuffers.length > 0)
+				{
+					final alBuffer:Null<ALBuffer> = alBuffers.shift();
+
+					if (alBuffer != null)
+					{
+						AL.bufferData(alBuffer, alFormat, UInt8Array.fromBytes(Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * alFrameSize,
+							alSampleRate);
+
+						AL.sourceQueueBuffer(alSource, alBuffer);
+
+						if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
+							AL.sourcePlay(alSource);
+					}
+				}
+
+				alMutex.release();
+			}
 		}
 		#end
 	}
@@ -1532,12 +1520,6 @@ class Video extends openfl.display.Bitmap
 
 		if (currentFormat != 'S16N')
 			cpp.Stdlib.nativeMemcpy(untyped format, untyped cpp.CastCharStar.fromString('S16N'), 4);
-
-		if (alSource == null)
-			alSource = AL.createSource();
-
-		if (alBuffers == null)
-			alBuffers = AL.genBuffers(128);
 
 		alSampleRate = rate[0];
 

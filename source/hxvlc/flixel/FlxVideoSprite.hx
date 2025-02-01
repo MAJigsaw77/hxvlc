@@ -44,6 +44,11 @@ using StringTools;
 class FlxVideoSprite extends FlxSprite
 {
 	/**
+	 * The volume adjustment.
+	 */
+	public var volumeAdjust(default, set):Float = 1.0;
+
+	/**
 	 * The video bitmap object.
 	 */
 	public final bitmap:Video;
@@ -298,7 +303,10 @@ class FlxVideoSprite extends FlxSprite
 	@:noCompletion
 	private function onVolumeChange(vol:Float):Void
 	{
-		bitmap.volume = Math.floor(vol * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		final currentVolume:Int = Math.floor((vol * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100)) * volumeAdjust);
+
+		if (bitmap.volume != currentVolume)
+			bitmap.volume = currentVolume;
 	}
 	#end
 
@@ -306,6 +314,14 @@ class FlxVideoSprite extends FlxSprite
 	private override function set_antialiasing(value:Bool):Bool
 	{
 		return antialiasing = (bitmap == null ? value : (bitmap.smoothing = value));
+	}
+
+	@:noCompletion
+	private function set_volumeAdjust(value:Float):Float
+	{
+		onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
+
+		return volumeAdjust = value;
 	}
 }
 #end

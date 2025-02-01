@@ -1,18 +1,20 @@
 package hxvlc.util;
 
 import haxe.io.Path;
-import haxe.Exception;
 import haxe.Int64;
 import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
+#if android
+import haxe.Exception;
 import hxvlc.util.macros.Define;
 import lime.app.Future;
 import lime.system.System;
 import lime.utils.AssetLibrary;
 import lime.utils.Assets;
-import lime.utils.Log;
 import sys.io.File;
+#end
+import lime.utils.Log;
 import sys.thread.Mutex;
 import sys.FileSystem;
 
