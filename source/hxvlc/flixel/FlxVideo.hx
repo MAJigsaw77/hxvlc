@@ -18,7 +18,7 @@ using StringTools;
  * This class extends Video to display video files in HaxeFlixel.
  *
  * ```haxe
- * var video:FlxVideo = new FlxVideo();
+ * final video:FlxVideo = new FlxVideo();
  * video.onEndReached.add(function():Void
  * {
  * 	video.dispose();

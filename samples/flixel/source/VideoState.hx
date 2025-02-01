@@ -1,6 +1,8 @@
 package;
 
+#if FLX_TOUCH
 import flixel.input.touch.FlxTouch;
+#end
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -13,6 +15,7 @@ import hxvlc.util.Handle;
 import openfl.display.FPS;
 import sys.FileSystem;
 
+@:nullSafety
 class VideoState extends FlxState
 {
 	static final bigBuckBunny:String = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
