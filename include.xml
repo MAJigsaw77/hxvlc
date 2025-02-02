@@ -9,24 +9,24 @@
 	</section>
 
 	<section if="android">
-		<library name="libvlc" preload="false" unless="HXVLC_NO_SHARE_DIRECTORY" />
+		<library name="libvlc" preload="false" if="HXVLC_SHARE_DIRECTORY" />
 	</section>
 
 	<section if="windows">
 		<assets path="project/vlc/lib/Windows" rename="" exclude="*.lib" library="libvlc" />
 		<assets path="project/vlc/plugins/Windows" rename="plugins" library="libvlc" />
-		<assets path="project/vlc/share" rename="" exclude="*.lua" library="libvlc" unless="HXVLC_NO_SHARE_DIRECTORY" />
+		<assets path="project/vlc/share" rename="" exclude="*.lua" library="libvlc" if="HXVLC_SHARE_DIRECTORY" />
 	</section>
 
 	<section if="mac">
 		<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" library="libvlc" />
 		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" library="libvlc" />
-		<assets path="project/vlc/share" rename="../MacOS/share" exclude="*.lua" library="libvlc" unless="HXVLC_NO_SHARE_DIRECTORY" />
+		<assets path="project/vlc/share" rename="../MacOS/share" exclude="*.lua" library="libvlc" if="HXVLC_SHARE_DIRECTORY" />
 	</section>
 
 	<section if="android">
-		<assets path="project/vlc/share" rename="share" exclude="*.luac" library="libvlc" unless="HXVLC_NO_SHARE_DIRECTORY" />
-		
+		<assets path="project/vlc/share" rename="share" exclude="*.luac" library="libvlc" if="HXVLC_SHARE_DIRECTORY" />
+
 		<ndll name="c++_shared" dir="project/vlc/lib" />
 		<ndll name="vlc" dir="project/vlc/lib" />
 	</section>
@@ -40,6 +40,7 @@
 		<dependency name="Security.framework" />
 		<dependency name="VideoToolbox.framework" />
 		<dependency name="CoreImage.framework" />
+
 		<dependency name="libiconv.tbd" />
 	</section>
 

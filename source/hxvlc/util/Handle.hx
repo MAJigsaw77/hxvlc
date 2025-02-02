@@ -196,7 +196,7 @@ class Handle
 			args.push_back("--no-interact");
 			args.push_back("--no-keyboard-events");
 			args.push_back("--no-mouse-events");
-			#if HXVLC_NO_SHARE_DIRECTORY
+			#if !HXVLC_SHARE_DIRECTORY
 			args.push_back("--no-lua");
 			#end
 			args.push_back("--no-snapshot-preview");
@@ -297,7 +297,7 @@ class Handle
 		#if android
 		final homePath:String = Path.join([Path.directory(System.applicationStorageDirectory), 'libvlc']);
 
-		#if !HXVLC_NO_SHARE_DIRECTORY
+		#if HXVLC_SHARE_DIRECTORY
 		/**
 		 * @see https://github.com/openfl/hxp/blob/master/src/hxp/System.hx#L595
 		 */
