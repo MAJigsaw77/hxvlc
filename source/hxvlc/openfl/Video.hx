@@ -1290,25 +1290,24 @@ class Video extends openfl.display.Bitmap
 			{
 				MainLoop.runInMainThread(function():Void
 				{
-					if (textureMutex.tryAcquire())
-					{
-						if (texturePlanesBuffer == null)
-							texturePlanesBuffer = new BytesData();
+					textureMutex.acquire();
 
-						cpp.NativeArray.setUnmanagedData(texturePlanesBuffer, cast texturePlanes, textureWidth * textureHeight * 4);
+					if (texturePlanesBuffer == null)
+						texturePlanesBuffer = new BytesData();
 
-						if (texture != null)
-							texture.uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanesBuffer)));
-						else if (bitmapData != null && bitmapData.image != null)
-							bitmapData.setPixels(bitmapData.rect, Bytes.ofData(texturePlanesBuffer));
+					cpp.NativeArray.setUnmanagedData(texturePlanesBuffer, cast texturePlanes, textureWidth * textureHeight * 4);
 
-						if (__renderable)
-							__setRenderDirty();
+					if (texture != null)
+						texture.uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanesBuffer)));
+					else if (bitmapData != null && bitmapData.image != null)
+						bitmapData.setPixels(bitmapData.rect, Bytes.ofData(texturePlanesBuffer));
 
-						onDisplay.dispatch();
+					if (__renderable)
+						__setRenderDirty();
 
-						textureMutex.release();
-					}
+					onDisplay.dispatch();
+
+					textureMutex.release();
 				});
 			}
 		}
@@ -1389,7 +1388,8 @@ class Video extends openfl.display.Bitmap
 
 				if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
 				{
-					texture = Lib.current.stage.context3D.createRectangleTexture(textureWidth, textureHeight, openfl.display3D.Context3DTextureFormat.BGRA, true);
+					texture = Lib.current.stage.context3D.createRectangleTexture(textureWidth, textureHeight, openfl.display3D.Context3DTextureFormat.BGRA,
+						true);
 
 					bitmapData = BitmapData.fromTexture(texture);
 				}
@@ -1418,39 +1418,37 @@ class Video extends openfl.display.Bitmap
 		#if lime_openal
 		if (alSource != null && alBuffers != null)
 		{
-			if (alMutex.tryAcquire())
+			alMutex.acquire();
+
+			if (alSamplesBuffer == null)
+				alSamplesBuffer = new BytesData();
+
+			cpp.NativeArray.setUnmanagedData(alSamplesBuffer, cast samples, count);
+
+			final processedBuffers:Int = AL.getSourcei(alSource, AL.BUFFERS_PROCESSED);
+
+			if (processedBuffers > 0)
 			{
-				if (alSamplesBuffer == null)
-					alSamplesBuffer = new BytesData();
-
-				cpp.NativeArray.setUnmanagedData(alSamplesBuffer, cast samples, count);
-
-				final processedBuffers:Int = AL.getSourcei(alSource, AL.BUFFERS_PROCESSED);
-
-				if (processedBuffers > 0)
-				{
-					for (alBuffer in AL.sourceUnqueueBuffers(alSource, processedBuffers))
-						alBuffers.push(alBuffer);
-				}
-
-				if (alBuffers.length > 0)
-				{
-					final alBuffer:Null<ALBuffer> = alBuffers.shift();
-
-					if (alBuffer != null)
-					{
-						AL.bufferData(alBuffer, alFormat, UInt8Array.fromBytes(Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * alFrameSize,
-							alSampleRate);
-
-						AL.sourceQueueBuffer(alSource, alBuffer);
-
-						if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
-							AL.sourcePlay(alSource);
-					}
-				}
-
-				alMutex.release();
+				for (alBuffer in AL.sourceUnqueueBuffers(alSource, processedBuffers))
+					alBuffers.push(alBuffer);
 			}
+
+			if (alBuffers.length > 0)
+			{
+				final alBuffer:Null<ALBuffer> = alBuffers.shift();
+
+				if (alBuffer != null)
+				{
+					AL.bufferData(alBuffer, alFormat, UInt8Array.fromBytes(Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * alFrameSize, alSampleRate);
+
+					AL.sourceQueueBuffer(alSource, alBuffer);
+
+					if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
+						AL.sourcePlay(alSource);
+				}
+			}
+
+			alMutex.release();
 		}
 		#end
 	}
