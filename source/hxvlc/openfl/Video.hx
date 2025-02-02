@@ -420,6 +420,9 @@ class Video extends openfl.display.Bitmap
 
 	@:noCompletion
 	private var alSamplesBuffer:Null<BytesData>;
+
+	@:noCompletion
+	private var alUseEXTMCFORMATS:Null<Bool>;
 	#end
 
 	/**
@@ -1529,12 +1532,32 @@ class Video extends openfl.display.Bitmap
 
 		alSampleRate = rate[0];
 
+		if (alUseEXTMCFORMATS == null)
+			alUseEXTMCFORMATS = AL.isExtensionPresent('AL_EXT_MCFORMATS');
+
+		if (alUseEXTMCFORMATS == true)
+		{
+			if (channels[0] > 8)
+				channels[0] = 8;
+		}
+		else if (alUseEXTMCFORMATS == false)
+		{
+			if (channels[0] > 2)
+				channels[0] = 2;
+		}
+
 		switch (channels[0])
 		{
 			case 1:
 				alFormat = AL.FORMAT_MONO16;
 			case 2:
 				alFormat = AL.FORMAT_STEREO16;
+			case 4:
+				alFormat = AL.getEnumValue('AL_FORMAT_QUAD16');
+			case 6:
+				alFormat = AL.getEnumValue('AL_FORMAT_51CHN16');
+			case 8:
+				alFormat = AL.getEnumValue('AL_FORMAT_71CHN16');
 		}
 
 		alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * channels[0];
