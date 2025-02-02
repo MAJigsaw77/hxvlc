@@ -1552,16 +1552,7 @@ class Video extends openfl.display.Bitmap
 	@:unreflective
 	private function audioSetVolume(volume:Single, mute:Bool):Void
 	{
-		#if lime_openal
-		if (alSource != null)
-		{
-			alMutex.acquire();
-
-			AL.sourcef(alSource, AL.GAIN, mute ? 0 : volume);
-
-			alMutex.release();
-		}
-		#end
+		// Leave this blank as we want to handle ourselves.
 	}
 
 	@:keep
