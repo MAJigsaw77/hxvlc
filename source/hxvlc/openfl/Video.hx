@@ -1080,14 +1080,20 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private function get_volume():Int
 	{
+		#if lime_openal
 		return alSource != null ? Math.floor(AL.getSourcef(alSource, AL.GAIN) * 100) : -1;
+		#else
+		return -1;
+		#end
 	}
 
 	@:noCompletion
 	private function set_volume(value:Int):Int
 	{
+		#if lime_openal
 		if (alSource != null)
 			AL.sourcef(alSource, AL.GAIN, Math.abs(value / 100));
+		#end
 
 		return value;
 	}
