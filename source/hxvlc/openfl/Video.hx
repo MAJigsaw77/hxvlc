@@ -655,6 +655,8 @@ class Video extends openfl.display.Bitmap
 
 							LibVLC.media_release(mediaSubItem);
 
+							LibVLC.media_list_release(currentMediaSubItems);
+
 							return true;
 						}
 					}
@@ -797,13 +799,7 @@ class Video extends openfl.display.Bitmap
 				final rawMeta:cpp.CastCharStar = LibVLC.media_get_meta(currentMediaItem, e_meta);
 
 				if (rawMeta != null)
-				{
-					final metaString:String = new String(untyped rawMeta);
-
-					cpp.Stdlib.nativeFree(untyped rawMeta);
-
-					return metaString;
-				}
+					return new String(untyped rawMeta);
 			}
 		}
 
@@ -939,13 +935,7 @@ class Video extends openfl.display.Bitmap
 				final rawMrl:cpp.CastCharStar = LibVLC.media_get_mrl(currentMediaItem);
 
 				if (rawMrl != null)
-				{
-					final mrlString:String = new String(untyped rawMrl);
-
-					cpp.Stdlib.nativeFree(untyped rawMrl);
-
-					return mrlString;
-				}
+					return new String(untyped rawMrl);
 			}
 		}
 
