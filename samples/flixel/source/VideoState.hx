@@ -27,6 +27,8 @@ class VideoState extends FlxState
 
 	override function create():Void
 	{
+		FlxG.autoPause = false;
+
 		setupVideoAsync();
 
 		setupUI();

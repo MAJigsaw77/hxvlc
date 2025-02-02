@@ -275,6 +275,11 @@ class FlxVideoSprite extends FlxSprite
 	@:noCompletion
 	private function onFocusGained():Void
 	{
+		#if !mobile
+		if (!FlxG.autoPause)
+			return;
+		#end
+
 		if (resumeOnFocus)
 		{
 			resumeOnFocus = false;
@@ -286,6 +291,11 @@ class FlxVideoSprite extends FlxSprite
 	@:noCompletion
 	private function onFocusLost():Void
 	{
+		#if !mobile
+		if (!FlxG.autoPause)
+			return;
+		#end
+
 		resumeOnFocus = bitmap.isPlaying;
 
 		pause();
