@@ -573,6 +573,9 @@ class Video extends openfl.display.Bitmap
 				LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), untyped NULL);
 
 				#if lime_openal
+				if (alUseEXTMCFORMATS == null)
+					alUseEXTMCFORMATS = AL.isExtensionPresent('AL_EXT_MCFORMATS');
+
 				if (alSource == null)
 					alSource = AL.createSource();
 
@@ -1530,35 +1533,35 @@ class Video extends openfl.display.Bitmap
 
 		alSampleRate = rate[0];
 
-		if (alUseEXTMCFORMATS == null)
-			alUseEXTMCFORMATS = AL.isExtensionPresent('AL_EXT_MCFORMATS');
+		var alChannelsToUse:cpp.UInt32 = channels[0];
 
-		if (alUseEXTMCFORMATS == true)
-		{
-			if (channels[0] > 8)
-				channels[0] = 8;
-		}
-		else if (alUseEXTMCFORMATS == false)
-		{
-			if (channels[0] > 2)
-				channels[0] = 2;
-		}
+		if (alUseEXTMCFORMATS == true && alChannelsToUse > 8)
+			alChannelsToUse = 8;
+		else if (alChannelsToUse > 2)
+			alChannelsToUse = 2;
 
-		switch (channels[0])
+		switch (alChannelsToUse)
 		{
 			case 1:
 				alFormat = AL.FORMAT_MONO16;
-			case 2:
+				alChannelsToUse = 1;
+			case 2 | 3:
 				alFormat = AL.FORMAT_STEREO16;
+				alChannelsToUse = 2;
 			case 4:
 				alFormat = AL.getEnumValue('AL_FORMAT_QUAD16');
-			case 6:
+				alChannelsToUse = 4;
+			case 5 | 6:
 				alFormat = AL.getEnumValue('AL_FORMAT_51CHN16');
-			case 8:
+				alChannelsToUse = 6;
+			case 7 | 8:
 				alFormat = AL.getEnumValue('AL_FORMAT_71CHN16');
+				alChannelsToUse = 8;
 		}
 
-		alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * channels[0];
+		alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * alChannelsToUse;
+
+		channels[0] = alChannelsToUse;
 
 		alMutex.release();
 
