@@ -5,9 +5,9 @@ import haxe.Int64;
 import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
+import hxvlc.util.macros.Define;
 #if android
 import haxe.Exception;
-import hxvlc.util.macros.Define;
 import lime.app.Future;
 import lime.system.System;
 import lime.utils.AssetLibrary;
