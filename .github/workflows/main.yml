@@ -31,7 +31,7 @@ jobs:
           haxe-version: 4.3.6
 
       - name: Install Dependencies
-        if: matrix.sample == 'ubuntu'
+        if: matrix.os == 'ubuntu'
         run: sudo apt-get update && sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc
 
       - name: Install Haxe Libraries
@@ -53,11 +53,11 @@ jobs:
         run: haxelib list
 
       - name: Build Windows
-        if: matrix.sample == 'windows'
+        if: matrix.os == 'windows'
         run: cd samples/${{matrix.sample}} && haxelib run lime build windows
 
       - name: Upload Windows Artifact
-        if: matrix.sample == 'windows'
+        if: matrix.os == 'windows'
         uses: actions/upload-artifact@main
         with:
           name: windowsBuild-${{matrix.sample}}
@@ -65,11 +65,11 @@ jobs:
           if-no-files-found: warn
 
       - name: Build MacOS
-        if: matrix.sample == 'macos'
+        if: matrix.os == 'macos'
         run: cd samples/${{matrix.sample}} && haxelib run lime build mac && tar -zcf build.tar.gz -C export/macos/bin .
 
       - name: Upload MacOS Artifact
-        if: matrix.sample == 'macos'
+        if: matrix.os == 'macos'
         uses: actions/upload-artifact@main
         with:
           name: macBuild-${{matrix.sample}}
@@ -77,11 +77,11 @@ jobs:
           if-no-files-found: warn
 
       - name: Build Linux
-        if: matrix.sample == 'ubuntu'
+        if: matrix.os == 'ubuntu'
         run: cd samples/${{matrix.sample}} && haxelib run lime build linux && tar -zcf build.tar.gz -C export/linux/bin .
 
       - name: Upload Linux Artifact
-        if: matrix.sample == 'ubuntu'
+        if: matrix.os == 'ubuntu'
         uses: actions/upload-artifact@main
         with:
           name: linuxBuild-${{matrix.sample}}
