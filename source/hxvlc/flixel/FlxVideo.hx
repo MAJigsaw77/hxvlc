@@ -62,15 +62,19 @@ class FlxVideo extends Video
 		{
 			role = LibVLC_Role_Game;
 
-			#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+			#if (FLX_SOUND_SYSTEM && flixel >= version("5.9.0"))
 			if (!FlxG.sound.onVolumeChange.has(onVolumeChange))
 				FlxG.sound.onVolumeChange.add(onVolumeChange);
-			#elseif (FLX_SOUND_SYSTEM && flixel < "5.9.0")
+			#elseif (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
 			if (!FlxG.signals.postUpdate.has(onVolumeUpdate))
 				FlxG.signals.postUpdate.add(onVolumeUpdate);
 			#end
 
+			#if FLX_SOUND_SYSTEM
 			onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
+			#else
+			onVolumeChange(1);
+			#end
 		});
 		onFormatSetup.add(function():Void
 		{
@@ -146,6 +150,9 @@ class FlxVideo extends Video
 		return super.load(location, options);
 	}
 
+	/**
+	 * Frees the memory that is used to store the Video object.
+	 */
 	public override function dispose():Void
 	{
 		if (FlxG.signals.focusGained.has(onFocusGained))
@@ -157,10 +164,10 @@ class FlxVideo extends Video
 		if (FlxG.signals.gameResized.has(onGameResized))
 			FlxG.signals.gameResized.remove(onGameResized);
 
-		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+		#if (FLX_SOUND_SYSTEM && flixel >= version("5.9.0"))
 		if (FlxG.sound.onVolumeChange.has(onVolumeChange))
 			FlxG.sound.onVolumeChange.remove(onVolumeChange);
-		#elseif (FLX_SOUND_SYSTEM && flixel < "5.9.0")
+		#elseif (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
 		if (FlxG.signals.postUpdate.has(onVolumeUpdate))
 			FlxG.signals.postUpdate.remove(onVolumeUpdate);
 		#end
@@ -207,12 +214,15 @@ class FlxVideo extends Video
 		pause();
 	}
 
-	#if FLX_SOUND_SYSTEM
-	#if (flixel < "5.9.0")
+	#if (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
 	@:noCompletion
 	private function onVolumeUpdate():Void
 	{
+		#if FLX_SOUND_SYSTEM
 		onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
+		#else
+		onVolumeChange(1);
+		#end
 	}
 	#end
 
@@ -224,12 +234,15 @@ class FlxVideo extends Video
 		if (volume != currentVolume)
 			volume = currentVolume;
 	}
-	#end
 
 	@:noCompletion
 	private function set_volumeAdjust(value:Float):Float
 	{
+		#if FLX_SOUND_SYSTEM
 		onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
+		#else
+		onVolumeChange(1);
+		#end
 
 		return volumeAdjust = value;
 	}

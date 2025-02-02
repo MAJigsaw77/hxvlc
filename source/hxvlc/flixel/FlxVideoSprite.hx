@@ -75,15 +75,19 @@ class FlxVideoSprite extends FlxSprite
 		{
 			bitmap.role = LibVLC_Role_Game;
 
-			#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+			#if (FLX_SOUND_SYSTEM && flixel >= version("5.9.0"))
 			if (!FlxG.sound.onVolumeChange.has(onVolumeChange))
 				FlxG.sound.onVolumeChange.add(onVolumeChange);
-			#elseif (FLX_SOUND_SYSTEM && flixel < "5.9.0")
+			#elseif (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
 			if (!FlxG.signals.postUpdate.has(onVolumeUpdate))
 				FlxG.signals.postUpdate.add(onVolumeUpdate);
 			#end
 
+			#if FLX_SOUND_SYSTEM
 			onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
+			#else
+			onVolumeChange(1);
+			#end
 		});
 		bitmap.onFormatSetup.add(function():Void
 		{
@@ -237,16 +241,10 @@ class FlxVideoSprite extends FlxSprite
 
 	public override function destroy():Void
 	{
-		if (FlxG.signals.focusGained.has(onFocusGained))
-			FlxG.signals.focusGained.remove(onFocusGained);
-
-		if (FlxG.signals.focusLost.has(onFocusLost))
-			FlxG.signals.focusLost.remove(onFocusLost);
-
-		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+		#if (FLX_SOUND_SYSTEM && flixel >= version("5.9.0"))
 		if (FlxG.sound.onVolumeChange.has(onVolumeChange))
 			FlxG.sound.onVolumeChange.remove(onVolumeChange);
-		#elseif (FLX_SOUND_SYSTEM && flixel < "5.9.0")
+		#elseif (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
 		if (FlxG.signals.postUpdate.has(onVolumeUpdate))
 			FlxG.signals.postUpdate.remove(onVolumeUpdate);
 		#end
@@ -301,8 +299,7 @@ class FlxVideoSprite extends FlxSprite
 		pause();
 	}
 
-	#if FLX_SOUND_SYSTEM
-	#if (flixel < "5.9.0")
+	#if (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
 	@:noCompletion
 	private function onVolumeUpdate():Void
 	{
@@ -318,7 +315,6 @@ class FlxVideoSprite extends FlxSprite
 		if (bitmap.volume != currentVolume)
 			bitmap.volume = currentVolume;
 	}
-	#end
 
 	@:noCompletion
 	private override function set_antialiasing(value:Bool):Bool
@@ -329,7 +325,11 @@ class FlxVideoSprite extends FlxSprite
 	@:noCompletion
 	private function set_volumeAdjust(value:Float):Float
 	{
+		#if FLX_SOUND_SYSTEM
 		onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
+		#else
+		onVolumeChange(1);
+		#end
 
 		return volumeAdjust = value;
 	}
