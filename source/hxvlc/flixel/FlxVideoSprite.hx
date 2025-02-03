@@ -310,7 +310,7 @@ class FlxVideoSprite extends FlxSprite
 	@:noCompletion
 	private function onVolumeChange(vol:Float):Void
 	{
-		final currentVolume:Int = Math.floor((vol * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100)) * volumeAdjust);
+		final currentVolume:Int = Math.floor((vol * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 125)) * volumeAdjust);
 
 		if (bitmap.volume != currentVolume)
 			bitmap.volume = currentVolume;
