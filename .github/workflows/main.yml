@@ -4,6 +4,7 @@ on:
     branches: main
     paths-ignore:
       - '.github/workflows/format.yml'
+      - '.github/workflows/libs-building.yml'
       - '.github/workflows/pages.yml'
       - 'docs/**'
       - 'LICENSE'

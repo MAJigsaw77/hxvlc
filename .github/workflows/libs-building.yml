@@ -29,14 +29,14 @@ jobs:
       - name: Setup Dependencies
         run: sudo apt-get install gettext autopoint automake ant autopoint cmake build-essential libtool-bin lua5.2 liblua5.2-dev patch pkg-config protobuf-compiler ragel subversion unzip git flex python3 wget nasm meson ninja-build
 
-      - name: Setup Dependencies
+      - name: Set Git Config User
         run: git config user.name "github-actions[bot]" && git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Get VLC Source
-        run: cd libvlcjni && git apply ../project/vlc/scripts/patches/libvlcjni/* && buildsystem/get-vlc.sh
+        run: cd libvlcjni && chmod +x buildsystem/get-vlc.sh && buildsystem/get-vlc.sh
 
       - name: Compile libvlcjni
-        run: cd libvlcjni && buildsystem/compile-libvlc.sh -a ${{ matrix.arch }} --no-jni --release
+        run: cd libvlcjni && chmod +x buildsystem/compile-libvlc.sh && buildsystem/compile-libvlc.sh -a ${{ matrix.arch }} --no-jni --release
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
           ANDROID_NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
