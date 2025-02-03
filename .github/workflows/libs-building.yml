@@ -30,7 +30,7 @@ jobs:
         run: sudo apt-get install gettext autopoint automake ant autopoint cmake build-essential libtool-bin lua5.2 liblua5.2-dev patch pkg-config protobuf-compiler ragel subversion unzip git flex python3 wget nasm meson ninja-build
 
       - name: Set Git Config User
-        run: git config user.name "github-actions[bot]" && git config user.email "github-actions[bot]@users.noreply.github.com"
+        run: git config --global user.name "github-actions[bot]" && git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Get VLC Source
         run: cd libvlcjni && chmod +x buildsystem/get-vlc.sh && buildsystem/get-vlc.sh
