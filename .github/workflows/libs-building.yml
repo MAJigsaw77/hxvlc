@@ -29,6 +29,28 @@ jobs:
       - name: Git libvlcjni Source
         run: git clone https://code.videolan.org/videolan/libvlcjni.git --depth=1 --recursive -b libvlcjni-3.x
 
+      - name: Renumber Patches
+        run: |
+          cd libvlcjni/libvlc/patches
+          
+          REMOVE_PATCHES=("0002-libvlc-events-Add-callbacks-for-record.patch" "0005-libvlc-media_player-Add-record-method.patch" "0008-input-Extract-attachment-also-when-preparsing.patch" "0010-media_player-backport-fast-seek-argument.patch")
+
+          for patch in "${REMOVE_PATCHES[@]}"; do
+            rm -f "$patch"
+          done
+
+          i=1
+
+          for patch in $(ls | sort); do
+            new_name=$(printf "%04d-%s" "$i" "$(echo "$patch" | cut -d- -f2-)")
+
+            if [[ "$patch" != "$new_name" ]]; then
+              mv "$patch" "$new_name"
+            fi
+
+            ((i++))
+          done
+
       - name: Get VLC Source
         run: cd libvlcjni && buildsystem/get-vlc.sh
 
