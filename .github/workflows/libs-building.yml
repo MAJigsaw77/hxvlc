@@ -34,36 +34,19 @@ jobs:
 
       - name: Make Prebuilt Contribs Vars Arm64
         if: matrix.arch == 'arm64'
-        run: |
-          VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})
-          echo "VLC_CONTRIB_SHA=$VLC_CONTRIB_SHA" >> $GITHUB_ENV
-          echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-arm64/vlc-contrib-aarch64-linux-android-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
+        run: VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }}) && echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-arm64/vlc-contrib-aarch64-linux-android-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
 
       - name: Make Prebuilt Contribs Vars Arm
         if: matrix.arch == 'arm'
-        run: |
-          VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})
-          echo "VLC_CONTRIB_SHA=$VLC_CONTRIB_SHA" >> $GITHUB_ENV
-          echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-arm/vlc-contrib-arm-linux-androideabi-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
+        run: VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }}) && echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-arm/vlc-contrib-arm-linux-androideabi-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
 
       - name: Make Prebuilt Contribs Vars x86
         if: matrix.arch == 'x86'
-        run: |
-          VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})
-          echo "VLC_CONTRIB_SHA=$VLC_CONTRIB_SHA" >> $GITHUB_ENV
-          echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-x86/vlc-contrib-i686-linux-android-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
+        run: VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }}) && echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-x86/vlc-contrib-i686-linux-android-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
 
       - name: Make Prebuilt Contribs Vars x86_64
         if: matrix.arch == 'x86_64'
-        run: |
-          VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})
-          echo "VLC_CONTRIB_SHA=$VLC_CONTRIB_SHA" >> $GITHUB_ENV
-          echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-x86_64/vlc-contrib-x86_64-linux-android-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
-
-      - name: Debug Environment Variables
-        run: |
-          echo "VLC_CONTRIB_SHA=$VLC_CONTRIB_SHA"
-          echo "VLC_PREBUILT_CONTRIBS_URL=$VLC_PREBUILT_CONTRIBS_URL"
+        run: VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }}) && echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-x86_64/vlc-contrib-x86_64-linux-android-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
 
       - name: Compile libVLC
         run: cd libvlcjni && buildsystem/compile-libvlc.sh -a ${{ matrix.arch }} --no-jni --release --with-prebuilt-contribs
@@ -71,38 +54,28 @@ jobs:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
           ANDROID_NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
 
+      - name: Prepare Build Directory
+        run: mkdir -p ~/build/include && mkdir -p ~/build/lib
+
       - name: Copy Arm64 libVLC
         if: matrix.arch == 'arm64'
-        run: |
-          mkdir -p ~/project/vlc/lib/Android
-          mv libvlcjni/libvlc/jni/libs/arm64-v8a/libvlc.so ~/project/vlc/lib/Android/libvlc-64.so
-          cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-64.so
+        run: cp -r libvlcjni/vlc/build-android-aarch64-linux-android/install/include/* ~/build/include/ && cp libvlcjni/libvlc/jni/libs/arm64-v8a/libvlc.so ~/build/lib/libvlc-64.so && cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so ~/build/lib/libc++_shared-64.so
 
       - name: Copy Arm libVLC
         if: matrix.arch == 'arm'
-        run: |
-          mkdir -p ~/project/vlc/lib/Android
-          mv libvlcjni/libvlc/jni/libs/armeabi-v7a/libvlc.so ~/project/vlc/lib/Android/libvlc-v7.so
-          cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-v7.so
+        run: cp -r libvlcjni/vlc/build-android-arm-linux-androideabi/install/include/* ~/build/include/ && cp libvlcjni/libvlc/jni/libs/armeabi-v7a/libvlc.so ~/build/lib/libvlc-v7.so && cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so ~/build/lib/libc++_shared-v7.so
 
       - name: Copy x86 libVLC
         if: matrix.arch == 'x86'
-        run: |
-          mkdir -p ~/project/vlc/lib/Android
-          mv libvlcjni/libvlc/jni/libs/x86/libvlc.so ~/project/vlc/lib/Android/libvlc-x86.so
-          cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-x86.so
+        run: cp -r libvlcjni/vlc/build-android-i686-linux-android/install/include/* ~/build/include/ && cp libvlcjni/libvlc/jni/libs/x86/libvlc.so ~/build/lib/libvlc-x86.so && cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/libc++_shared.so ~/build/lib/libc++_shared-x86.so
 
       - name: Copy x86_64 libVLC
         if: matrix.arch == 'x86_64'
-        run: |
-          mkdir -p ~/project/vlc/lib/Android
-          mv libvlcjni/libvlc/jni/libs/x86_64/libvlc.so ~/project/vlc/lib/Android/libvlc-x86_64.so
-          cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-x86_64.so
+        run: cp -r libvlcjni/vlc/build-android-x86_64-linux-android/install/include/* ~/build/include/ && cp libvlcjni/libvlc/jni/libs/x86_64/libvlc.so ~/build/lib/libvlc-x86_64.so && cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android/libc++_shared.so ~/build/lib/libc++_shared-x86_64.so
 
       - name: Upload libVLC
         uses: actions/upload-artifact@main
         with:
           name: Android-${{ matrix.arch }}
-          path: |
-            ~/project/vlc/lib/Android/*.so
+          path: ~/build
           if-no-files-found: error
