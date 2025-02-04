@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # -------------------------------------
 # Author: Mihai Alexandru (M.A. Jigsaw)
@@ -97,3 +97,7 @@ mkdir -p ~/build/include && mkdir -p ~/build/lib
 cp -r vlc/build-android-$TARGET_TUPLE/install/include/* ../build/include/
 cp libvlc/jni/libs/$JNI_DIR_NAME/libvlc.so ../build/lib/libvlc-$NUMBER_ARCH.so
 cp $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/$TARGET_TUPLE/libc++_shared.so ../build/lib/libc++_shared-$NUMBER_ARCH.so
+
+# Finish
+echo ""
+echo "Build succeeded!"
