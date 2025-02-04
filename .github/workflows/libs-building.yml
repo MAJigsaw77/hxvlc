@@ -60,14 +60,7 @@ jobs:
           export VLC_PREBUILT_CONTRIBS_URL="https://artifacts.videolan.org/vlc-3.0/android-${{ matrix.arch }}/vlc-contrib-x86_64-linux-android-${VLC_CONTRIB_SHA}.tar.bz2"
 
       - name: Compile libVLC
-        run: |
-          cd libvlcjni
-
-          if libvlcjni/vlc/extras/ci/check-url.sh "$VLC_PREBUILT_CONTRIBS_URL"; then
-            ./buildsystem/compile-libvlc.sh -a ${{ matrix.arch }} --no-jni --release --with-prebuilt-contribs
-          else
-            ./buildsystem/compile-libvlc.sh -a ${{ matrix.arch }} --no-jni --release
-          fi
+        run: cd libvlcjni && buildsystem/compile-libvlc.sh -a ${{ matrix.arch }} --no-jni --release --with-prebuilt-contribs
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
           ANDROID_NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
