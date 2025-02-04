@@ -8,9 +8,6 @@ jobs:
         arch: [arm64, arm, x86, x86_64]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@main
-
       - name: Setup Android NDK
         uses: nttld/setup-ndk@main
         id: setup-ndk
@@ -76,19 +73,31 @@ jobs:
 
       - name: Copy Arm64 libVLC
         if: matrix.arch == 'arm64'
-        run: mv libvlcjni/libvlc/jni/libs/*/libvlc.so ~/project/vlc/lib/Android/libvlc-64.so && cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-64.so
+        run: |
+          mkdir -p ~/project/vlc/lib/Android
+          mv libvlcjni/libvlc/jni/libs/arm64-v8a/libvlc.so ~/project/vlc/lib/Android/libvlc-64.so
+          cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-64.so
 
       - name: Copy Arm libVLC
         if: matrix.arch == 'arm'
-        run: mv libvlcjni/libvlc/jni/libs/*/libvlc.so ~/project/vlc/lib/Android/libvlc-v7.so && cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-v7.so
+        run: |
+          mkdir -p ~/project/vlc/lib/Android
+          mv libvlcjni/libvlc/jni/libs/armeabi-v7a/libvlc.so ~/project/vlc/lib/Android/libvlc-v7.so
+          cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-v7.so
 
       - name: Copy x86 libVLC
         if: matrix.arch == 'x86'
-        run: mv libvlcjni/libvlc/jni/libs/*/libvlc.so ~/project/vlc/lib/Android/libvlc-x86.so && cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-x86.so
+        run: |
+          mkdir -p ~/project/vlc/lib/Android
+          mv libvlcjni/libvlc/jni/libs/x86/libvlc.so ~/project/vlc/lib/Android/libvlc-x86.so
+          cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-x86.so
 
       - name: Copy x86_64 libVLC
         if: matrix.arch == 'x86_64'
-        run: mv libvlcjni/libvlc/jni/libs/*/libvlc.so ~/project/vlc/lib/Android/libvlc-x86_64.so && cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-x86_64.so
+        run: |
+          mkdir -p ~/project/vlc/lib/Android
+          mv libvlcjni/libvlc/jni/libs/x86_64/libvlc.so ~/project/vlc/lib/Android/libvlc-x86_64.so
+          cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-x86_64.so
 
       - name: Upload libVLC
         uses: actions/upload-artifact@main
