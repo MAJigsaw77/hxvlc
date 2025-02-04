@@ -38,26 +38,35 @@ jobs:
       - name: Make Prebuilt Contribs Vars Arm64
         if: matrix.arch == 'arm64'
         run: |
-          echo "VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})" >> $GITHUB_ENV
-          echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-${{ matrix.arch }}/vlc-contrib-aarch64-linux-android-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
+          VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})
+          echo "VLC_CONTRIB_SHA=$VLC_CONTRIB_SHA" >> $GITHUB_ENV
+          echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-arm64/vlc-contrib-aarch64-linux-android-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
 
       - name: Make Prebuilt Contribs Vars Arm
         if: matrix.arch == 'arm'
         run: |
-          echo "VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})" >> $GITHUB_ENV
-          echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-${{ matrix.arch }}/vlc-contrib-arm-linux-androideabi-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
+          VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})
+          echo "VLC_CONTRIB_SHA=$VLC_CONTRIB_SHA" >> $GITHUB_ENV
+          echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-arm/vlc-contrib-arm-linux-androideabi-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
 
       - name: Make Prebuilt Contribs Vars x86
         if: matrix.arch == 'x86'
         run: |
-          echo "VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})" >> $GITHUB_ENV
-          echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-${{ matrix.arch }}/vlc-contrib-i686-linux-android-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
+          VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})
+          echo "VLC_CONTRIB_SHA=$VLC_CONTRIB_SHA" >> $GITHUB_ENV
+          echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-x86/vlc-contrib-i686-linux-android-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
 
       - name: Make Prebuilt Contribs Vars x86_64
         if: matrix.arch == 'x86_64'
         run: |
-          echo "VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})" >> $GITHUB_ENV
-          echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-${{ matrix.arch }}/vlc-contrib-x86_64-linux-android-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
+          VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})
+          echo "VLC_CONTRIB_SHA=$VLC_CONTRIB_SHA" >> $GITHUB_ENV
+          echo "VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-x86_64/vlc-contrib-x86_64-linux-android-${VLC_CONTRIB_SHA}.tar.bz2" >> $GITHUB_ENV
+
+      - name: Debug Environment Variables
+        run: |
+          echo "VLC_CONTRIB_SHA=$VLC_CONTRIB_SHA"
+          echo "VLC_PREBUILT_CONTRIBS_URL=$VLC_PREBUILT_CONTRIBS_URL"
 
       - name: Compile libVLC
         run: cd libvlcjni && buildsystem/compile-libvlc.sh -a ${{ matrix.arch }} --no-jni --release --with-prebuilt-contribs
