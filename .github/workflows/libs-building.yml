@@ -5,7 +5,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [arm64, arm, x86, x86_64]
+        arch: [arm64, armv7a, x86, x86_64]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,44 +23,21 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-      - name: Git libvlcjni Source
-        run: git clone https://code.videolan.org/videolan/libvlcjni.git --depth=1 --recursive -b libvlcjni-3.x
-
       - name: Setup Dependencies
-        run: sudo apt-get install gettext autopoint automake ant autopoint cmake build-essential libtool-bin lua5.2 liblua5.2-dev patch pkg-config protobuf-compiler ragel subversion unzip git flex python3 wget nasm meson ninja-build
+        run: sudo apt-get update && sudo apt-get install -y gettext autopoint automake ant cmake build-essential libtool-bin lua5.2 liblua5.2-dev patch pkg-config protobuf-compiler ragel subversion unzip git flex python3 wget nasm meson ninja-build
 
       - name: Set Git Config User
         run: git config --global user.name "github-actions[bot]" && git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Get VLC Source
-        run: cd libvlcjni && chmod +x buildsystem/get-vlc.sh && buildsystem/get-vlc.sh
-
-      - name: Compile libvlcjni
-        run: cd libvlcjni && chmod +x buildsystem/compile-libvlc.sh && buildsystem/compile-libvlc.sh -a ${{ matrix.arch }} --no-jni --release
+      - name: Compile Libs
+        run: chmod +x project/vlc/scripts/Android-Building.sh && ./project/vlc/scripts/Android-Building.sh ${{ matrix.arch }}
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
           ANDROID_NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
-  
-      - name: Copy Arm64 libvlcjni
-        if: matrix.arch == 'arm64'
-        run: mv libvlcjni/libvlc/jni/libs/*/libvlc.so ~/project/vlc/lib/Android/libvlc-64.so && cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-64.so
 
-      - name: Copy Arm libvlcjni
-        if: matrix.arch == 'arm'
-        run: mv libvlcjni/libvlc/jni/libs/*/libvlc.so ~/project/vlc/lib/Android/libvlc-v7.so && cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-v7.so
-
-      - name: Copy x86 libvlcjni
-        if: matrix.arch == 'x86'
-        run: mv libvlcjni/libvlc/jni/libs/*/libvlc.so ~/project/vlc/lib/Android/libvlc-x86.so && cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-x86.so
-
-      - name: Copy x86_64 libvlcjni
-        if: matrix.arch == 'x86_64'
-        run: mv libvlcjni/libvlc/jni/libs/*/libvlc.so ~/project/vlc/lib/Android/libvlc-x86_64.so && cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-x86_64.so
-
-      - name: Upload libVLC
+      - name: Upload Build
         uses: actions/upload-artifact@main
         with:
-          name: Android-${{ matrix.arch }}
-          path: |
-            ~/project/vlc/lib/Android/*.so
+          name: androidBuild-${{ matrix.arch }}
+          path: build
           if-no-files-found: error
