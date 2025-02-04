@@ -84,8 +84,8 @@ cd ../../
 ./buildsystem/get-vlc.sh
 
 # Make Prebuilt Contribs Vars.
-export VLC_CONTRIB_SHA=$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-$SHORT_ARCH)
-export VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-x86_64/vlc-contrib-$TARGET_TUPLE-${VLC_CONTRIB_SHA}.tar.bz2
+export VLC_CONTRIB_SHA=$(cd vlc && extras/ci/get-contrib-sha.sh android-$SHORT_ARCH)
+export VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-x86_64/vlc-contrib-$TARGET_TUPLE-$VLC_CONTRIB_SHA.tar.bz2
 
 # Compile libVLC
 buildsystem/compile-libvlc.sh -a $SHORT_ARCH --no-jni --release --with-prebuilt-contribs
