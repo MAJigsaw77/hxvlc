@@ -91,7 +91,8 @@ export VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-
 buildsystem/compile-libvlc.sh -a $SHORT_ARCH --no-jni --release --with-prebuilt-contribs
 
 # Make the output directory
-mkdir -p ~/build/include && mkdir -p ~/build/lib
+mkdir -p ../build/include
+mkdir -p ../build/lib
 
 # Copy files to the output directory
 cp -r vlc/build-android-$TARGET_TUPLE/install/include/* ../build/include/

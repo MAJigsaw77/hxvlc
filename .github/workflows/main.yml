@@ -7,7 +7,7 @@ on:
       - '.github/workflows/libs-building.yml'
       - '.github/workflows/pages.yml'
       - 'docs/**'
-      - 'project/vlc/scripts'
+      - 'project/vlc/scripts/**'
       - 'LICENSE'
       - 'README.md'
       - 'TODO.md'
