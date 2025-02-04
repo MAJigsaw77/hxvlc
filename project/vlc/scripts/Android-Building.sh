@@ -71,7 +71,7 @@ reorder_patches()
 }
 
 # Remove the following patches as they change the api which is not what we need.
-rename_patches "libvlc/patches" \
+reorder_patches "libvlc/patches" \
   	"0002-libvlc-events-Add-callbacks-for-record.patch" \
   	"0005-libvlc-media_player-Add-record-method.patch" \
   	"0008-input-Extract-attachment-also-when-preparsing.patch" \
