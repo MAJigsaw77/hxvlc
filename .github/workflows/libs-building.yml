@@ -35,12 +35,43 @@ jobs:
       - name: Get VLC Source
         run: cd libvlcjni && buildsystem/get-vlc.sh
 
+      - name: Make Prebuilt Contribs Vars Arm64
+        if: matrix.arch == 'arm64'
+        run: |
+          export VLC_CONTRIB_SHA="$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})"
+          export VLC_PREBUILT_CONTRIBS_URL="https://artifacts.videolan.org/vlc-3.0/android-${{ matrix.arch }}/vlc-contrib-aarch64-linux-android-${VLC_CONTRIB_SHA}.tar.bz2"
+
+      - name: Make Prebuilt Contribs Vars Arm
+        if: matrix.arch == 'arm'
+        run: |
+          export VLC_CONTRIB_SHA="$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})"
+          export VLC_PREBUILT_CONTRIBS_URL="https://artifacts.videolan.org/vlc-3.0/android-${{ matrix.arch }}/vlc-contrib-arm-linux-androideabi-${VLC_CONTRIB_SHA}.tar.bz2"
+
+      - name: Make Prebuilt Contribs Vars x86
+        if: matrix.arch == 'x86'
+        run: |
+          export VLC_CONTRIB_SHA="$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})"
+          export VLC_PREBUILT_CONTRIBS_URL="https://artifacts.videolan.org/vlc-3.0/android-${{ matrix.arch }}/vlc-contrib-i686-linux-android-${VLC_CONTRIB_SHA}.tar.bz2"
+
+      - name: Make Prebuilt Contribs Vars x86_64
+        if: matrix.arch == 'x86_64'
+        run: |
+          export VLC_CONTRIB_SHA="$(cd libvlcjni/vlc && extras/ci/get-contrib-sha.sh android-${{ matrix.arch }})"
+          export VLC_PREBUILT_CONTRIBS_URL="https://artifacts.videolan.org/vlc-3.0/android-${{ matrix.arch }}/vlc-contrib-x86_64-linux-android-${VLC_CONTRIB_SHA}.tar.bz2"
+
       - name: Compile libVLC
-        run: cd libvlcjni && buildsystem/compile-libvlc.sh -a ${{ matrix.arch }} --no-jni --release
+        run: |
+          cd libvlcjni
+
+          if libvlcjni/vlc/extras/ci/check-url.sh "$VLC_PREBUILT_CONTRIBS_URL"; then
+            ./buildsystem/compile-libvlc.sh -a ${{ matrix.arch }} --no-jni --release --with-prebuilt-contribs
+          else
+            ./buildsystem/compile-libvlc.sh -a ${{ matrix.arch }} --no-jni --release
+          fi
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
           ANDROID_NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
-  
+
       - name: Copy Arm64 libVLC
         if: matrix.arch == 'arm64'
         run: mv libvlcjni/libvlc/jni/libs/*/libvlc.so ~/project/vlc/lib/Android/libvlc-64.so && cp ${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so ~/project/vlc/lib/Android/libc++_shared-64.so
