@@ -74,7 +74,7 @@ download_vlc()
 
 		git checkout -B localBranch ${TESTEDHASH}
 		git branch --set-upstream-to=3.0.x localBranch
-		git am ../VLCKit/libvlc/patches/*.patch
+		git am --whitespace=fix ../VLCKit/libvlc/patches/*.patch
 
 		if [ $? -ne 0 ]; then
 			git am --abort
@@ -88,7 +88,7 @@ download_vlc()
 
 		git fetch --all
 		git reset --hard ${TESTEDHASH}
-		git am ../VLCKit/libvlc/patches/*.patch
+		git am --whitespace=fix ../VLCKit/libvlc/patches/*.patch
 
 		cd ..
 	fi
