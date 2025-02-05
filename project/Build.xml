@@ -2,15 +2,17 @@
 <xml>
 	<pragma once="true" />
 
+	<set name="PROJECT_DIR" value="${haxelib:hxvlc}/project/vlc" />
+
 	<files id="haxe">
 		<section unless="linux">
-			<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" />
+			<compilerflag value="-I${PROJECT_DIR}/include" />
 		</section>
 	</files>
 
 	<files id="__main__">
 		<section unless="linux">
-			<compilerflag value="-I${haxelib:hxvlc}/project/vlc/include" />
+			<compilerflag value="-I${PROJECT_DIR}/include" />
 		</section>
 	</files>
 
@@ -19,15 +21,15 @@
 
 		<section if="windows">
 			<section if="HXCPP_M64">
-				<lib name="${haxelib:hxvlc}/project/vlc/lib/Windows/libvlc.lib" />
-				<lib name="${haxelib:hxvlc}/project/vlc/lib/Windows/libvlccore.lib" />
+				<lib name="${PROJECT_DIR}/lib/Windows/libvlc.lib" />
+				<lib name="${PROJECT_DIR}/lib/Windows/libvlccore.lib" />
 			</section>
 		</section>
 
 		<section if="macos">
 			<section if="HXCPP_M64 || HXCPP_ARM64">
-				<lib name="${haxelib:hxvlc}/project/vlc/lib/MacOS/libvlc.dylib"  />
-				<lib name="${haxelib:hxvlc}/project/vlc/lib/MacOS/libvlccore.dylib" />
+				<lib name="${PROJECT_DIR}/lib/MacOS/libvlc.dylib" />
+				<lib name="${PROJECT_DIR}/lib/MacOS/libvlccore.dylib" />
 			</section>
 		</section>
 
@@ -37,10 +39,10 @@
 		</section>
 
 		<section if="android">
-			<lib name="${haxelib:hxvlc}/project/vlc/lib/Android/libvlc-64.so" if="HXCPP_ARM64" />
-			<lib name="${haxelib:hxvlc}/project/vlc/lib/Android/libvlc-v7.so" if="HXCPP_ARMV7" />
-			<lib name="${haxelib:hxvlc}/project/vlc/lib/Android/libvlc-x86.so" if="HXCPP_X86" />
-			<lib name="${haxelib:hxvlc}/project/vlc/lib/Android/libvlc-x86_64.so" if="HXCPP_X86_64" />
+			<lib name="${PROJECT_DIR}/lib/Android/libvlc-64.so" if="HXCPP_ARM64" />
+			<lib name="${PROJECT_DIR}/lib/Android/libvlc-v7.so" if="HXCPP_ARMV7" />
+			<lib name="${PROJECT_DIR}/lib/Android/libvlc-x86.so" if="HXCPP_X86" />
+			<lib name="${PROJECT_DIR}/lib/Android/libvlc-x86_64.so" if="HXCPP_X86_64" />
 		</section>
 
 		<section if="iphoneos || iphonesim">
@@ -54,11 +56,27 @@
 			<vflag name="-framework" value="CoreImage" />
 
 			<section if="iphoneos">
-				<lib name="${haxelib:hxvlc}/project/vlc/lib/iOS/libvlc_device.a" if="HXCPP_ARM64" />
+				<section if="HXCPP_ARM64">
+					<section unless="HXVLC_CUSTOM_IOS_DEVICE_LIB">
+						<lib name="${PROJECT_DIR}/lib/iOS/libvlc_device.a" />
+					</section>
+
+					<section if="HXVLC_CUSTOM_IOS_DEVICE_LIB">
+						<lib name="${HXVLC_CUSTOM_IOS_DEVICE_LIB}" />
+					</section>
+				</section>
 			</section>
 
 			<section if="iphonesim || simulator">
-				<lib name="${haxelib:hxvlc}/project/vlc/lib/iOS/libvlc_sim.a" if="HXCPP_M64" />
+				<section if="HXCPP_ARM64 || HXCPP_M64">
+					<section unless="HXVLC_CUSTOM_IOS_SIMULATOR_LIB">
+						<lib name="${PROJECT_DIR}/lib/iOS/libvlc_sim.a" />
+					</section>
+
+					<section if="HXVLC_CUSTOM_IOS_SIMULATOR_LIB">
+						<lib name="${HXVLC_CUSTOM_IOS_SIMULATOR_LIB}" />
+					</section>
+				</section>
 			</section>
 		</section>
 	</target>
