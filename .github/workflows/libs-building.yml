@@ -41,3 +41,28 @@ jobs:
           name: androidBuild-${{ matrix.arch }}
           path: build
           if-no-files-found: error
+  iOS:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [phone, simulator]
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Setup Dependencies
+        run: sudo apt-get update && sudo apt-get install -y gettext autopoint automake ant cmake build-essential libtool-bin lua5.2 liblua5.2-dev patch pkg-config protobuf-compiler ragel subversion unzip git flex python3 wget nasm meson ninja-build
+
+      - name: Set Git Config User
+        run: git config --global user.name "github-actions[bot]" && git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Compile Libs
+        run: chmod +x project/vlc/scripts/iOS-Building.sh && ./project/vlc/scripts/iOS-Building.sh ${{ matrix.platform }}
+
+      - name: Upload Build
+        uses: actions/upload-artifact@main
+        with:
+          name: iosBuild-${{ matrix.platform }}
+          path: build
+          if-no-files-found: error

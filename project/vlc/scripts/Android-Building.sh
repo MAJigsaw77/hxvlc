@@ -10,7 +10,7 @@ if [ -z "$1" ]; then
 	exit 1
 fi
 
-# Detect OS and Architecture
+# Detect OS
 if [[ "$(uname -s)" == "Darwin" ]]; then
 	HOST_TAG="darwin-x86_64"
 elif [[ "$(uname -s)" == "Linux" ]]; then
