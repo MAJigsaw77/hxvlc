@@ -10,7 +10,10 @@ if [ -z "$1" ]; then
   	exit 1
 fi
 
-# Per Architecture config
+# Exit on any error.
+set -e
+
+# Per architecture config
 if [ "$1" = "arm64" ] ; then
   	TARGET_TUPLE="aarch64-linux-android"
   	SHORT_ARCH="arm64"
@@ -81,13 +84,13 @@ reorder_patches "libvlc/patches" \
 cd ../../
 
 # Get "vlc" source.
-./buildsystem/get-vlc.sh
+buildsystem/get-vlc.sh
 
-# Make Prebuilt Contribs Vars.
+# Make prebuilt contribs bars.
 export VLC_CONTRIB_SHA=$(cd vlc && extras/ci/get-contrib-sha.sh android-$SHORT_ARCH)
 export VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-$SHORT_ARCH/vlc-contrib-$TARGET_TUPLE-$VLC_CONTRIB_SHA.tar.bz2
 
-# Compile libVLC
+# Compile "libvlc".
 buildsystem/compile-libvlc.sh -a $SHORT_ARCH --no-jni --release --with-prebuilt-contribs
 
 # Make the output directory
