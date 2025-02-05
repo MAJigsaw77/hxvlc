@@ -21,7 +21,7 @@ set -e
 
 # Per platform config
 if [ "$1" = "simulator" ]; then
-    PLATFORM="iphonesimulator"
+	PLATFORM="iphonesimulator"
 elif [ "$1" = "phone" ]; then
 	PLATFORM="iphoneos"
 else
@@ -118,14 +118,16 @@ compile_vlc()
 # Remove the following patches as they change the api which is not what we need.
 reorder_patches "VLCKit/libvlc/patches" \
 	"0004-http-add-vlc_http_cookies_clear.patch" \
-    "0005-libvlc_media-add-cookie_jar-API.patch" \
-    "0009-input-Extract-attachment-also-when-preparsing.patch" \
-    "0011-libvlc-add-a-basic-API-to-change-freetype-s-color-bo.patch" \
-    "0020-libvlc-media_player-Add-record-method.patch" \
-    "0021-libvlc-events-Add-callbacks-for-record.patch" \
-    "0027-lib-media_player-add-stop-set_media-async-support.patch" \
-    "0031-lib-media_player-add-loudness-event.patch" \
-    "0036-http-cookie-fix-double-free.patch"
+	"0005-libvlc_media-add-cookie_jar-API.patch" \
+	"0009-input-Extract-attachment-also-when-preparsing.patch" \
+	"0011-libvlc-add-a-basic-API-to-change-freetype-s-color-bo.patch" \
+	"0018-lib-save-configuration-after-playback-parse.patch" \
+	"0020-libvlc-media_player-Add-record-method.patch" \
+	"0021-libvlc-events-Add-callbacks-for-record.patch" \
+	"0027-lib-media_player-add-stop-set_media-async-support.patch" \
+	"0031-lib-media_player-add-loudness-event.patch" \
+	"0032-ebur128-add-measurement-date.patch" \
+	"0036-http-cookie-fix-double-free.patch"
 
 # Go back 3 dirs.
 cd ../../../
