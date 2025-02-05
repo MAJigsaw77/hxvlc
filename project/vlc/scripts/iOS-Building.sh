@@ -104,13 +104,17 @@ compile_vlc()
 
 	cd vlc
 
-	extras/package/apple/build.sh --arch=$ARCH --sdk=$SDK --disable-debug
+	mkdir build
 
-	cp -r vlc-$SDK-$ARCH/include/* ../build/${ARCH}_$SDK_PLATFORM/include/
+	cd build
+
+	../extras/package/apple/build.sh --arch=$ARCH --sdk=$SDK --disable-debug
+
+	cp -r vlc-$SDK-$ARCH/include/* ../../build/${ARCH}_$SDK_PLATFORM/include/
 
 	strip -S libvlc-full-static.a
 
-	cp libvlc-full-static.a ../build/lib/libvlc_${ARCH}_$SDK_PLATFORM.a
+	cp libvlc-full-static.a ../../build/lib/libvlc_${ARCH}_$SDK_PLATFORM.a
 
 	cd ..
 }
