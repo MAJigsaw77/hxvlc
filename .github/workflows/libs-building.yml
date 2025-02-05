@@ -52,7 +52,7 @@ jobs:
         uses: actions/checkout@main
 
       - name: Setup Dependencies
-        run: brew update && brew install python@3.8 && brew link python@3.8 --force
+        run: brew update
 
       - name: Set Git Config User
         run: git config --global user.name "github-actions[bot]" && git config --global user.email "github-actions[bot]@users.noreply.github.com"
