@@ -20,9 +20,9 @@ fi
 set -e
 
 # Per platform config
-if [ "$2" = "simulator"]; then
+if [ "$1" = "simulator" ]; then
     PLATFORM="iphonesimulator"
-elif [ "$2" = "phone" ]; then
+elif [ "$1" = "phone" ]; then
 	PLATFORM="iphoneos"
 else
 	echo "Error: Unknown platform '$1'. Supported platforms: simulator, ios."
