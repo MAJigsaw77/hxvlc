@@ -127,6 +127,9 @@ reorder_patches "VLCKit/libvlc/patches" \
     "0031-lib-media_player-add-loudness-event.patch" \
     "0036-http-cookie-fix-double-free.patch"
 
+# Go back 3 dirs.
+cd ../../../
+
 # Get "vlc" source.
 download_vlc
 
