@@ -108,7 +108,7 @@ compile_vlc()
 
 	cd build
 
-	../extras/package/apple/build.sh --arch=$ARCH --sdk=$SDK --disable-debug
+	../extras/package/apple/build.sh --arch=$ARCH --sdk=$SDK_PLATFORM --disable-debug
 
 	cp -r vlc-$SDK-$ARCH/include/* ../../build/${ARCH}_$SDK_PLATFORM/include/
 
