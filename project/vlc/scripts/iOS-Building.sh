@@ -126,8 +126,6 @@ compile_vlc()
 {
 	ARCH="$1"
 	SDK_PLATFORM="$2"
-	SDK_VERSION=$(xcrun --sdk $SDK_PLATFORM --show-sdk-version)
-	SDK="$2-$SDK_VERSION"
 
 	cd vlc
 
@@ -139,7 +137,7 @@ compile_vlc()
 
 	mkdir -p ../../build/${ARCH}_$SDK_PLATFORM/include/
  
- 	cp -r vlc-$SDK-$ARCH/include/* ../../build/${ARCH}_$SDK_PLATFORM/include/
+ 	cp -r vlc-$SDK_PLATFORM-$ARCH/include/* ../../build/${ARCH}_$SDK_PLATFORM/include/
 
 	strip -S libvlc-full-static.a
 
@@ -177,19 +175,19 @@ mkdir -p build
 # Compile and create the output directory.
 if [ "$PLATFORM" = "iphonesimulator" ]; then
 	compile_vlc "x86_64" "iphonesimulator"
-	compile_vlc "aarch64" "iphonesimulator"
+	compile_vlc "arm64" "iphonesimulator"
 else
-	compile_vlc "aarch64" "iphoneos"
+	compile_vlc "arm64" "iphoneos"
 fi
 
 # Merge libs together.
 if [ "$PLATFORM" = "iphonesimulator" ]; then
-	lipo -create -output build/libvlc_sim.a build/libvlc_x86_64_iphonesimulator.a build/libvlc_aarch64_iphonesimulator.a
+	lipo -create -output build/libvlc_sim.a build/libvlc_x86_64_iphonesimulator.a build/libvlc_arm64_iphonesimulator.a
 
 	rm build/libvlc_x86_64_iphonesimulator.a
-	rm build/libvlc_aarch64_iphonesimulator.a
+	rm build/libvlc_arm64_iphonesimulator.a
 else
-	mv build/libvlc_device.a build/libvlc_aarch64_iphoneos.a
+	mv build/libvlc_device.a build/libvlc_arm64_iphoneos.a
 
 # Finish.
 echo ""
