@@ -94,6 +94,33 @@ download_vlc()
 	fi
 }
 
+# Fetch Python 3 path.
+fetch_python3_path()
+{
+    PYTHON3_PATH=$(echo /Library/Frameworks/Python.framework/Versions/3.*/bin | awk '{print $1;}')
+
+    if [ ! -d "${PYTHON3_PATH}" ]; then
+        PYTHON3_PATH=""
+    fi
+}
+
+# Function to compile the tools.
+compile_tools()
+{
+    echo "Building tools"
+
+    fetch_python3_path
+
+    export PATH="${PYTHON3_PATH}:$(pwd)/vlc/extras/tools/build/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+    cd vlc/extras/tools
+
+    bootstrap
+    make
+
+    cd ../../../
+}
+
 # Function to compile "libvlc".
 compile_vlc()
 {
@@ -139,10 +166,13 @@ cd ../../../
 # Get "vlc" source.
 download_vlc
 
+# Compile the tools.
+compile_tools
+
 # Make the output directory
 mkdir -p build/lib
 
-# Compile and create the output directory
+# Compile and create the output directory.
 if [ "$PLATFORM" = "iphonesimulator" ]; then
 	compile_vlc "x86_64" "iphonesimulator"
 	compile_vlc "aarch64" "iphonesimulator"
@@ -155,7 +185,7 @@ else
 	mkdir -p build/aarch64_iphoneos/include
 fi
 
-# Merge libs together
+# Merge libs together.
 if [ "$PLATFORM" = "iphonesimulator" ]; then
 	lipo -create -output build/libvlc_sim.a build/libvlc_x86_64_iphonesimulator.a build/libvlc_aarch64_iphonesimulator.a
 	rm build/libvlc_x86_64_iphonesimulator.a
@@ -163,6 +193,6 @@ if [ "$PLATFORM" = "iphonesimulator" ]; then
 else
 	mv build/libvlc_device.a build/libvlc_aarch64_iphoneos.a
 
-# Finish
+# Finish.
 echo ""
 echo "Build succeeded!"
