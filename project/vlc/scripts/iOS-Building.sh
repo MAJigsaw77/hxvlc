@@ -175,7 +175,7 @@ if [ "$PLATFORM" = "iphonesimulator" ]; then
 	rm build/lib/libvlc_x86_64_iphonesimulator.a
 	rm build/lib/libvlc_arm64_iphonesimulator.a
 else
-	mv build/lib/libvlc_device.a build/lib/libvlc_arm64_iphoneos.a
+	mv build/lib/libvlc_arm64_iphoneos.a build/lib/libvlc_device.a
 fi
 
 # Finish.
