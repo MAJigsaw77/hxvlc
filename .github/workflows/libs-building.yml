@@ -51,18 +51,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
-      - name: Show Available Simulator SDKs and Architectures
-        if: matrix.platform == 'simulator'
-        run: |
-          echo "Available SDKs:"
-          xcodebuild -showsdks
-          echo "Simulator SDK Platform Path:"
-          xcrun --sdk iphonesimulator --show-sdk-platform-path
-          echo "Simulator SDK Path:"
-          xcrun --sdk iphonesimulator --show-sdk-path
-          echo "Supported Architectures for iOS Simulator:"
-          xcrun --sdk iphonesimulator clang -v 2>&1 | grep Target
-
       - name: Set Git Config User
         run: git config --global user.name "github-actions[bot]" && git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
