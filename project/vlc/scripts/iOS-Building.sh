@@ -17,7 +17,7 @@ if [[ "$(uname -s)" != "Darwin" ]]; then
 fi
 
 # Exit on any error.
-set -e
+# set -e
 
 # Per platform config
 if [ "$1" = "simulator" ]; then
@@ -143,7 +143,7 @@ compile_vlc()
  
  	strip -S ../../build/libvlc_${ARCH}_$SDK_PLATFORM.a
 
-	cd ..
+	cd ../../
 }
 
 # Remove the following patches as they change the api which is not what we need.
