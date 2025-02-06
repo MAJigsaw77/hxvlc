@@ -51,9 +51,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
-      - name: Setup Dependencies
-        run: sudo apt-get update && sudo apt-get install -y gettext autopoint automake ant cmake build-essential libtool-bin lua5.2 liblua5.2-dev patch pkg-config protobuf-compiler ragel subversion unzip git flex python3 wget nasm meson ninja-build
-
       - name: Set Git Config User
         run: git config --global user.name "github-actions[bot]" && git config --global user.email "github-actions[bot]@users.noreply.github.com"
 

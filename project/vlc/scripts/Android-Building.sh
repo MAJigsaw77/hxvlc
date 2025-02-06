@@ -24,22 +24,22 @@ fi
 set -e
 
 # Per architecture config
-if [ "$1" = "arm64" ] ; then
+if [ "$1" = "arm64" ]; then
 	TARGET_TUPLE="aarch64-linux-android"
 	SHORT_ARCH="arm64"
 	JNI_DIR_NAME="arm64-v8a"
 	NUMBER_ARCH="64"
-elif [ "$1" = "armv7a" ] ; then
+elif [ "$1" = "armv7a" ]; then
 	TARGET_TUPLE="arm-linux-androideabi"
 	SHORT_ARCH="arm"
 	JNI_DIR_NAME="armeabi-v7a"
 	NUMBER_ARCH="v7"
-elif [ "$1" = "x86" ] ; then
+elif [ "$1" = "x86" ]; then
 	TARGET_TUPLE="i686-linux-android"
 	SHORT_ARCH="x86"
 	JNI_DIR_NAME="x86"
 	NUMBER_ARCH="x86"
-elif [ "$1" = "x86_64" ] ; then
+elif [ "$1" = "x86_64" ]; then
 	TARGET_TUPLE="x86_64-linux-android"
 	SHORT_ARCH="x86_64"
 	JNI_DIR_NAME="x86_64"
