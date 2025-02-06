@@ -112,8 +112,6 @@ fetch_python3_path()
 	if [ ! -d "${PYTHON3_PATH}" ]; then
 		PYTHON3_PATH=""
 	fi
-
-	export PATH="${PYTHON3_PATH}:$PATH"
 }
 
 # Function to compile "libvlc".
@@ -123,6 +121,8 @@ compile_vlc()
 	SDK_PLATFORM="$2"
 
 	fetch_python3_path
+
+	export PATH="${PYTHON3_PATH}:$(pwd)/vlc/extras/tools/build/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 	cd vlc
 
