@@ -124,11 +124,11 @@ compile_vlc()
 
 	mkdir -p ../../build/${ARCH}_$SDK_PLATFORM/include/
  
- 	cp -r vlc-$SDK_PLATFORM-$ARCH/include/* ../../build/${ARCH}_$SDK_PLATFORM/include/
+ 	cp -r vlc-$SDK_PLATFORM-$ARCH/include/* ../../build/include/${ARCH}_$SDK_PLATFORM/
 
-	cp static-lib/libvlc-full-static.a ../../build/libvlc_${ARCH}_$SDK_PLATFORM.a
+	cp static-lib/libvlc-full-static.a ../../build/lib/libvlc_${ARCH}_$SDK_PLATFORM.a
  
- 	strip -S ../../build/libvlc_${ARCH}_$SDK_PLATFORM.a
+ 	strip -S ../../build/lib/libvlc_${ARCH}_$SDK_PLATFORM.a
 
 	cd ../../
 }
@@ -154,7 +154,8 @@ cd ../../../
 download_vlc
 
 # Make the output directory
-mkdir -p build
+mkdir -p build/include
+mkdir -p build/lib
 
 # Compile and create the output directory.
 if [ "$PLATFORM" = "iphonesimulator" ]; then
@@ -166,12 +167,12 @@ fi
 
 # Merge libs together.
 if [ "$PLATFORM" = "iphonesimulator" ]; then
-	lipo -create -output build/libvlc_sim.a build/libvlc_x86_64_iphonesimulator.a build/libvlc_arm64_iphonesimulator.a
+	lipo -create -output build/lib/libvlc_sim.a build/lib/libvlc_x86_64_iphonesimulator.a build/lib/libvlc_arm64_iphonesimulator.a
 
-	rm build/libvlc_x86_64_iphonesimulator.a
-	rm build/libvlc_arm64_iphonesimulator.a
+	rm build/lib/libvlc_x86_64_iphonesimulator.a
+	rm build/lib/libvlc_arm64_iphonesimulator.a
 else
-	mv build/libvlc_device.a build/libvlc_arm64_iphoneos.a
+	mv build/lib/libvlc_device.a build/lib/libvlc_arm64_iphoneos.a
 fi
 
 # Finish.
