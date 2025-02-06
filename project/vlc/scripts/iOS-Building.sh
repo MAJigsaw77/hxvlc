@@ -139,9 +139,9 @@ compile_vlc()
  
  	cp -r vlc-$SDK_PLATFORM-$ARCH/include/* ../../build/${ARCH}_$SDK_PLATFORM/include/
 
-	strip -S libvlc-full-static.a
-
-	cp libvlc-full-static.a ../../build/libvlc_${ARCH}_$SDK_PLATFORM.a
+	cp vlc-$SDK_PLATFORM-$ARCH/static-lib/libvlc-full-static.a ../../build/libvlc_${ARCH}_$SDK_PLATFORM.a
+ 
+ 	strip -S ../../build/libvlc_${ARCH}_$SDK_PLATFORM.a
 
 	cd ..
 }
