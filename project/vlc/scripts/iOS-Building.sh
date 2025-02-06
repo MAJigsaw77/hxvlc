@@ -162,7 +162,6 @@ mkdir -p build/lib
 
 # Compile and create the output directory.
 if [ "$PLATFORM" = "iphonesimulator" ]; then
-	compile_vlc "x86_64" "iphonesimulator"
 	compile_vlc "arm64" "iphonesimulator"
 else
 	compile_vlc "arm64" "iphoneos"
@@ -170,10 +169,7 @@ fi
 
 # Merge libs together.
 if [ "$PLATFORM" = "iphonesimulator" ]; then
-	lipo -create -output build/lib/libvlc_sim.a build/lib/libvlc_x86_64_iphonesimulator.a build/lib/libvlc_arm64_iphonesimulator.a
-
-	rm build/lib/libvlc_x86_64_iphonesimulator.a
-	rm build/lib/libvlc_arm64_iphonesimulator.a
+	mv build/lib/libvlc_arm64_iphonesimulator.a build/lib/libvlc_sim.a
 else
 	mv build/lib/libvlc_arm64_iphoneos.a build/lib/libvlc_device.a
 fi
