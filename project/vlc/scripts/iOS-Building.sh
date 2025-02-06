@@ -139,9 +139,12 @@ reorder_patches "VLCKit/libvlc/patches" \
 	"0005-libvlc_media-add-cookie_jar-API.patch" \
 	"0009-input-Extract-attachment-also-when-preparsing.patch" \
 	"0011-libvlc-add-a-basic-API-to-change-freetype-s-color-bo.patch" \
+	"0013-add-auto-deinterlacer-mode-which-is-also-valid.patch" \
+	"0014-Users-will-be-able-to-change-the-deinterlace-mode-wi.patch" \
 	"0018-lib-save-configuration-after-playback-parse.patch" \
 	"0020-libvlc-media_player-Add-record-method.patch" \
 	"0021-libvlc-events-Add-callbacks-for-record.patch" \
+	"0023-transcode-add-support-for-mutliple-venc-parameters.patch" \
 	"0027-lib-media_player-add-stop-set_media-async-support.patch" \
 	"0031-lib-media_player-add-loudness-event.patch" \
 	"0032-ebur128-add-measurement-date.patch" \
