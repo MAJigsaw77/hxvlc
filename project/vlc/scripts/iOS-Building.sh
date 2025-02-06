@@ -76,7 +76,7 @@ download_vlc()
 		git branch --set-upstream-to=3.0.x localBranch
 
 		# Apply our "build.sh" fix.
-		git am --whitespace=fix ../project/vlc/scripts/patches/iOS/*.patch
+		git apply --whitespace=fix ../project/vlc/scripts/patches/iOS/*.patch
 
 		# Apply "VLCKit" patches.
 		git am --whitespace=fix ../VLCKit/libvlc/patches/*.patch
@@ -95,7 +95,7 @@ download_vlc()
 		git reset --hard ${TESTEDHASH}
 
 		# Apply our "build.sh" fix.
-		git am --whitespace=fix ../project/vlc/scripts/patches/iOS/*.patch
+		git apply --whitespace=fix ../project/vlc/scripts/patches/iOS/*.patch
 
 		# Apply "VLCKit" patches.
 		git am --whitespace=fix ../VLCKit/libvlc/patches/*.patch
