@@ -17,7 +17,7 @@ if [[ "$(uname -s)" != "Darwin" ]]; then
 fi
 
 # Exit on any error.
-# set -e
+set -e
 
 # Per platform config
 if [ "$1" = "simulator" ]; then
@@ -97,28 +97,11 @@ download_vlc()
 # Fetch Python 3 path.
 fetch_python3_path()
 {
-    PYTHON3_PATH=$(echo /Library/Frameworks/Python.framework/Versions/3.*/bin | awk '{print $1;}')
+	PYTHON3_PATH=$(echo /Library/Frameworks/Python.framework/Versions/3.*/bin | awk '{print $1;}')
 
-    if [ ! -d "${PYTHON3_PATH}" ]; then
-        PYTHON3_PATH=""
-    fi
-}
-
-# Function to compile the tools.
-compile_tools()
-{
-    echo "Building tools"
-
-    fetch_python3_path
-
-    export PATH="${PYTHON3_PATH}:$(pwd)/vlc/extras/tools/build/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-
-    cd vlc/extras/tools
-
-    ./bootstrap
-    make
-
-    cd ../../../
+	if [ ! -d "${PYTHON3_PATH}" ]; then
+		PYTHON3_PATH=""
+	fi
 }
 
 # Function to compile "libvlc".
@@ -126,6 +109,10 @@ compile_vlc()
 {
 	ARCH="$1"
 	SDK_PLATFORM="$2"
+
+	fetch_python3_path
+
+	export PATH="${PYTHON3_PATH}:$(pwd)/vlc/extras/tools/build/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 	cd vlc
 
@@ -139,7 +126,7 @@ compile_vlc()
  
  	cp -r vlc-$SDK_PLATFORM-$ARCH/include/* ../../build/${ARCH}_$SDK_PLATFORM/include/
 
-	cp vlc-$SDK_PLATFORM-$ARCH/static-lib/libvlc-full-static.a ../../build/libvlc_${ARCH}_$SDK_PLATFORM.a
+	cp static-lib/libvlc-full-static.a ../../build/libvlc_${ARCH}_$SDK_PLATFORM.a
  
  	strip -S ../../build/libvlc_${ARCH}_$SDK_PLATFORM.a
 
@@ -165,9 +152,6 @@ cd ../../../
 
 # Get "vlc" source.
 download_vlc
-
-# Compile the tools.
-compile_tools
 
 # Make the output directory
 mkdir -p build
