@@ -188,6 +188,7 @@ if [ "$PLATFORM" = "iphonesimulator" ]; then
 	rm build/libvlc_arm64_iphonesimulator.a
 else
 	mv build/libvlc_device.a build/libvlc_arm64_iphoneos.a
+fi
 
 # Finish.
 echo ""
