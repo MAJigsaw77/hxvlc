@@ -115,7 +115,7 @@ compile_tools()
 
     cd vlc/extras/tools
 
-    bootstrap
+    ./bootstrap
     make
 
     cd ../../../
