@@ -42,7 +42,9 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: androidBuild-${{ matrix.arch }}
-          path: build
+          path: |
+            build
+            !**/.gitignore
           if-no-files-found: error
   iOS:
     strategy:
@@ -64,7 +66,9 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: iosBuild-${{ matrix.platform }}
-          path: build
+          path: |
+            build
+            !**/.gitignore
           if-no-files-found: error
   Publisher:
     needs: [Android, iOS]
