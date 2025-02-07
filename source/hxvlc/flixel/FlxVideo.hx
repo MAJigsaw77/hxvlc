@@ -1,7 +1,6 @@
 package hxvlc.flixel;
 
 #if flixel
-import flixel.math.FlxMath;
 import flixel.util.FlxAxes;
 import flixel.FlxG;
 import haxe.io.Bytes;
@@ -19,7 +18,7 @@ using StringTools;
  * This class extends Video to display video files in HaxeFlixel.
  *
  * ```haxe
- * var video:FlxVideo = new FlxVideo();
+ * final video:FlxVideo = new FlxVideo();
  * video.onEndReached.add(function():Void
  * {
  * 	video.dispose();
@@ -35,37 +34,20 @@ using StringTools;
 class FlxVideo extends Video
 {
 	/**
-	 * Whether the video should automatically pause when focus is lost.
-	 *
-	 * WARNING: Must be set before loading a video.
+	 * The volume adjustment.
 	 */
-	public var autoPause:Bool = FlxG.autoPause;
+	public var volumeAdjust(default, set):Float = 1.0;
 
 	/**
-	 * Determines the automatic resizing behavior for the video.
-	 *
-	 * WARNING: Must be set before loading a video.
+	 * Determines the resizing behavior for the video.
 	 */
-	public var autoResizeMode:FlxAxes = FlxAxes.XY;
-
-	#if FLX_SOUND_SYSTEM
-	/**
-	 * Whether Flixel should automatically adjust the volume according to the Flixel sound system's current volume.
-	 */
-	public var autoVolumeHandle:Bool = true;
-	#end
+	public var resizeMode(default, set):FlxAxes = FlxAxes.XY;
 
 	/**
 	 * Internal tracker for whether the video is paused or not.
 	 */
 	@:noCompletion
 	private var resumeOnFocus:Bool = false;
-
-	/**
-	 * Internal tracker for the resize mode so it doesn't get changed while the video is running.
-	 */
-	@:noCompletion
-	private var currentResizeMode:Null<FlxAxes>;
 
 	/**
 	 * Initializes a FlxVideo object.
@@ -80,16 +62,18 @@ class FlxVideo extends Video
 		{
 			role = LibVLC_Role_Game;
 
-			#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+			#if (FLX_SOUND_SYSTEM && flixel >= version("5.9.0"))
 			if (!FlxG.sound.onVolumeChange.has(onVolumeChange))
 				FlxG.sound.onVolumeChange.add(onVolumeChange);
-			#elseif (FLX_SOUND_SYSTEM && flixel < "5.9.0")
+			#elseif (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
 			if (!FlxG.signals.postUpdate.has(onVolumeUpdate))
 				FlxG.signals.postUpdate.add(onVolumeUpdate);
 			#end
 
 			#if FLX_SOUND_SYSTEM
-			onVolumeChange(0.0);
+			onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
+			#else
+			onVolumeChange(1);
 			#end
 		});
 		onFormatSetup.add(function():Void
@@ -97,23 +81,9 @@ class FlxVideo extends Video
 			if (!FlxG.signals.gameResized.has(onGameResized))
 				FlxG.signals.gameResized.add(onGameResized);
 
-			onGameResized(0, 0);
+			onGameResized(FlxG.stage.stageWidth, FlxG.stage.stageHeight);
 		});
 	}
-
-	#if FLX_SOUND_SYSTEM
-	/**
-	 * Calculates and returns the current volume based on Flixel's sound settings by default.
-	 *
-	 * The volume is automatically clamped between `0` and `2.55` by the calling code. If the sound is muted, the volume is `0`.
-	 *
-	 * @return The calculated volume.
-	 */
-	public dynamic function getCalculatedVolume():Float
-	{
-		return (FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume;
-	}
-	#end
 
 	/**
 	 * Loads a video.
@@ -124,16 +94,11 @@ class FlxVideo extends Video
 	 */
 	public override function load(location:Location, ?options:Array<String>):Bool
 	{
-		if (autoPause)
-		{
-			if (!FlxG.signals.focusGained.has(onFocusGained))
-				FlxG.signals.focusGained.add(onFocusGained);
+		if (!FlxG.signals.focusGained.has(onFocusGained))
+			FlxG.signals.focusGained.add(onFocusGained);
 
-			if (!FlxG.signals.focusLost.has(onFocusLost))
-				FlxG.signals.focusLost.add(onFocusLost);
-		}
-
-		currentResizeMode = autoResizeMode;
+		if (!FlxG.signals.focusLost.has(onFocusLost))
+			FlxG.signals.focusLost.add(onFocusLost);
 
 		if (location != null && !(location is Int) && !(location is Bytes) && (location is String))
 		{
@@ -185,6 +150,9 @@ class FlxVideo extends Video
 		return super.load(location, options);
 	}
 
+	/**
+	 * Frees the memory that is used to store the Video object.
+	 */
 	public override function dispose():Void
 	{
 		if (FlxG.signals.focusGained.has(onFocusGained))
@@ -196,10 +164,10 @@ class FlxVideo extends Video
 		if (FlxG.signals.gameResized.has(onGameResized))
 			FlxG.signals.gameResized.remove(onGameResized);
 
-		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+		#if (FLX_SOUND_SYSTEM && flixel >= version("5.9.0"))
 		if (FlxG.sound.onVolumeChange.has(onVolumeChange))
 			FlxG.sound.onVolumeChange.remove(onVolumeChange);
-		#elseif (FLX_SOUND_SYSTEM && flixel < "5.9.0")
+		#elseif (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
 		if (FlxG.signals.postUpdate.has(onVolumeUpdate))
 			FlxG.signals.postUpdate.remove(onVolumeUpdate);
 		#end
@@ -210,19 +178,21 @@ class FlxVideo extends Video
 	@:noCompletion
 	private function onGameResized(width:Int, height:Int):Void
 	{
-		if (currentResizeMode != null)
+		if ((resizeMode.x || resizeMode.y) && bitmapData != null)
 		{
-			if ((currentResizeMode.x || currentResizeMode.y) && bitmapData != null)
-			{
-				this.width = currentResizeMode.x ? FlxG.scaleMode.gameSize.x : bitmapData.width;
-				this.height = currentResizeMode.y ? FlxG.scaleMode.gameSize.y : bitmapData.height;
-			}
+			this.width = resizeMode.x ? FlxG.scaleMode.gameSize.x : bitmapData.width;
+			this.height = resizeMode.y ? FlxG.scaleMode.gameSize.y : bitmapData.height;
 		}
 	}
 
 	@:noCompletion
 	private function onFocusGained():Void
 	{
+		#if !mobile
+		if (!FlxG.autoPause)
+			return;
+		#end
+
 		if (resumeOnFocus)
 		{
 			resumeOnFocus = false;
@@ -234,28 +204,55 @@ class FlxVideo extends Video
 	@:noCompletion
 	private function onFocusLost():Void
 	{
+		#if !mobile
+		if (!FlxG.autoPause)
+			return;
+		#end
+
 		resumeOnFocus = isPlaying;
 
 		pause();
 	}
 
-	#if FLX_SOUND_SYSTEM
-	#if (flixel < "5.9.0")
+	#if (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
 	@:noCompletion
 	private function onVolumeUpdate():Void
 	{
-		onVolumeChange(0.0);
+		#if FLX_SOUND_SYSTEM
+		onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
+		#else
+		onVolumeChange(1);
+		#end
 	}
 	#end
 
 	@:noCompletion
 	private function onVolumeChange(vol:Float):Void
 	{
-		if (!autoVolumeHandle)
-			return;
+		final currentVolume:Int = Math.floor((vol * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 125)) * volumeAdjust);
 
-		volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
+		if (volume != currentVolume)
+			volume = currentVolume;
 	}
-	#end
+
+	@:noCompletion
+	private function set_volumeAdjust(value:Float):Float
+	{
+		#if FLX_SOUND_SYSTEM
+		onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
+		#else
+		onVolumeChange(1);
+		#end
+
+		return volumeAdjust = value;
+	}
+
+	@:noCompletion
+	private function set_resizeMode(value:FlxAxes):FlxAxes
+	{
+		onGameResized(FlxG.stage.stageWidth, FlxG.stage.stageHeight);
+
+		return resizeMode = value;
+	}
 }
 #end

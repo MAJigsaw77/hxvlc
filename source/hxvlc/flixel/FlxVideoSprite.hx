@@ -2,7 +2,6 @@ package hxvlc.flixel;
 
 #if flixel
 import flixel.graphics.FlxGraphic;
-import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -21,7 +20,7 @@ using StringTools;
  * This class extends FlxSprite to display video files in HaxeFlixel.
  *
  * ```haxe
- * var video:FlxVideoSprite = new FlxVideoSprite(0, 0);
+ * final video:FlxVideoSprite = new FlxVideoSprite(0, 0);
  * video.antialiasing = true;
  * video.bitmap.onFormatSetup.add(function():Void
  * {
@@ -45,23 +44,14 @@ using StringTools;
 class FlxVideoSprite extends FlxSprite
 {
 	/**
-	 * Indicates whether the video should automatically pause when focus is lost.
-	 *
-	 * Must be set before loading a video.
+	 * The volume adjustment.
 	 */
-	public var autoPause:Bool = FlxG.autoPause;
-
-	#if FLX_SOUND_SYSTEM
-	/**
-	 * Determines if Flixel automatically adjusts the volume based on the Flixel sound system's current volume.
-	 */
-	public var autoVolumeHandle:Bool = true;
-	#end
+	public var volumeAdjust(default, set):Float = 1.0;
 
 	/**
 	 * The video bitmap object.
 	 */
-	public var bitmap(default, null):Null<Video>;
+	public final bitmap:Video;
 
 	/**
 	 * Internal tracker for whether the video is paused or not.
@@ -83,30 +73,26 @@ class FlxVideoSprite extends FlxSprite
 		bitmap.forceRendering = true;
 		bitmap.onOpening.add(function():Void
 		{
-			if (bitmap != null)
-			{
-				bitmap.role = LibVLC_Role_Game;
+			bitmap.role = LibVLC_Role_Game;
 
-				#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
-				if (!FlxG.sound.onVolumeChange.has(onVolumeChange))
-					FlxG.sound.onVolumeChange.add(onVolumeChange);
-				#elseif (FLX_SOUND_SYSTEM && flixel < "5.9.0")
-				if (!FlxG.signals.postUpdate.has(onVolumeUpdate))
-					FlxG.signals.postUpdate.add(onVolumeUpdate);
-				#end
+			#if (FLX_SOUND_SYSTEM && flixel >= version("5.9.0"))
+			if (!FlxG.sound.onVolumeChange.has(onVolumeChange))
+				FlxG.sound.onVolumeChange.add(onVolumeChange);
+			#elseif (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
+			if (!FlxG.signals.postUpdate.has(onVolumeUpdate))
+				FlxG.signals.postUpdate.add(onVolumeUpdate);
+			#end
 
-				#if FLX_SOUND_SYSTEM
-				onVolumeChange(0.0);
-				#end
-			}
+			#if FLX_SOUND_SYSTEM
+			onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
+			#else
+			onVolumeChange(1);
+			#end
 		});
 		bitmap.onFormatSetup.add(function():Void
 		{
-			if (bitmap != null)
-			{
-				if (bitmap.bitmapData != null)
-					loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
-			}
+			if (bitmap.bitmapData != null)
+				loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
 		});
 		bitmap.visible = false;
 		FlxG.game.addChild(bitmap);
@@ -123,17 +109,11 @@ class FlxVideoSprite extends FlxSprite
 	 */
 	public function load(location:Location, ?options:Array<String>):Bool
 	{
-		if (bitmap == null)
-			return false;
+		if (!FlxG.signals.focusGained.has(onFocusGained))
+			FlxG.signals.focusGained.add(onFocusGained);
 
-		if (autoPause)
-		{
-			if (!FlxG.signals.focusGained.has(onFocusGained))
-				FlxG.signals.focusGained.add(onFocusGained);
-
-			if (!FlxG.signals.focusLost.has(onFocusLost))
-				FlxG.signals.focusLost.add(onFocusLost);
-		}
+		if (!FlxG.signals.focusLost.has(onFocusLost))
+			FlxG.signals.focusLost.add(onFocusLost);
 
 		if (location != null && !(location is Int) && !(location is Bytes) && (location is String))
 		{
@@ -194,7 +174,7 @@ class FlxVideoSprite extends FlxSprite
 	 */
 	public inline function loadFromSubItem(index:Int, ?options:Array<String>):Bool
 	{
-		return bitmap == null ? false : bitmap.loadFromSubItem(index, options);
+		return bitmap.loadFromSubItem(index, options);
 	}
 
 	/**
@@ -206,7 +186,7 @@ class FlxVideoSprite extends FlxSprite
 	 */
 	public inline function parseWithOptions(parse_flag:Int, timeout:Int):Bool
 	{
-		return bitmap == null ? false : bitmap.parseWithOptions(parse_flag, timeout);
+		return bitmap.parseWithOptions(parse_flag, timeout);
 	}
 
 	/**
@@ -214,7 +194,7 @@ class FlxVideoSprite extends FlxSprite
 	 */
 	public inline function parseStop():Void
 	{
-		bitmap?.parseStop();
+		bitmap.parseStop();
 	}
 
 	/**
@@ -224,7 +204,7 @@ class FlxVideoSprite extends FlxSprite
 	 */
 	public inline function play():Bool
 	{
-		return bitmap == null ? false : bitmap.play();
+		return bitmap.play();
 	}
 
 	/**
@@ -232,7 +212,7 @@ class FlxVideoSprite extends FlxSprite
 	 */
 	public inline function stop():Void
 	{
-		bitmap?.stop();
+		bitmap.stop();
 	}
 
 	/**
@@ -240,7 +220,7 @@ class FlxVideoSprite extends FlxSprite
 	 */
 	public inline function pause():Void
 	{
-		bitmap?.pause();
+		bitmap.pause();
 	}
 
 	/**
@@ -248,7 +228,7 @@ class FlxVideoSprite extends FlxSprite
 	 */
 	public inline function resume():Void
 	{
-		bitmap?.resume();
+		bitmap.resume();
 	}
 
 	/**
@@ -256,52 +236,29 @@ class FlxVideoSprite extends FlxSprite
 	 */
 	public inline function togglePaused():Void
 	{
-		bitmap?.togglePaused();
+		bitmap.togglePaused();
 	}
-
-	#if FLX_SOUND_SYSTEM
-	/**
-	 * Calculates and returns the current volume based on Flixel's sound settings by default.
-	 *
-	 * The volume is automatically clamped between `0` and `2.55` by the calling code. If the sound is muted, the volume is `0`.
-	 *
-	 * @return The calculated volume.
-	 */
-	public dynamic function getCalculatedVolume():Float
-	{
-		return (FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume;
-	}
-	#end
 
 	public override function destroy():Void
 	{
-		if (FlxG.signals.focusGained.has(onFocusGained))
-			FlxG.signals.focusGained.remove(onFocusGained);
-
-		if (FlxG.signals.focusLost.has(onFocusLost))
-			FlxG.signals.focusLost.remove(onFocusLost);
-
-		#if (FLX_SOUND_SYSTEM && flixel >= "5.9.0")
+		#if (FLX_SOUND_SYSTEM && flixel >= version("5.9.0"))
 		if (FlxG.sound.onVolumeChange.has(onVolumeChange))
 			FlxG.sound.onVolumeChange.remove(onVolumeChange);
-		#elseif (FLX_SOUND_SYSTEM && flixel < "5.9.0")
+		#elseif (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
 		if (FlxG.signals.postUpdate.has(onVolumeUpdate))
 			FlxG.signals.postUpdate.remove(onVolumeUpdate);
 		#end
 
 		super.destroy();
 
-		if (bitmap != null)
-		{
-			FlxG.removeChild(bitmap);
-			bitmap.dispose();
-			bitmap = null;
-		}
+		FlxG.removeChild(bitmap);
+
+		bitmap.dispose();
 	}
 
 	public override function kill():Void
 	{
-		bitmap?.pause();
+		bitmap.pause();
 
 		super.kill();
 	}
@@ -310,12 +267,17 @@ class FlxVideoSprite extends FlxSprite
 	{
 		super.revive();
 
-		bitmap?.resume();
+		bitmap.resume();
 	}
 
 	@:noCompletion
 	private function onFocusGained():Void
 	{
+		#if !mobile
+		if (!FlxG.autoPause)
+			return;
+		#end
+
 		if (resumeOnFocus)
 		{
 			resumeOnFocus = false;
@@ -327,35 +289,49 @@ class FlxVideoSprite extends FlxSprite
 	@:noCompletion
 	private function onFocusLost():Void
 	{
-		resumeOnFocus = bitmap == null ? false : bitmap.isPlaying;
+		#if !mobile
+		if (!FlxG.autoPause)
+			return;
+		#end
+
+		resumeOnFocus = bitmap.isPlaying;
 
 		pause();
 	}
 
-	#if FLX_SOUND_SYSTEM
-	#if (flixel < "5.9.0")
+	#if (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
 	@:noCompletion
 	private function onVolumeUpdate():Void
 	{
-		onVolumeChange(0.0);
+		onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
 	}
 	#end
 
 	@:noCompletion
 	private function onVolumeChange(vol:Float):Void
 	{
-		if (bitmap != null)
-		{
-			if (autoVolumeHandle)
-				bitmap.volume = Math.floor(FlxMath.bound(getCalculatedVolume(), 0, 2.55) * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 100));
-		}
+		final currentVolume:Int = Math.floor((vol * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 125)) * volumeAdjust);
+
+		if (bitmap.volume != currentVolume)
+			bitmap.volume = currentVolume;
 	}
-	#end
 
 	@:noCompletion
 	private override function set_antialiasing(value:Bool):Bool
 	{
 		return antialiasing = (bitmap == null ? value : (bitmap.smoothing = value));
+	}
+
+	@:noCompletion
+	private function set_volumeAdjust(value:Float):Float
+	{
+		#if FLX_SOUND_SYSTEM
+		onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
+		#else
+		onVolumeChange(1);
+		#end
+
+		return volumeAdjust = value;
 	}
 }
 #end

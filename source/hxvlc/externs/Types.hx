@@ -111,29 +111,18 @@ extern class LibVLC_Media_Stats_T
 {
 	function new():Void;
 
-	/* Input */
 	var i_read_bytes:Int;
 	var f_input_bitrate:Single;
-
-	/* Demux */
 	var i_demux_read_bytes:Int;
 	var f_demux_bitrate:Single;
 	var i_demux_corrupted:Int;
 	var i_demux_discontinuity:Int;
-
-	/* Decoders */
 	var i_decoded_video:Int;
 	var i_decoded_audio:Int;
-
-	/* Video Output */
 	var i_displayed_pictures:Int;
 	var i_lost_pictures:Int;
-
-	/* Audio Output */
 	var i_played_abuffers:Int;
 	var i_lost_abuffers:Int;
-
-	/* Stream Output */
 	var i_sent_packets:Int;
 	var i_sent_bytes:Int;
 	var f_send_bitrate:Single;
@@ -196,21 +185,6 @@ private extern class LibVLC_Media_Parsed_Status_T_Impl {}
 @:include('vlc/vlc.h')
 @:native('libvlc_media_player_t')
 extern class LibVLC_Media_Player_T {}
-
-@:dox(hide)
-@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
-@:unreflective
-@:structAccess
-@:native('libvlc_audio_output_t')
-extern class LibVLC_Audio_Output_T
-{
-	function new():Void;
-
-	var psz_name:cpp.CastCharStar;
-	var psz_description:cpp.CastCharStar;
-	var p_next:cpp.RawPointer<LibVLC_Audio_Output_T>;
-}
 
 @:dox(hide)
 extern enum abstract LibVLC_Audio_Output_Channel_T(LibVLC_Audio_Output_Channel_T_Impl)

@@ -1,18 +1,20 @@
 package hxvlc.util;
 
 import haxe.io.Path;
-import haxe.Exception;
 import haxe.Int64;
 import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.macros.Define;
-import hxvlc.util.AudioOutput;
+#if android
+import haxe.Exception;
+import lime.app.Future;
 import lime.system.System;
 import lime.utils.AssetLibrary;
 import lime.utils.Assets;
-import lime.utils.Log;
 import sys.io.File;
+#end
+import lime.utils.Log;
 import sys.thread.Mutex;
 import sys.FileSystem;
 
@@ -102,11 +104,6 @@ class Handle
 	 */
 	public static var clock(get, never):Int64;
 
-	/**
-	 * Available audio output modules.
-	 */
-	public static var outputModules(get, never):Null<Array<AudioOutput>>;
-
 	@:noCompletion
 	private static final instanceMutex:Mutex = new Mutex();
 
@@ -185,87 +182,37 @@ class Handle
 
 		if (instance == null)
 		{
-			#if android
-			final homePath:String = Path.join([Path.directory(System.applicationStorageDirectory), 'libvlc']);
-
-			#if !HXVLC_NO_SHARE_DIRECTORY
-			Assets.loadLibrary('libvlc').onComplete(function(library:AssetLibrary):Void
-			{
-				final sharePath:String = Path.join([homePath, '.share']);
-
-				mkDirs(Path.directory(sharePath));
-
-				@:nullSafety(Off)
-				for (file in library.list(null))
-				{
-					final savePath:String = Path.join([sharePath, file.substring(file.indexOf('/', 0) + 1, file.length)]);
-
-					mkDirs(Path.directory(savePath));
-
-					try
-					{
-						if (!FileSystem.exists(savePath))
-							File.saveBytes(savePath, library.getBytes(file));
-					}
-					catch (e:Exception)
-						Log.warn('Failed to save file "$savePath", ${e.message}.');
-				}
-			}).onError((error:String) -> Log.warn('Failed to load library: libvlc, Error: $error'));
-			#end
-
-			Sys.putEnv('HOME', homePath);
-			#elseif macos
-			final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
-
-			if (FileSystem.exists(dataPath))
-				Sys.putEnv('VLC_DATA_PATH', dataPath);
-
-			final pluginPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
-
-			if (FileSystem.exists(pluginPath))
-				Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
-			#elseif windows
-			final pluginPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
-
-			if (FileSystem.exists(pluginPath))
-				Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
-			#end
+			setupEnvVariables();
 
 			final args:cpp.StdVector<cpp.ConstCharStar> = new cpp.StdVector<cpp.ConstCharStar>();
 
-			#if windows
-			args.push_back("--aout=directsound");
-			#end
-
-			#if (android || ios || macos)
-			args.push_back("--audio-resampler=soxr");
-			#end
-
-			args.push_back("--drop-late-frames");
-			args.push_back("--ignore-config");
+			args.push_back("--aout=amem,none");
 			args.push_back("--intf=none");
+			args.push_back("--text-renderer=none");
+			args.push_back("--vout=vmem,none");
+
+			args.push_back("--ignore-config");
+			args.push_back("--drop-late-frames");
 			args.push_back("--no-interact");
 			args.push_back("--no-keyboard-events");
 			args.push_back("--no-mouse-events");
-
-			#if HXVLC_NO_SHARE_DIRECTORY
+			#if !HXVLC_SHARE_DIRECTORY
 			args.push_back("--no-lua");
 			#end
-
 			args.push_back("--no-snapshot-preview");
 			args.push_back("--no-spu");
-
 			#if !HXVLC_ENABLE_STATS
 			args.push_back("--no-stats");
 			#end
-
 			args.push_back("--no-sub-autodetect-file");
 			args.push_back("--no-video-title-show");
 			args.push_back("--no-volume-save");
 			args.push_back("--no-xlib");
 
 			#if (windows || macos)
-			if (FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])))
+			final pluginPath:Null<String> = Sys.getEnv('VLC_PLUGIN_PATH');
+
+			if (pluginPath != null && FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])))
 			{
 				if (resetCache == true)
 					args.push_back("--reset-plugins-cache");
@@ -273,8 +220,6 @@ class Handle
 					args.push_back("--no-plugins-scan");
 			}
 			#end
-
-			args.push_back("--text-renderer=none");
 
 			#if HXVLC_VERBOSE
 			args.push_back("--verbose=" + Define.getInt('HXVLC_VERBOSE', 0));
@@ -346,57 +291,104 @@ class Handle
 		return true;
 	}
 
-	#if android
-	/**
-	 * @see https://github.com/openfl/hxp/blob/master/src/hxp/System.hx#L595
-	 */
 	@:noCompletion
-	private static function mkDirs(directory:String):Void
+	private static function setupEnvVariables():Void
 	{
-		try
+		#if android
+		final homePath:String = Path.join([Path.directory(System.applicationStorageDirectory), 'libvlc']);
+
+		#if HXVLC_SHARE_DIRECTORY
+		/**
+		 * @see https://github.com/openfl/hxp/blob/master/src/hxp/System.hx#L595
+		 */
+		function mkDirs(directory:String):Void
 		{
-			if (FileSystem.exists(directory) && FileSystem.isDirectory(directory))
-				return;
-		}
-		catch (e:Dynamic) {}
-
-		var total:String = '';
-
-		if (directory.substr(0, 1) == '/')
-			total = '/';
-
-		final parts:Array<String> = directory.split('/');
-
-		if (parts.length > 0 && parts[0].indexOf(':') > -1)
-			parts.shift();
-
-		for (part in parts)
-		{
-			if (part != '.' && part.length > 0)
+			try
 			{
-				if (total != '/' && total.length > 0)
-					total += '/';
+				if (FileSystem.exists(directory) && FileSystem.isDirectory(directory))
+					return;
+			}
+			catch (e:Dynamic) {}
 
-				total += part;
+			var total:String = '';
 
-				try
+			if (directory.substr(0, 1) == '/')
+				total = '/';
+
+			final parts:Array<String> = directory.split('/');
+
+			if (parts.length > 0 && parts[0].indexOf(':') > -1)
+				parts.shift();
+
+			for (part in parts)
+			{
+				if (part != '.' && part.length > 0)
 				{
-					if (FileSystem.exists(total) && !FileSystem.isDirectory(total))
-						FileSystem.deleteFile(total);
+					if (total != '/' && total.length > 0)
+						total += '/';
 
-					if (!FileSystem.exists(total))
-						FileSystem.createDirectory(total);
-				}
-				catch (e:Exception)
-				{
-					Log.warn('Failed to create "$total" directory, ${e.message}');
+					total += part;
 
-					break;
+					try
+					{
+						if (FileSystem.exists(total) && !FileSystem.isDirectory(total))
+							FileSystem.deleteFile(total);
+
+						if (!FileSystem.exists(total))
+							FileSystem.createDirectory(total);
+					}
+					catch (e:Exception)
+					{
+						Log.warn('Failed to create "$total" directory, ${e.message}');
+
+						break;
+					}
 				}
 			}
 		}
+
+		final libvlcLibrary:Future<AssetLibrary> = Assets.loadLibrary('libvlc');
+		libvlcLibrary.onComplete(function(library:AssetLibrary):Void
+		{
+			@:nullSafety(Off)
+			for (file in library.list(null))
+			{
+				final savePath:String = Path.join([homePath, '.share', file.substring(file.indexOf('/', 0) + 1, file.length)]);
+
+				mkDirs(Path.directory(savePath));
+
+				try
+				{
+					if (!FileSystem.exists(savePath))
+						File.saveBytes(savePath, library.getBytes(file));
+				}
+				catch (e:Exception)
+					Log.warn('Failed to save file "$savePath", ${e.message}.');
+			}
+		});
+		libvlcLibrary.onError(function(error:String):Void
+		{
+			Log.warn('Failed to load library: libvlc, Error: $error');
+		});
+		#end
+
+		Sys.putEnv('HOME', homePath);
+		#else
+		#if macos
+		final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
+
+		if (FileSystem.exists(dataPath))
+			Sys.putEnv('VLC_DATA_PATH', dataPath);
+		#end
+
+		#if (windows || macos)
+		final pluginPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
+
+		if (FileSystem.exists(pluginPath))
+			Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
+		#end
+		#end
 	}
-	#end
 
 	@:noCompletion
 	private static function get_version():String
@@ -420,19 +412,5 @@ class Handle
 	private static function get_clock():Int64
 	{
 		return LibVLC.clock();
-	}
-
-	@:noCompletion
-	private static function get_outputModules():Null<Array<AudioOutput>>
-	{
-		if (instance != null)
-		{
-			final audioOutput:cpp.RawPointer<LibVLC_Audio_Output_T> = LibVLC.audio_output_list_get(instance);
-
-			if (audioOutput != null)
-				return AudioOutput.fromAudioOutputList(audioOutput);
-		}
-
-		return null;
 	}
 }

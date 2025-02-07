@@ -167,6 +167,7 @@ cd ../../../
 download_vlc
 
 # Make the output directory
+
 mkdir -p build/include
 mkdir -p build/lib
 

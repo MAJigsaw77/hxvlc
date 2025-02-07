@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "1.9.6",
-	"releasenote": "Various improvements.",
+	"version": "2.0.0",
+	"releasenote": "Switched to OpenAL, removed share dir by default, improved audio and texture handling, refined API.",
 	"contributors": [
 		"MAJigsaw77"
 	],

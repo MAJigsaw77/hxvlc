@@ -1,5 +1,8 @@
 name: Libs Building
 on: workflow_dispatch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   Android:
     strategy:
@@ -39,7 +42,9 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: androidBuild-${{ matrix.arch }}
-          path: build
+          path: |
+            build
+            LICENSE
           if-no-files-found: error
   iOS:
     strategy:
@@ -61,7 +66,9 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: iosBuild-${{ matrix.platform }}
-          path: build
+          path: |
+            build
+            LICENSE
           if-no-files-found: error
   Publisher:
     needs: [Android, iOS]
@@ -71,9 +78,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@main
-
-      - name: Delete Old Libraries
-        run: rm -rf project/vlc/lib/Android/* && rm -rf project/vlc/lib/iOS/*
 
       - name: Download Android arm64
         uses: actions/download-artifact@main
@@ -99,6 +103,16 @@ jobs:
           name: androidBuild-x86_64
           path: androidBuilds/x86_64
 
+      - name: Move Android Libs
+        run: |
+          rm -rf project/vlc/lib/Android/*
+          mkdir -p project/vlc/lib/Android
+          cp -r androidBuilds/arm64/build/lib/* project/vlc/lib/Android/
+          cp -r androidBuilds/armv7a/build/lib/* project/vlc/lib/Android/
+          cp -r androidBuilds/x86/build/lib/* project/vlc/lib/Android/
+          cp -r androidBuilds/x86_64/build/lib/* project/vlc/lib/Android/
+          rm -rf androidBuilds
+
       - name: Download iOS Phone
         uses: actions/download-artifact@main
         with:
@@ -111,11 +125,13 @@ jobs:
           name: iosBuild-simulator
           path: iosBuilds/simulator
 
-      - name: Move Android Libs
-        run: mkdir -p project/vlc/lib/Android && mv androidBuilds/*/build/lib/* project/vlc/lib/Android/
-
       - name: Move iOS Libs
-        run: mkdir -p project/vlc/lib/iOS && mv iosBuilds/*/build/lib/* project/vlc/lib/iOS/
+        run: |
+          rm -rf project/vlc/lib/iOS/*
+          mkdir -p project/vlc/lib/iOS
+          cp -r iosBuilds/phone/build/lib/* project/vlc/lib/iOS/
+          cp -r iosBuilds/simulator/build/lib/* project/vlc/lib/iOS/
+          rm -rf iosBuilds
 
       - name: Push to GitHub
         uses: stefanzweifel/git-auto-commit-action@master

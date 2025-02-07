@@ -646,33 +646,6 @@ extern class LibVLC
 	static function audio_set_format(mp:cpp.RawPointer<LibVLC_Media_Player_T>, format:cpp.ConstCharStar, rate:cpp.UInt32, channels:cpp.UInt32):Void;
 
 	/**
-	 * Gets the list of audio outputs.
-	 *
-	 * @param p_instance Pointer to the LibVLC instance.
-	 * @return Pointer to the list of audio outputs.
-	 */
-	@:native('libvlc_audio_output_list_get')
-	static function audio_output_list_get(p_instance:cpp.RawPointer<LibVLC_Instance_T>):cpp.RawPointer<LibVLC_Audio_Output_T>;
-
-	/**
-	 * Releases the list of audio outputs.
-	 *
-	 * @param p_list Pointer to the list of audio outputs.
-	 */
-	@:native('libvlc_audio_output_list_release')
-	static function audio_output_list_release(p_list:cpp.RawPointer<LibVLC_Audio_Output_T>):Void;
-
-	/**
-	 * Sets the audio output.
-	 *
-	 * @param p_mi Pointer to the media player.
-	 * @param psz_name Name of the audio output.
-	 * @return 0 on success, -1 on failure.
-	 */
-	@:native('libvlc_audio_output_set')
-	static function audio_output_set(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, psz_name:cpp.ConstCharStar):Int;
-
-	/**
 	 * Gets the audio delay.
 	 *
 	 * @param p_mi Pointer to the media player.
@@ -690,25 +663,6 @@ extern class LibVLC
 	 */
 	@:native('libvlc_audio_set_delay')
 	static function audio_set_delay(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_delay:cpp.Int64):Int;
-
-	/**
-	 * Gets the audio volume.
-	 *
-	 * @param p_mi Pointer to the media player.
-	 * @return The audio volume (0-100).
-	 */
-	@:native('libvlc_audio_get_volume')
-	static function audio_get_volume(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
-
-	/**
-	 * Sets the audio volume.
-	 *
-	 * @param p_mi Pointer to the media player.
-	 * @param i_volume The new audio volume (0-100).
-	 * @return 0 on success, -1 on failure.
-	 */
-	@:native('libvlc_audio_set_volume')
-	static function audio_set_volume(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_volume:Int):Int;
 
 	/**
 	 * Gets the number of audio tracks.
@@ -737,25 +691,6 @@ extern class LibVLC
 	 */
 	@:native('libvlc_audio_set_track')
 	static function audio_set_track(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_track:Int):Int;
-
-	/**
-	 * Gets the mute status.
-	 *
-	 * @param p_mi Pointer to the media player.
-	 * @return 1 if muted, 0 otherwise.
-	 */
-	@:native('libvlc_audio_get_mute')
-	static function audio_get_mute(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
-
-	/**
-	 * Sets the mute status.
-	 *
-	 * @param p_mi Pointer to the media player.
-	 * @param i_status 1 to mute, 0 to unmute.
-	 * @return 0 on success, -1 on failure.
-	 */
-	@:native('libvlc_audio_set_mute')
-	static function audio_set_mute(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_status:Int):Int;
 
 	/**
 	 * Gets the current audio channel.

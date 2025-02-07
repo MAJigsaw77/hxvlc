@@ -1,5 +1,8 @@
 package;
 
+#if FLX_TOUCH
+import flixel.input.touch.FlxTouch;
+#end
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -12,49 +15,62 @@ import hxvlc.util.Handle;
 import openfl.display.FPS;
 import sys.FileSystem;
 
+@:nullSafety
 class VideoState extends FlxState
 {
-	var video:FlxVideoSprite;
-	var versionInfo:FlxText;
-	var fpsInfo:FlxText;
-	var fps:FPS;
+	static final bigBuckBunny:String = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+
+	var video:Null<FlxVideoSprite>;
+	var versionInfo:Null<FlxText>;
+	var fpsInfo:Null<FlxText>;
+	var fps:Null<FPS>;
 
 	override function create():Void
 	{
-		video = new FlxVideoSprite(0, 0);
-		video.active = false;
-		video.antialiasing = true;
-		video.bitmap.onFormatSetup.add(function():Void
-		{
-			if (video.bitmap != null && video.bitmap.bitmapData != null)
-			{
-				final scale:Float = Math.min(FlxG.width / video.bitmap.bitmapData.width, FlxG.height / video.bitmap.bitmapData.height);
+		FlxG.autoPause = false;
 
-				video.setGraphicSize(video.bitmap.bitmapData.width * scale, video.bitmap.bitmapData.height * scale);
-				video.updateHitbox();
-				video.screenCenter();
-			}
-		});
-		video.bitmap.onEndReached.add(video.destroy);
+		setupVideoAsync();
 
-		try
+		setupUI();
+
+		super.create();
+	}
+
+	override function update(elapsed:Float):Void
+	{
+		if (fps != null && fpsInfo != null)
 		{
-			#if mobile
-			final file:String = FileSystem.readDirectory('./')[0];
+			#if HXVLC_ENABLE_STATS
+			@:nullSafety(Off)
+			if (video != null && video.bitmap != null && video.bitmap.stats != null)
+				fpsInfo.text = 'FPS ${fps.currentFPS}\n${video.bitmap.stats.toString()}';
+			else
+				fpsInfo.text = 'FPS ${fps.currentFPS}';
 			#else
-			final file:String = haxe.io.Path.join(['videos', FileSystem.readDirectory('videos')[0]]);
+			fpsInfo.text = 'FPS ${fps.currentFPS}';
+			#end
+		}
+
+		if (video != null && video.bitmap != null)
+		{
+			var justPressed:Bool = FlxG.keys.justPressed.SPACE;
+
+			#if FLX_TOUCH
+			final firstTouch:Null<FlxTouch> = FlxG.touches.getFirst();
+
+			if (firstTouch != null)
+				justPressed = firstTouch.justPressed;
 			#end
 
-			if (file != null && file.length > 0)
-				video.load(file);
-			else
-				video.load('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
+			if (justPressed)
+				video.bitmap.togglePaused();
 		}
-		catch (e:Dynamic)
-			video.load('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
 
-		add(video);
+		super.update(elapsed);
+	}
 
+	private function setupUI():Void
+	{
 		versionInfo = new FlxText(10, FlxG.height - 10, 0, 'LibVLC ${Handle.version}', 17);
 		versionInfo.setBorderStyle(OUTLINE, FlxColor.BLACK, 2);
 		versionInfo.font = FlxAssets.FONT_DEBUGGER;
@@ -75,29 +91,50 @@ class VideoState extends FlxState
 		fps = new FPS();
 		fps.visible = false;
 		FlxG.stage.addChild(fps);
-
-		FlxTimer.wait(0.001, function():Void
-		{
-			video.play();
-		});
-
-		super.create();
 	}
 
-	override function update(elapsed:Float):Void
+	private function setupVideoAsync():Void
 	{
-		if (fpsInfo != null)
+		Handle.initAsync(function(success:Bool):Void
 		{
-			#if HXVLC_ENABLE_STATS
-			if (video != null && video.bitmap != null && video.bitmap.stats != null)
-				fpsInfo.text = 'FPS ${fps.currentFPS}\n${video.bitmap.stats.toString()}';
-			else
-				fpsInfo.text = 'FPS ${fps.currentFPS}';
-			#else
-			fpsInfo.text = 'FPS ${fps.currentFPS}';
-			#end
-		}
+			if (!success)
+				return;
 
-		super.update(elapsed);
+			video = new FlxVideoSprite(0, 0);
+			video.active = false;
+			video.antialiasing = true;
+			video.bitmap.onFormatSetup.add(function():Void
+			{
+				if (video.bitmap != null && video.bitmap.bitmapData != null)
+				{
+					final scale:Float = Math.min(FlxG.width / video.bitmap.bitmapData.width, FlxG.height / video.bitmap.bitmapData.height);
+
+					video.setGraphicSize(video.bitmap.bitmapData.width * scale, video.bitmap.bitmapData.height * scale);
+					video.updateHitbox();
+					video.screenCenter();
+				}
+			});
+			video.bitmap.onEndReached.add(video.destroy);
+
+			try
+			{
+				final file:String = haxe.io.Path.join(['videos', FileSystem.readDirectory('videos')[0]]);
+
+				if (file != null && file.length > 0)
+					video.load(file);
+				else
+					video.load(bigBuckBunny);
+			}
+			catch (e:Dynamic)
+				video.load(bigBuckBunny);
+
+			if (versionInfo != null)
+				insert(members.indexOf(versionInfo), video);
+
+			FlxTimer.wait(0.001, function():Void
+			{
+				video.play();
+			});
+		});
 	}
 }

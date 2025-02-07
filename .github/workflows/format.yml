@@ -1,5 +1,8 @@
 name: Formatter
 on: workflow_dispatch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   Formatter:
     runs-on: ubuntu-24.04
