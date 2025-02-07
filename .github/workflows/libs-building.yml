@@ -75,9 +75,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@main
 
-      - name: Delete Old Libraries
-        run: rm -rf project/vlc/lib/Android/* && rm -rf project/vlc/lib/iOS/*
-
       - name: Download Android arm64
         uses: actions/download-artifact@main
         with:
@@ -102,6 +99,16 @@ jobs:
           name: androidBuild-x86_64
           path: androidBuilds/x86_64
 
+      - name: Move Android Libs
+        run: |
+          rm -rf project/vlc/lib/Android/*
+          mkdir -p project/vlc/lib/Android
+          cp -r androidBuilds/arm64/build/lib/* project/vlc/lib/Android/
+          cp -r androidBuilds/armv7a/build/lib/* project/vlc/lib/Android/
+          cp -r androidBuilds/x86/build/lib/* project/vlc/lib/Android/
+          cp -r androidBuilds/x86_64/build/lib/* project/vlc/lib/Android/
+          rm -rf androidBuilds
+
       - name: Download iOS Phone
         uses: actions/download-artifact@main
         with:
@@ -114,11 +121,13 @@ jobs:
           name: iosBuild-simulator
           path: iosBuilds/simulator
 
-      - name: Move Android Libs
-        run: mkdir -p project/vlc/lib/Android && find androidBuilds -type f -path "*/build/lib/*" -exec mv {} project/vlc/lib/Android/ \; && rm -rf androidBuilds
-
       - name: Move iOS Libs
-        run: mkdir -p project/vlc/lib/iOS && find iosBuilds -type f -path "*/build/lib/*" -exec mv {} project/vlc/lib/iOS/ \; && rm -rf iosBuilds
+        run: |
+          rm -rf project/vlc/lib/iOS/*
+          mkdir -p project/vlc/lib/iOS
+          cp -r iosBuilds/phone/build/lib/* project/vlc/lib/iOS/
+          cp -r iosBuilds/simulator/build/lib/* project/vlc/lib/iOS/
+          rm -rf iosBuilds
 
       - name: Push to GitHub
         uses: stefanzweifel/git-auto-commit-action@master
