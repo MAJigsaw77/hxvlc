@@ -1,5 +1,8 @@
 name: Libs Building
 on: workflow_dispatch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   Android:
     strategy:
@@ -112,10 +115,10 @@ jobs:
           path: iosBuilds/simulator
 
       - name: Move Android Libs
-        run: mkdir -p project/vlc/lib/Android && find androidBuilds -type f -path "*/build/lib/*" -exec mv {} project/vlc/lib/Android/ \;
+        run: mkdir -p project/vlc/lib/Android && find androidBuilds -type f -path "*/build/lib/*" -exec mv {} project/vlc/lib/Android/ \; && rm -rf androidBuilds
 
       - name: Move iOS Libs
-        run: mkdir -p project/vlc/lib/iOS && find iosBuilds -type f -path "*/build/lib/*" -exec mv {} project/vlc/lib/iOS/ \;
+        run: mkdir -p project/vlc/lib/iOS && find iosBuilds -type f -path "*/build/lib/*" -exec mv {} project/vlc/lib/iOS/ \; && rm -rf iosBuilds
 
       - name: Push to GitHub
         uses: stefanzweifel/git-auto-commit-action@master

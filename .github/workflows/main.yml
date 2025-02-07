@@ -15,6 +15,9 @@ on:
       - 'hxformat.json'
   pull_request:
   workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   Desktop:
     runs-on: ${{matrix.os}}-latest
