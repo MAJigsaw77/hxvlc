@@ -44,7 +44,7 @@ jobs:
           name: androidBuild-${{ matrix.arch }}
           path: |
             build
-            !**/.gitignore
+            LICENSE
           if-no-files-found: error
   iOS:
     strategy:
@@ -68,7 +68,7 @@ jobs:
           name: iosBuild-${{ matrix.platform }}
           path: |
             build
-            !**/.gitignore
+            LICENSE
           if-no-files-found: error
   Publisher:
     needs: [Android, iOS]
