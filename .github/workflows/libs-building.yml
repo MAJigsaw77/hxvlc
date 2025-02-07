@@ -112,10 +112,10 @@ jobs:
           path: iosBuilds/simulator
 
       - name: Move Android Libs
-        run: mkdir -p project/vlc/lib/Android && mv androidBuilds/*/build/lib/* project/vlc/lib/Android/
+        run: mkdir -p project/vlc/lib/Android && find androidBuilds -type f -path "*/build/lib/*" -exec mv {} project/vlc/lib/Android/ \;
 
       - name: Move iOS Libs
-        run: mkdir -p project/vlc/lib/iOS && mv iosBuilds/*/build/lib/* project/vlc/lib/iOS/
+        run: mkdir -p project/vlc/lib/iOS && find iosBuilds -type f -path "*/build/lib/*" -exec mv {} project/vlc/lib/iOS/ \;
 
       - name: Push to GitHub
         uses: stefanzweifel/git-auto-commit-action@master

@@ -110,7 +110,7 @@ mkdir -p ../build/lib
 # Copy files to the output directory
 cp -r vlc/build-android-$TARGET_TUPLE/install/include/* ../build/include/
 cp libvlc/jni/libs/$JNI_DIR_NAME/libvlc.so ../build/lib/libvlc-$NUMBER_ARCH.so
-cp $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$HOST_TAG/sysroot/usr/lib/$TARGET_TUPLE/libc++_shared.so ../build/lib/libc++_shared-$NUMBER_ARCH.so
+cp libvlc/jni/libs/$JNI_DIR_NAME/libc++_shared.so ../build/lib/libc++_shared-$NUMBER_ARCH.so
 
 # Finish
 echo ""
