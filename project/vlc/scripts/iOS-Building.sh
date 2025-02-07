@@ -29,7 +29,7 @@ else
 	exit 1
 fi
 
-# First, get "vlckit" source.
+# First, get "vlckit" source for thier libvlc patches.
 git clone https://code.videolan.org/videolan/VLCKit.git --depth=1 --recursive -b 3.0
 
 # Function to reoder Git patches.
@@ -74,6 +74,11 @@ download_vlc()
 
 		git checkout -B localBranch ${TESTEDHASH}
 		git branch --set-upstream-to=3.0.x localBranch
+
+		# Apply our "build.sh" fix.
+		git apply --whitespace=fix ../project/vlc/scripts/patches/iOS/*.patch
+
+		# Apply "VLCKit" patches.
 		git am --whitespace=fix ../VLCKit/libvlc/patches/*.patch
 
 		if [ $? -ne 0 ]; then
@@ -88,6 +93,11 @@ download_vlc()
 
 		git fetch --all
 		git reset --hard ${TESTEDHASH}
+
+		# Apply our "build.sh" fix.
+		git apply --whitespace=fix ../project/vlc/scripts/patches/iOS/*.patch
+
+		# Apply "VLCKit" patches.
 		git am --whitespace=fix ../VLCKit/libvlc/patches/*.patch
 
 		cd ..

@@ -63,3 +63,61 @@ jobs:
           name: iosBuild-${{ matrix.platform }}
           path: build
           if-no-files-found: error
+  Publisher:
+    needs: [Android, iOS]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@main
+
+      - name: Delete Old Libraries
+        run: rm -rf project/vlc/lib/Android/* && rm -rf project/vlc/lib/iOS/*
+
+      - name: Download Android arm64
+        uses: actions/download-artifact@main
+        with:
+          name: androidBuild-arm64
+          path: androidBuilds/arm64
+
+      - name: Download Android armv7a
+        uses: actions/download-artifact@main
+        with:
+          name: androidBuild-armv7a
+          path: androidBuilds/armv7a
+
+      - name: Download Android x86
+        uses: actions/download-artifact@main
+        with:
+          name: androidBuild-x86
+          path: androidBuilds/x86
+
+      - name: Download Android x86_64
+        uses: actions/download-artifact@main
+        with:
+          name: androidBuild-x86_64
+          path: androidBuilds/x86_64
+
+      - name: Download iOS Phone
+        uses: actions/download-artifact@main
+        with:
+          name: iosBuild-phone
+          path: iosBuilds/phone
+
+      - name: Download iOS Simulator
+        uses: actions/download-artifact@main
+        with:
+          name: iosBuild-simulator
+          path: iosBuilds/simulator
+
+      - name: Move Android Libs
+        run: mkdir -p project/vlc/lib/Android && mv androidBuilds/*/build/lib/* project/vlc/lib/Android/
+
+      - name: Move iOS Libs
+        run: mkdir -p project/vlc/lib/iOS && mv iosBuilds/*/build/lib/* project/vlc/lib/iOS/
+
+      - name: Push to GitHub
+        uses: stefanzweifel/git-auto-commit-action@master
+        with:
+          commit_message: "Update Android and iOS libs."
