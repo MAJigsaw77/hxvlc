@@ -1,8 +1,5 @@
 package;
 
-#if FLX_TOUCH
-import flixel.input.touch.FlxTouch;
-#end
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -53,17 +50,18 @@ class VideoState extends FlxState
 
 		if (video != null && video.bitmap != null)
 		{
-			var justPressed:Bool = FlxG.keys.justPressed.SPACE;
-
-			#if FLX_TOUCH
-			final firstTouch:Null<FlxTouch> = FlxG.touches.getFirst();
-
-			if (firstTouch != null)
-				justPressed = firstTouch.justPressed;
-			#end
-
-			if (justPressed)
+			if (FlxG.keys.justPressed.SPACE)
 				video.bitmap.togglePaused();
+
+			if (FlxG.keys.justPressed.LEFT)
+				video.bitmap.position -= 0.1;
+			else if (FlxG.keys.justPressed.RIGHT)
+				video.bitmap.position += 0.1;
+
+			if (FlxG.keys.justPressed.A)
+				video.bitmap.rate -= 0.01;
+			else if (FlxG.keys.justPressed.D)
+				video.bitmap.rate += 0.01;
 		}
 
 		super.update(elapsed);

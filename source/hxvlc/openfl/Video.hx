@@ -6,6 +6,7 @@ import haxe.Int64;
 import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
+import hxvlc.util.macros.Define;
 #if HXVLC_ENABLE_STATS
 import hxvlc.util.Stats;
 #end
@@ -122,15 +123,6 @@ static void audio_pause(void *data, int64_t pts)
 	hx::SetTopOfStack((int *)0, true);
 }
 
-static void audio_resume(void *data, int64_t pts)
-{
-	hx::SetTopOfStack((int *)99, true);
-
-	reinterpret_cast<Video_obj *>(data)->audioResume(pts);
-
-	hx::SetTopOfStack((int *)0, true);
-}
-
 static void audio_flush(void *data, int64_t pts)
 {
 	hx::SetTopOfStack((int *)99, true);
@@ -170,6 +162,16 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 }')
 class Video extends openfl.display.Bitmap
 {
+	#if lime_openal
+	/**
+	 * The number of buffers that used for the buffer pool.
+	 * 
+	 * @see https://github.com/videolan/vlc/blob/0ddf69feccd687f0a694aeeefbc31c76074103ec/modules/audio_output/android/opensles.c#L42.
+	 */
+	@:noCompletion
+	private static final MAX_AUDIO_BUFFER_COUNT:Int = Define.getInt('HXVLC_MAX_AUDIO_BUFFER_COUNT', 255);
+	#end
+
 	/**
 	 * Indicates whether to use GPU texture for rendering.
 	 *
@@ -410,7 +412,7 @@ class Video extends openfl.display.Bitmap
 	private var alSource:Null<ALSource>;
 
 	@:noCompletion
-	private var alBuffers:Null<Array<ALBuffer>>;
+	private var alBufferPool:Null<Array<ALBuffer>>;
 
 	@:noCompletion
 	private var alFormat:Int = 0;
@@ -573,17 +575,11 @@ class Video extends openfl.display.Bitmap
 				LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), untyped NULL);
 
 				#if lime_openal
-				if (alUseEXTMCFORMATS == null)
-					alUseEXTMCFORMATS = AL.isExtensionPresent('AL_EXT_MCFORMATS');
-
 				if (alSource == null)
 					alSource = AL.createSource();
-
-				if (alBuffers == null)
-					alBuffers = AL.genBuffers(128);
 				#end
 
-				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'),
+				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped NULL,
 					untyped __cpp__('audio_flush'), untyped NULL, untyped __cpp__('this'));
 				LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 				LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
@@ -911,10 +907,10 @@ class Video extends openfl.display.Bitmap
 			alSource = null;
 		}
 
-		if (alBuffers != null)
+		if (alBufferPool != null)
 		{
-			AL.deleteBuffers(alBuffers);
-			alBuffers = null;
+			AL.deleteBuffers(alBufferPool);
+			alBufferPool = null;
 		}
 
 		alSamplesBuffer = [];
@@ -1173,17 +1169,6 @@ class Video extends openfl.display.Bitmap
 		return __bitmapData;
 	}
 
-	// These functions act as Haxe interop methods that are called from the C++ glue code.
-	// They handle critical operations for video and audio playback, including locking/unlocking
-	// textures, managing memory for video planes, synchronizing with GPU or CPU-based rendering,
-	// and interfacing with the audio subsystem for playback, pause, and volume control.
-	//
-	// The functions interact with raw pointers from the C++ layer, handling tasks such as
-	// memory allocation, pointer manipulation, and format setup for video and audio streams.
-	// Mutexes are used to ensure thread-safe access to shared resources like textures and audio buffers.
-	// The functions also coordinate between the Haxe main loop and the underlying C++ systems,
-	// ensuring operations that need to run on the main thread (e.g., rendering) are properly synchronized.
-
 	@:keep
 	@:noCompletion
 	@:unreflective
@@ -1208,7 +1193,6 @@ class Video extends openfl.display.Bitmap
 		if (untyped __cpp__('{0} >= {1}', mediaOffset, mediaSize))
 		{
 			mediaMutex.release();
-
 			return 0;
 		}
 
@@ -1217,7 +1201,6 @@ class Video extends openfl.display.Bitmap
 		if (mediaData == null || untyped __cpp__('{0} > {1} - {2}', mediaOffset, mediaSize, toRead))
 		{
 			mediaMutex.release();
-
 			return -1;
 		}
 
@@ -1240,7 +1223,6 @@ class Video extends openfl.display.Bitmap
 		if (untyped __cpp__('{0} > {1}', offset, mediaSize))
 		{
 			mediaMutex.release();
-
 			return -1;
 		}
 
@@ -1409,70 +1391,37 @@ class Video extends openfl.display.Bitmap
 	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32, pts:cpp.Int64):Void
 	{
 		#if lime_openal
-		if (alSource != null && alBuffers != null)
+		if (alSource != null && alBufferPool != null)
 		{
 			alMutex.acquire();
-
-			if (alSamplesBuffer == null)
-				alSamplesBuffer = new BytesData();
-
-			cpp.NativeArray.setUnmanagedData(alSamplesBuffer, cast samples, count);
 
 			final processedBuffers:Int = AL.getSourcei(alSource, AL.BUFFERS_PROCESSED);
 
 			if (processedBuffers > 0)
 			{
 				for (alBuffer in AL.sourceUnqueueBuffers(alSource, processedBuffers))
-					alBuffers.push(alBuffer);
+					alBufferPool.push(alBuffer);
 			}
 
-			if (alBuffers.length > 0)
+			if (alBufferPool.length > MAX_AUDIO_BUFFER_COUNT)
+				alBufferPool.splice(MAX_AUDIO_BUFFER_COUNT, alBufferPool.length - MAX_AUDIO_BUFFER_COUNT);
+
+			if (alBufferPool.length > 0)
 			{
-				final alBuffer:Null<ALBuffer> = alBuffers.shift();
+				final alBuffer:Null<ALBuffer> = alBufferPool.shift();
 
 				if (alBuffer != null)
 				{
+					if (alSamplesBuffer == null)
+						alSamplesBuffer = new BytesData();
+
+					cpp.NativeArray.setUnmanagedData(alSamplesBuffer, cast samples, count);
+
 					AL.bufferData(alBuffer, alFormat, UInt8Array.fromBytes(Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * alFrameSize, alSampleRate);
 
 					AL.sourceQueueBuffer(alSource, alBuffer);
-
-					if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
-						AL.sourcePlay(alSource);
 				}
 			}
-
-			alMutex.release();
-		}
-		#end
-	}
-
-	@:keep
-	@:noCompletion
-	@:unreflective
-	private function audioPause(pts:cpp.Int64):Void
-	{
-		#if lime_openal
-		if (alSource != null)
-		{
-			alMutex.acquire();
-
-			if (AL.getSourcei(alSource, AL.SOURCE_STATE) == AL.PLAYING)
-				AL.sourcePause(alSource);
-
-			alMutex.release();
-		}
-		#end
-	}
-
-	@:keep
-	@:noCompletion
-	@:unreflective
-	private function audioResume(pts:cpp.Int64):Void
-	{
-		#if lime_openal
-		if (alSource != null)
-		{
-			alMutex.acquire();
 
 			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
 				AL.sourcePlay(alSource);
@@ -1485,23 +1434,33 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function audioFlush(pts:cpp.Int64):Void
+	private function audioPause(pts:cpp.Int64):Void
 	{
 		#if lime_openal
-		if (alSource != null && alBuffers != null)
+		if (alSource != null && alBufferPool != null)
 		{
 			alMutex.acquire();
 
-			if (AL.getSourcei(alSource, AL.SOURCE_STATE) == AL.PLAYING)
+			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PAUSED)
+				AL.sourcePause(alSource);
+
+			alMutex.release();
+		}
+		#end
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private function audioFlush(pts:cpp.Int64):Void
+	{
+		#if lime_openal
+		if (alSource != null && alBufferPool != null)
+		{
+			alMutex.acquire();
+
+			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.STOPPED)
 				AL.sourceStop(alSource);
-
-			final processedBuffers:Int = AL.getSourcei(alSource, AL.BUFFERS_PROCESSED);
-
-			if (processedBuffers > 0)
-			{
-				for (alBuffer in AL.sourceUnqueueBuffers(alSource, processedBuffers))
-					alBuffers.push(alBuffer);
-			}
 
 			alMutex.release();
 		}
@@ -1520,6 +1479,12 @@ class Video extends openfl.display.Bitmap
 
 		if (currentFormat != 'S16N')
 			cpp.Stdlib.nativeMemcpy(untyped format, untyped cpp.CastCharStar.fromString('S16N'), 4);
+
+		if (alUseEXTMCFORMATS == null)
+			alUseEXTMCFORMATS = AL.isExtensionPresent('AL_EXT_MCFORMATS');
+
+		if (alBufferPool == null)
+			alBufferPool = AL.genBuffers(MAX_AUDIO_BUFFER_COUNT);
 
 		alSampleRate = rate[0];
 
