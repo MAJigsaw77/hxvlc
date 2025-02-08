@@ -212,12 +212,17 @@ class Handle
 			#if (windows || macos)
 			final pluginPath:Null<String> = Sys.getEnv('VLC_PLUGIN_PATH');
 
-			if (pluginPath != null && FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])))
+			if (pluginPath != null)
 			{
-				if (resetCache == true)
-					args.push_back("--reset-plugins-cache");
+				if (FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])))
+				{
+					if (resetCache == true)
+						args.push_back("--reset-plugins-cache");
+					else
+						args.push_back("--no-plugins-scan");
+				}
 				else
-					args.push_back("--no-plugins-scan");
+					args.push_back("--reset-plugins-cache");
 			}
 			#end
 
