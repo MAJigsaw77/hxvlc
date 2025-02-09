@@ -892,7 +892,7 @@ class Video extends openfl.display.Bitmap
 
 		if (alSource != null)
 		{
-			if (AL.getSourcei(alSource, AL.SOURCE_STATE) == AL.PLAYING)
+			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.STOPPED)
 				AL.sourceStop(alSource);
 
 			final queuedBuffers:Int = AL.getSourcei(alSource, AL.BUFFERS_QUEUED);
