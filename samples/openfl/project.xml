@@ -49,9 +49,11 @@
 
 	<undefine name="openfl-disable-handle-error" if="debug" />
 
-	<!--Full Dead Code Elimination-->
+	<!--Code Cleanup and Full Compile of Classes-->
 
 	<haxeflag name="-dce" value="full" />
+
+	<haxeflag name="--macro" value="include('hxvlc')" />
 
 	<!--Pretty Message Reporting-->
 

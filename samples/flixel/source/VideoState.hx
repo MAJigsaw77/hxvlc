@@ -6,7 +6,6 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import flixel.FlxG;
 import flixel.FlxState;
-import hxvlc.flixel.FlxVideo;
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.util.Handle;
 import openfl.display.FPS;
