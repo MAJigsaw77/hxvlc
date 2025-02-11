@@ -16,7 +16,7 @@
 
 	<!--Window Settings-->
 
-	<window orientation="landscape" allow-high-dpi="true" background="#000000" />
+	<window orientation="landscape" background="#000000" />
 
 	<!--Path Settings-->
 
@@ -40,10 +40,6 @@
 		<haxedef name="HXVLC_VERBOSE" value="2" />
 		<haxedef name="HXVLC_LOGGING" />
 	</section>
-
-	<!--DPI Awareness-->
-
-	<haxedef name="openfl_dpi_aware" />
 
 	<!--Undefinitions-->
 

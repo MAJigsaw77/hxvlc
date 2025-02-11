@@ -18,8 +18,6 @@
 
 	<window orientation="landscape" width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false" fullscreen="false" resizable="true" />
 
-	<window allow-high-dpi="true" unless="web" />
-	
 	<window fullscreen="true" resizable="false" if="mobile" />
 
 	<!--Path Settings-->
@@ -47,10 +45,6 @@
 		<haxedef name="HXVLC_VERBOSE" value="2" />
 		<haxedef name="HXVLC_LOGGING" />
 	</section>
-
-	<!--DPI Awareness-->
-
-	<haxedef name="openfl_dpi_aware" unless="web" />
 
 	<!--Undefinitions-->
 
