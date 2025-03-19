@@ -25,9 +25,9 @@ class VideoState extends FlxState
 	{
 		FlxG.autoPause = false;
 
-		setupVideoAsync();
-
 		setupUI();
+
+		setupVideo();
 
 		super.create();
 	}
@@ -38,10 +38,12 @@ class VideoState extends FlxState
 		{
 			#if HXVLC_ENABLE_STATS
 			@:nullSafety(Off)
-			if (video != null && video.bitmap != null && video.bitmap.stats != null)
-				fpsInfo.text = 'FPS ${fps.currentFPS}\n${video.bitmap.stats.toString()}';
-			else
-				fpsInfo.text = 'FPS ${fps.currentFPS}';
+			{
+				if (video != null && video.bitmap != null && video.bitmap.stats != null)
+					fpsInfo.text = 'FPS ${fps.currentFPS}\n${video.bitmap.stats.toString()}';
+				else
+					fpsInfo.text = 'FPS ${fps.currentFPS}';
+			}
 			#else
 			fpsInfo.text = 'FPS ${fps.currentFPS}';
 			#end
@@ -63,11 +65,16 @@ class VideoState extends FlxState
 				video.bitmap.rate += 0.01;
 		}
 
+		if (Handle.loading)
+			trace("LOADING...");
+
 		super.update(elapsed);
 	}
 
 	private function setupUI():Void
 	{
+		FlxG.camera.bgColor = FlxColor.MAGENTA;
+
 		versionInfo = new FlxText(10, FlxG.height - 10, 0, 'LibVLC ${Handle.version}', 17);
 		versionInfo.setBorderStyle(OUTLINE, FlxColor.BLACK, 2);
 		versionInfo.font = FlxAssets.FONT_DEBUGGER;
@@ -90,7 +97,8 @@ class VideoState extends FlxState
 		FlxG.stage.addChild(fps);
 	}
 
-	private function setupVideoAsync():Void
+	@:nullSafety(Off)
+	private function setupVideo():Void
 	{
 		Handle.initAsync(function(success:Bool):Void
 		{
