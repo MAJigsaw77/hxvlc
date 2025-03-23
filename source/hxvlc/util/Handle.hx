@@ -53,6 +53,7 @@ using StringTools;
 #else
 	vprintf(fmt, args);
 	putchar(\'\\n\');
+	fflush(stdout);
 #endif
 
 	hx::SetTopOfStack((int *)0, true);
