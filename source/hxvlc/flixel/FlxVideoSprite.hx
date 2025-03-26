@@ -8,7 +8,7 @@ import flixel.FlxSprite;
 import haxe.io.Bytes;
 import haxe.io.Path;
 import hxvlc.externs.Types;
-import hxvlc.util.macros.Define;
+import hxvlc.util.macros.DefineMacro;
 import hxvlc.util.Location;
 import hxvlc.openfl.Video;
 import openfl.utils.Assets;
@@ -61,7 +61,7 @@ class FlxVideoSprite extends FlxSprite
 
 	/**
 	 * Creates a `FlxVideoSprite` at a specified position.
-	 *
+	 * 
 	 * @param x The initial X position of the sprite.
 	 * @param y The initial Y position of the sprite.
 	 */
@@ -102,7 +102,7 @@ class FlxVideoSprite extends FlxSprite
 
 	/**
 	 * Loads a video from the specified location.
-	 *
+	 * 
 	 * @param location The location of the media file or stream.
 	 * @param options Additional options to configure the media.
 	 * @return `true` if the media was loaded successfully, `false` otherwise.
@@ -167,7 +167,7 @@ class FlxVideoSprite extends FlxSprite
 
 	/**
 	 * Loads a media subitem from the current media's subitems list at the specified index.
-	 *
+	 * 
 	 * @param index The index of the subitem to load.
 	 * @param options Additional options to configure the loaded subitem.
 	 * @return `true` if the subitem was loaded successfully, `false` otherwise.
@@ -179,7 +179,7 @@ class FlxVideoSprite extends FlxSprite
 
 	/**
 	 * Parses the current media item with the specified options.
-	 *
+	 * 
 	 * @param parse_flag The parsing option.
 	 * @param timeout The timeout in milliseconds.
 	 * @return `true` if parsing succeeded, `false` otherwise.
@@ -199,7 +199,7 @@ class FlxVideoSprite extends FlxSprite
 
 	/**
 	 * Starts video playback.
-	 *
+	 * 
 	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
 	public inline function play():Bool
@@ -310,7 +310,7 @@ class FlxVideoSprite extends FlxSprite
 	@:noCompletion
 	private function onVolumeChange(vol:Float):Void
 	{
-		final currentVolume:Int = Math.floor((vol * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 125)) * volumeAdjust);
+		final currentVolume:Int = Math.floor((vol * DefineMacro.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 125)) * volumeAdjust);
 
 		if (bitmap.volume != currentVolume)
 			bitmap.volume = currentVolume;

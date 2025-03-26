@@ -6,7 +6,7 @@ import flixel.FlxG;
 import haxe.io.Bytes;
 import haxe.io.Path;
 import hxvlc.externs.Types;
-import hxvlc.util.macros.Define;
+import hxvlc.util.macros.DefineMacro;
 import hxvlc.util.Location;
 import hxvlc.openfl.Video;
 import openfl.utils.Assets;
@@ -51,7 +51,7 @@ class FlxVideo extends Video
 
 	/**
 	 * Initializes a FlxVideo object.
-	 *
+	 * 
 	 * @param smoothing Whether or not the video is smoothed when scaled.
 	 */
 	public function new(smoothing:Bool = true):Void
@@ -87,7 +87,7 @@ class FlxVideo extends Video
 
 	/**
 	 * Loads a video.
-	 *
+	 * 
 	 * @param location The local filesystem path, the media location URL, the ID of an open file descriptor, or the bitstream input.
 	 * @param options Additional options to add to the LibVLC Media.
 	 * @return `true` if the video loaded successfully, `false` otherwise.
@@ -229,7 +229,7 @@ class FlxVideo extends Video
 	@:noCompletion
 	private function onVolumeChange(vol:Float):Void
 	{
-		final currentVolume:Int = Math.floor((vol * Define.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 125)) * volumeAdjust);
+		final currentVolume:Int = Math.floor((vol * DefineMacro.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 125)) * volumeAdjust);
 
 		if (volume != currentVolume)
 			volume = currentVolume;

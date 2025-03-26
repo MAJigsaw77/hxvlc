@@ -63,6 +63,9 @@ class VideoState extends FlxState
 				video.bitmap.rate -= 0.01;
 			else if (FlxG.keys.justPressed.D)
 				video.bitmap.rate += 0.01;
+
+			if (FlxG.keys.justPressed.ESCAPE)
+				video.bitmap.onEndReached.dispatch();
 		}
 
 		if (Handle.loading)

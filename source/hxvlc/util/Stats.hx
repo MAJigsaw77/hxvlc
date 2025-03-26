@@ -107,7 +107,7 @@ class Stats
 
 	/**
 	 * Returns a string representation of the Stats object.
-	 *
+	 * 
 	 * @return A string containing all the properties of the Stats object.
 	 */
 	@:keep
@@ -134,7 +134,7 @@ class Stats
 
 	/**
 	 * Constructs a Stats object from raw LibVLC media statistics.
-	 *
+	 * 
 	 * @param media_stats The LibVLC media statistics.
 	 * @return A Stats object populated with the provided media statistics.
 	 */

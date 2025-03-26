@@ -1,12 +1,13 @@
 package hxvlc.openfl;
 
+import hxvlc.util.macros.MainLoopMacro;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
 import haxe.Int64;
 import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
-import hxvlc.util.macros.Define;
+import hxvlc.util.macros.DefineMacro;
 #if HXVLC_ENABLE_STATS
 import hxvlc.util.Stats;
 #end
@@ -30,6 +31,8 @@ using StringTools;
 /**
  * This class is a video player that uses LibVLC for seamless integration with OpenFL display objects.
  */
+@:access(openfl.display.BitmapData)
+@:access(openfl.display3D.textures.TextureBase)
 @:cppNamespaceCode('static int media_open(void *opaque, void **datap, uint64_t *sizep)
 {
 	(*datap) = opaque;
@@ -169,7 +172,7 @@ class Video extends openfl.display.Bitmap
 	 * @see https://github.com/videolan/vlc/blob/0ddf69feccd687f0a694aeeefbc31c76074103ec/modules/audio_output/android/opensles.c#L42.
 	 */
 	@:noCompletion
-	private static final MAX_AUDIO_BUFFER_COUNT:Int = Define.getInt('HXVLC_MAX_AUDIO_BUFFER_COUNT', 255);
+	private static final MAX_AUDIO_BUFFER_COUNT:Int = DefineMacro.getInt('HXVLC_MAX_AUDIO_BUFFER_COUNT', 255);
 	#end
 
 	/**
@@ -393,13 +396,7 @@ class Video extends openfl.display.Bitmap
 	private var textureHeight:cpp.UInt32 = 0;
 
 	@:noCompletion
-	private var texturePlanes:Null<cpp.RawPointer<cpp.UInt8>>;
-
-	@:noCompletion
 	private var texturePlanesBuffer:Null<BytesData>;
-
-	@:noCompletion
-	private var texture:Null<RectangleTexture>;
 
 	#if lime_openal
 	@:noCompletion
@@ -429,16 +426,12 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Initializes a Video object.
-	 *
+	 * 
 	 * @param smoothing Whether or not the object is smoothed when scaled.
 	 */
 	public function new(smoothing:Bool = true):Void
 	{
 		super(null, AUTO, smoothing);
-
-		#if HXVLC_VIDEO_FINALIZER
-		cpp.vm.Gc.setFinalizer(this, cpp.Function.fromStaticFunction(finalize));
-		#end
 
 		while (Handle.loading)
 			Sys.sleep(0.05);
@@ -448,7 +441,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Loads media from the specified location.
-	 *
+	 * 
 	 * @param location The location of the media file or stream.
 	 * @param options Additional options to configure the media.
 	 * @return `true` if the media was loaded successfully, `false` otherwise.
@@ -613,7 +606,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Loads a media subitem from the current media's subitems list at the specified index.
-	 *
+	 * 
 	 * @param index The index of the subitem to load.
 	 * @param options Additional options to configure the loaded subitem.
 	 * @return `true` if the subitem was loaded successfully, `false` otherwise.
@@ -667,7 +660,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Parses the current media item with the specified options.
-	 *
+	 * 
 	 * @param parse_flag The parsing option.
 	 * @param timeout The timeout in milliseconds.
 	 * @return `true` if parsing succeeded, `false` otherwise.
@@ -716,7 +709,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Starts playback.
-	 *
+	 * 
 	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
 	public function play():Bool
@@ -780,7 +773,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Retrieves metadata for the current media item.
-	 *
+	 * 
 	 * @param e_meta The metadata type.
 	 * @return The metadata value as a string, or `null` if not available.
 	 */
@@ -804,7 +797,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Sets metadata for the current media item.
-	 *
+	 * 
 	 * @param e_meta The metadata type.
 	 * @param value The metadata value.
 	 */
@@ -821,7 +814,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Saves the metadata of the current media item.
-	 *
+	 * 
 	 * @return `true` if the metadata was saved successfully, `false` otherwise.
 	 */
 	public function saveMeta():Bool
@@ -840,7 +833,6 @@ class Video extends openfl.display.Bitmap
 	/**
 	 * Frees the memory that is used to store the Video object.
 	 */
-	@:nullSafety(Off)
 	public function dispose():Void
 	{
 		if (mediaPlayer != null)
@@ -865,25 +857,15 @@ class Video extends openfl.display.Bitmap
 
 		if (bitmapData != null)
 		{
-			bitmapData.dispose();
-			bitmapData = null;
-		}
+			if (bitmapData.__texture != null)
+				bitmapData.__texture.dispose();
 
-		if (texture != null)
-		{
-			texture.dispose();
-			texture = null;
+			bitmapData.dispose();
 		}
 
 		textureWidth = textureHeight = 0;
 
-		if (texturePlanes != null)
-		{
-			untyped __cpp__('delete[] {0}', texturePlanes);
-			texturePlanes = null;
-		}
-
-		texturePlanesBuffer = [];
+		texturePlanesBuffer = null;
 
 		textureMutex.release();
 
@@ -913,7 +895,7 @@ class Video extends openfl.display.Bitmap
 			alBufferPool = null;
 		}
 
-		alSamplesBuffer = [];
+		alSamplesBuffer = null;
 
 		alMutex.release();
 		#end
@@ -1240,8 +1222,8 @@ class Video extends openfl.display.Bitmap
 	{
 		textureMutex.acquire();
 
-		if (texturePlanes != null)
-			planes[0] = untyped texturePlanes;
+		if (texturePlanesBuffer != null)
+			planes[0] = untyped cpp.NativeArray.getBase(texturePlanesBuffer).getBase();
 
 		return untyped nullptr;
 	}
@@ -1259,23 +1241,20 @@ class Video extends openfl.display.Bitmap
 	@:unreflective
 	private function videoDisplay(picture:cpp.RawPointer<cpp.Void>):Void
 	{
-		if ((__renderable || forceRendering) && texturePlanes != null)
+		if (__renderable || forceRendering)
 		{
-			if (texture != null || (bitmapData != null && bitmapData.image != null))
-			{
-				MainLoop.runInMainThread(function():Void
+			MainLoopMacro.runInMainThreadSafe({
+				if (texturePlanesBuffer != null)
 				{
 					textureMutex.acquire();
 
-					if (texturePlanesBuffer == null)
-						texturePlanesBuffer = new BytesData();
-
-					cpp.NativeArray.setUnmanagedData(texturePlanesBuffer, cast texturePlanes, textureWidth * textureHeight * 4);
-
-					if (texture != null)
-						texture.uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanesBuffer)));
-					else if (bitmapData != null && bitmapData.image != null)
-						bitmapData.setPixels(bitmapData.rect, Bytes.ofData(texturePlanesBuffer));
+					if (bitmapData != null)
+					{
+						if (bitmapData.__texture != null)
+							cast(bitmapData.__texture, RectangleTexture).uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanesBuffer)));
+						else if (bitmapData.image != null)
+							bitmapData.setPixels(bitmapData.rect, Bytes.ofData(texturePlanesBuffer));
+					}
 
 					if (__renderable)
 						__setRenderDirty();
@@ -1283,13 +1262,11 @@ class Video extends openfl.display.Bitmap
 					onDisplay.dispatch();
 
 					textureMutex.release();
-				});
-			}
+				}
+			});
 		}
 	}
 
-	@:access(openfl.display.BitmapData)
-	@:access(openfl.display3D.textures.TextureBase)
 	@:keep
 	@:noCompletion
 	@:unreflective
@@ -1320,12 +1297,12 @@ class Video extends openfl.display.Bitmap
 			width[0] = textureWidth;
 			height[0] = textureHeight;
 
-			if (texturePlanes == null || (originalWidth != textureWidth || originalHeight != textureHeight))
+			if (originalWidth != textureWidth || originalHeight != textureHeight)
 			{
-				if (texturePlanes != null)
-					untyped __cpp__('delete[] {0}', texturePlanes);
+				if (texturePlanesBuffer == null)
+					texturePlanesBuffer = new BytesData();
 
-				texturePlanes = untyped __cpp__('new unsigned char[{0}]', textureWidth * textureHeight * 4);
+				texturePlanesBuffer.resize(textureWidth * textureHeight * 4);
 			}
 		}
 		else
@@ -1333,10 +1310,10 @@ class Video extends openfl.display.Bitmap
 			textureWidth = originalWidth;
 			textureHeight = originalHeight;
 
-			if (texturePlanes != null)
-				untyped __cpp__('delete[] {0}', texturePlanes);
+			if (texturePlanesBuffer == null)
+				texturePlanesBuffer = new BytesData();
 
-			texturePlanes = untyped __cpp__('new unsigned char[{0}]', textureWidth * textureHeight * 4);
+			texturePlanesBuffer.resize(textureWidth * textureHeight * 4);
 		}
 
 		pitches[0] = textureWidth * 4;
@@ -1348,25 +1325,21 @@ class Video extends openfl.display.Bitmap
 			|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
 			|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
 		{
-			MainLoop.runInMainThread(function():Void
-			{
+			MainLoopMacro.runInMainThreadSafe({
 				textureMutex.acquire();
 
 				if (bitmapData != null)
-					bitmapData.dispose();
-
-				if (texture != null)
 				{
-					texture.dispose();
-					texture = null;
+					if (bitmapData.__texture != null)
+						bitmapData.__texture.dispose();
+
+					bitmapData.dispose();
 				}
 
 				if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
 				{
-					texture = Lib.current.stage.context3D.createRectangleTexture(textureWidth, textureHeight, openfl.display3D.Context3DTextureFormat.BGRA,
-						true);
-
-					bitmapData = BitmapData.fromTexture(texture);
+					bitmapData = BitmapData.fromTexture(Lib.current.stage.context3D.createRectangleTexture(textureWidth, textureHeight,
+						openfl.display3D.Context3DTextureFormat.BGRA, true));
 				}
 				else
 				{
@@ -1542,54 +1515,47 @@ class Video extends openfl.display.Bitmap
 		switch (p_event[0].type)
 		{
 			case event if (event == LibVLC_MediaPlayerOpening):
-				MainLoop.runInMainThread(onOpening.dispatch.bind());
+				MainLoopMacro.runInMainThreadSafe(onOpening.dispatch());
 			case event if (event == LibVLC_MediaPlayerPlaying):
-				MainLoop.runInMainThread(onPlaying.dispatch.bind());
+				MainLoopMacro.runInMainThreadSafe(onPlaying.dispatch());
 			case event if (event == LibVLC_MediaPlayerStopped):
-				MainLoop.runInMainThread(onStopped.dispatch.bind());
+				MainLoopMacro.runInMainThreadSafe(onStopped.dispatch());
 			case event if (event == LibVLC_MediaPlayerPaused):
-				MainLoop.runInMainThread(onPaused.dispatch.bind());
+				MainLoopMacro.runInMainThreadSafe(onPaused.dispatch());
 			case event if (event == LibVLC_MediaPlayerEndReached):
-				MainLoop.runInMainThread(onEndReached.dispatch.bind());
+				MainLoopMacro.runInMainThreadSafe(onEndReached.dispatch());
 			case event if (event == LibVLC_MediaPlayerEncounteredError):
 				final errmsg:String = LibVLC.errmsg();
 
-				MainLoop.runInMainThread(onEncounteredError.dispatch.bind(errmsg));
+				MainLoopMacro.runInMainThreadSafe(onEncounteredError.dispatch(errmsg));
 			case event if (event == LibVLC_MediaPlayerCorked):
-				MainLoop.runInMainThread(onCorked.dispatch.bind());
+				MainLoopMacro.runInMainThreadSafe(onCorked.dispatch());
 			case event if (event == LibVLC_MediaPlayerUncorked):
-				MainLoop.runInMainThread(onUncorked.dispatch.bind());
+				MainLoopMacro.runInMainThreadSafe(onUncorked.dispatch());
 			case event if (event == LibVLC_MediaPlayerTimeChanged):
 				final newTime:Int64 = (untyped __cpp__('{0}.u.media_player_time_changed.new_time', p_event[0]) : cpp.Int64);
 
-				MainLoop.runInMainThread(onTimeChanged.dispatch.bind(newTime));
+				MainLoopMacro.runInMainThreadSafe(onTimeChanged.dispatch(newTime));
 			case event if (event == LibVLC_MediaPlayerPositionChanged):
 				final newPosition:Single = untyped __cpp__('{0}.u.media_player_position_changed.new_position', p_event[0]);
 
-				MainLoop.runInMainThread(onPositionChanged.dispatch.bind(newPosition));
+				MainLoopMacro.runInMainThreadSafe(onPositionChanged.dispatch(newPosition));
 			case event if (event == LibVLC_MediaPlayerLengthChanged):
 				final newLength:Int64 = (untyped __cpp__('{0}.u.media_player_length_changed.new_length', p_event[0]) : cpp.Int64);
 
-				MainLoop.runInMainThread(onLengthChanged.dispatch.bind(newLength));
+				MainLoopMacro.runInMainThreadSafe(onLengthChanged.dispatch(newLength));
 			case event if (event == LibVLC_MediaPlayerChapterChanged):
 				final newChapter:Int = untyped __cpp__('{0}.u.media_player_chapter_changed.new_chapter', p_event[0]);
 
-				MainLoop.runInMainThread(onChapterChanged.dispatch.bind(newChapter));
+				MainLoopMacro.runInMainThreadSafe(onChapterChanged.dispatch(newChapter));
 			case event if (event == LibVLC_MediaPlayerMediaChanged):
-				MainLoop.runInMainThread(onMediaChanged.dispatch.bind());
+				MainLoopMacro.runInMainThreadSafe(onMediaChanged.dispatch());
 			case event if (event == LibVLC_MediaParsedChanged):
 				final newStatus:Int = untyped __cpp__('{0}.u.media_parsed_changed.new_status', p_event[0]);
 
-				MainLoop.runInMainThread(onMediaParsedChanged.dispatch.bind(newStatus));
+				MainLoopMacro.runInMainThreadSafe(onMediaParsedChanged.dispatch(newStatus));
 			case event if (event == LibVLC_MediaMetaChanged):
-				MainLoop.runInMainThread(onMediaMetaChanged.dispatch.bind());
+				MainLoopMacro.runInMainThreadSafe(onMediaMetaChanged.dispatch());
 		}
 	}
-
-	#if HXVLC_VIDEO_FINALIZER
-	private static function finalize(video:Video):Void
-	{
-		video.dispose();
-	}
-	#end
 }

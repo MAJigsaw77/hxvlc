@@ -1,11 +1,12 @@
 package hxvlc.util;
 
+import hxvlc.util.macros.MainLoopMacro;
 import haxe.io.Path;
 import haxe.Int64;
 import haxe.MainLoop;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
-import hxvlc.util.macros.Define;
+import hxvlc.util.macros.DefineMacro;
 #if android
 import haxe.Exception;
 import lime.app.Future;
@@ -113,9 +114,9 @@ class Handle
 
 	/**
 	 * Initializes the LibVLC instance if it isn't already.
-	 *
+	 * 
 	 * @param options The additional options you can add to the LibVLC instance.
-	 *
+	 * 
 	 * @return `true` if the instance was created successfully or `false` if there was an error or the instance is still loading.
 	 */
 	public static inline function init(?options:Array<String>):Bool
@@ -125,7 +126,7 @@ class Handle
 
 	/**
 	 * Initializes the LibVLC instance asynchronously if it isn't already.
-	 *
+	 * 
 	 * @param options The additional options you can add to the LibVLC instance.
 	 * @param finishCallback A callback that is called after it finishes loading.
 	 */
@@ -139,7 +140,7 @@ class Handle
 			final success:Bool = init(options);
 
 			if (finishCallback != null)
-				MainLoop.runInMainThread(finishCallback.bind(success));
+				MainLoopMacro.runInMainThreadSafe(finishCallback(success));
 		});
 	}
 
@@ -194,6 +195,7 @@ class Handle
 
 			args.push_back("--ignore-config");
 			args.push_back("--drop-late-frames");
+
 			args.push_back("--no-interact");
 			args.push_back("--no-keyboard-events");
 			args.push_back("--no-mouse-events");
@@ -228,7 +230,7 @@ class Handle
 			#end
 
 			#if HXVLC_VERBOSE
-			args.push_back("--verbose=" + Define.getInt('HXVLC_VERBOSE', 0));
+			args.push_back("--verbose=" + DefineMacro.getInt('HXVLC_VERBOSE', 0));
 			#elseif (!HXVLC_LOGGING || !HXVLC_FILE_LOGGING)
 			args.push_back("--quiet");
 			#end
@@ -274,7 +276,7 @@ class Handle
 				if (logFile != null)
 					cpp.Stdio.fclose(logFile);
 
-				logFile = cpp.Stdio.fopen(Define.getString('HXVLC_FILE_LOGGING', 'libvlc-log.txt'), 'w');
+				logFile = cpp.Stdio.fopen(DefineMacro.getString('HXVLC_FILE_LOGGING', 'libvlc-log.txt'), 'w');
 
 				if (logFile == null)
 				{

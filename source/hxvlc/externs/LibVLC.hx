@@ -14,7 +14,7 @@ extern class LibVLC
 {
 	/**
 	 * Allocates and initializes a LibVLC instance.
-	 *
+	 * 
 	 * @param argc Number of arguments.
 	 * @param argv Argument values.
 	 * @return Pointer to the new LibVLC instance.
@@ -24,7 +24,7 @@ extern class LibVLC
 
 	/**
 	 * Releases a LibVLC instance.
-	 *
+	 * 
 	 * @param p_instance Pointer to the LibVLC instance.
 	 */
 	@:native('libvlc_release')
@@ -32,7 +32,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the application name and HTTP user agent string for LibVLC.
-	 *
+	 * 
 	 * @param p_instance Pointer to the LibVLC instance.
 	 * @param name Human-readable application name, e.g., "FooBar player 1.2.3".
 	 * @param http HTTP User Agent string, e.g., "FooBar/1.2.3 Python/2.6.0".
@@ -42,7 +42,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the last error message.
-	 *
+	 * 
 	 * @return The last error message.
 	 */
 	@:native('libvlc_errmsg')
@@ -50,7 +50,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the LibVLC version.
-	 *
+	 * 
 	 * @return The LibVLC version string.
 	 */
 	@:native('libvlc_get_version')
@@ -58,7 +58,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the LibVLC compiler information.
-	 *
+	 * 
 	 * @return The compiler information string.
 	 */
 	@:native('libvlc_get_compiler')
@@ -66,7 +66,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the LibVLC changeset.
-	 *
+	 * 
 	 * @return The changeset string.
 	 */
 	@:native('libvlc_get_changeset')
@@ -74,7 +74,7 @@ extern class LibVLC
 
 	/**
 	 * Attaches an event callback.
-	 *
+	 * 
 	 * @param p_event_manager Pointer to the event manager.
 	 * @param i_event_type Type of the event.
 	 * @param f_callback Event callback function.
@@ -87,7 +87,7 @@ extern class LibVLC
 
 	/**
 	 * Detaches an event callback.
-	 *
+	 * 
 	 * @param p_event_manager Pointer to the event manager.
 	 * @param i_event_type Type of the event.
 	 * @param f_callback Event callback function.
@@ -99,7 +99,7 @@ extern class LibVLC
 
 	/**
 	 * Unsets the logging callback.
-	 *
+	 * 
 	 * @param p_instance Pointer to the LibVLC instance.
 	 */
 	@:native('libvlc_log_unset')
@@ -107,7 +107,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the logging callback.
-	 *
+	 * 
 	 * @param p_instance Pointer to the LibVLC instance.
 	 * @param cb Logging callback function.
 	 * @param data User data to pass to the callback.
@@ -117,7 +117,7 @@ extern class LibVLC
 
 	/**
 	 * Sets up logging to a file.
-	 *
+	 * 
 	 * @param p_instance Pointer to the LibVLC instance.
 	 * @param stream FILE pointer opened for writing.
 	 *               The FILE pointer must remain valid until libvlc_log_unset().
@@ -127,7 +127,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the LibVLC clock time.
-	 *
+	 * 
 	 * @return The clock time.
 	 */
 	@:native('libvlc_clock')
@@ -135,7 +135,7 @@ extern class LibVLC
 
 	/**
 	 * Creates a new media descriptor from a location.
-	 *
+	 * 
 	 * @param p_instance Pointer to the LibVLC instance.
 	 * @param psz_mrl The location string.
 	 * @return Pointer to the new media descriptor.
@@ -145,7 +145,7 @@ extern class LibVLC
 
 	/**
 	 * Creates a new media descriptor from a file path.
-	 *
+	 * 
 	 * @param p_instance Pointer to the LibVLC instance.
 	 * @param path The file path.
 	 * @return Pointer to the new media descriptor.
@@ -155,7 +155,7 @@ extern class LibVLC
 
 	/**
 	 * Creates a new media descriptor from a file descriptor.
-	 *
+	 * 
 	 * @param p_instance Pointer to the LibVLC instance.
 	 * @param fd The file descriptor.
 	 * @return Pointer to the new media descriptor.
@@ -165,7 +165,7 @@ extern class LibVLC
 
 	/**
 	 * Creates a new media descriptor from custom callbacks.
-	 *
+	 * 
 	 * @param p_instance Pointer to the LibVLC instance.
 	 * @param open_cb Open callback function.
 	 * @param read_cb Read callback function.
@@ -180,7 +180,7 @@ extern class LibVLC
 
 	/**
 	 * Adds an option to a media descriptor.
-	 *
+	 * 
 	 * @param p_md Pointer to the media descriptor.
 	 * @param psz_options The option string.
 	 */
@@ -189,7 +189,7 @@ extern class LibVLC
 
 	/**
 	 * Releases a media descriptor.
-	 *
+	 * 
 	 * @param p_md Pointer to the media descriptor.
 	 */
 	@:native('libvlc_media_release')
@@ -197,7 +197,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the media resource locator (MRL) of a media descriptor.
-	 *
+	 * 
 	 * @param p_md Pointer to the media descriptor.
 	 * @return The MRL string.
 	 */
@@ -206,7 +206,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the metadata of a media descriptor.
-	 *
+	 * 
 	 * @param p_md Pointer to the media descriptor.
 	 * @param e_meta Metadata type.
 	 * @return The metadata string.
@@ -216,7 +216,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the metadata of a media descriptor.
-	 *
+	 * 
 	 * @param p_md Pointer to the media descriptor.
 	 * @param e_meta Metadata type.
 	 * @param psz_value New metadata value.
@@ -228,7 +228,7 @@ extern class LibVLC
 	 * Saves the metadata of a media descriptor.
 	 *
 	 * This function commits any metadata modifications to the underlying storage, if applicable.
-	 *
+	 * 
 	 * @param p_md Pointer to the media descriptor.
 	 * @return 0 on failure, a non-zero value if the metadata was saved successfully.
 	 */
@@ -237,7 +237,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the statistics of a media descriptor.
-	 *
+	 * 
 	 * @param p_md Pointer to the media descriptor.
 	 * @param p_stats Pointer to the statistics structure.
 	 * @return 0 on success, -1 on failure.
@@ -247,7 +247,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the subitems of a media descriptor.
-	 *
+	 * 
 	 * @param p_md Pointer to the media descriptor.
 	 * @return Pointer to the media list containing subitems.
 	 */
@@ -256,7 +256,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the event manager of a media descriptor.
-	 *
+	 * 
 	 * @param p_md Pointer to the media descriptor.
 	 * @return Pointer to the event manager.
 	 */
@@ -265,7 +265,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the duration of a media descriptor.
-	 *
+	 * 
 	 * @param p_md Pointer to the media descriptor.
 	 * @return The duration in milliseconds.
 	 */
@@ -274,7 +274,7 @@ extern class LibVLC
 
 	/**
 	 * Parses a media descriptor with options.
-	 *
+	 * 
 	 * @param p_md Pointer to the media descriptor.
 	 * @param parse_flag Parse flags.
 	 * @param timeout Timeout in milliseconds.
@@ -285,7 +285,7 @@ extern class LibVLC
 
 	/**
 	 * Stops the parsing of a media descriptor.
-	 *
+	 * 
 	 * @param p_md Pointer to the media descriptor.
 	 */
 	@:native('libvlc_media_parse_stop')
@@ -293,7 +293,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the parsed status of a media descriptor.
-	 *
+	 * 
 	 * @param p_md Pointer to the media descriptor.
 	 * @return The parsed status.
 	 */
@@ -302,7 +302,7 @@ extern class LibVLC
 
 	/**
 	 * Releases a media list.
-	 *
+	 * 
 	 * @param p_ml Pointer to the media list.
 	 */
 	@:native('libvlc_media_list_release')
@@ -310,7 +310,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the number of items in a media list.
-	 *
+	 * 
 	 * @param p_ml Pointer to the media list.
 	 * @return Number of items in the list.
 	 */
@@ -319,7 +319,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the media item at the specified index in a media list.
-	 *
+	 * 
 	 * @param p_ml Pointer to the media list.
 	 * @param i_pos Index of the media item to retrieve.
 	 * @return Pointer to the media descriptor.
@@ -329,7 +329,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the media descriptor from a media player.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return Pointer to the media descriptor.
 	 */
@@ -338,7 +338,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the media descriptor for a media player.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @param p_md Pointer to the media descriptor.
 	 */
@@ -347,7 +347,7 @@ extern class LibVLC
 
 	/**
 	 * Starts playback of the media player.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return 0 on success, -1 on failure.
 	 */
@@ -356,7 +356,7 @@ extern class LibVLC
 
 	/**
 	 * Stops playback of the media player.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 */
 	@:native('libvlc_media_player_stop')
@@ -364,7 +364,7 @@ extern class LibVLC
 
 	/**
 	 * Pauses playback of the media player.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 */
 	@:native('libvlc_media_player_pause')
@@ -372,9 +372,9 @@ extern class LibVLC
 
 	/**
 	 * Sets pause state for the media player.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
-	 *
+	 * 
 	 * @param do_pause 1 to pause, 0 to play.
 	 */
 	@:native('libvlc_media_player_set_pause')
@@ -382,7 +382,7 @@ extern class LibVLC
 
 	/**
 	 * Checks if the media player is playing.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return 1 if playing, 0 otherwise.
 	 */
@@ -391,7 +391,7 @@ extern class LibVLC
 
 	/**
 	 * Checks if the media player is seekable.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return 1 if seekable, 0 otherwise.
 	 */
@@ -400,7 +400,7 @@ extern class LibVLC
 
 	/**
 	 * Checks if the media player can pause.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return 1 if can pause, 0 otherwise.
 	 */
@@ -409,7 +409,7 @@ extern class LibVLC
 
 	/**
 	 * Checks if the media player will play.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return 1 if will play, 0 otherwise.
 	 */
@@ -418,7 +418,7 @@ extern class LibVLC
 
 	/**
 	 * Releases a media player.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 */
 	@:native('libvlc_media_player_release')
@@ -426,7 +426,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the event manager of a media player.
-	 *
+	 * 
 	 * @param mp Pointer to the media player.
 	 * @return Pointer to the event manager.
 	 */
@@ -435,7 +435,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the current playback time.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return The current playback time in milliseconds.
 	 */
@@ -444,7 +444,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the current playback time.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @param i_time The new playback time in milliseconds.
 	 * @return 0 on success, -1 on failure.
@@ -454,7 +454,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the current playback position.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return The current playback position as a float between 0.0 and 1.0.
 	 */
@@ -463,7 +463,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the current playback position.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @param f_pos The new playback position as a float between 0.0 and 1.0.
 	 */
@@ -472,7 +472,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the current chapter.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return The current chapter.
 	 */
@@ -481,7 +481,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the current chapter.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @param i_chapter The new chapter.
 	 */
@@ -490,7 +490,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the total number of chapters.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return The total number of chapters.
 	 */
@@ -499,7 +499,7 @@ extern class LibVLC
 
 	/**
 	 * Moves to the previous chapter.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 */
 	@:native('libvlc_media_player_previous_chapter')
@@ -507,7 +507,7 @@ extern class LibVLC
 
 	/**
 	 * Moves to the next chapter.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 */
 	@:native('libvlc_media_player_next_chapter')
@@ -515,7 +515,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the current playback rate.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return The current playback rate.
 	 */
@@ -524,7 +524,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the playback rate.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @param rate The new playback rate.
 	 * @return 0 on success, -1 on failure.
@@ -534,7 +534,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the media length.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return The media length in milliseconds.
 	 */
@@ -543,7 +543,7 @@ extern class LibVLC
 
 	/**
 	 * Creates a new media player.
-	 *
+	 * 
 	 * @param p_libvlc_instance Pointer to the LibVLC instance.
 	 * @return Pointer to the new media player.
 	 */
@@ -552,7 +552,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the video format callbacks.
-	 *
+	 * 
 	 * @param mp Pointer to the media player.
 	 * @param setup Video format setup callback.
 	 * @param cleanup Video format cleanup callback.
@@ -562,7 +562,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the video callbacks.
-	 *
+	 * 
 	 * @param mp Pointer to the media player.
 	 * @param lock Video lock callback.
 	 * @param unlock Video unlock callback.
@@ -575,7 +575,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the video format.
-	 *
+	 * 
 	 * @param mp Pointer to the media player.
 	 * @param chroma Four-character string identifying the chroma format (e.g., "RV32" for 32-bit RGBA).
 	 * @param width Width of the video in pixels.
@@ -588,7 +588,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the pixel dimensions of a video.
-	 *
+	 * 
 	 * @param mp Pointer to the media player.
 	 * @param num The index of the video (starting from 0, and most commonly 0).
 	 * @param px Pointer to store the width of the video in pixels [OUT].
@@ -600,7 +600,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the audio format callbacks.
-	 *
+	 * 
 	 * @param mp Pointer to the media player.
 	 * @param setup Audio format setup callback.
 	 *        This callback is invoked to configure the audio format.
@@ -612,7 +612,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the audio callbacks.
-	 *
+	 * 
 	 * @param mp Pointer to the media player.
 	 * @param play Audio play callback.
 	 * @param pause Audio pause callback.
@@ -627,7 +627,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the audio volume callback.
-	 *
+	 * 
 	 * @param mp Pointer to the media player.
 	 * @param set_volume Audio set volume callback.
 	 */
@@ -636,7 +636,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the audio format.
-	 *
+	 * 
 	 * @param mp Pointer to the media player.
 	 * @param format Audio format string.
 	 * @param rate Sample rate.
@@ -647,7 +647,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the audio delay.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return The audio delay in microseconds.
 	 */
@@ -656,7 +656,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the audio delay.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @param i_delay The new audio delay in microseconds.
 	 * @return 0 on success, -1 on failure.
@@ -666,7 +666,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the number of audio tracks.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return The number of audio tracks.
 	 */
@@ -675,7 +675,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the current audio track.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return The current audio track.
 	 */
@@ -684,7 +684,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the current audio track.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @param i_track The new audio track.
 	 * @return 0 on success, -1 on failure.
@@ -694,7 +694,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the current audio channel.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return The current audio channel.
 	 */
@@ -703,7 +703,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the current audio channel.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @param channel The new audio channel.
 	 * @return 0 on success, -1 on failure.
@@ -713,7 +713,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the role of the media player.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @return The role of the media player.
 	 */
@@ -722,7 +722,7 @@ extern class LibVLC
 
 	/**
 	 * Sets the role of the media player.
-	 *
+	 * 
 	 * @param p_mi Pointer to the media player.
 	 * @param role The new role.
 	 * @return 0 on success, -1 on failure.

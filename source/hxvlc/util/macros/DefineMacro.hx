@@ -8,14 +8,17 @@ import haxe.macro.Expr;
 /**
  * Utility class to retrieve values from compiler defines.
  */
-class Define
+class DefineMacro
 {
 	/**
 	 * Retrieves a string value from the compiler define if it is set.
+	 * 
 	 * If the define is not set or the value is not a valid string, it returns the specified default value.
-	 *
+	 * 
 	 * @param key The compiler define key to check.
+	 * 
 	 * @param defaultValue The default value to return if the define is not set or invalid.
+	 * 
 	 * @return The string value from the compiler define or the default value.
 	 */
 	public static macro function getString(key:String, defaultValue:String):Expr
@@ -36,7 +39,7 @@ class Define
 	/**
 	 * Retrieves an integer value from the compiler define if it is set.
 	 * If the define is not set or the value is not a valid integer, it returns the specified default value.
-	 *
+	 * 
 	 * @param key The compiler define key to check.
 	 * @param defaultValue The default value to return if the define is not set or invalid.
 	 * @return The integer value from the compiler define or the default value.
@@ -59,7 +62,7 @@ class Define
 	/**
 	 * Retrieves a float value from the compiler define if it is set.
 	 * If the define is not set or the value is not a valid float, it returns the specified default value.
-	 *
+	 * 
 	 * @param key The compiler define key to check.
 	 * @param defaultValue The default value to return if the define is not set or invalid.
 	 * @return The float value from the compiler define or the default value.
