@@ -375,10 +375,10 @@ class Video extends openfl.display.Bitmap
 	private final mediaMutex:Mutex = new Mutex();
 
 	@:noCompletion
-	private var mediaData:Null<cpp.RawPointer<cpp.UInt8>>;
+	private var mediaData:Null<BytesData>;
 
 	@:noCompletion
-	private var mediaSize:cpp.UInt64 = 0;
+	private var mediaLength:cpp.UInt64 = 0;
 
 	@:noCompletion
 	private var mediaOffset:cpp.UInt64 = 0;
@@ -396,7 +396,7 @@ class Video extends openfl.display.Bitmap
 	private var textureHeight:cpp.UInt32 = 0;
 
 	@:noCompletion
-	private var texturePlanesBuffer:Null<BytesData>;
+	private var texturePlanes:Null<BytesData>;
 
 	#if lime_openal
 	@:noCompletion
@@ -418,7 +418,7 @@ class Video extends openfl.display.Bitmap
 	private var alFrameSize:cpp.UInt32 = 0;
 
 	@:noCompletion
-	private var alSamplesBuffer:Null<BytesData>;
+	private var alSamples:Null<BytesData>;
 
 	@:noCompletion
 	private var alUseEXTMCFORMATS:Null<Bool>;
@@ -473,24 +473,19 @@ class Video extends openfl.display.Bitmap
 			{
 				mediaItem = LibVLC.media_new_fd(Handle.instance, cast(location, Int));
 			}
-			else if ((location is haxe.io.Bytes))
+			else if ((location is Bytes))
 			{
-				final data:BytesData = cast(location, haxe.io.Bytes).getData();
+				final data:BytesData = cast(location, Bytes).getData();
 
 				if (data.length > 0)
 				{
 					mediaMutex.acquire();
 
-					mediaData = untyped __cpp__('new unsigned char[{0}]', data.length);
-
-					cpp.Stdlib.nativeMemcpy(untyped mediaData, untyped cpp.Pointer.ofArray(data).constRaw, data.length);
-
-					mediaSize = data.length;
+					mediaData = data;
+					mediaLength = data.length;
 					mediaOffset = 0;
 
 					mediaMutex.release();
-
-					data.splice(0, data.length);
 
 					mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
 						untyped __cpp__('media_seek'), untyped NULL, untyped __cpp__('this'));
@@ -843,13 +838,9 @@ class Video extends openfl.display.Bitmap
 
 		mediaMutex.acquire();
 
-		if (mediaData != null)
-		{
-			untyped __cpp__('delete[] {0}', mediaData);
-			mediaData = null;
-		}
-
-		mediaSize = mediaOffset = 0;
+		mediaData = null;
+		mediaLength = 0;
+		mediaOffset = 0;
 
 		mediaMutex.release();
 
@@ -863,9 +854,9 @@ class Video extends openfl.display.Bitmap
 			bitmapData.dispose();
 		}
 
-		textureWidth = textureHeight = 0;
-
-		texturePlanesBuffer = null;
+		textureWidth = 0;
+		textureHeight = 0;
+		texturePlanes = null;
 
 		textureMutex.release();
 
@@ -895,7 +886,7 @@ class Video extends openfl.display.Bitmap
 			alBufferPool = null;
 		}
 
-		alSamplesBuffer = null;
+		alSamples = null;
 
 		alMutex.release();
 		#end
@@ -1158,7 +1149,7 @@ class Video extends openfl.display.Bitmap
 	{
 		mediaMutex.acquire();
 
-		sizep[0] = untyped mediaSize;
+		sizep[0] = untyped mediaLength;
 
 		mediaMutex.release();
 
@@ -1172,21 +1163,23 @@ class Video extends openfl.display.Bitmap
 	{
 		mediaMutex.acquire();
 
-		if (untyped __cpp__('{0} >= {1}', mediaOffset, mediaSize))
+		if (untyped __cpp__('{0} >= {1}', mediaOffset, mediaLength))
 		{
 			mediaMutex.release();
 			return 0;
 		}
 
-		final toRead:cpp.UInt64 = untyped __cpp__('{0} < ({1} - {2}) ? {0} : ({1} - {2})', len, mediaSize, mediaOffset);
+		final toRead:cpp.UInt64 = untyped __cpp__('{0} < ({1} - {2}) ? {0} : ({1} - {2})', len, mediaLength, mediaOffset);
 
-		if (mediaData == null || untyped __cpp__('{0} > {1} - {2}', mediaOffset, mediaSize, toRead))
+		if (mediaData == null || untyped __cpp__('{0} > {1} - {2}', mediaOffset, mediaLength, toRead))
 		{
 			mediaMutex.release();
 			return -1;
 		}
 
-		cpp.Stdlib.nativeMemcpy(untyped buf, untyped cpp.RawPointer.addressOf(mediaData[untyped __cpp__('{0}', mediaOffset)]), untyped __cpp__('{0}', toRead));
+		cpp.Stdlib.nativeMemcpy(untyped buf,
+			untyped cpp.RawPointer.addressOf(cpp.NativeArray.getBase(mediaData).getBase()[untyped __cpp__('{0}', mediaOffset)]),
+			untyped __cpp__('{0}', toRead));
 
 		untyped __cpp__('{0} += {1}', mediaOffset, toRead);
 
@@ -1202,7 +1195,7 @@ class Video extends openfl.display.Bitmap
 	{
 		mediaMutex.acquire();
 
-		if (untyped __cpp__('{0} > {1}', offset, mediaSize))
+		if (untyped __cpp__('{0} > {1}', offset, mediaLength))
 		{
 			mediaMutex.release();
 			return -1;
@@ -1222,8 +1215,8 @@ class Video extends openfl.display.Bitmap
 	{
 		textureMutex.acquire();
 
-		if (texturePlanesBuffer != null)
-			planes[0] = untyped cpp.NativeArray.getBase(texturePlanesBuffer).getBase();
+		if (texturePlanes != null)
+			planes[0] = untyped cpp.NativeArray.getBase(texturePlanes).getBase();
 
 		return untyped nullptr;
 	}
@@ -1244,17 +1237,14 @@ class Video extends openfl.display.Bitmap
 		if (__renderable || forceRendering)
 		{
 			MainLoopMacro.runInMainThreadSafe({
-				if (texturePlanesBuffer != null)
+				if (texturePlanes != null)
 				{
 					textureMutex.acquire();
 
-					if (bitmapData != null)
-					{
-						if (bitmapData.__texture != null)
-							cast(bitmapData.__texture, RectangleTexture).uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanesBuffer)));
-						else if (bitmapData.image != null)
-							bitmapData.setPixels(bitmapData.rect, Bytes.ofData(texturePlanesBuffer));
-					}
+					if (bitmapData != null && bitmapData.__texture != null)
+						cast(bitmapData.__texture, RectangleTexture).uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanes)));
+					else if (bitmapData != null && bitmapData.image != null)
+						bitmapData.setPixels(bitmapData.rect, Bytes.ofData(texturePlanes));
 
 					if (__renderable)
 						__setRenderDirty();
@@ -1303,10 +1293,10 @@ class Video extends openfl.display.Bitmap
 			textureHeight = originalHeight;
 		}
 
-		if (texturePlanesBuffer == null)
-			texturePlanesBuffer = new BytesData();
+		if (texturePlanes == null)
+			texturePlanes = new BytesData();
 
-		texturePlanesBuffer.resize(textureWidth * textureHeight * 4);
+		texturePlanes.resize(textureWidth * textureHeight * 4);
 
 		pitches[0] = textureWidth * 4;
 		lines[0] = textureHeight;
@@ -1377,12 +1367,12 @@ class Video extends openfl.display.Bitmap
 
 				if (alBuffer != null)
 				{
-					if (alSamplesBuffer == null)
-						alSamplesBuffer = new BytesData();
+					if (alSamples == null)
+						alSamples = new BytesData();
 
-					cpp.NativeArray.setUnmanagedData(alSamplesBuffer, cast samples, count);
+					cpp.NativeArray.setUnmanagedData(alSamples, cast samples, count);
 
-					AL.bufferData(alBuffer, alFormat, UInt8Array.fromBytes(Bytes.ofData(alSamplesBuffer)), alSamplesBuffer.length * alFrameSize, alSampleRate);
+					AL.bufferData(alBuffer, alFormat, UInt8Array.fromBytes(Bytes.ofData(alSamples)), alSamples.length * alFrameSize, alSampleRate);
 
 					AL.sourceQueueBuffer(alSource, alBuffer);
 				}

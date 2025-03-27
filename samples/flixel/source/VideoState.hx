@@ -1,5 +1,6 @@
 package;
 
+import sys.io.File;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -18,8 +19,6 @@ class VideoState extends FlxState
 
 	var video:Null<FlxVideoSprite>;
 	var versionInfo:Null<FlxText>;
-	var fpsInfo:Null<FlxText>;
-	var fps:Null<FPS>;
 
 	override function create():Void
 	{
@@ -34,21 +33,6 @@ class VideoState extends FlxState
 
 	override function update(elapsed:Float):Void
 	{
-		if (fps != null && fpsInfo != null)
-		{
-			#if HXVLC_ENABLE_STATS
-			@:nullSafety(Off)
-			{
-				if (video != null && video.bitmap != null && video.bitmap.stats != null)
-					fpsInfo.text = 'FPS ${fps.currentFPS}\n${video.bitmap.stats.toString()}';
-				else
-					fpsInfo.text = 'FPS ${fps.currentFPS}';
-			}
-			#else
-			fpsInfo.text = 'FPS ${fps.currentFPS}';
-			#end
-		}
-
 		if (video != null && video.bitmap != null)
 		{
 			if (FlxG.keys.justPressed.SPACE)
@@ -76,8 +60,6 @@ class VideoState extends FlxState
 
 	private function setupUI():Void
 	{
-		FlxG.camera.bgColor = FlxColor.MAGENTA;
-
 		versionInfo = new FlxText(10, FlxG.height - 10, 0, 'LibVLC ${Handle.version}', 17);
 		versionInfo.setBorderStyle(OUTLINE, FlxColor.BLACK, 2);
 		versionInfo.font = FlxAssets.FONT_DEBUGGER;
@@ -86,18 +68,6 @@ class VideoState extends FlxState
 		versionInfo.antialiasing = true;
 		versionInfo.y -= versionInfo.height;
 		add(versionInfo);
-
-		fpsInfo = new FlxText(10, 10, 0, 'FPS 0', 17);
-		fpsInfo.setBorderStyle(OUTLINE, FlxColor.BLACK, 2);
-		fpsInfo.font = FlxAssets.FONT_DEBUGGER;
-		fpsInfo.active = false;
-		fpsInfo.alignment = JUSTIFY;
-		fpsInfo.antialiasing = true;
-		add(fpsInfo);
-
-		fps = new FPS();
-		fps.visible = false;
-		FlxG.stage.addChild(fps);
 	}
 
 	@:nullSafety(Off)
@@ -129,7 +99,7 @@ class VideoState extends FlxState
 				final file:String = haxe.io.Path.join(['videos', FileSystem.readDirectory('videos')[0]]);
 
 				if (file != null && file.length > 0)
-					video.load(file);
+					video.load(File.getBytes(file));
 				else
 					video.load(bigBuckBunny);
 			}
