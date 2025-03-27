@@ -1296,25 +1296,17 @@ class Video extends openfl.display.Bitmap
 		{
 			width[0] = textureWidth;
 			height[0] = textureHeight;
-
-			if (originalWidth != textureWidth || originalHeight != textureHeight)
-			{
-				if (texturePlanesBuffer == null)
-					texturePlanesBuffer = new BytesData();
-
-				texturePlanesBuffer.resize(textureWidth * textureHeight * 4);
-			}
 		}
 		else
 		{
 			textureWidth = originalWidth;
 			textureHeight = originalHeight;
-
-			if (texturePlanesBuffer == null)
-				texturePlanesBuffer = new BytesData();
-
-			texturePlanesBuffer.resize(textureWidth * textureHeight * 4);
 		}
+
+		if (texturePlanesBuffer == null)
+			texturePlanesBuffer = new BytesData();
+
+		texturePlanesBuffer.resize(textureWidth * textureHeight * 4);
 
 		pitches[0] = textureWidth * 4;
 		lines[0] = textureHeight;
