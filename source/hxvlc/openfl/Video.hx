@@ -378,9 +378,6 @@ class Video extends openfl.display.Bitmap
 	private var mediaData:Null<BytesData>;
 
 	@:noCompletion
-	private var mediaLength:cpp.UInt64 = 0;
-
-	@:noCompletion
 	private var mediaOffset:cpp.UInt64 = 0;
 
 	@:noCompletion
@@ -482,7 +479,6 @@ class Video extends openfl.display.Bitmap
 					mediaMutex.acquire();
 
 					mediaData = data;
-					mediaLength = data.length;
 					mediaOffset = 0;
 
 					mediaMutex.release();
@@ -536,7 +532,8 @@ class Video extends openfl.display.Bitmap
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerCorked)');
 
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'),
+						untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerUncorked)');
 
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('event_manager_callbacks'),
@@ -563,8 +560,14 @@ class Video extends openfl.display.Bitmap
 				LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), untyped NULL);
 
 				#if lime_openal
+				if (alUseEXTMCFORMATS == null)
+					alUseEXTMCFORMATS = AL.isExtensionPresent('AL_EXT_MCFORMATS');
+
 				if (alSource == null)
 					alSource = AL.createSource();
+
+				if (alBufferPool == null)
+					alBufferPool = AL.genBuffers(MAX_AUDIO_BUFFER_COUNT);
 				#end
 
 				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped NULL,
@@ -839,7 +842,6 @@ class Video extends openfl.display.Bitmap
 		mediaMutex.acquire();
 
 		mediaData = null;
-		mediaLength = 0;
 		mediaOffset = 0;
 
 		mediaMutex.release();
@@ -1149,7 +1151,7 @@ class Video extends openfl.display.Bitmap
 	{
 		mediaMutex.acquire();
 
-		sizep[0] = untyped mediaLength;
+		sizep[0] = untyped mediaData.length;
 
 		mediaMutex.release();
 
@@ -1163,15 +1165,15 @@ class Video extends openfl.display.Bitmap
 	{
 		mediaMutex.acquire();
 
-		if (untyped __cpp__('{0} >= {1}', mediaOffset, mediaLength))
+		if (untyped __cpp__('{0} >= {1}', mediaOffset, mediaData.length))
 		{
 			mediaMutex.release();
 			return 0;
 		}
 
-		final toRead:cpp.UInt64 = untyped __cpp__('{0} < ({1} - {2}) ? {0} : ({1} - {2})', len, mediaLength, mediaOffset);
+		final toRead:cpp.UInt64 = untyped __cpp__('{0} < ({1} - {2}) ? {0} : ({1} - {2})', len, mediaData.length, mediaOffset);
 
-		if (mediaData == null || untyped __cpp__('{0} > {1} - {2}', mediaOffset, mediaLength, toRead))
+		if (mediaData == null || untyped __cpp__('{0} > {1} - {2}', mediaOffset, mediaData.length, toRead))
 		{
 			mediaMutex.release();
 			return -1;
@@ -1195,7 +1197,7 @@ class Video extends openfl.display.Bitmap
 	{
 		mediaMutex.acquire();
 
-		if (untyped __cpp__('{0} > {1}', offset, mediaLength))
+		if (untyped __cpp__('{0} > {1}', offset, mediaData.length))
 		{
 			mediaMutex.release();
 			return -1;
@@ -1303,11 +1305,12 @@ class Video extends openfl.display.Bitmap
 
 		textureMutex.release();
 
-		if (bitmapData == null
-			|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
-			|| ((!useTexture && bitmapData.__texture != null) || (useTexture && bitmapData.image != null)))
-		{
-			MainLoopMacro.runInMainThreadSafe({
+		MainLoopMacro.runInMainThreadSafe({
+			if (bitmapData == null
+				|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
+				|| (!useTexture && bitmapData.__texture != null)
+				|| (useTexture && bitmapData.image != null))
+			{
 				textureMutex.acquire();
 
 				if (bitmapData != null)
@@ -1334,8 +1337,8 @@ class Video extends openfl.display.Bitmap
 				onFormatSetup.dispatch();
 
 				textureMutex.release();
-			});
-		}
+			}
+		});
 
 		return 1;
 	}
@@ -1434,12 +1437,6 @@ class Video extends openfl.display.Bitmap
 
 		if (currentFormat != 'S16N')
 			cpp.Stdlib.nativeMemcpy(untyped format, untyped cpp.CastCharStar.fromString('S16N'), 4);
-
-		if (alUseEXTMCFORMATS == null)
-			alUseEXTMCFORMATS = AL.isExtensionPresent('AL_EXT_MCFORMATS');
-
-		if (alBufferPool == null)
-			alBufferPool = AL.genBuffers(MAX_AUDIO_BUFFER_COUNT);
 
 		alSampleRate = rate[0];
 
