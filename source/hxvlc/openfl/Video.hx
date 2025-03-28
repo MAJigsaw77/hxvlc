@@ -378,7 +378,7 @@ class Video extends openfl.display.Bitmap
 	private var mediaData:Null<BytesData>;
 
 	@:noCompletion
-	private var mediaOffset:cpp.UInt64 = 0;
+	private var mediaOffset:cpp.UInt32 = 0;
 
 	@:noCompletion
 	private var mediaPlayer:Null<cpp.RawPointer<LibVLC_Media_Player_T>>;
@@ -532,8 +532,7 @@ class Video extends openfl.display.Bitmap
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerCorked)');
 
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'),
-						untyped __cpp__('this')) != 0)
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerUncorked)');
 
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('event_manager_callbacks'),
@@ -1151,11 +1150,18 @@ class Video extends openfl.display.Bitmap
 	{
 		mediaMutex.acquire();
 
-		sizep[0] = untyped mediaData.length;
+		if (mediaData != null)
+		{
+			sizep[0] = cast mediaData.length;
+
+			mediaMutex.release();
+
+			return 0;
+		}
 
 		mediaMutex.release();
 
-		return 0;
+		return -1;
 	}
 
 	@:keep
@@ -1165,29 +1171,36 @@ class Video extends openfl.display.Bitmap
 	{
 		mediaMutex.acquire();
 
-		if (untyped __cpp__('{0} >= {1}', mediaOffset, mediaData.length))
+		if (mediaData != null)
 		{
+			final readLength:cpp.UInt32 = cast len;
+
+			if (mediaOffset >= mediaData.length)
+			{
+				mediaMutex.release();
+				return 0;
+			}
+
+			final toRead:cpp.UInt32 = readLength < (mediaData.length - mediaOffset) ? readLength : (mediaData.length - mediaOffset);
+
+			if (mediaOffset > (mediaData.length - toRead))
+			{
+				mediaMutex.release();
+				return -1;
+			}
+
+			cpp.Stdlib.nativeMemcpy(untyped buf, untyped cpp.RawPointer.addressOf(cpp.NativeArray.getBase(mediaData).getBase()[mediaOffset]), toRead);
+
+			mediaOffset += toRead;
+
 			mediaMutex.release();
-			return 0;
+
+			return toRead;
 		}
-
-		final toRead:cpp.UInt64 = untyped __cpp__('{0} < ({1} - {2}) ? {0} : ({1} - {2})', len, mediaData.length, mediaOffset);
-
-		if (mediaData == null || untyped __cpp__('{0} > {1} - {2}', mediaOffset, mediaData.length, toRead))
-		{
-			mediaMutex.release();
-			return -1;
-		}
-
-		cpp.Stdlib.nativeMemcpy(untyped buf,
-			untyped cpp.RawPointer.addressOf(cpp.NativeArray.getBase(mediaData).getBase()[untyped __cpp__('{0}', mediaOffset)]),
-			untyped __cpp__('{0}', toRead));
-
-		untyped __cpp__('{0} += {1}', mediaOffset, toRead);
 
 		mediaMutex.release();
 
-		return cast toRead;
+		return -1;
 	}
 
 	@:keep
@@ -1197,17 +1210,27 @@ class Video extends openfl.display.Bitmap
 	{
 		mediaMutex.acquire();
 
-		if (untyped __cpp__('{0} > {1}', offset, mediaData.length))
+		if (mediaData != null)
 		{
-			mediaMutex.release();
-			return -1;
-		}
+			final newOffset:cpp.UInt32 = cast offset;
 
-		mediaOffset = offset;
+			if (newOffset > mediaData.length)
+			{
+				mediaMutex.release();
+
+				return -1;
+			}
+
+			mediaOffset = newOffset;
+
+			mediaMutex.release();
+
+			return 0;
+		}
 
 		mediaMutex.release();
 
-		return 0;
+		return -1;
 	}
 
 	@:keep
