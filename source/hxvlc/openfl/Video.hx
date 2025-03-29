@@ -1,32 +1,28 @@
 package hxvlc.openfl;
 
-import hxvlc.util.macros.MainLoopMacro;
-import haxe.io.Bytes;
-import haxe.io.BytesData;
 import haxe.Int64;
 import haxe.MainLoop;
+import haxe.io.Bytes;
+import haxe.io.BytesData;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
-import hxvlc.util.macros.DefineMacro;
-#if HXVLC_ENABLE_STATS
-import hxvlc.util.Stats;
-#end
 import hxvlc.util.Handle;
+import hxvlc.util.Stats;
+import hxvlc.util.macros.DefineMacro;
 import lime.app.Event;
+import lime.utils.Log;
+import lime.utils.UInt8Array;
+import openfl.Lib;
+import openfl.display.BitmapData;
+import sys.thread.Mutex;
+
+using StringTools;
+
 #if lime_openal
 import lime.media.openal.AL;
 import lime.media.openal.ALBuffer;
 import lime.media.openal.ALSource;
 #end
-import lime.utils.Log;
-import lime.utils.UInt8Array;
-import openfl.display.BitmapData;
-import openfl.display3D.textures.RectangleTexture;
-import openfl.display3D.textures.TextureBase;
-import openfl.Lib;
-import sys.thread.Mutex;
-
-using StringTools;
 
 /**
  * This class is a video player that uses LibVLC for seamless integration with OpenFL display objects.
@@ -177,7 +173,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Indicates whether to use GPU texture for rendering.
-	 *
+	 * 
 	 * If set to true, GPU texture rendering will be used if possible, otherwise, CPU-based image rendering will be used.
 	 */
 	public static var useTexture:Bool = true;
@@ -192,12 +188,10 @@ class Video extends openfl.display.Bitmap
 	 */
 	public var mrl(get, never):Null<String>;
 
-	#if HXVLC_ENABLE_STATS
 	/**
 	 * Statistics related to the media.
 	 */
 	public var stats(get, never):Null<Stats>;
-	#end
 
 	/**
 	 * Duration of the media in microseconds.
@@ -241,7 +235,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Playback rate of the video.
-	 *
+	 * 
 	 * Note: The actual rate may vary depending on the media.
 	 */
 	public var rate(get, set):Single;
@@ -912,7 +906,6 @@ class Video extends openfl.display.Bitmap
 		return null;
 	}
 
-	#if HXVLC_ENABLE_STATS
 	@:noCompletion
 	private function get_stats():Null<Stats>
 	{
@@ -931,7 +924,6 @@ class Video extends openfl.display.Bitmap
 
 		return null;
 	}
-	#end
 
 	@:noCompletion
 	private function get_duration():Int64
@@ -1261,13 +1253,14 @@ class Video extends openfl.display.Bitmap
 	{
 		if (__renderable || forceRendering)
 		{
-			MainLoopMacro.runInMainThreadSafe({
+			MainLoop.runInMainThread(function():Void
+			{
 				if (texturePlanes != null)
 				{
 					textureMutex.acquire();
 
 					if (bitmapData != null && bitmapData.__texture != null)
-						cast(bitmapData.__texture, RectangleTexture).uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanes)));
+						cast(bitmapData.__texture, openfl.display3D.textures.RectangleTexture).uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanes)));
 					else if (bitmapData != null && bitmapData.image != null)
 						bitmapData.setPixels(bitmapData.rect, Bytes.ofData(texturePlanes));
 
@@ -1292,7 +1285,7 @@ class Video extends openfl.display.Bitmap
 
 		final currentChroma:String = new String(untyped chroma);
 
-		if (TextureBase.__supportsBGRA == true)
+		if (openfl.display3D.textures.TextureBase.__supportsBGRA == true)
 		{
 			if (currentChroma != 'BGRA')
 				cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('BGRA'), 4);
@@ -1328,7 +1321,8 @@ class Video extends openfl.display.Bitmap
 
 		textureMutex.release();
 
-		MainLoopMacro.runInMainThreadSafe({
+		MainLoop.runInMainThread(function():Void
+		{
 			if (bitmapData == null
 				|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
 				|| (!useTexture && bitmapData.__texture != null)
@@ -1344,18 +1338,23 @@ class Video extends openfl.display.Bitmap
 					bitmapData.dispose();
 				}
 
+				bitmapData = new BitmapData(textureWidth, textureHeight, true, 0);
+
 				if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
 				{
-					bitmapData = BitmapData.fromTexture(Lib.current.stage.context3D.createRectangleTexture(textureWidth, textureHeight,
-						openfl.display3D.Context3DTextureFormat.BGRA, true));
-				}
-				else
-				{
-					if (useTexture)
-						Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
+					bitmapData.disposeImage();
 
-					bitmapData = new BitmapData(textureWidth, textureHeight, true, 0);
+					@:nullSafety(Off)
+					bitmapData.image = null;
+
+					bitmapData.getTexture(Lib.current.stage.context3D);
+
+					// Optimize for Render To Texture
+					if (bitmapData.__texture != null)
+						bitmapData.__texture.__getGLFramebuffer(true, 0, 0);
 				}
+				else if (useTexture)
+					Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
 
 				onFormatSetup.dispatch();
 
@@ -1517,47 +1516,47 @@ class Video extends openfl.display.Bitmap
 		switch (p_event[0].type)
 		{
 			case event if (event == LibVLC_MediaPlayerOpening):
-				MainLoopMacro.runInMainThreadSafe(onOpening.dispatch());
+				MainLoop.runInMainThread(onOpening.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerPlaying):
-				MainLoopMacro.runInMainThreadSafe(onPlaying.dispatch());
+				MainLoop.runInMainThread(onPlaying.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerStopped):
-				MainLoopMacro.runInMainThreadSafe(onStopped.dispatch());
+				MainLoop.runInMainThread(onStopped.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerPaused):
-				MainLoopMacro.runInMainThreadSafe(onPaused.dispatch());
+				MainLoop.runInMainThread(onPaused.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerEndReached):
-				MainLoopMacro.runInMainThreadSafe(onEndReached.dispatch());
+				MainLoop.runInMainThread(onEndReached.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerEncounteredError):
 				final errmsg:String = LibVLC.errmsg();
 
-				MainLoopMacro.runInMainThreadSafe(onEncounteredError.dispatch(errmsg));
+				MainLoop.runInMainThread(onEncounteredError.dispatch.bind(errmsg));
 			case event if (event == LibVLC_MediaPlayerCorked):
-				MainLoopMacro.runInMainThreadSafe(onCorked.dispatch());
+				MainLoop.runInMainThread(onCorked.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerUncorked):
-				MainLoopMacro.runInMainThreadSafe(onUncorked.dispatch());
+				MainLoop.runInMainThread(onUncorked.dispatch.bind());
 			case event if (event == LibVLC_MediaPlayerTimeChanged):
 				final newTime:Int64 = (untyped __cpp__('{0}.u.media_player_time_changed.new_time', p_event[0]) : cpp.Int64);
 
-				MainLoopMacro.runInMainThreadSafe(onTimeChanged.dispatch(newTime));
+				MainLoop.runInMainThread(onTimeChanged.dispatch.bind(newTime));
 			case event if (event == LibVLC_MediaPlayerPositionChanged):
 				final newPosition:Single = untyped __cpp__('{0}.u.media_player_position_changed.new_position', p_event[0]);
 
-				MainLoopMacro.runInMainThreadSafe(onPositionChanged.dispatch(newPosition));
+				MainLoop.runInMainThread(onPositionChanged.dispatch.bind(newPosition));
 			case event if (event == LibVLC_MediaPlayerLengthChanged):
 				final newLength:Int64 = (untyped __cpp__('{0}.u.media_player_length_changed.new_length', p_event[0]) : cpp.Int64);
 
-				MainLoopMacro.runInMainThreadSafe(onLengthChanged.dispatch(newLength));
+				MainLoop.runInMainThread(onLengthChanged.dispatch.bind(newLength));
 			case event if (event == LibVLC_MediaPlayerChapterChanged):
 				final newChapter:Int = untyped __cpp__('{0}.u.media_player_chapter_changed.new_chapter', p_event[0]);
 
-				MainLoopMacro.runInMainThreadSafe(onChapterChanged.dispatch(newChapter));
+				MainLoop.runInMainThread(onChapterChanged.dispatch.bind(newChapter));
 			case event if (event == LibVLC_MediaPlayerMediaChanged):
-				MainLoopMacro.runInMainThreadSafe(onMediaChanged.dispatch());
+				MainLoop.runInMainThread(onMediaChanged.dispatch.bind());
 			case event if (event == LibVLC_MediaParsedChanged):
 				final newStatus:Int = untyped __cpp__('{0}.u.media_parsed_changed.new_status', p_event[0]);
 
-				MainLoopMacro.runInMainThreadSafe(onMediaParsedChanged.dispatch(newStatus));
+				MainLoop.runInMainThread(onMediaParsedChanged.dispatch.bind(newStatus));
 			case event if (event == LibVLC_MediaMetaChanged):
-				MainLoopMacro.runInMainThreadSafe(onMediaMetaChanged.dispatch());
+				MainLoop.runInMainThread(onMediaMetaChanged.dispatch.bind());
 		}
 	}
 }

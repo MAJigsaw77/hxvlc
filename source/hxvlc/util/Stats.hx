@@ -1,6 +1,5 @@
 package hxvlc.util;
 
-#if HXVLC_ENABLE_STATS
 import hxvlc.externs.Types;
 
 /**
@@ -165,4 +164,3 @@ class Stats
 		return stats;
 	}
 }
-#end

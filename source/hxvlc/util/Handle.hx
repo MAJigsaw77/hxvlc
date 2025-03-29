@@ -1,12 +1,17 @@
 package hxvlc.util;
 
-import hxvlc.util.macros.MainLoopMacro;
-import haxe.io.Path;
 import haxe.Int64;
 import haxe.MainLoop;
+import haxe.io.Path;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.macros.DefineMacro;
+import lime.utils.Log;
+import sys.FileSystem;
+import sys.thread.Mutex;
+
+using StringTools;
+
 #if android
 import haxe.Exception;
 import lime.app.Future;
@@ -15,11 +20,6 @@ import lime.utils.AssetLibrary;
 import lime.utils.Assets;
 import sys.io.File;
 #end
-import lime.utils.Log;
-import sys.thread.Mutex;
-import sys.FileSystem;
-
-using StringTools;
 
 /**
  * This class manages the global instance of LibVLC, providing methods for initialization, disposal, and retrieving version information.
@@ -140,7 +140,7 @@ class Handle
 			final success:Bool = init(options);
 
 			if (finishCallback != null)
-				MainLoopMacro.runInMainThreadSafe(finishCallback(success));
+				MainLoop.runInMainThread(finishCallback.bind(success));
 		});
 	}
 
@@ -204,9 +204,6 @@ class Handle
 			#end
 			args.push_back("--no-snapshot-preview");
 			args.push_back("--no-spu");
-			#if !HXVLC_ENABLE_STATS
-			args.push_back("--no-stats");
-			#end
 			args.push_back("--no-sub-autodetect-file");
 			args.push_back("--no-video-title-show");
 			args.push_back("--no-volume-save");
