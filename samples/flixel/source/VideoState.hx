@@ -1,6 +1,5 @@
 package;
 
-import sys.io.File;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -9,7 +8,6 @@ import flixel.FlxG;
 import flixel.FlxState;
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.util.Handle;
-import openfl.display.FPS;
 import sys.FileSystem;
 
 @:nullSafety
@@ -99,7 +97,7 @@ class VideoState extends FlxState
 				final file:String = haxe.io.Path.join(['videos', FileSystem.readDirectory('videos')[0]]);
 
 				if (file != null && file.length > 0)
-					video.load(File.getBytes(file));
+					video.load(file);
 				else
 					video.load(bigBuckBunny);
 			}

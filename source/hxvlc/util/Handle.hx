@@ -190,7 +190,6 @@ class Handle
 
 			args.push_back("--aout=amem,none");
 			args.push_back("--intf=none");
-			args.push_back("--text-renderer=none");
 			args.push_back("--vout=vmem,none");
 
 			args.push_back("--ignore-config");
@@ -203,8 +202,6 @@ class Handle
 			args.push_back("--no-lua");
 			#end
 			args.push_back("--no-snapshot-preview");
-			args.push_back("--no-spu");
-			args.push_back("--no-sub-autodetect-file");
 			args.push_back("--no-video-title-show");
 			args.push_back("--no-volume-save");
 			args.push_back("--no-xlib");
