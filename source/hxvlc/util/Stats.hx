@@ -83,7 +83,7 @@ class Stats
 	public var f_send_bitrate:Single;
 
 	/**
-	 * Creates a new instance of Stats with default values.
+	 * Creates a new instance of `Stats` with default values.
 	 */
 	public function new():Void
 	{
@@ -105,9 +105,9 @@ class Stats
 	}
 
 	/**
-	 * Returns a string representation of the Stats object.
+	 * Returns a string representation of the `Stats` object.
 	 * 
-	 * @return A string containing all the properties of the Stats object.
+	 * @return A string containing all the properties of the `Stats` object.
 	 */
 	@:keep
 	public function toString():String
@@ -128,14 +128,15 @@ class Stats
 		parts.push('Sent packets: $i_sent_packets');
 		parts.push('Sent bytes: $i_sent_bytes');
 		parts.push('Send bitrate: $f_send_bitrate bps');
-		return parts.join('\n');
+		return parts.join(', ');
 	}
 
 	/**
-	 * Constructs a Stats object from raw LibVLC media statistics.
+	 * Constructs a `Stats` object from raw LibVLC media statistics.
 	 * 
 	 * @param media_stats The LibVLC media statistics.
-	 * @return A Stats object populated with the provided media statistics.
+	 * 
+	 * @return A `Stats` object populated with the provided media statistics.
 	 */
 	@:unreflective
 	public static function fromMediaStats(media_stats:cpp.Struct<LibVLC_Media_Stats_T>):Stats

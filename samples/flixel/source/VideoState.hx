@@ -81,6 +81,12 @@ class VideoState extends FlxState
 			video.antialiasing = true;
 			video.bitmap.onFormatSetup.add(function():Void
 			{
+				trace(video.bitmap.getVideoDescription());
+				trace(video.bitmap.getAudioDescription());
+				trace(video.bitmap.getSpuDescription());
+			});
+			video.bitmap.onFormatSetup.add(function():Void
+			{
 				if (video.bitmap != null && video.bitmap.bitmapData != null)
 				{
 					final scale:Float = Math.min(FlxG.width / video.bitmap.bitmapData.width, FlxG.height / video.bitmap.bitmapData.height);

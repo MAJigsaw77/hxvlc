@@ -550,7 +550,7 @@ extern class LibVLC
 	 * @param p_mi Pointer to the media player.
 	 * @param i_type Subtitle or audio.
 	 * @param psz_uri URI of the slave (should contain a valid scheme).
-	 * @param b_select True if this slave should be selected when it's loaded.
+	 * @param b_select `true` if this slave should be selected when it's loaded.
 	 * @return 0 on success, -1 on error.
 	 */
 	@:native('libvlc_media_player_add_slave')

@@ -1,5 +1,6 @@
 package hxvlc.openfl;
 
+import hxvlc.util.TrackDescription;
 import haxe.Int64;
 import haxe.MainLoop;
 import haxe.io.Bytes;
@@ -276,21 +277,6 @@ class Video extends openfl.display.Bitmap
 	public var videoTrack(get, set):Int;
 
 	/**
-	 * Total number of available subtitle tracks.
-	 */
-	public var spuTrackCount(get, never):Int;
-
-	/**
-	 * Selected subtitle track.
-	 */
-	public var spuTrack(get, set):Int;
-
-	/**
-	 * Subtitle delay in microseconds.
-	 */
-	public var spuDelay(get, set):Int64;
-
-	/**
 	 * Total number of available audio tracks.
 	 */
 	public var audioTrackCount(get, never):Int;
@@ -304,6 +290,21 @@ class Video extends openfl.display.Bitmap
 	 * Audio delay in microseconds.
 	 */
 	public var audioDelay(get, set):Int64;
+
+	/**
+	 * Total number of available subtitle tracks.
+	 */
+	public var spuTrackCount(get, never):Int;
+
+	/**
+	 * Selected subtitle track.
+	 */
+	public var spuTrack(get, set):Int;
+
+	/**
+	 * Subtitle delay in microseconds.
+	 */
+	public var spuDelay(get, set):Int64;
 
 	/**
 	 * Event triggered when the media is opening.
@@ -460,6 +461,7 @@ class Video extends openfl.display.Bitmap
 	 * 
 	 * @param location The location of the media file or stream.
 	 * @param options Additional options to configure the media.
+	 * 
 	 * @return `true` if the media was loaded successfully, `false` otherwise.
 	 */
 	public function load(location:hxvlc.util.Location, ?options:Array<String>):Bool
@@ -625,6 +627,7 @@ class Video extends openfl.display.Bitmap
 	 * 
 	 * @param index The index of the subitem to load.
 	 * @param options Additional options to configure the loaded subitem.
+	 * 
 	 * @return `true` if the subitem was loaded successfully, `false` otherwise.
 	 */
 	public function loadFromSubItem(index:Int, ?options:Array<String>):Bool
@@ -679,6 +682,7 @@ class Video extends openfl.display.Bitmap
 	 * 
 	 * @param parse_flag The parsing option.
 	 * @param timeout The timeout in milliseconds.
+	 * 
 	 * @return `true` if parsing succeeded, `false` otherwise.
 	 */
 	public function parseWithOptions(parse_flag:Int, timeout:Int):Bool
@@ -721,6 +725,104 @@ class Video extends openfl.display.Bitmap
 			if (currentMediaItem != null)
 				LibVLC.media_parse_stop(currentMediaItem);
 		}
+	}
+
+	/**
+	 * Adds a slave to the current media player.
+	 * 
+	 * @param type Subtitle or audio.
+	 * @param uri URI of the slave (should contain a valid scheme).
+	 * @param select `true` if this slave should be selected when it's loaded.
+	 * 
+	 * @return `true` on success, `false` otherwise.
+	 */
+	public function addSlave(type:LibVLC_Media_Slave_Type_T, url:String, select:Bool):Bool
+	{
+		return mediaPlayer != null && LibVLC.media_player_add_slave(mediaPlayer, type, url, select) == 0;
+	}
+
+	/**
+	 * Gets the description of available audio tracks of the current media player.
+	 * 
+	 * @return The list containing descriptions of available audio tracks.
+	 */
+	public function getVideoDescription():Array<TrackDescription>
+	{
+		var description:Array<TrackDescription> = [];
+
+		if (mediaPlayer != null)
+		{
+			var rawDescription:cpp.RawPointer<LibVLC_Track_Description_T> = LibVLC.video_get_track_description(mediaPlayer);
+
+			var nextDescription:cpp.RawPointer<LibVLC_Track_Description_T> = rawDescription[0].p_next;
+
+			while (nextDescription != null)
+			{
+				description.push(TrackDescription.fromTrackDescription(nextDescription[0]));
+
+				nextDescription = nextDescription[0].p_next;
+			}
+
+			LibVLC.track_description_list_release(rawDescription);
+		}
+
+		return description;
+	}
+
+	/**
+	 * Gets the description of available audio tracks of the current media player.
+	 * 
+	 * @return The list containing descriptions of available audio tracks.
+	 */
+	public function getAudioDescription():Array<TrackDescription>
+	{
+		var description:Array<TrackDescription> = [];
+
+		if (mediaPlayer != null)
+		{
+			var rawDescription:cpp.RawPointer<LibVLC_Track_Description_T> = LibVLC.audio_get_track_description(mediaPlayer);
+
+			var nextDescription:cpp.RawPointer<LibVLC_Track_Description_T> = rawDescription[0].p_next;
+
+			while (nextDescription != null)
+			{
+				description.push(TrackDescription.fromTrackDescription(nextDescription[0]));
+
+				nextDescription = nextDescription[0].p_next;
+			}
+
+			LibVLC.track_description_list_release(rawDescription);
+		}
+
+		return description;
+	}
+
+	/**
+	 * Gets the description of available available video subtitles of the current media player.
+	 * 
+	 * @return The list containing descriptions of available available video subtitles.
+	 */
+	public function getSpuDescription():Array<TrackDescription>
+	{
+		var description:Array<TrackDescription> = [];
+
+		if (mediaPlayer != null)
+		{
+			var rawDescription:cpp.RawPointer<LibVLC_Track_Description_T> = LibVLC.video_get_spu_description(mediaPlayer);
+
+			var nextDescription:cpp.RawPointer<LibVLC_Track_Description_T> = rawDescription[0].p_next;
+
+			while (nextDescription != null)
+			{
+				description.push(TrackDescription.fromTrackDescription(nextDescription[0]));
+
+				nextDescription = nextDescription[0].p_next;
+			}
+
+			LibVLC.track_description_list_release(rawDescription);
+		}
+
+		return description;
 	}
 
 	/**
@@ -1133,42 +1235,6 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:noCompletion
-	private function get_spuTrackCount():Int
-	{
-		return mediaPlayer != null ? LibVLC.video_get_spu_count(mediaPlayer) : -1;
-	}
-
-	@:noCompletion
-	private function get_spuTrack():Int
-	{
-		return mediaPlayer != null ? LibVLC.video_get_spu(mediaPlayer) : -1;
-	}
-
-	@:noCompletion
-	private function set_spuTrack(value:Int):Int
-	{
-		if (mediaPlayer != null)
-			LibVLC.video_set_spu(mediaPlayer, value);
-
-		return value;
-	}
-
-	@:noCompletion
-	private function get_spuDelay():Int64
-	{
-		return mediaPlayer != null ? LibVLC.video_get_spu_delay(mediaPlayer) : 0;
-	}
-
-	@:noCompletion
-	private function set_spuDelay(value:Int64):Int64
-	{
-		if (mediaPlayer != null)
-			LibVLC.video_set_spu_delay(mediaPlayer, value);
-
-		return value;
-	}
-
-	@:noCompletion
 	private function get_audioTrackCount():Int
 	{
 		return mediaPlayer != null ? LibVLC.audio_get_track_count(mediaPlayer) : -1;
@@ -1200,6 +1266,42 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 			LibVLC.audio_set_delay(mediaPlayer, value);
+
+		return value;
+	}
+
+	@:noCompletion
+	private function get_spuTrackCount():Int
+	{
+		return mediaPlayer != null ? LibVLC.video_get_spu_count(mediaPlayer) : -1;
+	}
+
+	@:noCompletion
+	private function get_spuTrack():Int
+	{
+		return mediaPlayer != null ? LibVLC.video_get_spu(mediaPlayer) : -1;
+	}
+
+	@:noCompletion
+	private function set_spuTrack(value:Int):Int
+	{
+		if (mediaPlayer != null)
+			LibVLC.video_set_spu(mediaPlayer, value);
+
+		return value;
+	}
+
+	@:noCompletion
+	private function get_spuDelay():Int64
+	{
+		return mediaPlayer != null ? LibVLC.video_get_spu_delay(mediaPlayer) : 0;
+	}
+
+	@:noCompletion
+	private function set_spuDelay(value:Int64):Int64
+	{
+		if (mediaPlayer != null)
+			LibVLC.video_set_spu_delay(mediaPlayer, value);
 
 		return value;
 	}
