@@ -256,29 +256,54 @@ class Video extends openfl.display.Bitmap
 	public var volume(get, set):Int;
 
 	/**
-	 * Total number of available audio tracks.
-	 */
-	public var trackCount(get, never):Int;
-
-	/**
-	 * Selected audio track.
-	 */
-	public var track(get, set):Int;
-
-	/**
 	 * Selected audio channel.
 	 */
 	public var channel(get, set):Int;
 
 	/**
-	 * Audio delay in microseconds.
-	 */
-	public var delay(get, set):Int64;
-
-	/**
 	 * Role of the media.
 	 */
 	public var role(get, set):UInt;
+
+	/**
+	 * Total number of available video tracks.
+	 */
+	public var videoTrackCount(get, never):Int;
+
+	/**
+	 * Selected video track.
+	 */
+	public var videoTrack(get, set):Int;
+
+	/**
+	 * Total number of available subtitle tracks.
+	 */
+	public var spuTrackCount(get, never):Int;
+
+	/**
+	 * Selected subtitle track.
+	 */
+	public var spuTrack(get, set):Int;
+
+	/**
+	 * Subtitle delay in microseconds.
+	 */
+	public var spuDelay(get, set):Int64;
+
+	/**
+	 * Total number of available audio tracks.
+	 */
+	public var audioTrackCount(get, never):Int;
+
+	/**
+	 * Selected audio track.
+	 */
+	public var audioTrack(get, set):Int;
+
+	/**
+	 * Audio delay in microseconds.
+	 */
+	public var audioDelay(get, set):Int64;
 
 	/**
 	 * Event triggered when the media is opening.
@@ -1057,27 +1082,6 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:noCompletion
-	private function get_trackCount():Int
-	{
-		return mediaPlayer != null ? LibVLC.audio_get_track_count(mediaPlayer) : -1;
-	}
-
-	@:noCompletion
-	private function get_track():Int
-	{
-		return mediaPlayer != null ? LibVLC.audio_get_track(mediaPlayer) : -1;
-	}
-
-	@:noCompletion
-	private function set_track(value:Int):Int
-	{
-		if (mediaPlayer != null)
-			LibVLC.audio_set_track(mediaPlayer, value);
-
-		return value;
-	}
-
-	@:noCompletion
 	private function get_channel():Int
 	{
 		return mediaPlayer != null ? LibVLC.audio_get_channel(mediaPlayer) : 0;
@@ -1093,21 +1097,6 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:noCompletion
-	private function get_delay():Int64
-	{
-		return mediaPlayer != null ? LibVLC.audio_get_delay(mediaPlayer) : 0;
-	}
-
-	@:noCompletion
-	private function set_delay(value:Int64):Int64
-	{
-		if (mediaPlayer != null)
-			LibVLC.audio_set_delay(mediaPlayer, value);
-
-		return value;
-	}
-
-	@:noCompletion
 	private function get_role():UInt
 	{
 		return mediaPlayer != null ? LibVLC.media_player_get_role(mediaPlayer) : 0;
@@ -1118,6 +1107,99 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_set_role(mediaPlayer, value);
+
+		return value;
+	}
+
+	@:noCompletion
+	private function get_videoTrackCount():Int
+	{
+		return mediaPlayer != null ? LibVLC.video_get_track_count(mediaPlayer) : -1;
+	}
+
+	@:noCompletion
+	private function get_videoTrack():Int
+	{
+		return mediaPlayer != null ? LibVLC.video_get_track(mediaPlayer) : -1;
+	}
+
+	@:noCompletion
+	private function set_videoTrack(value:Int):Int
+	{
+		if (mediaPlayer != null)
+			LibVLC.video_set_track(mediaPlayer, value);
+
+		return value;
+	}
+
+	@:noCompletion
+	private function get_spuTrackCount():Int
+	{
+		return mediaPlayer != null ? LibVLC.video_get_spu_count(mediaPlayer) : -1;
+	}
+
+	@:noCompletion
+	private function get_spuTrack():Int
+	{
+		return mediaPlayer != null ? LibVLC.video_get_spu(mediaPlayer) : -1;
+	}
+
+	@:noCompletion
+	private function set_spuTrack(value:Int):Int
+	{
+		if (mediaPlayer != null)
+			LibVLC.video_set_spu(mediaPlayer, value);
+
+		return value;
+	}
+
+	@:noCompletion
+	private function get_spuDelay():Int64
+	{
+		return mediaPlayer != null ? LibVLC.video_get_spu_delay(mediaPlayer) : 0;
+	}
+
+	@:noCompletion
+	private function set_spuDelay(value:Int64):Int64
+	{
+		if (mediaPlayer != null)
+			LibVLC.video_set_spu_delay(mediaPlayer, value);
+
+		return value;
+	}
+
+	@:noCompletion
+	private function get_audioTrackCount():Int
+	{
+		return mediaPlayer != null ? LibVLC.audio_get_track_count(mediaPlayer) : -1;
+	}
+
+	@:noCompletion
+	private function get_audioTrack():Int
+	{
+		return mediaPlayer != null ? LibVLC.audio_get_track(mediaPlayer) : -1;
+	}
+
+	@:noCompletion
+	private function set_audioTrack(value:Int):Int
+	{
+		if (mediaPlayer != null)
+			LibVLC.audio_set_track(mediaPlayer, value);
+
+		return value;
+	}
+
+	@:noCompletion
+	private function get_audioDelay():Int64
+	{
+		return mediaPlayer != null ? LibVLC.audio_get_delay(mediaPlayer) : 0;
+	}
+
+	@:noCompletion
+	private function set_audioDelay(value:Int64):Int64
+	{
+		if (mediaPlayer != null)
+			LibVLC.audio_set_delay(mediaPlayer, value);
 
 		return value;
 	}
@@ -1260,7 +1342,8 @@ class Video extends openfl.display.Bitmap
 					textureMutex.acquire();
 
 					if (bitmapData != null && bitmapData.__texture != null)
-						cast(bitmapData.__texture, openfl.display3D.textures.RectangleTexture).uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanes)));
+						cast(bitmapData.__texture, openfl.display3D.textures.RectangleTexture)
+							.uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanes)));
 					else if (bitmapData != null && bitmapData.image != null)
 						bitmapData.setPixels(bitmapData.rect, Bytes.ofData(texturePlanes));
 

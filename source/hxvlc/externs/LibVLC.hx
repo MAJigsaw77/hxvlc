@@ -542,6 +542,30 @@ extern class LibVLC
 	static function media_player_get_length(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):LibVLC_Time_T;
 
 	/**
+	 * Adds a slave to the current media player.
+	 * 
+	 * @note If the player is playing, the slave will be added directly. This call
+	 *       will also update the slave list of the attached libvlc_media_t.
+	 * 
+	 * @param p_mi Pointer to the media player.
+	 * @param i_type Subtitle or audio.
+	 * @param psz_uri URI of the slave (should contain a valid scheme).
+	 * @param b_select True if this slave should be selected when it's loaded.
+	 * @return 0 on success, -1 on error.
+	 */
+	@:native('libvlc_media_player_add_slave')
+	static function media_player_add_slave(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_type:LibVLC_Media_Slave_Type_T, psz_uri:cpp.ConstCharStar,
+		b_select:Bool):Int;
+
+	/**
+	 * Releases (frees) a libvlc_track_description_t structure.
+	 * 
+	 * @param p_track_description Pointer to the structure to release.
+	 */
+	@:native('libvlc_track_description_list_release')
+	static function track_description_list_release(p_track_description:cpp.RawPointer<LibVLC_Track_Description_T>):Void;
+
+	/**
 	 * Creates a new media player.
 	 * 
 	 * @param p_libvlc_instance Pointer to the LibVLC instance.
@@ -597,6 +621,104 @@ extern class LibVLC
 	 */
 	@:native('libvlc_video_get_size')
 	static function video_get_size(mp:cpp.RawPointer<LibVLC_Media_Player_T>, num:cpp.UInt32, px:cpp.RawPointer<cpp.UInt32>, py:cpp.RawPointer<cpp.UInt32>):Int;
+
+	/**
+	 * Gets the current video subtitle.
+	 * 
+	 * @param p_mi Pointer to the media player.
+	 * @return The video subtitle selected, or -1 if none.
+	 */
+	@:native('libvlc_video_get_spu')
+	static function video_get_spu(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
+
+	/**
+	 * Gets the number of available video subtitles.
+	 * 
+	 * @param p_mi Pointer to the media player.
+	 * @return The number of available video subtitles.
+	 */
+	@:native('libvlc_video_get_spu_count')
+	static function video_get_spu_count(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
+
+	/**
+	 * Gets the description of available video subtitles.
+	 * 
+	 * @param p_mi Pointer to the media player.
+	 * @return Pointer to the list containing descriptions of available video subtitles.
+	 *         It must be freed with libvlc_track_description_list_release().
+	 */
+	@:native('libvlc_video_get_spu_description')
+	static function video_get_spu_description(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):cpp.RawPointer<LibVLC_Track_Description_T>;
+
+	/**
+	 * Sets a new video subtitle.
+	 * 
+	 * @param p_mi Pointer to the media player.
+	 * @param i_spu Video subtitle track to select (i_id from track description).
+	 * @return 0 on success, -1 if out of range.
+	 */
+	@:native('libvlc_video_set_spu')
+	static function video_set_spu(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_spu:Int):Int;
+
+	/**
+	 * Gets the current subtitle delay.
+	 * Positive values mean subtitles are displayed later, negative values earlier.
+	 * 
+	 * @param p_mi Pointer to the media player.
+	 * @return Time (in microseconds) the display of subtitles is being delayed.
+	 */
+	@:native('libvlc_video_get_spu_delay')
+	static function video_get_spu_delay(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):cpp.Int64;
+
+	/**
+	 * Sets the subtitle delay.
+	 * Positive values result in subtitles being displayed later, while negative values
+	 * result in subtitles being displayed earlier. The delay resets to zero when the media changes.
+	 * 
+	 * @param p_mi Pointer to the media player.
+	 * @param i_delay Time (in microseconds) the display of subtitles should be delayed.
+	 * @return 0 on success, -1 on error.
+	 */
+	@:native('libvlc_video_set_spu_delay')
+	static function video_set_spu_delay(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_delay:cpp.Int64):Int;
+
+	/**
+	 * Gets the number of available video tracks.
+	 * 
+	 * @param p_mi Pointer to the media player.
+	 * @return The number of available video tracks.
+	 */
+	@:native('libvlc_video_get_track_count')
+	static function video_get_track_count(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
+
+	/**
+	 * Gets the description of available video tracks.
+	 * 
+	 * @param p_mi Pointer to the media player.
+	 * @return Pointer to the list containing descriptions of available video tracks,
+	 *         or null on error. It must be freed with libvlc_track_description_list_release().
+	 */
+	@:native('libvlc_video_get_track_description')
+	static function video_get_track_description(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):cpp.RawPointer<LibVLC_Track_Description_T>;
+
+	/**
+	 * Gets the current video track.
+	 * 
+	 * @param p_mi Pointer to the media player.
+	 * @return The video track ID, or -1 if no active input.
+	 */
+	@:native('libvlc_video_get_track')
+	static function video_get_track(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
+
+	/**
+	 * Sets the video track.
+	 * 
+	 * @param p_mi Pointer to the media player.
+	 * @param i_track The track ID (i_id field from track description).
+	 * @return 0 on success, -1 if out of range.
+	 */
+	@:native('libvlc_video_set_track')
+	static function video_set_track(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_track:Int):Int;
 
 	/**
 	 * Sets the audio format callbacks.
@@ -665,19 +787,29 @@ extern class LibVLC
 	static function audio_set_delay(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_delay:cpp.Int64):Int;
 
 	/**
-	 * Gets the number of audio tracks.
+	 * Gets the number of available audio tracks.
 	 * 
 	 * @param p_mi Pointer to the media player.
-	 * @return The number of audio tracks.
+	 * @return The number of available audio tracks, or -1 if unavailable.
 	 */
 	@:native('libvlc_audio_get_track_count')
 	static function audio_get_track_count(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
 
 	/**
+	 * Gets the description of available audio tracks.
+	 * 
+	 * @param p_mi Pointer to the media player.
+	 * @return Pointer to the list containing descriptions of available audio tracks,
+	 *         or null. It must be freed with libvlc_track_description_list_release().
+	 */
+	@:native('libvlc_audio_get_track_description')
+	static function audio_get_track_description(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):cpp.RawPointer<LibVLC_Track_Description_T>;
+
+	/**
 	 * Gets the current audio track.
 	 * 
 	 * @param p_mi Pointer to the media player.
-	 * @return The current audio track.
+	 * @return The audio track ID, or -1 if no active input.
 	 */
 	@:native('libvlc_audio_get_track')
 	static function audio_get_track(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
@@ -686,8 +818,8 @@ extern class LibVLC
 	 * Sets the current audio track.
 	 * 
 	 * @param p_mi Pointer to the media player.
-	 * @param i_track The new audio track.
-	 * @return 0 on success, -1 on failure.
+	 * @param i_track The track ID (i_id field from track description).
+	 * @return 0 on success, -1 on error.
 	 */
 	@:native('libvlc_audio_set_track')
 	static function audio_set_track(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_track:Int):Int;
