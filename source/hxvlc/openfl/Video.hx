@@ -480,10 +480,7 @@ class Video extends openfl.display.Bitmap
 				if (location.contains('://'))
 					mediaItem = LibVLC.media_new_location(Handle.instance, location);
 				else if (location.length > 0)
-				{
-					mediaItem = LibVLC.media_new_path(Handle.instance,
-						#if windows haxe.io.Path.normalize(location).split('/').join('\\') #else haxe.io.Path.normalize(location) #end);
-				}
+					mediaItem = LibVLC.media_new_path(Handle.instance, normalizePath(location));
 				else
 					return false;
 			}
@@ -526,75 +523,25 @@ class Video extends openfl.display.Bitmap
 
 				if (eventManager != null)
 				{
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerOpening, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaPlayerOpening)');
-
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPlaying, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaPlayerPlaying)');
-
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerStopped, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaPlayerStopped)');
-
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPaused, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaPlayerPaused)');
-
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, untyped __cpp__('event_manager_callbacks'),
-						untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaPlayerEndReached)');
-
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, untyped __cpp__('event_manager_callbacks'),
-						untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaPlayerEncounteredError)');
-
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, untyped __cpp__('event_manager_callbacks'),
-						untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaPlayerMediaChanged)');
-
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaPlayerCorked)');
-
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'),
-						untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaPlayerUncorked)');
-
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('event_manager_callbacks'),
-						untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaPlayerTimeChanged)');
-
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPositionChanged, untyped __cpp__('event_manager_callbacks'),
-						untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaPlayerPositionChanged)');
-
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerLengthChanged, untyped __cpp__('event_manager_callbacks'),
-						untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaPlayerLengthChanged)');
-
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerChapterChanged, untyped __cpp__('event_manager_callbacks'),
-						untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaPlayerChapterChanged)');
+					addEvent(eventManager, LibVLC_MediaPlayerOpening);
+					addEvent(eventManager, LibVLC_MediaPlayerPlaying);
+					addEvent(eventManager, LibVLC_MediaPlayerStopped);
+					addEvent(eventManager, LibVLC_MediaPlayerPaused);
+					addEvent(eventManager, LibVLC_MediaPlayerEndReached);
+					addEvent(eventManager, LibVLC_MediaPlayerEncounteredError);
+					addEvent(eventManager, LibVLC_MediaPlayerMediaChanged);
+					addEvent(eventManager, LibVLC_MediaPlayerCorked);
+					addEvent(eventManager, LibVLC_MediaPlayerUncorked);
+					addEvent(eventManager, LibVLC_MediaPlayerTimeChanged);
+					addEvent(eventManager, LibVLC_MediaPlayerPositionChanged);
+					addEvent(eventManager, LibVLC_MediaPlayerLengthChanged);
+					addEvent(eventManager, LibVLC_MediaPlayerChapterChanged);
 				}
 				else
 					Log.warn('Unable to initialize the LibVLC media player event manager.');
 
-				LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), untyped __cpp__('video_unlock'), untyped __cpp__('video_display'),
-					untyped __cpp__('this'));
-				LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), untyped NULL);
-
-				#if lime_openal
-				if (alUseEXTMCFORMATS == null)
-					alUseEXTMCFORMATS = AL.isExtensionPresent('AL_EXT_MCFORMATS');
-
-				if (alSource == null)
-					alSource = AL.createSource();
-
-				if (alBufferPool == null)
-					alBufferPool = AL.genBuffers(MAX_AUDIO_BUFFER_COUNT);
-				#end
-
-				LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped NULL,
-					untyped __cpp__('audio_flush'), untyped NULL, untyped __cpp__('this'));
-				LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
-				LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
+				setupVideo(mediaPlayer);
+				setupAudio(mediaPlayer);
 			}
 			else
 				Log.warn('Unable to initialize the LibVLC media player.');
@@ -602,19 +549,7 @@ class Video extends openfl.display.Bitmap
 
 		if (mediaItem != null)
 		{
-			if (options != null)
-			{
-				for (option in options)
-				{
-					if (option != null && option.length > 0)
-						LibVLC.media_add_option(mediaItem, option);
-				}
-			}
-
-			LibVLC.media_player_set_media(mediaPlayer, mediaItem);
-
-			LibVLC.media_release(mediaItem);
-
+			setMediaToPlayer(mediaPlayer, mediaItem, options);
 			return true;
 		}
 		else
@@ -651,18 +586,7 @@ class Video extends openfl.display.Bitmap
 
 						if (mediaSubItem != null)
 						{
-							if (options != null)
-							{
-								for (option in options)
-								{
-									if (option != null && option.length > 0)
-										LibVLC.media_add_option(mediaSubItem, option);
-								}
-							}
-
-							LibVLC.media_player_set_media(mediaPlayer, mediaSubItem);
-
-							LibVLC.media_release(mediaSubItem);
+							setMediaToPlayer(mediaPlayer, mediaSubItem, options);
 
 							LibVLC.media_list_release(currentMediaSubItems);
 
@@ -698,11 +622,8 @@ class Video extends openfl.display.Bitmap
 
 				if (eventManager != null)
 				{
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaParsedChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaParsedChanged)');
-
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaMetaChanged, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-						Log.warn('Failed to attach event (MediaMetaChanged)');
+					addEvent(eventManager, LibVLC_MediaParsedChanged);
+					addEvent(eventManager, LibVLC_MediaMetaChanged);
 				}
 				else
 					Log.warn('Unable to initialize the LibVLC media event manager.');
@@ -749,25 +670,14 @@ class Video extends openfl.display.Bitmap
 	 */
 	public function getVideoDescription():Array<TrackDescription>
 	{
-		var description:Array<TrackDescription> = [];
+		final description:Array<TrackDescription> = [];
 
 		if (mediaPlayer != null)
 		{
-			var rawDescription:cpp.RawPointer<LibVLC_Track_Description_T> = LibVLC.video_get_track_description(mediaPlayer);
+			final rawDescription:cpp.RawPointer<LibVLC_Track_Description_T> = LibVLC.video_get_track_description(mediaPlayer);
 
 			if (rawDescription != null)
-			{
-				var nextDescription:cpp.RawPointer<LibVLC_Track_Description_T> = rawDescription;
-
-				while (nextDescription != null)
-				{
-					description.push(TrackDescription.fromTrackDescription(nextDescription[0]));
-
-					nextDescription = nextDescription[0].p_next;
-				}
-
-				LibVLC.track_description_list_release(rawDescription);
-			}
+				getDescription(rawDescription, description);
 		}
 
 		return description;
@@ -780,25 +690,14 @@ class Video extends openfl.display.Bitmap
 	 */
 	public function getAudioDescription():Array<TrackDescription>
 	{
-		var description:Array<TrackDescription> = [];
+		final description:Array<TrackDescription> = [];
 
 		if (mediaPlayer != null)
 		{
-			var rawDescription:cpp.RawPointer<LibVLC_Track_Description_T> = LibVLC.audio_get_track_description(mediaPlayer);
+			final rawDescription:cpp.RawPointer<LibVLC_Track_Description_T> = LibVLC.audio_get_track_description(mediaPlayer);
 
 			if (rawDescription != null)
-			{
-				var nextDescription:cpp.RawPointer<LibVLC_Track_Description_T> = rawDescription;
-
-				while (nextDescription != null)
-				{
-					description.push(TrackDescription.fromTrackDescription(nextDescription[0]));
-
-					nextDescription = nextDescription[0].p_next;
-				}
-
-				LibVLC.track_description_list_release(rawDescription);
-			}
+				getDescription(rawDescription, description);
 		}
 
 		return description;
@@ -811,25 +710,14 @@ class Video extends openfl.display.Bitmap
 	 */
 	public function getSpuDescription():Array<TrackDescription>
 	{
-		var description:Array<TrackDescription> = [];
+		final description:Array<TrackDescription> = [];
 
 		if (mediaPlayer != null)
 		{
-			var rawDescription:cpp.RawPointer<LibVLC_Track_Description_T> = LibVLC.video_get_spu_description(mediaPlayer);
+			final rawDescription:cpp.RawPointer<LibVLC_Track_Description_T> = LibVLC.video_get_spu_description(mediaPlayer);
 
 			if (rawDescription != null)
-			{
-				var nextDescription:cpp.RawPointer<LibVLC_Track_Description_T> = rawDescription;
-
-				while (nextDescription != null)
-				{
-					description.push(TrackDescription.fromTrackDescription(nextDescription[0]));
-
-					nextDescription = nextDescription[0].p_next;
-				}
-
-				LibVLC.track_description_list_release(rawDescription);
-			}
+				getDescription(rawDescription, description);
 		}
 
 		return description;
@@ -1753,5 +1641,88 @@ class Video extends openfl.display.Bitmap
 			case event if (event == LibVLC_MediaMetaChanged):
 				MainLoop.runInMainThread(onMediaMetaChanged.dispatch.bind());
 		}
+	}
+
+	@:noCompletion
+	@:unreflective
+	private function addEvent(eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>, type:LibVLC_Event_E):Void
+	{
+		if (LibVLC.event_attach(eventManager, type, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+			Log.warn('Failed to attach event (${LibVLC.event_type_name(type)})');
+	}
+
+	@:noCompletion
+	@:unreflective
+	private function getDescription(rawDescription:cpp.RawPointer<LibVLC_Track_Description_T>, description:Array<TrackDescription>):Void
+	{
+		var nextDescription:cpp.RawPointer<LibVLC_Track_Description_T> = rawDescription;
+
+		while (nextDescription != null)
+		{
+			description.push(TrackDescription.fromTrackDescription(nextDescription[0]));
+
+			nextDescription = nextDescription[0].p_next;
+		}
+
+		LibVLC.track_description_list_release(rawDescription);
+	}
+
+	@:noCompletion
+	@:unreflective
+	private function setMediaToPlayer(mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>, mediaItem:cpp.RawPointer<LibVLC_Media_T>, ?options:Array<String>):Void
+	{
+		if (options != null)
+		{
+			for (option in options)
+			{
+				if (option != null && option.length > 0)
+					LibVLC.media_add_option(mediaItem, option);
+			}
+		}
+
+		LibVLC.media_player_set_media(mediaPlayer, mediaItem);
+
+		LibVLC.media_release(mediaItem);
+	}
+
+	@:noCompletion
+	@:unreflective
+	private function setupVideo(mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>):Void
+	{
+		LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), untyped __cpp__('video_unlock'), untyped __cpp__('video_display'),
+			untyped __cpp__('this'));
+		LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), untyped NULL);
+	}
+
+	@:noCompletion
+	@:unreflective
+	private function setupAudio(mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>):Void
+	{
+		#if lime_openal
+		if (alUseEXTMCFORMATS == null)
+			alUseEXTMCFORMATS = AL.isExtensionPresent('AL_EXT_MCFORMATS');
+
+		if (alSource == null)
+			alSource = AL.createSource();
+
+		if (alBufferPool == null)
+			alBufferPool = AL.genBuffers(MAX_AUDIO_BUFFER_COUNT);
+		#end
+
+		LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped NULL, untyped __cpp__('audio_flush'),
+			untyped NULL, untyped __cpp__('this'));
+		LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
+		LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
+	}
+
+	@:noCompletion
+	@:unreflective
+	private function normalizePath(location:String):String
+	{
+		#if windows
+		return haxe.io.Path.normalize(location).split('/').join('\\');
+		#else
+		return haxe.io.Path.normalize(location);
+		#end
 	}
 }

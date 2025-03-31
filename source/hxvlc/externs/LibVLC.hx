@@ -98,6 +98,14 @@ extern class LibVLC
 		user_data:cpp.RawPointer<cpp.Void>):Void;
 
 	/**
+	 * Get an event's type name.
+	 *
+	 * @param event_type the desired event
+	 */
+	@:native('libvlc_event_type_name')
+	static function event_type_name(event_type:Int):cpp.ConstCharStar;
+
+	/**
 	 * Unsets the logging callback.
 	 * 
 	 * @param p_instance Pointer to the LibVLC instance.
