@@ -1,6 +1,5 @@
 package hxvlc.openfl;
 
-import hxvlc.util.TrackDescription;
 import haxe.Int64;
 import haxe.MainLoop;
 import haxe.io.Bytes;
@@ -9,6 +8,7 @@ import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.Handle;
 import hxvlc.util.Stats;
+import hxvlc.util.TrackDescription;
 import hxvlc.util.macros.DefineMacro;
 import lime.app.Event;
 import lime.utils.Log;
@@ -165,7 +165,7 @@ class Video extends openfl.display.Bitmap
 	#if lime_openal
 	/**
 	 * The number of buffers that used for the buffer pool.
-	 * 
+	 *
 	 * @see https://github.com/videolan/vlc/blob/0ddf69feccd687f0a694aeeefbc31c76074103ec/modules/audio_output/android/opensles.c#L42.
 	 */
 	@:noCompletion
@@ -174,7 +174,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Indicates whether to use GPU texture for rendering.
-	 * 
+	 *
 	 * If set to true, GPU texture rendering will be used if possible, otherwise, CPU-based image rendering will be used.
 	 */
 	public static var useTexture:Bool = true;
@@ -236,7 +236,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Playback rate of the video.
-	 * 
+	 *
 	 * Note: The actual rate may vary depending on the media.
 	 */
 	public var rate(get, set):Single;
@@ -443,7 +443,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Initializes a Video object.
-	 * 
+	 *
 	 * @param smoothing Whether or not the object is smoothed when scaled.
 	 */
 	public function new(smoothing:Bool = true):Void
@@ -458,10 +458,10 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Loads media from the specified location.
-	 * 
+	 *
 	 * @param location The location of the media file or stream.
 	 * @param options Additional options to configure the media.
-	 * 
+	 *
 	 * @return `true` if the media was loaded successfully, `false` otherwise.
 	 */
 	public function load(location:hxvlc.util.Location, ?options:Array<String>):Bool
@@ -553,7 +553,8 @@ class Video extends openfl.display.Bitmap
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerCorked)');
 
-					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, untyped __cpp__('event_manager_callbacks'),
+						untyped __cpp__('this')) != 0)
 						Log.warn('Failed to attach event (MediaPlayerUncorked)');
 
 					if (LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, untyped __cpp__('event_manager_callbacks'),
@@ -624,10 +625,10 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Loads a media subitem from the current media's subitems list at the specified index.
-	 * 
+	 *
 	 * @param index The index of the subitem to load.
 	 * @param options Additional options to configure the loaded subitem.
-	 * 
+	 *
 	 * @return `true` if the subitem was loaded successfully, `false` otherwise.
 	 */
 	public function loadFromSubItem(index:Int, ?options:Array<String>):Bool
@@ -679,10 +680,10 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Parses the current media item with the specified options.
-	 * 
+	 *
 	 * @param parse_flag The parsing option.
 	 * @param timeout The timeout in milliseconds.
-	 * 
+	 *
 	 * @return `true` if parsing succeeded, `false` otherwise.
 	 */
 	public function parseWithOptions(parse_flag:Int, timeout:Int):Bool
@@ -729,11 +730,11 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Adds a slave to the current media player.
-	 * 
+	 *
 	 * @param type Subtitle or audio.
 	 * @param uri URI of the slave (should contain a valid scheme).
 	 * @param select `true` if this slave should be selected when it's loaded.
-	 * 
+	 *
 	 * @return `true` on success, `false` otherwise.
 	 */
 	public function addSlave(type:LibVLC_Media_Slave_Type_T, url:String, select:Bool):Bool
@@ -743,7 +744,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Gets the description of available audio tracks of the current media player.
-	 * 
+	 *
 	 * @return The list containing descriptions of available audio tracks.
 	 */
 	public function getVideoDescription():Array<TrackDescription>
@@ -754,16 +755,19 @@ class Video extends openfl.display.Bitmap
 		{
 			var rawDescription:cpp.RawPointer<LibVLC_Track_Description_T> = LibVLC.video_get_track_description(mediaPlayer);
 
-			var nextDescription:cpp.RawPointer<LibVLC_Track_Description_T> = rawDescription[0].p_next;
-
-			while (nextDescription != null)
+			if (rawDescription != null)
 			{
-				description.push(TrackDescription.fromTrackDescription(nextDescription[0]));
+				var nextDescription:cpp.RawPointer<LibVLC_Track_Description_T> = rawDescription;
 
-				nextDescription = nextDescription[0].p_next;
+				while (nextDescription != null)
+				{
+					description.push(TrackDescription.fromTrackDescription(nextDescription[0]));
+
+					nextDescription = nextDescription[0].p_next;
+				}
+
+				LibVLC.track_description_list_release(rawDescription);
 			}
-
-			LibVLC.track_description_list_release(rawDescription);
 		}
 
 		return description;
@@ -771,7 +775,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Gets the description of available audio tracks of the current media player.
-	 * 
+	 *
 	 * @return The list containing descriptions of available audio tracks.
 	 */
 	public function getAudioDescription():Array<TrackDescription>
@@ -782,16 +786,19 @@ class Video extends openfl.display.Bitmap
 		{
 			var rawDescription:cpp.RawPointer<LibVLC_Track_Description_T> = LibVLC.audio_get_track_description(mediaPlayer);
 
-			var nextDescription:cpp.RawPointer<LibVLC_Track_Description_T> = rawDescription[0].p_next;
-
-			while (nextDescription != null)
+			if (rawDescription != null)
 			{
-				description.push(TrackDescription.fromTrackDescription(nextDescription[0]));
+				var nextDescription:cpp.RawPointer<LibVLC_Track_Description_T> = rawDescription;
 
-				nextDescription = nextDescription[0].p_next;
+				while (nextDescription != null)
+				{
+					description.push(TrackDescription.fromTrackDescription(nextDescription[0]));
+
+					nextDescription = nextDescription[0].p_next;
+				}
+
+				LibVLC.track_description_list_release(rawDescription);
 			}
-
-			LibVLC.track_description_list_release(rawDescription);
 		}
 
 		return description;
@@ -799,7 +806,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Gets the description of available available video subtitles of the current media player.
-	 * 
+	 *
 	 * @return The list containing descriptions of available available video subtitles.
 	 */
 	public function getSpuDescription():Array<TrackDescription>
@@ -810,16 +817,19 @@ class Video extends openfl.display.Bitmap
 		{
 			var rawDescription:cpp.RawPointer<LibVLC_Track_Description_T> = LibVLC.video_get_spu_description(mediaPlayer);
 
-			var nextDescription:cpp.RawPointer<LibVLC_Track_Description_T> = rawDescription[0].p_next;
-
-			while (nextDescription != null)
+			if (rawDescription != null)
 			{
-				description.push(TrackDescription.fromTrackDescription(nextDescription[0]));
+				var nextDescription:cpp.RawPointer<LibVLC_Track_Description_T> = rawDescription;
 
-				nextDescription = nextDescription[0].p_next;
+				while (nextDescription != null)
+				{
+					description.push(TrackDescription.fromTrackDescription(nextDescription[0]));
+
+					nextDescription = nextDescription[0].p_next;
+				}
+
+				LibVLC.track_description_list_release(rawDescription);
 			}
-
-			LibVLC.track_description_list_release(rawDescription);
 		}
 
 		return description;
@@ -827,7 +837,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Starts playback.
-	 * 
+	 *
 	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
 	public function play():Bool
@@ -891,7 +901,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Retrieves metadata for the current media item.
-	 * 
+	 *
 	 * @param e_meta The metadata type.
 	 * @return The metadata value as a string, or `null` if not available.
 	 */
@@ -915,7 +925,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Sets metadata for the current media item.
-	 * 
+	 *
 	 * @param e_meta The metadata type.
 	 * @param value The metadata value.
 	 */
@@ -932,7 +942,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Saves the metadata of the current media item.
-	 * 
+	 *
 	 * @return `true` if the metadata was saved successfully, `false` otherwise.
 	 */
 	public function saveMeta():Bool
