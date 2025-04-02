@@ -99,7 +99,7 @@ extern class LibVLC
 
 	/**
 	 * Get an event's type name.
-	 *
+	 * 
 	 * @param event_type the desired event
 	 */
 	@:native('libvlc_event_type_name')

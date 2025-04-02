@@ -27,7 +27,7 @@ using StringTools;
  * 	if (video.bitmap != null && video.bitmap.bitmapData != null)
  * 	{
  * 		final scale:Float = Math.min(FlxG.width / video.bitmap.bitmapData.width, FlxG.height / video.bitmap.bitmapData.height);
- *
+ * 
  * 		video.setGraphicSize(video.bitmap.bitmapData.width * scale, video.bitmap.bitmapData.height * scale);
  * 		video.updateHitbox();
  * 		video.screenCenter();
@@ -35,7 +35,7 @@ using StringTools;
  * });
  * video.bitmap.onEndReached.add(video.destroy);
  * add(video);
- *
+ * 
  * if (video.load('assets/videos/video.mp4'))
  * 	FlxTimer.wait(0.001, () -> video.play());
  * ```
@@ -43,19 +43,12 @@ using StringTools;
 @:nullSafety
 class FlxVideoSprite extends FlxSprite
 {
-	/**
-	 * The volume adjustment.
-	 */
+	/** The volume adjustment. */
 	public var volumeAdjust(default, set):Float = 1.0;
 
-	/**
-	 * The video bitmap object.
-	 */
+	/** The video bitmap object. */
 	public final bitmap:Video;
 
-	/**
-	 * Internal tracker for whether the video is paused or not.
-	 */
 	@:noCompletion
 	private var resumeOnFocus:Bool = false;
 
@@ -189,9 +182,7 @@ class FlxVideoSprite extends FlxSprite
 		return bitmap.parseWithOptions(parse_flag, timeout);
 	}
 
-	/**
-	 * Stops parsing the current media item.
-	 */
+	/** Stops parsing the current media item. */
 	public inline function parseStop():Void
 	{
 		bitmap.parseStop();
@@ -207,33 +198,25 @@ class FlxVideoSprite extends FlxSprite
 		return bitmap.play();
 	}
 
-	/**
-	 * Stops video playback.
-	 */
+	/** Stops video playback. */
 	public inline function stop():Void
 	{
 		bitmap.stop();
 	}
 
-	/**
-	 * Pauses video playback.
-	 */
+	/** Pauses video playback. */
 	public inline function pause():Void
 	{
 		bitmap.pause();
 	}
 
-	/**
-	 * Resumes playback of a paused video.
-	 */
+	/** Resumes playback of a paused video. */
 	public inline function resume():Void
 	{
 		bitmap.resume();
 	}
 
-	/**
-	 * Toggles between play and pause states of the video.
-	 */
+	/** Toggles between play and pause states of the video. */
 	public inline function togglePaused():Void
 	{
 		bitmap.togglePaused();

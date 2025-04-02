@@ -163,11 +163,7 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 class Video extends openfl.display.Bitmap
 {
 	#if lime_openal
-	/**
-	 * The number of buffers that used for the buffer pool.
-	 *
-	 * @see https://github.com/videolan/vlc/blob/0ddf69feccd687f0a694aeeefbc31c76074103ec/modules/audio_output/android/opensles.c#L42.
-	 */
+	/** The number of buffers used for the buffer pool. */
 	@:noCompletion
 	private static final MAX_AUDIO_BUFFER_COUNT:Int = DefineMacro.getInt('HXVLC_MAX_AUDIO_BUFFER_COUNT', 255);
 
@@ -192,223 +188,133 @@ class Video extends openfl.display.Bitmap
 	private static final URL_VERIFICATION_REGEX:EReg = ~/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\/[^\s]*$/;
 	#end
 
-	/**
-	 * Indicates whether to use GPU texture for rendering.
-	 *
-	 * If set to true, GPU texture rendering will be used if possible, otherwise, CPU-based image rendering will be used.
-	 */
+	/** Enables hardware rendering (GPU textures) if supported; otherwise, falls back to software rendering (CPU). */
 	public static var useTexture:Bool = true;
 
-	/**
-	 * Forces on the rendering of the bitmapData within this bitmap.
-	 */
+	/** Forces rendering of the bitmapData within this bitmap. */
 	public var forceRendering:Bool = false;
 
-	/**
-	 * The media resource locator (MRL).
-	 */
+	/** The media resource locator (MRL). */
 	public var mrl(get, never):Null<String>;
 
-	/**
-	 * Statistics related to the media.
-	 */
+	/** Statistics related to the media. */
 	public var stats(get, never):Null<Stats>;
 
-	/**
-	 * Duration of the media in microseconds.
-	 */
+	/** Duration of the media in microseconds. */
 	public var duration(get, never):Int64;
 
-	/**
-	 * Indicates whether the media is currently playing.
-	 */
+	/** Indicates whether the media is currently playing. */
 	public var isPlaying(get, never):Bool;
 
-	/**
-	 * Length of the media in microseconds.
-	 */
+	/** Length of the media in microseconds. */
 	public var length(get, never):Int64;
 
-	/**
-	 * Current time position in the media in microseconds.
-	 */
+	/** Current time position in the media in microseconds. */
 	public var time(get, set):Int64;
 
-	/**
-	 * Current playback position as a percentage (0.0 to 1.0).
-	 */
+	/** Current playback position as a percentage (0.0 to 1.0). */
 	public var position(get, set):Single;
 
-	/**
-	 * Current chapter of the video.
-	 */
+	/** Current chapter of the video. */
 	public var chapter(get, set):Int;
 
-	/**
-	 * Total number of chapters in the video.
-	 */
+	/** Total number of chapters in the video. */
 	public var chapterCount(get, never):Int;
 
-	/**
-	 * Indicates whether playback will start automatically once loaded.
-	 */
+	/** Indicates whether playback will start automatically once loaded. */
 	public var willPlay(get, never):Bool;
 
-	/**
-	 * Playback rate of the video.
-	 *
-	 * Note: The actual rate may vary depending on the media.
-	 */
+	/** Playback rate of the video. */
 	public var rate(get, set):Single;
 
-	/**
-	 * Indicates whether seeking is supported.
-	 */
+	/** Indicates whether seeking is supported. */
 	public var isSeekable(get, never):Bool;
 
-	/**
-	 * Indicates whether pausing is supported.
-	 */
+	/** Indicates whether pausing is supported. */
 	public var canPause(get, never):Bool;
 
-	/**
-	 * Volume level (0 to 100).
-	 */
+	/** Volume level (0 to 100). */
 	public var volume(get, set):Int;
 
-	/**
-	 * Selected audio channel.
-	 */
+	/** Selected audio channel. */
 	public var channel(get, set):Int;
 
-	/**
-	 * Role of the media.
-	 */
+	/** Role of the media. */
 	public var role(get, set):UInt;
 
-	/**
-	 * Total number of available video tracks.
-	 */
+	/** Total number of available video tracks. */
 	public var videoTrackCount(get, never):Int;
 
-	/**
-	 * Selected video track.
-	 */
+	/** Selected video track. */
 	public var videoTrack(get, set):Int;
 
-	/**
-	 * Total number of available audio tracks.
-	 */
+	/** Total number of available audio tracks. */
 	public var audioTrackCount(get, never):Int;
 
-	/**
-	 * Selected audio track.
-	 */
+	/** Selected audio track. */
 	public var audioTrack(get, set):Int;
 
-	/**
-	 * Audio delay in microseconds.
-	 */
+	/** Audio delay in microseconds. */
 	public var audioDelay(get, set):Int64;
 
-	/**
-	 * Total number of available subtitle tracks.
-	 */
+	/** Total number of available subtitle tracks. */
 	public var spuTrackCount(get, never):Int;
 
-	/**
-	 * Selected subtitle track.
-	 */
+	/** Selected subtitle track. */
 	public var spuTrack(get, set):Int;
 
-	/**
-	 * Subtitle delay in microseconds.
-	 */
+	/** Subtitle delay in microseconds. */
 	public var spuDelay(get, set):Int64;
 
-	/**
-	 * Event triggered when the media is opening.
-	 */
+	/** Event triggered when the media is opening. */
 	public var onOpening(default, null):Event<Void->Void> = new Event<Void->Void>();
 
-	/**
-	 * Event triggered when playback starts.
-	 */
+	/** Event triggered when playback starts. */
 	public var onPlaying(default, null):Event<Void->Void> = new Event<Void->Void>();
 
-	/**
-	 * Event triggered when playback stops.
-	 */
+	/** Event triggered when playback stops. */
 	public var onStopped(default, null):Event<Void->Void> = new Event<Void->Void>();
 
-	/**
-	 * Event triggered when playback is paused.
-	 */
+	/** Event triggered when playback is paused. */
 	public var onPaused(default, null):Event<Void->Void> = new Event<Void->Void>();
 
-	/**
-	 * Event triggered when the end of the media is reached.
-	 */
+	/** Event triggered when the end of the media is reached. */
 	public var onEndReached(default, null):Event<Void->Void> = new Event<Void->Void>();
 
-	/**
-	 * Event triggered when an error occurs.
-	 */
+	/** Event triggered when an error occurs. */
 	public var onEncounteredError(default, null):Event<String->Void> = new Event<String->Void>();
 
-	/**
-	 * Event triggered when the media changes.
-	 */
+	/** Event triggered when the media changes. */
 	public var onMediaChanged(default, null):Event<Void->Void> = new Event<Void->Void>();
 
-	/**
-	 * Event triggered when the media is corked.
-	 */
+	/** Event triggered when the media is corked. */
 	public var onCorked(default, null):Event<Void->Void> = new Event<Void->Void>();
 
-	/**
-	 * Event triggered when the media is uncorked.
-	 */
+	/** Event triggered when the media is uncorked. */
 	public var onUncorked(default, null):Event<Void->Void> = new Event<Void->Void>();
 
-	/**
-	 * Event triggered when the time changes.
-	 */
+	/** Event triggered when the time changes. */
 	public var onTimeChanged(default, null):Event<Int64->Void> = new Event<Int64->Void>();
 
-	/**
-	 * Event triggered when the position changes.
-	 */
+	/** Event triggered when the position changes. */
 	public var onPositionChanged(default, null):Event<Single->Void> = new Event<Single->Void>();
 
-	/**
-	 * Event triggered when the length changes.
-	 */
+	/** Event triggered when the length changes. */
 	public var onLengthChanged(default, null):Event<Int64->Void> = new Event<Int64->Void>();
 
-	/**
-	 * Event triggered when the chapter changes.
-	 */
+	/** Event triggered when the chapter changes. */
 	public var onChapterChanged(default, null):Event<Int->Void> = new Event<Int->Void>();
 
-	/**
-	 * Event triggered when the media metadata changes.
-	 */
+	/** Event triggered when the media metadata changes. */
 	public var onMediaMetaChanged(default, null):Event<Void->Void> = new Event<Void->Void>();
 
-	/**
-	 * Event triggered when the media is parsed.
-	 */
+	/** Event triggered when the media is parsed. */
 	public var onMediaParsedChanged(default, null):Event<Int->Void> = new Event<Int->Void>();
 
-	/**
-	 * Event triggered when the media format setup is initialized.
-	 */
+	/** Event triggered when the media format setup is initialized. */
 	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
 
-	/**
-	 * Event triggered when the media is being rendered.
-	 */
+	/** Event triggered when the media is being rendered. */
 	public var onDisplay(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	@:noCompletion
@@ -463,7 +369,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Initializes a Video object.
-	 *
+	 * 
 	 * @param smoothing Whether or not the object is smoothed when scaled.
 	 */
 	public function new(smoothing:Bool = true):Void
@@ -478,10 +384,10 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Loads media from the specified location.
-	 *
+	 * 
 	 * @param location The location of the media file or stream.
 	 * @param options Additional options to configure the media.
-	 *
+	 * 
 	 * @return `true` if the media was loaded successfully, `false` otherwise.
 	 */
 	public function load(location:hxvlc.util.Location, ?options:Array<String>):Bool
@@ -507,9 +413,9 @@ class Video extends openfl.display.Bitmap
 					return false;
 				}
 			}
-			else if ((location is Int))
+			else if ((location is UInt))
 			{
-				mediaItem = LibVLC.media_new_fd(Handle.instance, cast(location, Int));
+				mediaItem = LibVLC.media_new_fd(Handle.instance, cast(location, UInt));
 			}
 			else if ((location is Bytes))
 			{
@@ -518,10 +424,8 @@ class Video extends openfl.display.Bitmap
 				if (data.length > 0)
 				{
 					mediaMutex.acquire();
-
 					mediaData = data;
 					mediaOffset = 0;
-
 					mediaMutex.release();
 
 					mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
@@ -583,10 +487,10 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Loads a media subitem from the current media's subitems list at the specified index.
-	 *
+	 * 
 	 * @param index The index of the subitem to load.
 	 * @param options Additional options to configure the loaded subitem.
-	 *
+	 * 
 	 * @return `true` if the subitem was loaded successfully, `false` otherwise.
 	 */
 	public function loadFromSubItem(index:Int, ?options:Array<String>):Bool
@@ -627,10 +531,10 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Parses the current media item with the specified options.
-	 *
+	 * 
 	 * @param parse_flag The parsing option.
 	 * @param timeout The timeout in milliseconds.
-	 *
+	 * 
 	 * @return `true` if parsing succeeded, `false` otherwise.
 	 */
 	public function parseWithOptions(parse_flag:Int, timeout:Int):Bool
@@ -658,9 +562,7 @@ class Video extends openfl.display.Bitmap
 		return false;
 	}
 
-	/**
-	 * Stops parsing the current media item.
-	 */
+	/** Stops parsing the current media item. */
 	public function parseStop():Void
 	{
 		if (mediaPlayer != null)
@@ -674,11 +576,11 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Adds a slave to the current media player.
-	 *
+	 * 
 	 * @param type Subtitle or audio.
 	 * @param uri URI of the slave (should contain a valid scheme).
 	 * @param select `true` if this slave should be selected when it's loaded.
-	 *
+	 * 
 	 * @return `true` on success, `false` otherwise.
 	 */
 	public function addSlave(type:LibVLC_Media_Slave_Type_T, url:String, select:Bool):Bool
@@ -688,7 +590,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Gets the description of available audio tracks of the current media player.
-	 *
+	 * 
 	 * @return The list containing descriptions of available audio tracks.
 	 */
 	public function getVideoDescription():Array<TrackDescription>
@@ -708,7 +610,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Gets the description of available audio tracks of the current media player.
-	 *
+	 * 
 	 * @return The list containing descriptions of available audio tracks.
 	 */
 	public function getAudioDescription():Array<TrackDescription>
@@ -728,7 +630,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Gets the description of available available video subtitles of the current media player.
-	 *
+	 * 
 	 * @return The list containing descriptions of available available video subtitles.
 	 */
 	public function getSpuDescription():Array<TrackDescription>
@@ -748,7 +650,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Starts playback.
-	 *
+	 * 
 	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
 	public function play():Bool
@@ -756,54 +658,42 @@ class Video extends openfl.display.Bitmap
 		return mediaPlayer != null && LibVLC.media_player_play(mediaPlayer) == 0;
 	}
 
-	/**
-	 * Stops playback.
-	 */
+	/** Stops playback. */
 	public function stop():Void
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_stop(mediaPlayer);
 	}
 
-	/**
-	 * Pauses playback.
-	 */
+	/** Pauses playback. */
 	public function pause():Void
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_set_pause(mediaPlayer, 1);
 	}
 
-	/**
-	 * Resumes playback.
-	 */
+	/** Resumes playback. */
 	public function resume():Void
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_set_pause(mediaPlayer, 0);
 	}
 
-	/**
-	 * Toggles the pause state.
-	 */
+	/** Toggles the pause state. */
 	public function togglePaused():Void
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_pause(mediaPlayer);
 	}
 
-	/**
-	 * Moves to the previous chapter, if supported.
-	 */
+	/** Moves to the previous chapter, if supported. */
 	public function previousChapter():Void
 	{
 		if (mediaPlayer != null)
 			LibVLC.media_player_previous_chapter(mediaPlayer);
 	}
 
-	/**
-	 * Moves to the next chapter, if supported.
-	 */
+	/** Moves to the next chapter, if supported. */
 	public function nextChapter():Void
 	{
 		if (mediaPlayer != null)
@@ -812,7 +702,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Retrieves metadata for the current media item.
-	 *
+	 * 
 	 * @param e_meta The metadata type.
 	 * @return The metadata value as a string, or `null` if not available.
 	 */
@@ -836,7 +726,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Sets metadata for the current media item.
-	 *
+	 * 
 	 * @param e_meta The metadata type.
 	 * @param value The metadata value.
 	 */
@@ -853,7 +743,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Saves the metadata of the current media item.
-	 *
+	 * 
 	 * @return `true` if the metadata was saved successfully, `false` otherwise.
 	 */
 	public function saveMeta():Bool
@@ -869,9 +759,7 @@ class Video extends openfl.display.Bitmap
 		return false;
 	}
 
-	/**
-	 * Frees the memory that is used to store the Video object.
-	 */
+	/** Frees the memory that is used to store the Video object. */
 	public function dispose():Void
 	{
 		if (mediaPlayer != null)

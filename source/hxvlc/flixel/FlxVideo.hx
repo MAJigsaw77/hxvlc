@@ -33,19 +33,12 @@ using StringTools;
  */
 class FlxVideo extends Video
 {
-	/**
-	 * The volume adjustment.
-	 */
+	/** The volume adjustment. */
 	public var volumeAdjust(default, set):Float = 1.0;
 
-	/**
-	 * Determines the resizing behavior for the video.
-	 */
+	/** Determines the resizing behavior for the video. */
 	public var resizeMode(default, set):FlxAxes = FlxAxes.XY;
 
-	/**
-	 * Internal tracker for whether the video is paused or not.
-	 */
 	@:noCompletion
 	private var resumeOnFocus:Bool = false;
 
@@ -90,6 +83,7 @@ class FlxVideo extends Video
 	 * 
 	 * @param location The local filesystem path, the media location URL, the ID of an open file descriptor, or the bitstream input.
 	 * @param options Additional options to add to the LibVLC Media.
+	 * 
 	 * @return `true` if the video loaded successfully, `false` otherwise.
 	 */
 	public override function load(location:Location, ?options:Array<String>):Bool
@@ -150,9 +144,7 @@ class FlxVideo extends Video
 		return super.load(location, options);
 	}
 
-	/**
-	 * Frees the memory that is used to store the Video object.
-	 */
+	/** Frees the memory that is used to store the Video object. */
 	public override function dispose():Void
 	{
 		if (FlxG.signals.focusGained.has(onFocusGained))
