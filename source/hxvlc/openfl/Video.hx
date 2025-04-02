@@ -170,6 +170,26 @@ class Video extends openfl.display.Bitmap
 	 */
 	@:noCompletion
 	private static final MAX_AUDIO_BUFFER_COUNT:Int = DefineMacro.getInt('HXVLC_MAX_AUDIO_BUFFER_COUNT', 255);
+
+	/**
+	 * Regular expression used to validate the structure of a URL.
+	 * 
+	 * This regex checks that the URL:
+	 * 1. Starts with a valid protocol (letters, digits, or special characters like '+', '.', or '-').
+	 * 2. Contains "://" after the protocol.
+	 * 3. Does not contain spaces after the "://".
+	 * 
+	 * This validation does not restrict specific protocols, so it allows any protocol
+	 * that follows the general URL format (e.g., http://, ftp://, file://).
+	 * 
+	 * Example:
+	 * - "http://example.com" -> valid
+	 * - "ftp://files.server" -> valid
+	 * - "invalid_url://something" -> invalid
+	 * - "http:// example.com" -> invalid (space after '://')
+	 */
+	@:noCompletion
+	private static final URL_VERIFICATION_REGEX:EReg = ~/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\/[^\s]*$/;
 	#end
 
 	/**
@@ -475,14 +495,26 @@ class Video extends openfl.display.Bitmap
 		{
 			if ((location is String))
 			{
+				function normalizePath(location:String):String
+				{
+					#if windows
+					return haxe.io.Path.normalize(location).split('/').join('\\');
+					#else
+					return haxe.io.Path.normalize(location);
+					#end
+				}
+	
 				final location:String = cast(location, String);
 
-				if (location.contains('://'))
+				if (URL_VERIFICATION_REGEX.match(location))
 					mediaItem = LibVLC.media_new_location(Handle.instance, location);
-				else if (location.length > 0)
+				else if (Path.isAbsolute(location))
 					mediaItem = LibVLC.media_new_path(Handle.instance, normalizePath(location));
 				else
+				{
+					Log.warn('Invalid location "$location".');
 					return false;
+				}
 			}
 			else if ((location is Int))
 			{
@@ -1713,16 +1745,5 @@ class Video extends openfl.display.Bitmap
 			untyped NULL, untyped __cpp__('this'));
 		LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 		LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
-	}
-
-	@:noCompletion
-	@:unreflective
-	private function normalizePath(location:String):String
-	{
-		#if windows
-		return haxe.io.Path.normalize(location).split('/').join('\\');
-		#else
-		return haxe.io.Path.normalize(location);
-		#end
 	}
 }
