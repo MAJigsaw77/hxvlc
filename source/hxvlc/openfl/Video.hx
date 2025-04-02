@@ -30,135 +30,187 @@ import lime.media.openal.ALSource;
  */
 @:access(openfl.display.BitmapData)
 @:access(openfl.display3D.textures.TextureBase)
-@:cppNamespaceCode('static int media_open(void *opaque, void **datap, uint64_t *sizep)
+@:cppNamespaceCode('
+static int media_open(void *opaque, void **datap, uint64_t *sizep)
 {
-	(*datap) = opaque;
+	if (opaque)
+	{
+		(*datap) = opaque;
 
-	hx::SetTopOfStack((int *)99, true);
+		hx::SetTopOfStack((int *)99, true);
 
-	int result = reinterpret_cast<Video_obj *>(opaque)->mediaOpen(sizep);
+		int result = reinterpret_cast<Video_obj *>(opaque)->mediaOpen(sizep);
 
-	hx::SetTopOfStack((int *)0, true);
+		hx::SetTopOfStack((int *)0, true);
 
-	return result;
+		return result;
+	}
+
+	return -1;
 }
 
 static ssize_t media_read(void *opaque, unsigned char *buf, size_t len)
 {
-	hx::SetTopOfStack((int *)99, true);
+	if (opaque)
+	{
+		hx::SetTopOfStack((int *)99, true);
 
-	ssize_t bytesToRead = reinterpret_cast<Video_obj *>(opaque)->mediaRead(buf, len);
+		ssize_t bytesToRead = reinterpret_cast<Video_obj *>(opaque)->mediaRead(buf, len);
 
-	hx::SetTopOfStack((int *)0, true);
+		hx::SetTopOfStack((int *)0, true);
 
-	return bytesToRead;
+		return bytesToRead;
+	}
+
+	return -1;
 }
 
 static int media_seek(void *opaque, uint64_t offset)
 {
-	hx::SetTopOfStack((int *)99, true);
+	if (opaque)
+	{
+		hx::SetTopOfStack((int *)99, true);
 
-	int success = reinterpret_cast<Video_obj *>(opaque)->mediaSeek(offset);
+		int success = reinterpret_cast<Video_obj *>(opaque)->mediaSeek(offset);
 
-	hx::SetTopOfStack((int *)0, true);
+		hx::SetTopOfStack((int *)0, true);
 
-	return success;
+		return success;
+	}
+
+	return -1;
 }
 
 static void *video_lock(void *opaque, void **planes)
 {
-	hx::SetTopOfStack((int *)99, true);
+	if (opaque)
+	{
+		hx::SetTopOfStack((int *)99, true);
 
-	void *picture = reinterpret_cast<Video_obj *>(opaque)->videoLock(planes);
+		void *picture = reinterpret_cast<Video_obj *>(opaque)->videoLock(planes);
 
-	hx::SetTopOfStack((int *)0, true);
+		hx::SetTopOfStack((int *)0, true);
 
-	return picture;
+		return picture;
+	}
+
+	return nullptr;
 }
 
 static void video_unlock(void *opaque, void *picture, void *const *planes)
 {
-	hx::SetTopOfStack((int *)99, true);
+	if (opaque)
+	{
+		hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(opaque)->videoUnlock(planes);
+		reinterpret_cast<Video_obj *>(opaque)->videoUnlock(planes);
 
-	hx::SetTopOfStack((int *)0, true);
+		hx::SetTopOfStack((int *)0, true);
+	}
 }
 
 static void video_display(void *opaque, void *picture)
 {
-	hx::SetTopOfStack((int *)99, true);
+	if (opaque)
+	{
+		hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(opaque)->videoDisplay(picture);
+		reinterpret_cast<Video_obj *>(opaque)->videoDisplay(picture);
 
-	hx::SetTopOfStack((int *)0, true);
+		hx::SetTopOfStack((int *)0, true);
+	}
 }
 
 static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
 {
-	hx::SetTopOfStack((int *)99, true);
+	if (opaque && *opaque)
+	{
+		hx::SetTopOfStack((int *)99, true);
 
-	int pictureBuffers = reinterpret_cast<Video_obj *>(*opaque)->videoFormatSetup(chroma, width, height, pitches, lines);
+		int pictureBuffers = reinterpret_cast<Video_obj *>(*opaque)->videoFormatSetup(chroma, width, height, pitches, lines);
 
-	hx::SetTopOfStack((int *)0, true);
+		hx::SetTopOfStack((int *)0, true);
 
-	return pictureBuffers;
+		return pictureBuffers;
+	}
+
+	return 0;
 }
 
 static void audio_play(void *data, const void *samples, unsigned count, int64_t pts)
 {
-	hx::SetTopOfStack((int *)99, true);
+	if (data)
+	{
+		hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(data)->audioPlay((unsigned char *)samples, count, pts);
+		reinterpret_cast<Video_obj *>(data)->audioPlay((unsigned char *)samples, count, pts);
 
-	hx::SetTopOfStack((int *)0, true);
+		hx::SetTopOfStack((int *)0, true);
+	}
 }
 
 static void audio_pause(void *data, int64_t pts)
 {
-	hx::SetTopOfStack((int *)99, true);
+	if (data)
+	{
+		hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(data)->audioPause(pts);
+		reinterpret_cast<Video_obj *>(data)->audioPause(pts);
 
-	hx::SetTopOfStack((int *)0, true);
+		hx::SetTopOfStack((int *)0, true);
+	}
 }
 
 static void audio_flush(void *data, int64_t pts)
 {
-	hx::SetTopOfStack((int *)99, true);
+	if (data)
+	{
+		hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(data)->audioFlush(pts);
+		reinterpret_cast<Video_obj *>(data)->audioFlush(pts);
 
-	hx::SetTopOfStack((int *)0, true);
+		hx::SetTopOfStack((int *)0, true);
+	}
 }
 
 static int audio_setup(void **data, char *format, unsigned *rate, unsigned *channels)
 {
-	hx::SetTopOfStack((int *)99, true);
+	if (data && *data)
+	{
+		hx::SetTopOfStack((int *)99, true);
 
-	int result = reinterpret_cast<Video_obj *>(*data)->audioSetup(format, rate, channels);
+		int result = reinterpret_cast<Video_obj *>(*data)->audioSetup(format, rate, channels);
 
-	hx::SetTopOfStack((int *)0, true);
+		hx::SetTopOfStack((int *)0, true);
 
-	return result;
+		return result;
+	}
+
+	return 1;
 }
 
 static void audio_set_volume(void *data, float volume, bool mute)
 {
-	hx::SetTopOfStack((int *)99, true);
+	if (data)
+	{
+		hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(data)->audioSetVolume(volume, mute);
+		reinterpret_cast<Video_obj *>(data)->audioSetVolume(volume, mute);
 
-	hx::SetTopOfStack((int *)0, true);
+		hx::SetTopOfStack((int *)0, true);
+	}
 }
 
 static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 {
-	hx::SetTopOfStack((int *)99, true);
+	if (p_data)
+	{
+		hx::SetTopOfStack((int *)99, true);
 
-	reinterpret_cast<Video_obj *>(p_data)->eventManagerCallbacks(p_event);
+		reinterpret_cast<Video_obj *>(p_data)->eventManagerCallbacks(p_event);
 
-	hx::SetTopOfStack((int *)0, true);
+		hx::SetTopOfStack((int *)0, true);
+	}
 }')
 class Video extends openfl.display.Bitmap
 {
@@ -413,9 +465,9 @@ class Video extends openfl.display.Bitmap
 					return false;
 				}
 			}
-			else if ((location is UInt))
+			else if ((location is Int))
 			{
-				mediaItem = LibVLC.media_new_fd(Handle.instance, cast(location, UInt));
+				mediaItem = LibVLC.media_new_fd(Handle.instance, cast(location, Int));
 			}
 			else if ((location is Bytes))
 			{
@@ -467,8 +519,8 @@ class Video extends openfl.display.Bitmap
 				else
 					Log.warn('Unable to initialize the LibVLC media player event manager.');
 
-				setupVideo(mediaPlayer);
-				setupAudio(mediaPlayer);
+				setupVideo();
+				setupAudio();
 			}
 			else
 				Log.warn('Unable to initialize the LibVLC media player.');
@@ -476,7 +528,7 @@ class Video extends openfl.display.Bitmap
 
 		if (mediaItem != null)
 		{
-			setMediaToPlayer(mediaPlayer, mediaItem, options);
+			setMediaToPlayer(mediaItem, options);
 			return true;
 		}
 		else
@@ -513,7 +565,7 @@ class Video extends openfl.display.Bitmap
 
 						if (mediaSubItem != null)
 						{
-							setMediaToPlayer(mediaPlayer, mediaSubItem, options);
+							setMediaToPlayer(mediaSubItem, options);
 
 							LibVLC.media_list_release(currentMediaSubItems);
 
@@ -1369,6 +1421,11 @@ class Video extends openfl.display.Bitmap
 		{
 			alMutex.acquire();
 
+			if (alSamples == null)
+				alSamples = new BytesData();
+
+			cpp.NativeArray.setUnmanagedData(alSamples, cast samples, count);
+
 			final processedBuffers:Int = AL.getSourcei(alSource, AL.BUFFERS_PROCESSED);
 
 			if (processedBuffers > 0)
@@ -1377,22 +1434,13 @@ class Video extends openfl.display.Bitmap
 					alBufferPool.push(alBuffer);
 			}
 
-			if (alBufferPool.length > MAX_AUDIO_BUFFER_COUNT)
-				alBufferPool.splice(MAX_AUDIO_BUFFER_COUNT, alBufferPool.length - MAX_AUDIO_BUFFER_COUNT);
-
 			if (alBufferPool.length > 0)
 			{
 				final alBuffer:Null<ALBuffer> = alBufferPool.shift();
 
 				if (alBuffer != null)
 				{
-					if (alSamples == null)
-						alSamples = new BytesData();
-
-					cpp.NativeArray.setUnmanagedData(alSamples, cast samples, count);
-
 					AL.bufferData(alBuffer, alFormat, UInt8Array.fromBytes(Bytes.ofData(alSamples)), alSamples.length * alFrameSize, alSampleRate);
-
 					AL.sourceQueueBuffer(alSource, alBuffer);
 				}
 			}
@@ -1580,8 +1628,11 @@ class Video extends openfl.display.Bitmap
 
 	@:noCompletion
 	@:unreflective
-	private function setMediaToPlayer(mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>, mediaItem:cpp.RawPointer<LibVLC_Media_T>, ?options:Array<String>):Void
+	private function setMediaToPlayer(mediaItem:cpp.RawPointer<LibVLC_Media_T>, ?options:Array<String>):Void
 	{
+		if (mediaPlayer == null)
+			return;
+
 		if (options != null)
 		{
 			for (option in options)
@@ -1598,8 +1649,11 @@ class Video extends openfl.display.Bitmap
 
 	@:noCompletion
 	@:unreflective
-	private function setupVideo(mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>):Void
+	private function setupVideo():Void
 	{
+		if (mediaPlayer == null)
+			return;
+
 		LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), untyped __cpp__('video_unlock'), untyped __cpp__('video_display'),
 			untyped __cpp__('this'));
 		LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), untyped NULL);
@@ -1607,8 +1661,11 @@ class Video extends openfl.display.Bitmap
 
 	@:noCompletion
 	@:unreflective
-	private function setupAudio(mediaPlayer:cpp.RawPointer<LibVLC_Media_Player_T>):Void
+	private function setupAudio():Void
 	{
+		if (mediaPlayer == null)
+			return;
+
 		#if lime_openal
 		if (alUseEXTMCFORMATS == null)
 			alUseEXTMCFORMATS = AL.isExtensionPresent('AL_EXT_MCFORMATS');
