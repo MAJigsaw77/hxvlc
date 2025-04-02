@@ -508,7 +508,7 @@ class Video extends openfl.display.Bitmap
 
 				if (URL_VERIFICATION_REGEX.match(location))
 					mediaItem = LibVLC.media_new_location(Handle.instance, location);
-				else if (Path.isAbsolute(location))
+				else if (haxe.io.Path.isAbsolute(location))
 					mediaItem = LibVLC.media_new_path(Handle.instance, normalizePath(location));
 				else
 				{
