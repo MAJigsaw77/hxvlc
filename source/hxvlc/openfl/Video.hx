@@ -495,15 +495,6 @@ class Video extends openfl.display.Bitmap
 		{
 			if ((location is String))
 			{
-				function normalizePath(location:String):String
-				{
-					#if windows
-					return haxe.io.Path.normalize(location).split('/').join('\\');
-					#else
-					return haxe.io.Path.normalize(location);
-					#end
-				}
-	
 				final location:String = cast(location, String);
 
 				if (URL_VERIFICATION_REGEX.match(location))
@@ -1745,5 +1736,16 @@ class Video extends openfl.display.Bitmap
 			untyped NULL, untyped __cpp__('this'));
 		LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 		LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
+	}
+
+	@:noCompletion
+	@:unreflective
+	private function normalizePath(location:String):String
+	{
+		#if windows
+		return haxe.io.Path.normalize(location).split('/').join('\\');
+		#else
+		return haxe.io.Path.normalize(location);
+		#end
 	}
 }
