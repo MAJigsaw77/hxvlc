@@ -21,9 +21,7 @@ import lime.utils.Assets;
 import sys.io.File;
 #end
 
-/**
- * This class manages the global instance of LibVLC, providing methods for initialization, disposal, and retrieving version information.
- */
+/** This class manages the global instance of LibVLC, providing methods for initialization, disposal, and retrieving version information. */
 #if (HXVLC_FILE_LOGGING || HXVLC_LOGGING)
 #if android
 @:headerInclude('android/log.h')
@@ -32,85 +30,43 @@ import sys.io.File;
 {
 	hx::SetTopOfStack((int *)99, true);
 
-#ifdef __ANDROID__
-	switch (level)
-	{
-	case LIBVLC_NOTICE:
-		__android_log_vprint(ANDROID_LOG_INFO, "HXVLC", fmt, args);
-		break;
-	case LIBVLC_ERROR:
-		__android_log_vprint(ANDROID_LOG_ERROR, "HXVLC", fmt, args);
-		break;
-	case LIBVLC_WARNING:
-		__android_log_vprint(ANDROID_LOG_WARN, "HXVLC", fmt, args);
-		break;
-	case LIBVLC_DEBUG:
-		__android_log_vprint(ANDROID_LOG_DEBUG, "HXVLC", fmt, args);
-		break;
-	default:
-		__android_log_vprint(ANDROID_LOG_UNKNOWN, "HXVLC", fmt, args);
-		break;
-	}
-#else
-	vprintf(fmt, args);
-	putchar(\'\\n\');
-	fflush(stdout);
-#endif
+	Handle_obj::instanceLogging(level, ctx, fmt, args);
 
 	hx::SetTopOfStack((int *)0, true);
 }')
 #end
 class Handle
 {
-	/**
-	 * The instance of LibVLC that is used globally.
-	 */
+	/** The instance of LibVLC that is used globally. */
 	public static var instance(default, null):Null<cpp.RawPointer<LibVLC_Instance_T>>;
 
-	/**
-	 * Indicates whether the instance is still loading.
-	 */
+	/** Indicates whether the instance is still loading. */
 	public static var loading(default, null):Bool = false;
 
-	/**
-	 * Retrieves the LibVLC version.
-	 *
-	 * Example: "1.1.0-git The Luggage"
-	 */
+	/** Retrieves the LibVLC version. */
 	public static var version(get, never):String;
 
-	/**
-	 * Retrieves the LibVLC compiler version.
-	 *
-	 * Example: "gcc version 4.2.3 (Ubuntu 4.2.3-2ubuntu6)"
-	 */
+	/** Retrieves the LibVLC compiler version. */
 	public static var compiler(get, never):String;
 
-	/**
-	 * Retrieves the LibVLC changeset.
-	 *
-	 * Example: "aa9bce0bc4"
-	 */
+	/** Retrieves the LibVLC changeset. */
 	public static var changeset(get, never):String;
 
-	/**
-	 * Returns the current time as defined by LibVLC.
-	 *
-	 * The unit is the microsecond.
-	 *
-	 * Time increases monotonically (regardless of time zone changes and RTC adjustments).
-	 *
-	 * The origin is arbitrary but consistent across the whole system (e.g. the system uptime, the time since the system was booted).
-	 *
-	 * Note: On systems that support it, the POSIX monotonic clock is used.
-	 */
+	/** Returns the current time in microseconds as defined by LibVLC. */
 	public static var clock(get, never):Int64;
 
 	@:noCompletion
 	private static final instanceMutex:Mutex = new Mutex();
 
+	#if (HXVLC_FILE_LOGGING || HXVLC_LOGGING)
+	@:noCompletion
+	private static final logMutex:Mutex = new Mutex();
+	#end
+
+	#if HXVLC_FILE_LOGGING
 	@:noCompletion
 	private static var logFile:Null<cpp.FILE>;
+	#end
 
 	/**
 	 * Initializes the LibVLC instance if it isn't already.
@@ -294,6 +250,30 @@ class Handle
 	}
 
 	@:noCompletion
+	private static function get_version():String
+	{
+		return LibVLC.get_version();
+	}
+
+	@:noCompletion
+	private static function get_compiler():String
+	{
+		return LibVLC.get_compiler();
+	}
+
+	@:noCompletion
+	private static function get_changeset():String
+	{
+		return LibVLC.get_changeset();
+	}
+
+	@:noCompletion
+	private static function get_clock():Int64
+	{
+		return LibVLC.clock();
+	}
+
+	@:noCompletion
 	private static function setupEnvVariables():Void
 	{
 		#if android
@@ -392,27 +372,36 @@ class Handle
 		#end
 	}
 
+	#if (HXVLC_FILE_LOGGING || HXVLC_LOGGING)
+	@:keep
 	@:noCompletion
-	private static function get_version():String
+	@:unreflective
+	private static function instanceLogging(level:Int, ctx:cpp.RawConstPointer<LibVLC_Log_T>, fmt:cpp.ConstCharStar, args:cpp.VarList):Void
 	{
-		return LibVLC.get_version();
-	}
+		if (level > DefineMacro.getInt('HXVLC_VERBOSE', 0))
+			return;
 
-	@:noCompletion
-	private static function get_compiler():String
-	{
-		return LibVLC.get_compiler();
-	}
+		logMutex.acquire();
 
-	@:noCompletion
-	private static function get_changeset():String
-	{
-		return LibVLC.get_changeset();
-	}
+		{
+			final size:Int = untyped vsnprintf(untyped nullptr, 0, fmt, args) + 1;
 
-	@:noCompletion
-	private static function get_clock():Int64
-	{
-		return LibVLC.clock();
+			if (size <= 0)
+			{
+				logMutex.release();
+				return;
+			}
+
+			final buffer:cpp.CastCharStar = cast cpp.Stdlib.nativeMalloc(size);
+
+			untyped vsnprintf(buffer, size, fmt, args);
+
+			MainLoop.runInMainThread(Sys.println.bind(new String(untyped buffer)));
+
+			untyped cpp.Stdlib.nativeFree(untyped buffer);
+		}
+
+		logMutex.release(); // Release the lock
 	}
+	#end
 }

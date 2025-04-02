@@ -41,6 +41,11 @@
 	<haxedef name="FLX_NO_TOUCH" if="desktop" />
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
 
+	<section if="debug">
+		<haxedef name="HXVLC_VERBOSE" value="4" />
+		<haxedef name="HXVLC_LOGGING" />
+	</section>
+
 	<!--Undefinitions-->
 
 	<undefine name="openfl-disable-handle-error" if="debug" />

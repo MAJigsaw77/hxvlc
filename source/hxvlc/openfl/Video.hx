@@ -25,9 +25,7 @@ import lime.media.openal.ALBuffer;
 import lime.media.openal.ALSource;
 #end
 
-/**
- * This class is a video player that uses LibVLC for seamless integration with OpenFL display objects.
- */
+/** This class is a video player that uses LibVLC for seamless integration with OpenFL display objects. */
 @:access(openfl.display.BitmapData)
 @:access(openfl.display3D.textures.TextureBase)
 @:cppNamespaceCode('
@@ -123,7 +121,7 @@ static void video_display(void *opaque, void *picture)
 
 static unsigned video_format_setup(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines)
 {
-	if (opaque && *opaque)
+	if (opaque && (*opaque))
 	{
 		hx::SetTopOfStack((int *)99, true);
 
@@ -223,18 +221,19 @@ class Video extends openfl.display.Bitmap
 	 * Regular expression used to validate the structure of a URL.
 	 * 
 	 * This regex checks that the URL:
+	 * 
 	 * 1. Starts with a valid protocol (letters, digits, or special characters like '+', '.', or '-').
 	 * 2. Contains "://" after the protocol.
 	 * 3. Does not contain spaces after the "://".
 	 * 
 	 * This validation does not restrict specific protocols, so it allows any protocol
-	 * that follows the general URL format (e.g., http://, ftp://, file://).
+	 * that follows the general URL format (e.g., https://, ftp://, file://).
 	 * 
 	 * Example:
-	 * - "http://example.com" -> valid
+	 * - "https://example.com" -> valid
 	 * - "ftp://files.server" -> valid
 	 * - "invalid_url://something" -> invalid
-	 * - "http:// example.com" -> invalid (space after '://')
+	 * - "https:// example.com" -> invalid (space after '://')
 	 */
 	@:noCompletion
 	private static final URL_VERIFICATION_REGEX:EReg = ~/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\/[^\s]*$/;
@@ -498,29 +497,9 @@ class Video extends openfl.display.Bitmap
 
 			if (mediaPlayer != null)
 			{
-				final eventManager:cpp.RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_player_event_manager(mediaPlayer);
-
-				if (eventManager != null)
-				{
-					addEvent(eventManager, LibVLC_MediaPlayerOpening);
-					addEvent(eventManager, LibVLC_MediaPlayerPlaying);
-					addEvent(eventManager, LibVLC_MediaPlayerStopped);
-					addEvent(eventManager, LibVLC_MediaPlayerPaused);
-					addEvent(eventManager, LibVLC_MediaPlayerEndReached);
-					addEvent(eventManager, LibVLC_MediaPlayerEncounteredError);
-					addEvent(eventManager, LibVLC_MediaPlayerMediaChanged);
-					addEvent(eventManager, LibVLC_MediaPlayerCorked);
-					addEvent(eventManager, LibVLC_MediaPlayerUncorked);
-					addEvent(eventManager, LibVLC_MediaPlayerTimeChanged);
-					addEvent(eventManager, LibVLC_MediaPlayerPositionChanged);
-					addEvent(eventManager, LibVLC_MediaPlayerLengthChanged);
-					addEvent(eventManager, LibVLC_MediaPlayerChapterChanged);
-				}
-				else
-					Log.warn('Unable to initialize the LibVLC media player event manager.');
-
-				setupVideo();
 				setupAudio();
+				setupVideo();
+				setupEvents();
 			}
 			else
 				Log.warn('Unable to initialize the LibVLC media player.');
@@ -529,6 +508,7 @@ class Video extends openfl.display.Bitmap
 		if (mediaItem != null)
 		{
 			setMediaToPlayer(mediaItem, options);
+
 			return true;
 		}
 		else
@@ -1547,7 +1527,9 @@ class Video extends openfl.display.Bitmap
 	@:unreflective
 	private function audioSetVolume(volume:Single, mute:Bool):Void
 	{
-		// Leave this blank as we want to handle ourselves.
+		// This function is intentionally left blank because we want to handle the audio volume ourselves.
+		// 
+		// LibVLC's default behavior for handling audio volume is not ideal, so we override it to prevent issues.
 	}
 
 	@:keep
@@ -1681,6 +1663,35 @@ class Video extends openfl.display.Bitmap
 			untyped NULL, untyped __cpp__('this'));
 		LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 		LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
+	}
+
+	@:noCompletion
+	@:unreflective
+	private function setupEvents():Void
+	{
+		if (mediaPlayer != null)
+		{
+			final eventManager:cpp.RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_player_event_manager(mediaPlayer);
+
+			if (eventManager != null)
+			{
+				addEvent(eventManager, LibVLC_MediaPlayerOpening);
+				addEvent(eventManager, LibVLC_MediaPlayerPlaying);
+				addEvent(eventManager, LibVLC_MediaPlayerStopped);
+				addEvent(eventManager, LibVLC_MediaPlayerPaused);
+				addEvent(eventManager, LibVLC_MediaPlayerEndReached);
+				addEvent(eventManager, LibVLC_MediaPlayerEncounteredError);
+				addEvent(eventManager, LibVLC_MediaPlayerMediaChanged);
+				addEvent(eventManager, LibVLC_MediaPlayerCorked);
+				addEvent(eventManager, LibVLC_MediaPlayerUncorked);
+				addEvent(eventManager, LibVLC_MediaPlayerTimeChanged);
+				addEvent(eventManager, LibVLC_MediaPlayerPositionChanged);
+				addEvent(eventManager, LibVLC_MediaPlayerLengthChanged);
+				addEvent(eventManager, LibVLC_MediaPlayerChapterChanged);
+			}
+			else
+				Log.warn('Unable to initialize the LibVLC media player event manager.');
+		}
 	}
 
 	@:noCompletion

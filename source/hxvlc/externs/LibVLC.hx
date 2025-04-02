@@ -20,7 +20,7 @@ extern class LibVLC
 	 * @return Pointer to the new LibVLC instance.
 	 */
 	@:native('libvlc_new')
-	static function alloc(argc:Int, argv:cpp.ConstCharStarConstStar):cpp.RawPointer<LibVLC_Instance_T>;
+	static function alloc(argc:Int, argv:cpp.RawPointer<cpp.ConstCharStar>):cpp.RawPointer<LibVLC_Instance_T>;
 
 	/**
 	 * Releases a LibVLC instance.
