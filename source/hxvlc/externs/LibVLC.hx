@@ -134,6 +134,28 @@ extern class LibVLC
 	static function log_set_file(p_instance:cpp.RawPointer<LibVLC_Instance_T>, stream:cpp.FILE):Void;
 
 	/**
+	 * Gets log message debug information.
+	 * 
+	 * This function retrieves self-debug information about a log message:
+	 * - the name of the VLC module emitting the message,
+	 * - the name of the source code module (i.e., file), and
+	 * - the line number within the source code module.
+	 * 
+	 * The returned module name and file name will be null if unknown.
+	 * The returned line number will similarly be zero if unknown.
+	 * 
+	 * @param ctx Message context (as passed to the `libvlc_log_cb` callback).
+	 * @param module Module name storage (or null) [OUT].
+	 * @param file Source code file name storage (or null) [OUT].
+	 * @param line Source code file line number storage (or null) [OUT].
+	 * 
+	 * @warning The returned module name and source code file name, if non-null, are only valid until the logging callback returns.
+	 */
+	@:native('libvlc_log_get_context')
+	static function log_get_context(ctx:cpp.RawConstPointer<LibVLC_Log_T>, module:cpp.RawPointer<cpp.ConstCharStar>, file:cpp.RawPointer<cpp.ConstCharStar>,
+		line:cpp.RawPointer<cpp.UInt32>):Void;
+
+	/**
 	 * Gets the LibVLC clock time.
 	 * 
 	 * @return The clock time.

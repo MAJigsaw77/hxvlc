@@ -1,12 +1,13 @@
 package hxvlc.util;
 
+import haxe.PosInfos;
+import haxe.Log;
 import haxe.Int64;
 import haxe.MainLoop;
 import haxe.io.Path;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.macros.DefineMacro;
-import lime.utils.Log;
 import sys.FileSystem;
 import sys.thread.Mutex;
 
@@ -22,7 +23,7 @@ import sys.io.File;
 #end
 
 /** This class manages the global instance of LibVLC, providing methods for initialization, disposal, and retrieving version information. */
-#if (HXVLC_FILE_LOGGING || HXVLC_LOGGING)
+#if HXVLC_LOGGING
 @:cppNamespaceCode('static void instance_logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
 	hx::SetTopOfStack((int *)99, true);
@@ -55,14 +56,9 @@ class Handle
 	@:noCompletion
 	private static final instanceMutex:Mutex = new Mutex();
 
-	#if (HXVLC_FILE_LOGGING || HXVLC_LOGGING)
+	#if (HXVLC_LOGGING)
 	@:noCompletion
 	private static final logMutex:Mutex = new Mutex();
-	#end
-
-	#if HXVLC_FILE_LOGGING
-	@:noCompletion
-	private static var logFile:Null<cpp.FILE>;
 	#end
 
 	/**
@@ -109,14 +105,6 @@ class Handle
 			LibVLC.release(instance);
 			instance = null;
 		}
-
-		#if HXVLC_FILE_LOGGING
-		if (logFile != null)
-		{
-			cpp.Stdio.fclose(logFile);
-			logFile = null;
-		}
-		#end
 
 		instanceMutex.release();
 	}
@@ -176,7 +164,7 @@ class Handle
 			}
 			#end
 
-			#if (!HXVLC_LOGGING || !HXVLC_FILE_LOGGING)
+			#if !HXVLC_LOGGING
 			args.push_back("--quiet");
 			#end
 
@@ -200,7 +188,7 @@ class Handle
 				#if (windows || macos)
 				if (resetCache == false)
 				{
-					Log.warn('Failed to initialize the LibVLC instance, resetting plugins\'s cache');
+					trace('Failed to initialize the LibVLC instance, resetting plugins\'s cache');
 
 					return initWithRetry(options, true);
 				}
@@ -209,29 +197,15 @@ class Handle
 				final errmsg:String = LibVLC.errmsg();
 
 				if (errmsg != null && errmsg.length > 0)
-					Log.error('Failed to initialize the LibVLC instance, Error: $errmsg');
+					throw 'Failed to initialize the LibVLC instance, Error: $errmsg';
 				else
-					Log.error('Failed to initialize the LibVLC instance');
+					throw 'Failed to initialize the LibVLC instance';
 
 				return false;
 			}
 			else
 			{
-				#if HXVLC_FILE_LOGGING
-				if (logFile != null)
-					cpp.Stdio.fclose(logFile);
-
-				logFile = cpp.Stdio.fopen(DefineMacro.getString('HXVLC_FILE_LOGGING', 'libvlc-log.txt'), 'w');
-
-				if (logFile == null)
-				{
-					Log.warn('Failed to open log file for writing.');
-
-					LibVLC.log_set(instance, untyped __cpp__('instance_logging'), untyped NULL);
-				}
-				else
-					LibVLC.log_set_file(instance, logFile);
-				#elseif HXVLC_LOGGING
+				#if HXVLC_LOGGING
 				LibVLC.log_set(instance, untyped __cpp__('instance_logging'), untyped NULL);
 				#end
 			}
@@ -316,7 +290,7 @@ class Handle
 					}
 					catch (e:Exception)
 					{
-						Log.warn('Failed to create "$total" directory, ${e.message}');
+						trace('Failed to create "$total" directory, ${e.message}');
 
 						break;
 					}
@@ -340,12 +314,12 @@ class Handle
 						File.saveBytes(savePath, library.getBytes(file));
 				}
 				catch (e:Exception)
-					Log.warn('Failed to save file "$savePath", ${e.message}.');
+					trace('Failed to save file "$savePath", ${e.message}.');
 			}
 		});
 		libvlcLibrary.onError(function(error:String):Void
 		{
-			Log.warn('Failed to load library: libvlc, Error: $error');
+			trace('Failed to load library: libvlc, Error: $error');
 		});
 		#end
 
@@ -367,39 +341,63 @@ class Handle
 		#end
 	}
 
-	#if (HXVLC_FILE_LOGGING || HXVLC_LOGGING)
+	#if HXVLC_LOGGING
 	@:keep
 	@:noCompletion
 	@:unreflective
 	private static function instanceLogging(level:Int, ctx:cpp.RawConstPointer<LibVLC_Log_T>, fmt:cpp.ConstCharStar, args:cpp.VarList):Void
 	{
-		if (level > DefineMacro.getInt('HXVLC_VERBOSE', 0))
+		if (level < DefineMacro.getInt('HXVLC_VERBOSE', 0))
 			return;
 
 		logMutex.acquire();
 
+		final msg:String = getStringFromFormat(fmt, args);
+
+		if (msg.length == 0)
 		{
-			final size:Int = untyped vsnprintf(untyped nullptr, 0, fmt, args) + 1;
-
-			if (size <= 0)
-			{
-				logMutex.release();
-				return;
-			}
-
-			final buffer:cpp.CastCharStar = cast cpp.Stdlib.nativeMalloc(size);
-
-			untyped vsnprintf(buffer, size, fmt, args);
-
-			final msg:String = new String(untyped buffer);
-
-			cpp.Stdlib.nativeFree(untyped buffer);
-
-			Sys.println(msg);
-			
+			logMutex.release();
+			return;
 		}
 
+		var fileName:cpp.ConstCharStar = untyped nullptr;
+
+		var lineNumber:cpp.UInt32 = 0;
+
+		LibVLC.log_get_context(ctx, untyped nullptr, cpp.RawPointer.addressOf(fileName), cpp.RawPointer.addressOf(lineNumber));
+
+		MainLoop.runInMainThread(function():Void
+		{
+			Log.trace(msg, {
+				fileName: Path.normalize(fileName),
+				lineNumber: lineNumber,
+				className: '',
+				methodName: ''
+			});
+		});
+
 		logMutex.release();
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private static function getStringFromFormat(fmt:cpp.ConstCharStar, args:cpp.VarList):String
+	{
+		final size:Int = untyped vsnprintf(untyped nullptr, 0, fmt, args) + 1;
+
+		if (size <= 0)
+			return '';
+
+		final buffer:cpp.CastCharStar = cast cpp.Stdlib.nativeMalloc(size);
+
+		untyped vsnprintf(buffer, size, fmt, args);
+
+		final msg:String = new String(untyped buffer);
+
+		cpp.Stdlib.nativeFree(untyped buffer);
+
+		return msg;
 	}
 	#end
 }

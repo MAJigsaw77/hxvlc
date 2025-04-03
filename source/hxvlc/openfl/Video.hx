@@ -11,7 +11,6 @@ import hxvlc.util.Stats;
 import hxvlc.util.TrackDescription;
 import hxvlc.util.macros.DefineMacro;
 import lime.app.Event;
-import lime.utils.Log;
 import lime.utils.UInt8Array;
 import openfl.Lib;
 import openfl.display.BitmapData;
@@ -460,7 +459,7 @@ class Video extends openfl.display.Bitmap
 					mediaItem = LibVLC.media_new_path(Handle.instance, normalizePath(location));
 				else
 				{
-					Log.warn('Invalid location "$location".');
+					trace('Invalid location "$location".');
 					return false;
 				}
 			}
@@ -502,7 +501,7 @@ class Video extends openfl.display.Bitmap
 				setupEvents();
 			}
 			else
-				Log.warn('Unable to initialize the LibVLC media player.');
+				trace('Unable to initialize the LibVLC media player.');
 		}
 
 		if (mediaItem != null)
@@ -512,7 +511,7 @@ class Video extends openfl.display.Bitmap
 			return true;
 		}
 		else
-			Log.warn('Unable to initialize the LibVLC media item.');
+			trace('Unable to initialize the LibVLC media item.');
 
 		return false;
 	}
@@ -585,7 +584,7 @@ class Video extends openfl.display.Bitmap
 					addEvent(eventManager, LibVLC_MediaMetaChanged);
 				}
 				else
-					Log.warn('Unable to initialize the LibVLC media event manager.');
+					trace('Unable to initialize the LibVLC media event manager.');
 
 				return LibVLC.media_parse_with_options(currentMediaItem, parse_flag, timeout) == 0;
 			}
@@ -1380,7 +1379,7 @@ class Video extends openfl.display.Bitmap
 						bitmapData.__texture.__getGLFramebuffer(true, 0, 0);
 				}
 				else if (useTexture)
-					Log.warn('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
+					trace('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
 
 				onFormatSetup.dispatch();
 
@@ -1401,11 +1400,6 @@ class Video extends openfl.display.Bitmap
 		{
 			alMutex.acquire();
 
-			if (alSamples == null)
-				alSamples = new BytesData();
-
-			cpp.NativeArray.setUnmanagedData(alSamples, cast samples, count);
-
 			final processedBuffers:Int = AL.getSourcei(alSource, AL.BUFFERS_PROCESSED);
 
 			if (processedBuffers > 0)
@@ -1420,13 +1414,19 @@ class Video extends openfl.display.Bitmap
 
 				if (alBuffer != null)
 				{
+					if (alSamples == null)
+						alSamples = new BytesData();
+
+					cpp.NativeArray.setUnmanagedData(alSamples, cast samples, count);
+
 					AL.bufferData(alBuffer, alFormat, UInt8Array.fromBytes(Bytes.ofData(alSamples)), alSamples.length * alFrameSize, alSampleRate);
+
 					AL.sourceQueueBuffer(alSource, alBuffer);
+
+					if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
+						AL.sourcePlay(alSource);
 				}
 			}
-
-			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
-				AL.sourcePlay(alSource);
 
 			alMutex.release();
 		}
@@ -1439,7 +1439,7 @@ class Video extends openfl.display.Bitmap
 	private function audioPause(pts:cpp.Int64):Void
 	{
 		#if lime_openal
-		if (alSource != null && alBufferPool != null)
+		if (alSource != null)
 		{
 			alMutex.acquire();
 
@@ -1457,7 +1457,7 @@ class Video extends openfl.display.Bitmap
 	private function audioFlush(pts:cpp.Int64):Void
 	{
 		#if lime_openal
-		if (alSource != null && alBufferPool != null)
+		if (alSource != null)
 		{
 			alMutex.acquire();
 
@@ -1528,7 +1528,7 @@ class Video extends openfl.display.Bitmap
 	private function audioSetVolume(volume:Single, mute:Bool):Void
 	{
 		// This function is intentionally left blank because we want to handle the audio volume ourselves.
-		// 
+		//
 		// LibVLC's default behavior for handling audio volume is not ideal, so we override it to prevent issues.
 	}
 
@@ -1589,7 +1589,7 @@ class Video extends openfl.display.Bitmap
 	private function addEvent(eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>, type:LibVLC_Event_E):Void
 	{
 		if (LibVLC.event_attach(eventManager, type, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-			Log.warn('Failed to attach event (${LibVLC.event_type_name(type)})');
+			trace('Failed to attach event (${LibVLC.event_type_name(type)})');
 	}
 
 	@:noCompletion
@@ -1690,7 +1690,7 @@ class Video extends openfl.display.Bitmap
 				addEvent(eventManager, LibVLC_MediaPlayerChapterChanged);
 			}
 			else
-				Log.warn('Unable to initialize the LibVLC media player event manager.');
+				trace('Unable to initialize the LibVLC media player event manager.');
 		}
 	}
 
