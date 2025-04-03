@@ -179,9 +179,7 @@ class Handle
 			}
 			#end
 
-			#if HXVLC_VERBOSE
-			args.push_back("--verbose=" + DefineMacro.getInt('HXVLC_VERBOSE', 0));
-			#elseif (!HXVLC_LOGGING || !HXVLC_FILE_LOGGING)
+			#if (!HXVLC_LOGGING || !HXVLC_FILE_LOGGING)
 			args.push_back("--quiet");
 			#end
 
@@ -396,12 +394,12 @@ class Handle
 
 			untyped vsnprintf(buffer, size, fmt, args);
 
-			MainLoop.runInMainThread(Sys.println.bind(new String(untyped buffer)));
+			Sys.println(new String(untyped buffer));
 
 			untyped cpp.Stdlib.nativeFree(untyped buffer);
 		}
 
-		logMutex.release(); // Release the lock
+		logMutex.release();
 	}
 	#end
 }
