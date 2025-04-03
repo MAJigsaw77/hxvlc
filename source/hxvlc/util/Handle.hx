@@ -23,9 +23,6 @@ import sys.io.File;
 
 /** This class manages the global instance of LibVLC, providing methods for initialization, disposal, and retrieving version information. */
 #if (HXVLC_FILE_LOGGING || HXVLC_LOGGING)
-#if android
-@:headerInclude('android/log.h')
-#end
 @:cppNamespaceCode('static void instance_logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
 	hx::SetTopOfStack((int *)99, true);
@@ -394,9 +391,12 @@ class Handle
 
 			untyped vsnprintf(buffer, size, fmt, args);
 
-			Sys.println(new String(untyped buffer));
+			final msg:String = new String(untyped buffer);
 
-			untyped cpp.Stdlib.nativeFree(untyped buffer);
+			cpp.Stdlib.nativeFree(untyped buffer);
+
+			Sys.println(msg);
+			
 		}
 
 		logMutex.release();
