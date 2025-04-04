@@ -17,7 +17,6 @@ import openfl.display.BitmapData;
 import sys.thread.Mutex;
 
 using StringTools;
-using cpp.NativeArray;
 
 #if lime_openal
 import lime.media.openal.AL;
@@ -609,13 +608,13 @@ class Video extends openfl.display.Bitmap
 	/**
 	 * Adds a slave to the current media player.
 	 * 
-	 * @param type Subtitle or audio.
+	 * @param type The slave type.
 	 * @param uri URI of the slave (should contain a valid scheme).
 	 * @param select `true` if this slave should be selected when it's loaded.
 	 * 
 	 * @return `true` on success, `false` otherwise.
 	 */
-	public function addSlave(type:LibVLC_Media_Slave_Type_T, url:String, select:Bool):Bool
+	public function addSlave(type:Int, url:String, select:Bool):Bool
 	{
 		return mediaPlayer != null && LibVLC.media_player_add_slave(mediaPlayer, type, url, select) == 0;
 	}

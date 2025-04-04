@@ -40,6 +40,7 @@ using StringTools;
  * 	FlxTimer.wait(0.001, () -> video.play());
  * ```
  */
+@:access(hxvlc.openfl.Video)
 @:nullSafety
 class FlxVideoSprite extends FlxSprite
 {
@@ -112,7 +113,7 @@ class FlxVideoSprite extends FlxSprite
 		{
 			final location:String = cast(location, String);
 
-			if (!location.contains('://'))
+			if (!Video.URL_VERIFICATION_REGEX.match(location))
 			{
 				final absolutePath:String = FileSystem.absolutePath(location);
 
@@ -126,6 +127,8 @@ class FlxVideoSprite extends FlxSprite
 					{
 						if (FileSystem.exists(assetPath) && Path.isAbsolute(assetPath))
 							return bitmap.load(assetPath, options);
+						else if (FileSystem.exists(assetPath) && !Path.isAbsolute(assetPath))
+							return bitmap.load(FileSystem.absolutePath(assetPath), options);
 						else if (!Path.isAbsolute(assetPath))
 						{
 							try
@@ -186,6 +189,52 @@ class FlxVideoSprite extends FlxSprite
 	public inline function parseStop():Void
 	{
 		bitmap.parseStop();
+	}
+
+	/**
+	 * Adds a slave to the current media player.
+	 * 
+	 * @param type The slave type.
+	 * @param uri URI of the slave (should contain a valid scheme).
+	 * @param select `true` if this slave should be selected when it's loaded.
+	 * 
+	 * @return `true` on success, `false` otherwise.
+	 */
+	public function addSlave(type:Int, location:String, select:Bool):Bool
+	{
+		function convertAbsToURL(str:String):String
+		{
+			final normalizedPath:String = Path.normalize(str);
+
+			if (!normalizedPath.startsWith('/'))
+				return 'file:///$normalizedPath';
+			else
+				return 'file://$normalizedPath';
+		}
+
+		if (!Video.URL_VERIFICATION_REGEX.match(location))
+		{
+			final absolutePath:String = FileSystem.absolutePath(location);
+
+			if (FileSystem.exists(absolutePath))
+				return bitmap.addSlave(type, convertAbsToURL(absolutePath), select);
+			else if (Assets.exists(location))
+			{
+				final assetPath:Null<String> = Assets.getPath(location);
+
+				if (assetPath != null)
+				{
+					if (FileSystem.exists(assetPath) && Path.isAbsolute(assetPath))
+						return bitmap.addSlave(type, convertAbsToURL(assetPath), select);
+					else if (FileSystem.exists(assetPath) && !Path.isAbsolute(assetPath))
+						return bitmap.addSlave(type, FileSystem.absolutePath(assetPath), select);
+				}
+
+				return false;
+			}
+		}
+
+		return bitmap.addSlave(type, location, select);
 	}
 
 	/**
