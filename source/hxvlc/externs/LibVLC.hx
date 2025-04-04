@@ -164,6 +164,16 @@ extern class LibVLC
 	static function clock():cpp.Int64;
 
 	/**
+	 * Returns the delay (in microseconds) until a certain timestamp.
+	 * 
+	 * @param pts The timestamp.
+	 * @return A negative value if the timestamp is in the past,
+	 *         a positive value if it is in the future.
+	 */
+	@:native('libvlc_delay')
+	static function delay(pts:cpp.Int64):cpp.Int64;
+
+	/**
 	 * Creates a new media descriptor from a location.
 	 * 
 	 * @param p_instance Pointer to the LibVLC instance.

@@ -17,6 +17,7 @@ import openfl.display.BitmapData;
 import sys.thread.Mutex;
 
 using StringTools;
+using cpp.NativeArray;
 
 #if lime_openal
 import lime.media.openal.AL;
@@ -215,6 +216,7 @@ class Video extends openfl.display.Bitmap
 	/** The number of buffers used for the buffer pool. */
 	@:noCompletion
 	private static final MAX_AUDIO_BUFFER_COUNT:Int = DefineMacro.getInt('HXVLC_MAX_AUDIO_BUFFER_COUNT', 255);
+	#end
 
 	/**
 	 * Regular expression used to validate the structure of a URL.
@@ -236,7 +238,6 @@ class Video extends openfl.display.Bitmap
 	 */
 	@:noCompletion
 	private static final URL_VERIFICATION_REGEX:EReg = ~/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\/[^\s]*$/;
-	#end
 
 	/** Enables hardware rendering (GPU textures) if supported; otherwise, falls back to software rendering (CPU). */
 	public static var useTexture:Bool = true;
@@ -1443,8 +1444,8 @@ class Video extends openfl.display.Bitmap
 		{
 			alMutex.acquire();
 
-			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.STOPPED)
-				AL.sourceStop(alSource);
+			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PAUSED)
+				AL.sourcePause(alSource);
 
 			alMutex.release();
 		}
