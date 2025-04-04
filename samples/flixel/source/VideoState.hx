@@ -6,7 +6,6 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import flixel.FlxG;
 import flixel.FlxState;
-import hxvlc.externs.Types;
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.util.Handle;
 import sys.FileSystem;
@@ -15,6 +14,7 @@ import sys.FileSystem;
 class VideoState extends FlxState
 {
 	static final bigBuckBunny:String = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+	static final elephantsDream:String = 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4';
 
 	var video:Null<FlxVideoSprite>;
 	var versionInfo:Null<FlxText>;
@@ -80,10 +80,6 @@ class VideoState extends FlxState
 			video = new FlxVideoSprite(0, 0);
 			video.active = false;
 			video.antialiasing = true;
-			video.bitmap.onOpening.add(function():Void
-			{
-				video.addSlave(0, 'videos/1.srt', true);
-			});
 			video.bitmap.onFormatSetup.add(function():Void
 			{
 				if (video.bitmap != null && video.bitmap.bitmapData != null)
@@ -104,10 +100,10 @@ class VideoState extends FlxState
 				if (file != null && file.length > 0)
 					video.load(file);
 				else
-					video.load(bigBuckBunny);
+					video.load(FlxG.random.getObject([bigBuckBunny, elephantsDream]));
 			}
 			catch (e:Dynamic)
-				video.load(bigBuckBunny);
+				video.load(FlxG.random.getObject([bigBuckBunny, elephantsDream]));
 
 			if (versionInfo != null)
 				insert(members.indexOf(versionInfo), video);
