@@ -128,14 +128,11 @@ class Handle
 			setupEnvVariables();
 
 			final args:cpp.StdVector<cpp.ConstCharStar> = new cpp.StdVector<cpp.ConstCharStar>();
-
-			args.push_back("--aout=amem,none");
-			args.push_back("--intf=none");
-			args.push_back("--vout=vmem,none");
-
 			args.push_back("--ignore-config");
 			args.push_back("--drop-late-frames");
-
+			args.push_back("--aout=none");
+			args.push_back("--intf=none");
+			args.push_back("--vout=none");
 			args.push_back("--no-interact");
 			args.push_back("--no-keyboard-events");
 			args.push_back("--no-mouse-events");
@@ -250,55 +247,6 @@ class Handle
 		final homePath:String = Path.join([Path.directory(System.applicationStorageDirectory), 'libvlc']);
 
 		#if HXVLC_SHARE_DIRECTORY
-		/**
-		 * @see https://github.com/openfl/hxp/blob/master/src/hxp/System.hx#L595
-		 */
-		function mkDirs(directory:String):Void
-		{
-			try
-			{
-				if (FileSystem.exists(directory) && FileSystem.isDirectory(directory))
-					return;
-			}
-			catch (e:Dynamic) {}
-
-			var total:String = '';
-
-			if (directory.substr(0, 1) == '/')
-				total = '/';
-
-			final parts:Array<String> = directory.split('/');
-
-			if (parts.length > 0 && parts[0].indexOf(':') > -1)
-				parts.shift();
-
-			for (part in parts)
-			{
-				if (part != '.' && part.length > 0)
-				{
-					if (total != '/' && total.length > 0)
-						total += '/';
-
-					total += part;
-
-					try
-					{
-						if (FileSystem.exists(total) && !FileSystem.isDirectory(total))
-							FileSystem.deleteFile(total);
-
-						if (!FileSystem.exists(total))
-							FileSystem.createDirectory(total);
-					}
-					catch (e:Exception)
-					{
-						trace('Failed to create "$total" directory, ${e.message}');
-
-						break;
-					}
-				}
-			}
-		}
-
 		final libvlcLibrary:Future<AssetLibrary> = Assets.loadLibrary('libvlc');
 		libvlcLibrary.onComplete(function(library:AssetLibrary):Void
 		{
@@ -307,7 +255,7 @@ class Handle
 			{
 				final savePath:String = Path.join([homePath, '.share', file.substring(file.indexOf('/', 0) + 1, file.length)]);
 
-				mkDirs(Path.directory(savePath));
+				Util.mkDirs(Path.directory(savePath));
 
 				try
 				{
@@ -348,12 +296,15 @@ class Handle
 	@:unreflective
 	private static function instanceLogging(level:Int, ctx:cpp.RawConstPointer<LibVLC_Log_T>, fmt:cpp.ConstCharStar, args:cpp.VarList):Void
 	{
-		if (level < DefineMacro.getInt('HXVLC_VERBOSE', 0))
+		if (level > DefineMacro.getInt('HXVLC_VERBOSE', -1))
+			return;
+
+		if (level == DefineMacro.getInt('HXVLC_EXCLUDE_LOG_LEVEL', -1))
 			return;
 
 		logMutex.acquire();
 
-		final msg:String = getStringFromFormat(fmt, args);
+		final msg:String = Util.getStringFromFormat(fmt, args);
 
 		if (msg.length == 0)
 		{
@@ -361,44 +312,19 @@ class Handle
 			return;
 		}
 
-		var fileName:cpp.ConstCharStar = untyped nullptr;
-
-		var lineNumber:cpp.UInt32 = 0;
+		final fileName:cpp.ConstCharStar = untyped nullptr;
+		final lineNumber:cpp.UInt32 = 0;
 
 		LibVLC.log_get_context(ctx, untyped nullptr, cpp.RawPointer.addressOf(fileName), cpp.RawPointer.addressOf(lineNumber));
 
-		MainLoop.runInMainThread(function():Void
-		{
-			Log.trace(msg, {
-				fileName: Path.normalize(fileName),
-				lineNumber: lineNumber,
-				className: '',
-				methodName: ''
-			});
+		Log.trace(msg, {
+			fileName: Path.normalize(fileName),
+			lineNumber: lineNumber,
+			className: '',
+			methodName: ''
 		});
 
 		logMutex.release();
-	}
-
-	@:keep
-	@:noCompletion
-	@:unreflective
-	private static function getStringFromFormat(fmt:cpp.ConstCharStar, args:cpp.VarList):String
-	{
-		final size:Int = untyped vsnprintf(untyped nullptr, 0, fmt, args) + 1;
-
-		if (size <= 0)
-			return '';
-
-		final buffer:cpp.CastCharStar = cast cpp.Stdlib.nativeMalloc(size);
-
-		untyped vsnprintf(buffer, size, fmt, args);
-
-		final msg:String = new String(untyped buffer);
-
-		cpp.Stdlib.nativeFree(untyped buffer);
-
-		return msg;
 	}
 	#end
 }

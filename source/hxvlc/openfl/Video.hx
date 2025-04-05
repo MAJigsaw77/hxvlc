@@ -1,5 +1,6 @@
 package hxvlc.openfl;
 
+import hxvlc.util.Util;
 import haxe.Int64;
 import haxe.MainLoop;
 import haxe.io.Bytes;
@@ -271,9 +272,6 @@ class Video extends openfl.display.Bitmap
 	/** Total number of chapters in the video. */
 	public var chapterCount(get, never):Int;
 
-	/** Indicates whether playback will start automatically once loaded. */
-	public var willPlay(get, never):Bool;
-
 	/** Playback rate of the video. */
 	public var rate(get, set):Single;
 
@@ -285,9 +283,6 @@ class Video extends openfl.display.Bitmap
 
 	/** Volume level (0 to 100). */
 	public var volume(get, set):Int;
-
-	/** Selected audio channel. */
-	public var channel(get, set):Int;
 
 	/** Role of the media. */
 	public var role(get, set):UInt;
@@ -455,13 +450,8 @@ class Video extends openfl.display.Bitmap
 
 				if (URL_VERIFICATION_REGEX.match(location))
 					mediaItem = LibVLC.media_new_location(Handle.instance, location);
-				else if (haxe.io.Path.isAbsolute(location))
-					mediaItem = LibVLC.media_new_path(Handle.instance, normalizePath(location));
 				else
-				{
-					trace('Invalid location "$location".');
-					return false;
-				}
+					mediaItem = LibVLC.media_new_path(Handle.instance, Util.normalizePath(location));
 			}
 			else if ((location is Int))
 			{
@@ -469,20 +459,14 @@ class Video extends openfl.display.Bitmap
 			}
 			else if ((location is Bytes))
 			{
-				final data:BytesData = cast(location, Bytes).getData();
+				mediaMutex.acquire();
 
-				if (data.length > 0)
-				{
-					mediaMutex.acquire();
-					mediaData = data;
-					mediaOffset = 0;
-					mediaMutex.release();
+				mediaData = cast(location, Bytes).getData();
+				mediaOffset = 0;
+				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
+					untyped __cpp__('media_seek'), untyped NULL, untyped __cpp__('this'));
 
-					mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
-						untyped __cpp__('media_seek'), untyped NULL, untyped __cpp__('this'));
-				}
-				else
-					return false;
+				mediaMutex.release();
 			}
 			else
 				return false;
@@ -970,12 +954,6 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:noCompletion
-	private function get_willPlay():Bool
-	{
-		return mediaPlayer != null && LibVLC.media_player_will_play(mediaPlayer) != 0;
-	}
-
-	@:noCompletion
 	private function get_rate():Single
 	{
 		return mediaPlayer != null ? LibVLC.media_player_get_rate(mediaPlayer) : 1;
@@ -1019,21 +997,6 @@ class Video extends openfl.display.Bitmap
 		if (alSource != null)
 			AL.sourcef(alSource, AL.GAIN, Math.abs(value / 100));
 		#end
-
-		return value;
-	}
-
-	@:noCompletion
-	private function get_channel():Int
-	{
-		return mediaPlayer != null ? LibVLC.audio_get_channel(mediaPlayer) : 0;
-	}
-
-	@:noCompletion
-	private function set_channel(value:Int):Int
-	{
-		if (mediaPlayer != null)
-			LibVLC.audio_set_channel(mediaPlayer, value);
 
 		return value;
 	}
@@ -1292,7 +1255,8 @@ class Video extends openfl.display.Bitmap
 					if (__renderable)
 						__setRenderDirty();
 
-					onDisplay.dispatch();
+					if (onDisplay != null)
+						onDisplay.dispatch();
 
 					textureMutex.release();
 				}
@@ -1308,33 +1272,22 @@ class Video extends openfl.display.Bitmap
 	{
 		textureMutex.acquire();
 
-		final currentChroma:String = new String(untyped chroma);
-
 		if (openfl.display3D.textures.TextureBase.__supportsBGRA == true)
-		{
-			if (currentChroma != 'BGRA')
-				cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('BGRA'), 4);
-		}
+			cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('BGRA'), 4);
 		else
-		{
-			if (currentChroma != 'RGBA')
-				cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('RGBA'), 4);
-		}
+			cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('RGBA'), 4);
 
 		final originalWidth:cpp.UInt32 = width[0];
 		final originalHeight:cpp.UInt32 = height[0];
 
-		if (mediaPlayer != null
-			&& LibVLC.video_get_size(mediaPlayer, 0, cpp.RawPointer.addressOf(textureWidth), cpp.RawPointer.addressOf(textureHeight)) == 0)
+		if (mediaPlayer == null || LibVLC.video_get_size(mediaPlayer, 0, width, height) != 0)
 		{
-			width[0] = textureWidth;
-			height[0] = textureHeight;
+			width[0] = originalWidth;
+			height[0] = originalHeight;
 		}
-		else
-		{
-			textureWidth = originalWidth;
-			textureHeight = originalHeight;
-		}
+
+		textureWidth = width[0];
+		textureHeight = height[0];
 
 		if (texturePlanes == null)
 			texturePlanes = new BytesData();
@@ -1348,10 +1301,11 @@ class Video extends openfl.display.Bitmap
 
 		MainLoop.runInMainThread(function():Void
 		{
-			if (bitmapData == null
-				|| (bitmapData.width != textureWidth || bitmapData.height != textureHeight)
-				|| (!useTexture && bitmapData.__texture != null)
-				|| (useTexture && bitmapData.image != null))
+			final sizeMismatch:Bool = bitmapData != null && (bitmapData.width != textureWidth || bitmapData.height != textureHeight);
+			final textureMismatch:Bool = bitmapData != null && bitmapData.__texture != null && !useTexture;
+			final imageMismatch:Bool = bitmapData != null && bitmapData.image != null && useTexture;
+
+			if (bitmapData == null || sizeMismatch || textureMismatch || imageMismatch)
 			{
 				textureMutex.acquire();
 
@@ -1365,23 +1319,23 @@ class Video extends openfl.display.Bitmap
 
 				bitmapData = new BitmapData(textureWidth, textureHeight, true, 0);
 
-				if (useTexture && Lib.current.stage != null && Lib.current.stage.context3D != null)
+				if (useTexture)
 				{
-					bitmapData.disposeImage();
-
 					@:nullSafety(Off)
-					bitmapData.image = null;
-
-					bitmapData.getTexture(Lib.current.stage.context3D);
-
-					// Optimize for Render To Texture
-					if (bitmapData.__texture != null)
-						bitmapData.__texture.__getGLFramebuffer(true, 0, 0);
+					if (Lib.current.stage != null && Lib.current.stage.context3D != null)
+					{
+						bitmapData.disposeImage();
+						bitmapData.__texture = Lib.current.stage.context3D.createRectangleTexture(bitmapData.width, bitmapData.height, BGRA, true);
+						bitmapData.__textureContext = bitmapData.__texture.__textureContext;
+						bitmapData.__surface = null;
+						bitmapData.image = null;
+					}
+					else
+						trace('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
 				}
-				else if (useTexture)
-					trace('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
 
-				onFormatSetup.dispatch();
+				if (onFormatSetup != null)
+					onFormatSetup.dispatch();
 
 				textureMutex.release();
 			}
@@ -1477,40 +1431,42 @@ class Video extends openfl.display.Bitmap
 		#if lime_openal
 		alMutex.acquire();
 
-		final currentFormat:String = new String(untyped format);
-
-		if (currentFormat != 'S16N')
-			cpp.Stdlib.nativeMemcpy(untyped format, untyped cpp.CastCharStar.fromString('S16N'), 4);
+		cpp.Stdlib.nativeMemcpy(untyped format, untyped cpp.CastCharStar.fromString('S16N'), 4);
 
 		alSampleRate = rate[0];
 
 		var alChannelsToUse:cpp.UInt32 = channels[0];
 
-		if (alUseEXTMCFORMATS == true && alChannelsToUse > 8)
-			alChannelsToUse = 8;
-		else if (alChannelsToUse > 2)
-			alChannelsToUse = 2;
-
-		switch (alChannelsToUse)
 		{
-			case 1:
-				alFormat = AL.FORMAT_MONO16;
-				alChannelsToUse = 1;
-			case 2 | 3:
-				alFormat = AL.FORMAT_STEREO16;
-				alChannelsToUse = 2;
-			case 4:
-				alFormat = AL.getEnumValue('AL_FORMAT_QUAD16');
-				alChannelsToUse = 4;
-			case 5 | 6:
-				alFormat = AL.getEnumValue('AL_FORMAT_51CHN16');
-				alChannelsToUse = 6;
-			case 7 | 8:
-				alFormat = AL.getEnumValue('AL_FORMAT_71CHN16');
+			if (alUseEXTMCFORMATS == true && alChannelsToUse > 8)
 				alChannelsToUse = 8;
-		}
+			else if (alChannelsToUse > 2)
+				alChannelsToUse = 2;
 
-		alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * alChannelsToUse;
+			switch (alChannelsToUse)
+			{
+				case 1:
+					alFormat = AL.FORMAT_MONO16;
+					alChannelsToUse = 1;
+					alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * alChannelsToUse;
+				case 2 | 3:
+					alFormat = AL.FORMAT_STEREO16;
+					alChannelsToUse = 2;
+					alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * alChannelsToUse;
+				case 4:
+					alFormat = AL.getEnumValue('AL_FORMAT_QUAD16');
+					alChannelsToUse = 4;
+					alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * alChannelsToUse;
+				case 5 | 6:
+					alFormat = AL.getEnumValue('AL_FORMAT_51CHN16');
+					alChannelsToUse = 6;
+					alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * alChannelsToUse;
+				case 7 | 8:
+					alFormat = AL.getEnumValue('AL_FORMAT_71CHN16');
+					alChannelsToUse = 8;
+					alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * alChannelsToUse;
+			}
+		}
 
 		channels[0] = alChannelsToUse;
 
@@ -1525,12 +1481,7 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function audioSetVolume(volume:Single, mute:Bool):Void
-	{
-		// This function is intentionally left blank because we want to handle the audio volume ourselves.
-		//
-		// LibVLC's default behavior for handling audio volume is not ideal, so we override it to prevent issues.
-	}
+	private function audioSetVolume(volume:Single, mute:Bool):Void {}
 
 	@:keep
 	@:noCompletion
@@ -1540,56 +1491,113 @@ class Video extends openfl.display.Bitmap
 		switch (p_event[0].type)
 		{
 			case event if (event == LibVLC_MediaPlayerOpening):
-				MainLoop.runInMainThread(onOpening.dispatch.bind());
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onOpening != null)
+						onOpening.dispatch();
+				});
 			case event if (event == LibVLC_MediaPlayerPlaying):
-				MainLoop.runInMainThread(onPlaying.dispatch.bind());
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onPlaying != null)
+						onPlaying.dispatch();
+				});
 			case event if (event == LibVLC_MediaPlayerStopped):
-				MainLoop.runInMainThread(onStopped.dispatch.bind());
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onStopped != null)
+						onStopped.dispatch();
+				});
 			case event if (event == LibVLC_MediaPlayerPaused):
-				MainLoop.runInMainThread(onPaused.dispatch.bind());
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onPaused != null)
+						onPaused.dispatch();
+				});
 			case event if (event == LibVLC_MediaPlayerEndReached):
-				MainLoop.runInMainThread(onEndReached.dispatch.bind());
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onEndReached != null)
+						onEndReached.dispatch();
+				});
 			case event if (event == LibVLC_MediaPlayerEncounteredError):
 				final errmsg:String = LibVLC.errmsg();
 
-				MainLoop.runInMainThread(onEncounteredError.dispatch.bind(errmsg));
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onEncounteredError != null)
+					{
+						if (errmsg != null && errmsg.length > 0)
+							onEncounteredError.dispatch(errmsg);
+						else
+							onEncounteredError.dispatch('Unknown error');
+					}
+				});
 			case event if (event == LibVLC_MediaPlayerCorked):
-				MainLoop.runInMainThread(onCorked.dispatch.bind());
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onCorked != null)
+						onCorked.dispatch();
+				});
 			case event if (event == LibVLC_MediaPlayerUncorked):
-				MainLoop.runInMainThread(onUncorked.dispatch.bind());
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onUncorked != null)
+						onUncorked.dispatch();
+				});
 			case event if (event == LibVLC_MediaPlayerTimeChanged):
-				final newTime:Int64 = (untyped __cpp__('{0}.u.media_player_time_changed.new_time', p_event[0]) : cpp.Int64);
+				final newTime:Int64 = untyped __cpp__('{0}.u.media_player_time_changed.new_time', p_event[0]);
 
-				MainLoop.runInMainThread(onTimeChanged.dispatch.bind(newTime));
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onTimeChanged != null)
+						onTimeChanged.dispatch(newTime);
+				});
 			case event if (event == LibVLC_MediaPlayerPositionChanged):
 				final newPosition:Single = untyped __cpp__('{0}.u.media_player_position_changed.new_position', p_event[0]);
 
-				MainLoop.runInMainThread(onPositionChanged.dispatch.bind(newPosition));
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onPositionChanged != null)
+						onPositionChanged.dispatch(newPosition);
+				});
 			case event if (event == LibVLC_MediaPlayerLengthChanged):
-				final newLength:Int64 = (untyped __cpp__('{0}.u.media_player_length_changed.new_length', p_event[0]) : cpp.Int64);
+				final newLength:Int64 = untyped __cpp__('{0}.u.media_player_length_changed.new_length', p_event[0]);
 
-				MainLoop.runInMainThread(onLengthChanged.dispatch.bind(newLength));
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onLengthChanged != null)
+						onLengthChanged.dispatch(newLength);
+				});
 			case event if (event == LibVLC_MediaPlayerChapterChanged):
 				final newChapter:Int = untyped __cpp__('{0}.u.media_player_chapter_changed.new_chapter', p_event[0]);
 
-				MainLoop.runInMainThread(onChapterChanged.dispatch.bind(newChapter));
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onChapterChanged != null)
+						onChapterChanged.dispatch(newChapter);
+				});
 			case event if (event == LibVLC_MediaPlayerMediaChanged):
-				MainLoop.runInMainThread(onMediaChanged.dispatch.bind());
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onMediaChanged != null)
+						onMediaChanged.dispatch();
+				});
 			case event if (event == LibVLC_MediaParsedChanged):
 				final newStatus:Int = untyped __cpp__('{0}.u.media_parsed_changed.new_status', p_event[0]);
 
-				MainLoop.runInMainThread(onMediaParsedChanged.dispatch.bind(newStatus));
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onMediaParsedChanged != null)
+						onMediaParsedChanged.dispatch(newStatus);
+				});
 			case event if (event == LibVLC_MediaMetaChanged):
-				MainLoop.runInMainThread(onMediaMetaChanged.dispatch.bind());
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onMediaMetaChanged != null)
+						onMediaMetaChanged.dispatch();
+				});
 		}
-	}
-
-	@:noCompletion
-	@:unreflective
-	private function addEvent(eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>, type:LibVLC_Event_E):Void
-	{
-		if (LibVLC.event_attach(eventManager, type, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
-			trace('Failed to attach event (${LibVLC.event_type_name(type)})');
 	}
 
 	@:noCompletion
@@ -1696,12 +1704,9 @@ class Video extends openfl.display.Bitmap
 
 	@:noCompletion
 	@:unreflective
-	private function normalizePath(location:String):String
+	private function addEvent(eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>, type:LibVLC_Event_E):Void
 	{
-		#if windows
-		return haxe.io.Path.normalize(location).split('/').join('\\');
-		#else
-		return haxe.io.Path.normalize(location);
-		#end
+		if (LibVLC.event_attach(eventManager, type, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+			trace('Failed to attach event (${LibVLC.event_type_name(type)})');
 	}
 }

@@ -448,15 +448,6 @@ extern class LibVLC
 	static function media_player_can_pause(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
 
 	/**
-	 * Checks if the media player will play.
-	 * 
-	 * @param p_mi Pointer to the media player.
-	 * @return 1 if will play, 0 otherwise.
-	 */
-	@:native('libvlc_media_player_will_play')
-	static function media_player_will_play(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
-
-	/**
 	 * Releases a media player.
 	 * 
 	 * @param p_mi Pointer to the media player.
@@ -761,6 +752,25 @@ extern class LibVLC
 	static function video_set_track(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_track:Int):Int;
 
 	/**
+	 * Gets the current software audio volume.
+	 * 
+	 * @param p_mi Pointer to the media player.
+	 * @return The software volume in percent (0 = mute, 100 = nominal / 0dB).
+	 */
+	@:native('libvlc_audio_get_volume')
+	static function audio_get_volume(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
+
+	/**
+	 * Sets the current software audio volume.
+	 * 
+	 * @param p_mi Pointer to the media player.
+	 * @param i_volume The volume in percent (0 = mute, 100 = 0dB).
+	 * @return 0 if the volume was set, -1 if it was out of range.
+	 */
+	@:native('libvlc_audio_set_volume')
+	static function audio_set_volume(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_volume:Int):Int;
+
+	/**
 	 * Sets the audio format callbacks.
 	 * 
 	 * @param mp Pointer to the media player.
@@ -863,25 +873,6 @@ extern class LibVLC
 	 */
 	@:native('libvlc_audio_set_track')
 	static function audio_set_track(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, i_track:Int):Int;
-
-	/**
-	 * Gets the current audio channel.
-	 * 
-	 * @param p_mi Pointer to the media player.
-	 * @return The current audio channel.
-	 */
-	@:native('libvlc_audio_get_channel')
-	static function audio_get_channel(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>):Int;
-
-	/**
-	 * Sets the current audio channel.
-	 * 
-	 * @param p_mi Pointer to the media player.
-	 * @param channel The new audio channel.
-	 * @return 0 on success, -1 on failure.
-	 */
-	@:native('libvlc_audio_set_channel')
-	static function audio_set_channel(p_mi:cpp.RawPointer<LibVLC_Media_Player_T>, channel:Int):Int;
 
 	/**
 	 * Gets the role of the media player.
