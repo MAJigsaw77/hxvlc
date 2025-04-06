@@ -51,7 +51,7 @@ class FlxVideoSprite extends FlxSprite
 		bitmap.forceRendering = true;
 		bitmap.onFormatSetup.add(function():Void
 		{
-			if (bitmap.bitmapData != null)
+			if (bitmap != null && bitmap.bitmapData != null)
 				loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
 		});
 		bitmap.visible = false;

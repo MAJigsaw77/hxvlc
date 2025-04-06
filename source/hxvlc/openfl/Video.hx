@@ -28,7 +28,6 @@ import lime.media.openal.ALSource;
 
 /** This class is a video player that uses LibVLC for seamless integration with OpenFL display objects. */
 @:access(openfl.display.BitmapData)
-@:access(openfl.display3D.textures.TextureBase)
 @:cppNamespaceCode('
 static int media_open(void *opaque, void **datap, uint64_t *sizep)
 {
@@ -1225,10 +1224,7 @@ class Video extends openfl.display.Bitmap
 	{
 		textureMutex.acquire();
 
-		if (openfl.display3D.textures.TextureBase.__supportsBGRA == true)
-			cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('BGRA'), 4);
-		else
-			cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('RGBA'), 4);
+		cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('RV32'), 4);
 
 		final originalWidth:cpp.UInt32 = width[0];
 		final originalHeight:cpp.UInt32 = height[0];
