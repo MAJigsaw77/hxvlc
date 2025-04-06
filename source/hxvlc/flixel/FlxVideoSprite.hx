@@ -10,7 +10,7 @@ import hxvlc.util.Location;
 using StringTools;
 
 /**
- * This class extends FlxSprite to display video files in HaxeFlixel.
+ * This class extends `FlxSprite` to display video files in HaxeFlixel.
  *
  * ```haxe
  * final video:FlxVideoSprite = new FlxVideoSprite(0, 0);
@@ -37,7 +37,7 @@ using StringTools;
 class FlxVideoSprite extends FlxSprite
 {
 	/** The video bitmap object. */
-	public final bitmap:FlxVideoInternal;
+	public final bitmap:FlxInternalVideo;
 
 	/**
 	 * Creates a `FlxVideoSprite` at a specified position.
@@ -49,7 +49,7 @@ class FlxVideoSprite extends FlxSprite
 	{
 		super(x, y);
 
-		bitmap = new FlxVideoInternal(antialiasing);
+		bitmap = new FlxInternalVideo(antialiasing);
 		bitmap.forceRendering = true;
 		bitmap.onFormatSetup.add(function():Void
 		{

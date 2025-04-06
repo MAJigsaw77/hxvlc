@@ -7,7 +7,7 @@ import flixel.FlxG;
 using StringTools;
 
 /**
- * This class extends Video to display video files in HaxeFlixel.
+ * This class extends `FlxInternalVideo` to display video files in HaxeFlixel.
  *
  * ```haxe
  * final video:FlxVideo = new FlxVideo();
@@ -23,7 +23,7 @@ using StringTools;
  * 	FlxTimer.wait(0.001, () -> video.play());
  * ```
  */
-class FlxVideo extends FlxVideoInternal
+class FlxVideo extends FlxInternalVideo
 {
 	/** Determines the resizing behavior for the video. */
 	public var resizeMode(default, set):FlxAxes = FlxAxes.XY;
