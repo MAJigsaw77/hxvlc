@@ -50,9 +50,6 @@ class Handle
 	/** Retrieves the LibVLC changeset. */
 	public static var changeset(get, never):String;
 
-	/** Returns the current time in microseconds as defined by LibVLC. */
-	public static var clock(get, never):Int64;
-
 	@:noCompletion
 	private static final instanceMutex:Mutex = new Mutex();
 
@@ -65,7 +62,6 @@ class Handle
 	 * Initializes the LibVLC instance if it isn't already.
 	 * 
 	 * @param options The additional options you can add to the LibVLC instance.
-	 * 
 	 * @return `true` if the instance was created successfully or `false` if there was an error or the instance is still loading.
 	 */
 	public static inline function init(?options:Array<String>):Bool
@@ -195,9 +191,9 @@ class Handle
 				final errmsg:String = LibVLC.errmsg();
 
 				if (errmsg != null && errmsg.length > 0)
-					throw 'Failed to initialize the LibVLC instance, Error: $errmsg';
+					trace('Failed to initialize the LibVLC instance: $errmsg');
 				else
-					throw 'Failed to initialize the LibVLC instance';
+					trace('Failed to initialize the LibVLC instance');
 
 				return false;
 			}
@@ -232,12 +228,6 @@ class Handle
 	private static function get_changeset():String
 	{
 		return LibVLC.get_changeset();
-	}
-
-	@:noCompletion
-	private static function get_clock():Int64
-	{
-		return LibVLC.clock();
 	}
 
 	@:noCompletion

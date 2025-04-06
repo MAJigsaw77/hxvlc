@@ -1,18 +1,11 @@
 package hxvlc.flixel;
 
 #if flixel
-import flixel.graphics.FlxGraphic;
-import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import haxe.io.Bytes;
-import haxe.io.Path;
-import hxvlc.externs.Types;
-import hxvlc.util.macros.DefineMacro;
+import flixel.graphics.FlxGraphic;
+import flixel.util.FlxColor;
 import hxvlc.util.Location;
-import hxvlc.openfl.Video;
-import openfl.utils.Assets;
-import sys.FileSystem;
 
 using StringTools;
 
@@ -40,18 +33,11 @@ using StringTools;
  * 	FlxTimer.wait(0.001, () -> video.play());
  * ```
  */
-@:access(hxvlc.openfl.Video)
 @:nullSafety
 class FlxVideoSprite extends FlxSprite
 {
-	/** The volume adjustment. */
-	public var volumeAdjust(default, set):Float = 1.0;
-
 	/** The video bitmap object. */
-	public final bitmap:Video;
-
-	@:noCompletion
-	private var resumeOnFocus:Bool = false;
+	public final bitmap:FlxVideoInternal;
 
 	/**
 	 * Creates a `FlxVideoSprite` at a specified position.
@@ -63,26 +49,8 @@ class FlxVideoSprite extends FlxSprite
 	{
 		super(x, y);
 
-		bitmap = new Video(antialiasing);
+		bitmap = new FlxVideoInternal(antialiasing);
 		bitmap.forceRendering = true;
-		bitmap.onOpening.add(function():Void
-		{
-			bitmap.role = LibVLC_Role_Game;
-
-			#if (FLX_SOUND_SYSTEM && flixel >= version("5.9.0"))
-			if (!FlxG.sound.onVolumeChange.has(onVolumeChange))
-				FlxG.sound.onVolumeChange.add(onVolumeChange);
-			#elseif (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
-			if (!FlxG.signals.postUpdate.has(onVolumeUpdate))
-				FlxG.signals.postUpdate.add(onVolumeUpdate);
-			#end
-
-			#if FLX_SOUND_SYSTEM
-			onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
-			#else
-			onVolumeChange(1);
-			#end
-		});
 		bitmap.onFormatSetup.add(function():Void
 		{
 			if (bitmap.bitmapData != null)
@@ -101,63 +69,8 @@ class FlxVideoSprite extends FlxSprite
 	 * @param options Additional options to configure the media.
 	 * @return `true` if the media was loaded successfully, `false` otherwise.
 	 */
-	public function load(location:Location, ?options:Array<String>):Bool
+	public inline function load(location:Location, ?options:Array<String>):Bool
 	{
-		if (!FlxG.signals.focusGained.has(onFocusGained))
-			FlxG.signals.focusGained.add(onFocusGained);
-
-		if (!FlxG.signals.focusLost.has(onFocusLost))
-			FlxG.signals.focusLost.add(onFocusLost);
-
-		if (location != null && !(location is Int) && !(location is Bytes) && (location is String))
-		{
-			final location:String = cast(location, String);
-
-			if (!Video.URL_VERIFICATION_REGEX.match(location))
-			{
-				final absolutePath:String = FileSystem.absolutePath(location);
-
-				if (FileSystem.exists(absolutePath))
-					return bitmap.load(absolutePath, options);
-				else if (Assets.exists(location))
-				{
-					final assetPath:String = Assets.getPath(location);
-
-					if (assetPath != null)
-					{
-						if (FileSystem.exists(assetPath) && Path.isAbsolute(assetPath))
-							return bitmap.load(assetPath, options);
-						else if (FileSystem.exists(assetPath) && !Path.isAbsolute(assetPath))
-							return bitmap.load(FileSystem.absolutePath(assetPath), options);
-						else if (!Path.isAbsolute(assetPath))
-						{
-							try
-							{
-								final assetBytes:Bytes = Assets.getBytes(location);
-
-								if (assetBytes != null)
-									return bitmap.load(assetBytes, options);
-							}
-							catch (e:Dynamic)
-							{
-								FlxG.log.error('Error loading asset bytes from location "$location": $e');
-
-								return false;
-							}
-						}
-					}
-
-					return false;
-				}
-				else
-				{
-					FlxG.log.warn('Unable to find the video file at location "$location".');
-
-					return false;
-				}
-			}
-		}
-
 		return bitmap.load(location, options);
 	}
 
@@ -197,49 +110,15 @@ class FlxVideoSprite extends FlxSprite
 	 * @param type The slave type.
 	 * @param uri URI of the slave (should contain a valid scheme).
 	 * @param select `true` if this slave should be selected when it's loaded.
-	 * 
 	 * @return `true` on success, `false` otherwise.
 	 */
-	public function addSlave(type:Int, location:String, select:Bool):Bool
+	public inline function addSlave(type:Int, location:String, select:Bool):Bool
 	{
-		function convertAbsToURL(str:String):String
-		{
-			final normalizedPath:String = Path.normalize(str);
-
-			if (!normalizedPath.startsWith('/'))
-				return 'file:///$normalizedPath';
-			else
-				return 'file://$normalizedPath';
-		}
-
-		if (!Video.URL_VERIFICATION_REGEX.match(location))
-		{
-			final absolutePath:String = FileSystem.absolutePath(location);
-
-			if (FileSystem.exists(absolutePath))
-				return bitmap.addSlave(type, convertAbsToURL(absolutePath), select);
-			else if (Assets.exists(location))
-			{
-				final assetPath:Null<String> = Assets.getPath(location);
-
-				if (assetPath != null)
-				{
-					if (FileSystem.exists(assetPath) && Path.isAbsolute(assetPath))
-						return bitmap.addSlave(type, convertAbsToURL(assetPath), select);
-					else if (FileSystem.exists(assetPath) && !Path.isAbsolute(assetPath))
-						return bitmap.addSlave(type, FileSystem.absolutePath(assetPath), select);
-				}
-
-				return false;
-			}
-		}
-
 		return bitmap.addSlave(type, location, select);
 	}
 
 	/**
 	 * Starts video playback.
-	 * 
 	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
 	public inline function play():Bool
@@ -271,16 +150,9 @@ class FlxVideoSprite extends FlxSprite
 		bitmap.togglePaused();
 	}
 
+	@:dox(hide)
 	public override function destroy():Void
 	{
-		#if (FLX_SOUND_SYSTEM && flixel >= version("5.9.0"))
-		if (FlxG.sound.onVolumeChange.has(onVolumeChange))
-			FlxG.sound.onVolumeChange.remove(onVolumeChange);
-		#elseif (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
-		if (FlxG.signals.postUpdate.has(onVolumeUpdate))
-			FlxG.signals.postUpdate.remove(onVolumeUpdate);
-		#end
-
 		super.destroy();
 
 		FlxG.removeChild(bitmap);
@@ -288,6 +160,7 @@ class FlxVideoSprite extends FlxSprite
 		bitmap.dispose();
 	}
 
+	@:dox(hide)
 	public override function kill():Void
 	{
 		bitmap.pause();
@@ -295,6 +168,7 @@ class FlxVideoSprite extends FlxSprite
 		super.kill();
 	}
 
+	@:dox(hide)
 	public override function revive():Void
 	{
 		super.revive();
@@ -303,67 +177,9 @@ class FlxVideoSprite extends FlxSprite
 	}
 
 	@:noCompletion
-	private function onFocusGained():Void
-	{
-		#if !mobile
-		if (!FlxG.autoPause)
-			return;
-		#end
-
-		if (resumeOnFocus)
-		{
-			resumeOnFocus = false;
-
-			resume();
-		}
-	}
-
-	@:noCompletion
-	private function onFocusLost():Void
-	{
-		#if !mobile
-		if (!FlxG.autoPause)
-			return;
-		#end
-
-		resumeOnFocus = bitmap.isPlaying;
-
-		pause();
-	}
-
-	#if (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
-	@:noCompletion
-	private function onVolumeUpdate():Void
-	{
-		onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
-	}
-	#end
-
-	@:noCompletion
-	private function onVolumeChange(vol:Float):Void
-	{
-		final currentVolume:Int = Math.floor((vol * DefineMacro.getFloat('HXVLC_FLIXEL_VOLUME_MULTIPLIER', 125)) * volumeAdjust);
-
-		if (bitmap.volume != currentVolume)
-			bitmap.volume = currentVolume;
-	}
-
-	@:noCompletion
 	private override function set_antialiasing(value:Bool):Bool
 	{
 		return antialiasing = (bitmap == null ? value : (bitmap.smoothing = value));
-	}
-
-	@:noCompletion
-	private function set_volumeAdjust(value:Float):Float
-	{
-		#if FLX_SOUND_SYSTEM
-		onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
-		#else
-		onVolumeChange(1);
-		#end
-
-		return volumeAdjust = value;
 	}
 }
 #end

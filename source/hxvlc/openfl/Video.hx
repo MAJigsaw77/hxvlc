@@ -1,15 +1,16 @@
 package hxvlc.openfl;
 
-import hxvlc.util.Util;
 import haxe.Int64;
 import haxe.MainLoop;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
+import haxe.io.BytesInput;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.Handle;
 import hxvlc.util.Stats;
 import hxvlc.util.TrackDescription;
+import hxvlc.util.Util;
 import hxvlc.util.macros.DefineMacro;
 import lime.app.Event;
 import lime.utils.UInt8Array;
@@ -366,16 +367,18 @@ class Video extends openfl.display.Bitmap
 	private final mediaMutex:Mutex = new Mutex();
 
 	@:noCompletion
-	private var mediaData:Null<BytesData>;
+	private final textureMutex:Mutex = new Mutex();
+
+	#if lime_openal
+	@:noCompletion
+	private final alMutex:Mutex = new Mutex();
+	#end
 
 	@:noCompletion
-	private var mediaOffset:cpp.UInt32 = 0;
+	private var mediaInput:Null<BytesInput>;
 
 	@:noCompletion
 	private var mediaPlayer:Null<cpp.RawPointer<LibVLC_Media_Player_T>>;
-
-	@:noCompletion
-	private final textureMutex:Mutex = new Mutex();
 
 	@:noCompletion
 	private var textureWidth:cpp.UInt32 = 0;
@@ -387,9 +390,6 @@ class Video extends openfl.display.Bitmap
 	private var texturePlanes:Null<BytesData>;
 
 	#if lime_openal
-	@:noCompletion
-	private final alMutex:Mutex = new Mutex();
-
 	@:noCompletion
 	private var alSampleRate:cpp.UInt32 = 0;
 
@@ -432,7 +432,6 @@ class Video extends openfl.display.Bitmap
 	 * 
 	 * @param location The location of the media file or stream.
 	 * @param options Additional options to configure the media.
-	 * 
 	 * @return `true` if the media was loaded successfully, `false` otherwise.
 	 */
 	public function load(location:hxvlc.util.Location, ?options:Array<String>):Bool
@@ -461,8 +460,8 @@ class Video extends openfl.display.Bitmap
 			{
 				mediaMutex.acquire();
 
-				mediaData = cast(location, Bytes).getData();
-				mediaOffset = 0;
+				mediaInput = new BytesInput(cast(location, Bytes));
+
 				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
 					untyped __cpp__('media_seek'), untyped NULL, untyped __cpp__('this'));
 
@@ -505,7 +504,6 @@ class Video extends openfl.display.Bitmap
 	 * 
 	 * @param index The index of the subitem to load.
 	 * @param options Additional options to configure the loaded subitem.
-	 * 
 	 * @return `true` if the subitem was loaded successfully, `false` otherwise.
 	 */
 	public function loadFromSubItem(index:Int, ?options:Array<String>):Bool
@@ -549,7 +547,6 @@ class Video extends openfl.display.Bitmap
 	 * 
 	 * @param parse_flag The parsing option.
 	 * @param timeout The timeout in milliseconds.
-	 * 
 	 * @return `true` if parsing succeeded, `false` otherwise.
 	 */
 	public function parseWithOptions(parse_flag:Int, timeout:Int):Bool
@@ -595,7 +592,6 @@ class Video extends openfl.display.Bitmap
 	 * @param type The slave type.
 	 * @param uri URI of the slave (should contain a valid scheme).
 	 * @param select `true` if this slave should be selected when it's loaded.
-	 * 
 	 * @return `true` on success, `false` otherwise.
 	 */
 	public function addSlave(type:Int, url:String, select:Bool):Bool
@@ -605,7 +601,6 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Gets the description of available audio tracks of the current media player.
-	 * 
 	 * @return The list containing descriptions of available audio tracks.
 	 */
 	public function getVideoDescription():Array<TrackDescription>
@@ -625,7 +620,6 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Gets the description of available audio tracks of the current media player.
-	 * 
 	 * @return The list containing descriptions of available audio tracks.
 	 */
 	public function getAudioDescription():Array<TrackDescription>
@@ -645,7 +639,6 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Gets the description of available available video subtitles of the current media player.
-	 * 
 	 * @return The list containing descriptions of available available video subtitles.
 	 */
 	public function getSpuDescription():Array<TrackDescription>
@@ -665,7 +658,6 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Starts playback.
-	 * 
 	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
 	public function play():Bool
@@ -758,7 +750,6 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Saves the metadata of the current media item.
-	 * 
 	 * @return `true` if the metadata was saved successfully, `false` otherwise.
 	 */
 	public function saveMeta():Bool
@@ -785,8 +776,7 @@ class Video extends openfl.display.Bitmap
 
 		mediaMutex.acquire();
 
-		mediaData = null;
-		mediaOffset = 0;
+		mediaInput = null;
 
 		mediaMutex.release();
 
@@ -1129,9 +1119,9 @@ class Video extends openfl.display.Bitmap
 	{
 		mediaMutex.acquire();
 
-		if (mediaData != null)
+		if (mediaInput != null)
 		{
-			sizep[0] = cast mediaData.length;
+			sizep[0] = cast mediaInput.length;
 
 			mediaMutex.release();
 
@@ -1150,36 +1140,11 @@ class Video extends openfl.display.Bitmap
 	{
 		mediaMutex.acquire();
 
-		if (mediaData != null)
-		{
-			final readLength:cpp.UInt32 = cast len;
-
-			if (mediaOffset >= mediaData.length)
-			{
-				mediaMutex.release();
-				return 0;
-			}
-
-			final toRead:cpp.UInt32 = readLength < (mediaData.length - mediaOffset) ? readLength : (mediaData.length - mediaOffset);
-
-			if (mediaOffset > (mediaData.length - toRead))
-			{
-				mediaMutex.release();
-				return -1;
-			}
-
-			cpp.Stdlib.nativeMemcpy(untyped buf, untyped cpp.RawPointer.addressOf(cpp.NativeArray.getBase(mediaData).getBase()[mediaOffset]), toRead);
-
-			mediaOffset += toRead;
-
-			mediaMutex.release();
-
-			return toRead;
-		}
+		final bytesRead:Int = mediaInput != null ? Util.readFromInput(mediaInput, untyped buf, cast len) : -1;
 
 		mediaMutex.release();
 
-		return -1;
+		return bytesRead;
 	}
 
 	@:keep
@@ -1189,22 +1154,15 @@ class Video extends openfl.display.Bitmap
 	{
 		mediaMutex.acquire();
 
-		if (mediaData != null)
+		if (mediaInput != null)
 		{
-			final newOffset:cpp.UInt32 = cast offset;
+			mediaInput.position = cast offset;
 
-			if (newOffset > mediaData.length)
-			{
-				mediaMutex.release();
-
-				return -1;
-			}
-
-			mediaOffset = newOffset;
+			final result:Int = mediaInput.position >= mediaInput.length ? -1 : 0;
 
 			mediaMutex.release();
 
-			return 0;
+			return result;
 		}
 
 		mediaMutex.release();

@@ -42,7 +42,6 @@ extern class LibVLC
 
 	/**
 	 * Gets the last error message.
-	 * 
 	 * @return The last error message.
 	 */
 	@:native('libvlc_errmsg')
@@ -50,7 +49,6 @@ extern class LibVLC
 
 	/**
 	 * Gets the LibVLC version.
-	 * 
 	 * @return The LibVLC version string.
 	 */
 	@:native('libvlc_get_version')
@@ -58,7 +56,6 @@ extern class LibVLC
 
 	/**
 	 * Gets the LibVLC compiler information.
-	 * 
 	 * @return The compiler information string.
 	 */
 	@:native('libvlc_get_compiler')
@@ -66,7 +63,6 @@ extern class LibVLC
 
 	/**
 	 * Gets the LibVLC changeset.
-	 * 
 	 * @return The changeset string.
 	 */
 	@:native('libvlc_get_changeset')
@@ -147,28 +143,16 @@ extern class LibVLC
 	 * @param ctx Message context (as passed to the `libvlc_log_cb` callback).
 	 * @param module Module name storage (or null) [OUT].
 	 * @param file Source code file name storage (or null) [OUT].
-	 * @param line Source code file line number storage (or null) [OUT].
-	 * 
-	 * @warning The returned module name and source code file name, if non-null, are only valid until the logging callback returns.
 	 */
 	@:native('libvlc_log_get_context')
 	static function log_get_context(ctx:cpp.RawConstPointer<LibVLC_Log_T>, module:cpp.RawPointer<cpp.ConstCharStar>, file:cpp.RawPointer<cpp.ConstCharStar>,
 		line:cpp.RawPointer<cpp.UInt32>):Void;
 
 	/**
-	 * Gets the LibVLC clock time.
-	 * 
-	 * @return The clock time.
-	 */
-	@:native('libvlc_clock')
-	static function clock():cpp.Int64;
-
-	/**
 	 * Returns the delay (in microseconds) until a certain timestamp.
 	 * 
 	 * @param pts The timestamp.
-	 * @return A negative value if the timestamp is in the past,
-	 *         a positive value if it is in the future.
+	 * @return A negative value if the timestamp is in the past, a positive value if it is in the future.
 	 */
 	@:native('libvlc_delay')
 	static function delay(pts:cpp.Int64):cpp.Int64;

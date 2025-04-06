@@ -1,14 +1,15 @@
 package;
 
+import flixel.FlxG;
+import flixel.FlxState;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
-import flixel.FlxG;
-import flixel.FlxState;
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.util.Handle;
 import sys.FileSystem;
+import sys.io.File;
 
 @:nullSafety
 class VideoState extends FlxState
@@ -98,7 +99,7 @@ class VideoState extends FlxState
 				final file:String = haxe.io.Path.join(['videos', FileSystem.readDirectory('videos')[0]]);
 
 				if (file != null && file.length > 0)
-					video.load(file);
+					video.load(File.getBytes(file));
 				else
 					video.load(FlxG.random.getObject([bigBuckBunny, elephantsDream]));
 			}
