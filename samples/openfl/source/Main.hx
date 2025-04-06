@@ -13,8 +13,6 @@ import openfl.events.Event;
 import openfl.Lib;
 import sys.FileSystem;
 
-using StringTools;
-
 class Main extends Sprite
 {
 	private var video:Video;

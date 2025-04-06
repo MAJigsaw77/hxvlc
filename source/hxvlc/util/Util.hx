@@ -4,6 +4,8 @@ import haxe.io.BytesInput;
 import haxe.Exception;
 import sys.FileSystem;
 
+using cpp.NativeArray;
+
 /**
  * Utility class providing helper methods for common operations.
  */
@@ -131,7 +133,7 @@ class Util
 		if (input.position > (input.length - read))
 			return -1;
 
-		cpp.Stdlib.nativeMemcpy(untyped buf, untyped cpp.RawPointer.addressOf(cpp.NativeArray.getBase(input.b).getBase()[input.position]), read);
+		cpp.Stdlib.nativeMemcpy(untyped buf, untyped cpp.RawPointer.addressOf(input.b.getBase().getBase()[input.position]), read);
 
 		input.position += read;
 

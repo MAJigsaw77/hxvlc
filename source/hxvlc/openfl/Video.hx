@@ -18,7 +18,7 @@ import openfl.Lib;
 import openfl.display.BitmapData;
 import sys.thread.Mutex;
 
-using StringTools;
+using cpp.NativeArray;
 
 #if lime_openal
 import lime.media.openal.AL;
@@ -391,7 +391,7 @@ class Video extends openfl.display.Bitmap
 
 	#if lime_openal
 	@:noCompletion
-	private var alSampleRate:cpp.UInt32 = 0;
+	private var alUseEXTMCFORMATS:Null<Bool>;
 
 	@:noCompletion
 	private var alSource:Null<ALSource>;
@@ -400,16 +400,13 @@ class Video extends openfl.display.Bitmap
 	private var alBufferPool:Null<Array<ALBuffer>>;
 
 	@:noCompletion
+	private var alSampleRate:cpp.UInt32 = 0;
+
+	@:noCompletion
 	private var alFormat:Int = 0;
 
 	@:noCompletion
 	private var alFrameSize:cpp.UInt32 = 0;
-
-	@:noCompletion
-	private var alSamples:Null<BytesData>;
-
-	@:noCompletion
-	private var alUseEXTMCFORMATS:Null<Bool>;
 	#end
 
 	/**
@@ -822,8 +819,6 @@ class Video extends openfl.display.Bitmap
 			alBufferPool = null;
 		}
 
-		alSamples = null;
-
 		alMutex.release();
 		#end
 	}
@@ -1178,7 +1173,7 @@ class Video extends openfl.display.Bitmap
 		textureMutex.acquire();
 
 		if (texturePlanes != null)
-			planes[0] = untyped cpp.NativeArray.getBase(texturePlanes).getBase();
+			planes[0] = untyped texturePlanes.getBase().getBase();
 
 		return untyped nullptr;
 	}
@@ -1326,10 +1321,9 @@ class Video extends openfl.display.Bitmap
 
 				if (alBuffer != null)
 				{
-					if (alSamples == null)
-						alSamples = new BytesData();
+					final alSamples:BytesData = new BytesData();
 
-					cpp.NativeArray.setUnmanagedData(alSamples, cast samples, count);
+					alSamples.setUnmanagedData(cast samples, count);
 
 					AL.bufferData(alBuffer, alFormat, UInt8Array.fromBytes(Bytes.ofData(alSamples)), alSamples.length * alFrameSize, alSampleRate);
 

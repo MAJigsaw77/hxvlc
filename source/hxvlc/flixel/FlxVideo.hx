@@ -4,8 +4,6 @@ package hxvlc.flixel;
 import flixel.util.FlxAxes;
 import flixel.FlxG;
 
-using StringTools;
-
 /**
  * This class extends `FlxInternalVideo` to display video files in HaxeFlixel.
  *

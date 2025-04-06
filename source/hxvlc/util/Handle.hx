@@ -1,8 +1,6 @@
 package hxvlc.util;
 
-import haxe.PosInfos;
 import haxe.Log;
-import haxe.Int64;
 import haxe.MainLoop;
 import haxe.io.Path;
 import hxvlc.externs.LibVLC;
@@ -10,8 +8,6 @@ import hxvlc.externs.Types;
 import hxvlc.util.macros.DefineMacro;
 import sys.FileSystem;
 import sys.thread.Mutex;
-
-using StringTools;
 
 #if android
 import haxe.Exception;

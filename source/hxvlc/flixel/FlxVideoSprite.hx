@@ -7,8 +7,6 @@ import flixel.graphics.FlxGraphic;
 import flixel.util.FlxColor;
 import hxvlc.util.Location;
 
-using StringTools;
-
 /**
  * This class extends `FlxSprite` to display video files in HaxeFlixel.
  *
