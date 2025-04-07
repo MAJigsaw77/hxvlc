@@ -35,7 +35,7 @@ import hxvlc.util.Location;
 class FlxVideoSprite extends FlxSprite
 {
 	/** The video bitmap object. */
-	public final bitmap:FlxInternalVideo;
+	public var bitmap:Null<FlxInternalVideo>;
 
 	/**
 	 * Creates a `FlxVideoSprite` at a specified position.
@@ -47,6 +47,8 @@ class FlxVideoSprite extends FlxSprite
 	{
 		super(x, y);
 
+		makeGraphic(1, 1, FlxColor.TRANSPARENT);
+
 		bitmap = new FlxInternalVideo(antialiasing);
 		bitmap.forceRendering = true;
 		bitmap.onFormatSetup.add(function():Void
@@ -56,8 +58,6 @@ class FlxVideoSprite extends FlxSprite
 		});
 		bitmap.visible = false;
 		FlxG.game.addChild(bitmap);
-
-		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 	}
 
 	/**
@@ -69,7 +69,7 @@ class FlxVideoSprite extends FlxSprite
 	 */
 	public inline function load(location:Location, ?options:Array<String>):Bool
 	{
-		return bitmap.load(location, options);
+		return bitmap != null ? bitmap.load(location, options) : false;
 	}
 
 	/**
@@ -81,7 +81,7 @@ class FlxVideoSprite extends FlxSprite
 	 */
 	public inline function loadFromSubItem(index:Int, ?options:Array<String>):Bool
 	{
-		return bitmap.loadFromSubItem(index, options);
+		return bitmap != null ? bitmap.loadFromSubItem(index, options) : false;
 	}
 
 	/**
@@ -93,13 +93,14 @@ class FlxVideoSprite extends FlxSprite
 	 */
 	public inline function parseWithOptions(parse_flag:Int, timeout:Int):Bool
 	{
-		return bitmap.parseWithOptions(parse_flag, timeout);
+		return bitmap != null ? bitmap.parseWithOptions(parse_flag, timeout) : false;
 	}
 
 	/** Stops parsing the current media item. */
 	public inline function parseStop():Void
 	{
-		bitmap.parseStop();
+		if (bitmap != null)
+			bitmap.parseStop();
 	}
 
 	/**
@@ -112,7 +113,7 @@ class FlxVideoSprite extends FlxSprite
 	 */
 	public inline function addSlave(type:Int, location:String, select:Bool):Bool
 	{
-		return bitmap.addSlave(type, location, select);
+		return bitmap != null ? bitmap.addSlave(type, location, select) : false;
 	}
 
 	/**
@@ -121,31 +122,35 @@ class FlxVideoSprite extends FlxSprite
 	 */
 	public inline function play():Bool
 	{
-		return bitmap.play();
+		return bitmap != null ? bitmap.play() : false;
 	}
 
 	/** Stops video playback. */
 	public inline function stop():Void
 	{
-		bitmap.stop();
+		if (bitmap != null)
+			bitmap.stop();
 	}
 
 	/** Pauses video playback. */
 	public inline function pause():Void
 	{
-		bitmap.pause();
+		if (bitmap != null)
+			bitmap.pause();
 	}
 
 	/** Resumes playback of a paused video. */
 	public inline function resume():Void
 	{
-		bitmap.resume();
+		if (bitmap != null)
+			bitmap.resume();
 	}
 
 	/** Toggles between play and pause states of the video. */
 	public inline function togglePaused():Void
 	{
-		bitmap.togglePaused();
+		if (bitmap != null)
+			bitmap.togglePaused();
 	}
 
 	@:dox(hide)
@@ -153,15 +158,19 @@ class FlxVideoSprite extends FlxSprite
 	{
 		super.destroy();
 
-		FlxG.removeChild(bitmap);
-
-		bitmap.dispose();
+		if (bitmap != null)
+		{
+			FlxG.removeChild(bitmap);
+			bitmap.dispose();
+			bitmap = null;
+		}
 	}
 
 	@:dox(hide)
 	public override function kill():Void
 	{
-		bitmap.pause();
+		if (bitmap != null)
+			bitmap.pause();
 
 		super.kill();
 	}
@@ -171,7 +180,8 @@ class FlxVideoSprite extends FlxSprite
 	{
 		super.revive();
 
-		bitmap.resume();
+		if (bitmap != null)
+			bitmap.resume();
 	}
 
 	@:noCompletion

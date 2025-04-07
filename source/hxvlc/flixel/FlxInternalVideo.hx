@@ -214,11 +214,7 @@ class FlxInternalVideo extends Video
 	@:noCompletion
 	private function onVolumeUpdate():Void
 	{
-		#if FLX_SOUND_SYSTEM
-		onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
-		#else
-		onVolumeChange(1);
-		#end
+		onVolumeChange(#if FLX_SOUND_SYSTEM (FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume #else 1 #end);
 	}
 	#end
 
@@ -234,11 +230,7 @@ class FlxInternalVideo extends Video
 	@:noCompletion
 	private function set_volumeAdjust(value:Float):Float
 	{
-		#if FLX_SOUND_SYSTEM
-		onVolumeChange((FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume);
-		#else
-		onVolumeChange(1);
-		#end
+		onVolumeChange(#if FLX_SOUND_SYSTEM (FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume #else 1 #end);
 
 		return volumeAdjust = value;
 	}
