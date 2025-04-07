@@ -8,7 +8,6 @@ import hxvlc.externs.Types;
 import hxvlc.util.macros.DefineMacro;
 import sys.FileSystem;
 import sys.thread.Mutex;
-
 #if android
 import haxe.Exception;
 import lime.app.Future;
@@ -142,13 +141,8 @@ class Handle
 
 			if (pluginPath != null)
 			{
-				if (FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])))
-				{
-					if (resetCache == true)
-						args.push_back("--reset-plugins-cache");
-					else
-						args.push_back("--no-plugins-scan");
-				}
+				if (FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])) && resetCache != true)
+					args.push_back("--no-plugins-scan");
 				else
 					args.push_back("--reset-plugins-cache");
 			}
@@ -226,10 +220,10 @@ class Handle
 		return LibVLC.get_changeset();
 	}
 
+	#if android
 	@:noCompletion
 	private static function setupEnvVariables():Void
 	{
-		#if android
 		final homePath:String = Path.join([Path.directory(System.applicationStorageDirectory), 'libvlc']);
 
 		#if HXVLC_SHARE_DIRECTORY
@@ -259,7 +253,11 @@ class Handle
 		#end
 
 		Sys.putEnv('HOME', homePath);
-		#else
+	}
+	#else
+	@:noCompletion
+	private static function setupEnvVariables():Void
+	{
 		#if macos
 		final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
 
@@ -273,8 +271,8 @@ class Handle
 		if (FileSystem.exists(pluginPath))
 			Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
 		#end
-		#end
 	}
+	#end
 
 	#if HXVLC_LOGGING
 	@:keep
@@ -290,13 +288,27 @@ class Handle
 
 		logMutex.acquire();
 
-		final msg:String = Util.getStringFromFormat(fmt, args);
+		var msg:String = Util.getStringFromFormat(fmt, args);
 
 		if (msg.length == 0)
 		{
 			logMutex.release();
 			return;
 		}
+
+		#if HXVLC_SHOW_LOG_TYPE
+		switch (level)
+		{
+			case 0: /** Debug message */
+				msg = '[DEBUG] $msg';
+			case 2: /** Important informational message */
+				msg = '[NOTICE] $msg';
+			case 3: /** Warning (potential error) message */
+				msg = '[WARNING] $msg';
+			case 4: /** Error message */
+				msg = '[ERROR] $msg';
+		}
+		#end
 
 		final fileName:cpp.ConstCharStar = untyped nullptr;
 		final lineNumber:cpp.UInt32 = 0;

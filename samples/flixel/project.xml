@@ -43,7 +43,7 @@
 
 	<section if="debug">
 		<haxedef name="HXVLC_VERBOSE" value="4" />
-		<haxedef name="HXVLC_EXCLUDE_LOG_LEVEL" value="0" />
+		<haxedef name="HXVLC_SHOW_LOG_TYPE" />
 		<haxedef name="HXVLC_LOGGING" />
 	</section>
 

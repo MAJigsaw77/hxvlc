@@ -1384,9 +1384,9 @@ class Video extends openfl.display.Bitmap
 
 		alSampleRate = rate[0];
 
-		var alChannelsToUse:cpp.UInt32 = channels[0];
-
 		{
+			var alChannelsToUse:cpp.UInt32 = channels[0];
+
 			if (alUseEXTMCFORMATS == true && alChannelsToUse > 8)
 				alChannelsToUse = 8;
 			else if (alChannelsToUse > 2)
@@ -1415,9 +1415,9 @@ class Video extends openfl.display.Bitmap
 					alChannelsToUse = 8;
 					alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * alChannelsToUse;
 			}
-		}
 
-		channels[0] = alChannelsToUse;
+			channels[0] = alChannelsToUse;
+		}
 
 		alMutex.release();
 
