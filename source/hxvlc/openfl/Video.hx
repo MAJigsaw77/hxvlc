@@ -28,6 +28,7 @@ import lime.media.openal.ALSource;
 
 /** This class is a video player that uses LibVLC for seamless integration with OpenFL display objects. */
 @:access(openfl.display.BitmapData)
+@:access(openfl.display3D.textures.TextureBase)
 @:cppNamespaceCode('
 static int media_open(void *opaque, void **datap, uint64_t *sizep)
 {
