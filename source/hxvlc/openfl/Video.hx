@@ -28,7 +28,6 @@ import lime.media.openal.ALSource;
 
 /** This class is a video player that uses LibVLC for seamless integration with OpenFL display objects. */
 @:access(openfl.display.BitmapData)
-@:access(openfl.display3D.textures.TextureBase)
 @:cppNamespaceCode('
 static int media_open(void *opaque, void **datap, uint64_t *sizep)
 {
@@ -1269,19 +1268,24 @@ class Video extends openfl.display.Bitmap
 
 				bitmapData = new BitmapData(textureWidth, textureHeight, true, 0);
 
-				if (useTexture)
 				{
-					@:nullSafety(Off)
-					if (Lib.current.stage != null && Lib.current.stage.context3D != null)
+					@:privateAccess
+					if (useTexture)
 					{
-						bitmapData.disposeImage();
-						bitmapData.__texture = Lib.current.stage.context3D.createRectangleTexture(bitmapData.width, bitmapData.height, BGRA, true);
-						bitmapData.__textureContext = bitmapData.__texture.__textureContext;
-						bitmapData.__surface = null;
-						bitmapData.image = null;
+						@:nullSafety(Off)
+						if (Lib.current.stage != null && Lib.current.stage.context3D != null)
+						{
+							bitmapData.disposeImage();
+
+							bitmapData.__texture = Lib.current.stage.context3D.createRectangleTexture(bitmapData.width, bitmapData.height, BGRA, true);
+							bitmapData.__textureContext = bitmapData.__texture.__textureContext;
+							bitmapData.__surface = null;
+
+							bitmapData.image = null;
+						}
+						else
+							trace('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
 					}
-					else
-						trace('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
 				}
 
 				if (onFormatSetup != null)
@@ -1385,6 +1389,9 @@ class Video extends openfl.display.Bitmap
 		alSampleRate = rate[0];
 
 		{
+			if (alUseEXTMCFORMATS == null)
+				alUseEXTMCFORMATS = AL.isExtensionPresent('AL_EXT_MCFORMATS');
+
 			var alChannelsToUse:cpp.UInt32 = channels[0];
 
 			if (alUseEXTMCFORMATS == true && alChannelsToUse > 8)
@@ -1606,9 +1613,6 @@ class Video extends openfl.display.Bitmap
 			return;
 
 		#if lime_openal
-		if (alUseEXTMCFORMATS == null)
-			alUseEXTMCFORMATS = AL.isExtensionPresent('AL_EXT_MCFORMATS');
-
 		if (alSource == null)
 			alSource = AL.createSource();
 

@@ -114,9 +114,9 @@ class Util
 	}
 
 	/**
-	 * Reads data from a BytesInput stream into a raw memory buffer.
+	 * Reads data from a `BytesInput` stream into a raw memory buffer.
 	 *
-	 * @param input The BytesInput object acting as the source bitstream.
+	 * @param input The `BytesInput` object acting as the source bitstream.
 	 * @param buf Pointer to the destination buffer where data should be copied.
 	 * @param len The maximum number of bytes to read into the buffer.
 	 * @return A strictly positive number of bytes read, 0 on end-of-stream, or -1 on unrecoverable error.
