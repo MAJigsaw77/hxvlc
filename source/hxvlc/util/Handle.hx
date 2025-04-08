@@ -1,11 +1,13 @@
 package hxvlc.util;
 
-import haxe.io.Path;
-import haxe.Int64;
+import haxe.Log;
 import haxe.MainLoop;
+import haxe.io.Path;
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
-import hxvlc.util.macros.Define;
+import hxvlc.util.macros.DefineMacro;
+import sys.FileSystem;
+import sys.thread.Mutex;
 #if android
 import haxe.Exception;
 import lime.app.Future;
@@ -14,108 +16,47 @@ import lime.utils.AssetLibrary;
 import lime.utils.Assets;
 import sys.io.File;
 #end
-import lime.utils.Log;
-import sys.thread.Mutex;
-import sys.FileSystem;
 
-using StringTools;
-
-/**
- * This class manages the global instance of LibVLC, providing methods for initialization, disposal, and retrieving version information.
- */
-#if (HXVLC_FILE_LOGGING || HXVLC_LOGGING)
-#if android
-@:headerInclude('android/log.h')
-#end
+/** This class manages the global instance of LibVLC, providing methods for initialization, disposal, and retrieving version information. */
+#if HXVLC_LOGGING
 @:cppNamespaceCode('static void instance_logging(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
 	hx::SetTopOfStack((int *)99, true);
 
-#ifdef __ANDROID__
-	switch (level)
-	{
-	case LIBVLC_NOTICE:
-		__android_log_vprint(ANDROID_LOG_INFO, "HXVLC", fmt, args);
-		break;
-	case LIBVLC_ERROR:
-		__android_log_vprint(ANDROID_LOG_ERROR, "HXVLC", fmt, args);
-		break;
-	case LIBVLC_WARNING:
-		__android_log_vprint(ANDROID_LOG_WARN, "HXVLC", fmt, args);
-		break;
-	case LIBVLC_DEBUG:
-		__android_log_vprint(ANDROID_LOG_DEBUG, "HXVLC", fmt, args);
-		break;
-	default:
-		__android_log_vprint(ANDROID_LOG_UNKNOWN, "HXVLC", fmt, args);
-		break;
-	}
-#else
-	vprintf(fmt, args);
-	putchar(\'\\n\');
-	fflush(stdout);
-#endif
+	Handle_obj::instanceLogging(level, ctx, fmt, args);
 
 	hx::SetTopOfStack((int *)0, true);
 }')
 #end
 class Handle
 {
-	/**
-	 * The instance of LibVLC that is used globally.
-	 */
+	/** The instance of LibVLC that is used globally. */
 	public static var instance(default, null):Null<cpp.RawPointer<LibVLC_Instance_T>>;
 
-	/**
-	 * Indicates whether the instance is still loading.
-	 */
+	/** Indicates whether the instance is still loading. */
 	public static var loading(default, null):Bool = false;
 
-	/**
-	 * Retrieves the LibVLC version.
-	 *
-	 * Example: "1.1.0-git The Luggage"
-	 */
+	/** Retrieves the LibVLC version. */
 	public static var version(get, never):String;
 
-	/**
-	 * Retrieves the LibVLC compiler version.
-	 *
-	 * Example: "gcc version 4.2.3 (Ubuntu 4.2.3-2ubuntu6)"
-	 */
+	/** Retrieves the LibVLC compiler version. */
 	public static var compiler(get, never):String;
 
-	/**
-	 * Retrieves the LibVLC changeset.
-	 *
-	 * Example: "aa9bce0bc4"
-	 */
+	/** Retrieves the LibVLC changeset. */
 	public static var changeset(get, never):String;
-
-	/**
-	 * Returns the current time as defined by LibVLC.
-	 *
-	 * The unit is the microsecond.
-	 *
-	 * Time increases monotonically (regardless of time zone changes and RTC adjustments).
-	 *
-	 * The origin is arbitrary but consistent across the whole system (e.g. the system uptime, the time since the system was booted).
-	 *
-	 * Note: On systems that support it, the POSIX monotonic clock is used.
-	 */
-	public static var clock(get, never):Int64;
 
 	@:noCompletion
 	private static final instanceMutex:Mutex = new Mutex();
 
+	#if (HXVLC_LOGGING)
 	@:noCompletion
-	private static var logFile:Null<cpp.FILE>;
+	private static final logMutex:Mutex = new Mutex();
+	#end
 
 	/**
 	 * Initializes the LibVLC instance if it isn't already.
-	 *
+	 * 
 	 * @param options The additional options you can add to the LibVLC instance.
-	 *
 	 * @return `true` if the instance was created successfully or `false` if there was an error or the instance is still loading.
 	 */
 	public static inline function init(?options:Array<String>):Bool
@@ -125,7 +66,7 @@ class Handle
 
 	/**
 	 * Initializes the LibVLC instance asynchronously if it isn't already.
-	 *
+	 * 
 	 * @param options The additional options you can add to the LibVLC instance.
 	 * @param finishCallback A callback that is called after it finishes loading.
 	 */
@@ -156,14 +97,6 @@ class Handle
 			instance = null;
 		}
 
-		#if HXVLC_FILE_LOGGING
-		if (logFile != null)
-		{
-			cpp.Stdio.fclose(logFile);
-			logFile = null;
-		}
-		#end
-
 		instanceMutex.release();
 	}
 
@@ -186,14 +119,11 @@ class Handle
 			setupEnvVariables();
 
 			final args:cpp.StdVector<cpp.ConstCharStar> = new cpp.StdVector<cpp.ConstCharStar>();
-
-			args.push_back("--aout=amem,none");
-			args.push_back("--intf=none");
-			args.push_back("--text-renderer=none");
-			args.push_back("--vout=vmem,none");
-
 			args.push_back("--ignore-config");
 			args.push_back("--drop-late-frames");
+			args.push_back("--aout=none");
+			args.push_back("--intf=none");
+			args.push_back("--vout=none");
 			args.push_back("--no-interact");
 			args.push_back("--no-keyboard-events");
 			args.push_back("--no-mouse-events");
@@ -201,10 +131,6 @@ class Handle
 			args.push_back("--no-lua");
 			#end
 			args.push_back("--no-snapshot-preview");
-			args.push_back("--no-spu");
-			#if !HXVLC_ENABLE_STATS
-			args.push_back("--no-stats");
-			#end
 			args.push_back("--no-sub-autodetect-file");
 			args.push_back("--no-video-title-show");
 			args.push_back("--no-volume-save");
@@ -215,21 +141,14 @@ class Handle
 
 			if (pluginPath != null)
 			{
-				if (FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])))
-				{
-					if (resetCache == true)
-						args.push_back("--reset-plugins-cache");
-					else
-						args.push_back("--no-plugins-scan");
-				}
+				if (FileSystem.exists(Path.join([pluginPath, 'plugins.dat'])) && resetCache != true)
+					args.push_back("--no-plugins-scan");
 				else
 					args.push_back("--reset-plugins-cache");
 			}
 			#end
 
-			#if HXVLC_VERBOSE
-			args.push_back("--verbose=" + Define.getInt('HXVLC_VERBOSE', 0));
-			#elseif (!HXVLC_LOGGING || !HXVLC_FILE_LOGGING)
+			#if !HXVLC_LOGGING
 			args.push_back("--quiet");
 			#end
 
@@ -253,7 +172,7 @@ class Handle
 				#if (windows || macos)
 				if (resetCache == false)
 				{
-					Log.warn('Failed to initialize the LibVLC instance, resetting plugins\'s cache');
+					trace('Failed to initialize the LibVLC instance, resetting plugins\'s cache');
 
 					return initWithRetry(options, true);
 				}
@@ -262,29 +181,15 @@ class Handle
 				final errmsg:String = LibVLC.errmsg();
 
 				if (errmsg != null && errmsg.length > 0)
-					Log.error('Failed to initialize the LibVLC instance, Error: $errmsg');
+					trace('Failed to initialize the LibVLC instance: $errmsg');
 				else
-					Log.error('Failed to initialize the LibVLC instance');
+					trace('Failed to initialize the LibVLC instance');
 
 				return false;
 			}
 			else
 			{
-				#if HXVLC_FILE_LOGGING
-				if (logFile != null)
-					cpp.Stdio.fclose(logFile);
-
-				logFile = cpp.Stdio.fopen(Define.getString('HXVLC_FILE_LOGGING', 'libvlc-log.txt'), 'w');
-
-				if (logFile == null)
-				{
-					Log.warn('Failed to open log file for writing.');
-
-					LibVLC.log_set(instance, untyped __cpp__('instance_logging'), untyped NULL);
-				}
-				else
-					LibVLC.log_set_file(instance, logFile);
-				#elseif HXVLC_LOGGING
+				#if HXVLC_LOGGING
 				LibVLC.log_set(instance, untyped __cpp__('instance_logging'), untyped NULL);
 				#end
 			}
@@ -295,105 +200,6 @@ class Handle
 		instanceMutex.release();
 
 		return true;
-	}
-
-	@:noCompletion
-	private static function setupEnvVariables():Void
-	{
-		#if android
-		final homePath:String = Path.join([Path.directory(System.applicationStorageDirectory), 'libvlc']);
-
-		#if HXVLC_SHARE_DIRECTORY
-		/**
-		 * @see https://github.com/openfl/hxp/blob/master/src/hxp/System.hx#L595
-		 */
-		function mkDirs(directory:String):Void
-		{
-			try
-			{
-				if (FileSystem.exists(directory) && FileSystem.isDirectory(directory))
-					return;
-			}
-			catch (e:Dynamic) {}
-
-			var total:String = '';
-
-			if (directory.substr(0, 1) == '/')
-				total = '/';
-
-			final parts:Array<String> = directory.split('/');
-
-			if (parts.length > 0 && parts[0].indexOf(':') > -1)
-				parts.shift();
-
-			for (part in parts)
-			{
-				if (part != '.' && part.length > 0)
-				{
-					if (total != '/' && total.length > 0)
-						total += '/';
-
-					total += part;
-
-					try
-					{
-						if (FileSystem.exists(total) && !FileSystem.isDirectory(total))
-							FileSystem.deleteFile(total);
-
-						if (!FileSystem.exists(total))
-							FileSystem.createDirectory(total);
-					}
-					catch (e:Exception)
-					{
-						Log.warn('Failed to create "$total" directory, ${e.message}');
-
-						break;
-					}
-				}
-			}
-		}
-
-		final libvlcLibrary:Future<AssetLibrary> = Assets.loadLibrary('libvlc');
-		libvlcLibrary.onComplete(function(library:AssetLibrary):Void
-		{
-			@:nullSafety(Off)
-			for (file in library.list(null))
-			{
-				final savePath:String = Path.join([homePath, '.share', file.substring(file.indexOf('/', 0) + 1, file.length)]);
-
-				mkDirs(Path.directory(savePath));
-
-				try
-				{
-					if (!FileSystem.exists(savePath))
-						File.saveBytes(savePath, library.getBytes(file));
-				}
-				catch (e:Exception)
-					Log.warn('Failed to save file "$savePath", ${e.message}.');
-			}
-		});
-		libvlcLibrary.onError(function(error:String):Void
-		{
-			Log.warn('Failed to load library: libvlc, Error: $error');
-		});
-		#end
-
-		Sys.putEnv('HOME', homePath);
-		#else
-		#if macos
-		final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
-
-		if (FileSystem.exists(dataPath))
-			Sys.putEnv('VLC_DATA_PATH', dataPath);
-		#end
-
-		#if (windows || macos)
-		final pluginPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
-
-		if (FileSystem.exists(pluginPath))
-			Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
-		#end
-		#end
 	}
 
 	@:noCompletion
@@ -414,9 +220,109 @@ class Handle
 		return LibVLC.get_changeset();
 	}
 
+	#if android
 	@:noCompletion
-	private static function get_clock():Int64
+	private static function setupEnvVariables():Void
 	{
-		return LibVLC.clock();
+		final homePath:String = Path.join([Path.directory(System.applicationStorageDirectory), 'libvlc']);
+
+		#if HXVLC_SHARE_DIRECTORY
+		final libvlcLibrary:Future<AssetLibrary> = Assets.loadLibrary('libvlc');
+		libvlcLibrary.onComplete(function(library:AssetLibrary):Void
+		{
+			@:nullSafety(Off)
+			for (file in library.list(null))
+			{
+				final savePath:String = Path.join([homePath, '.share', file.substring(file.indexOf('/', 0) + 1, file.length)]);
+
+				Util.mkDirs(Path.directory(savePath));
+
+				try
+				{
+					if (!FileSystem.exists(savePath))
+						File.saveBytes(savePath, library.getBytes(file));
+				}
+				catch (e:Exception)
+					trace('Failed to save file "$savePath", ${e.message}.');
+			}
+		});
+		libvlcLibrary.onError(function(error:String):Void
+		{
+			trace('Failed to load library: libvlc, Error: $error');
+		});
+		#end
+
+		Sys.putEnv('HOME', homePath);
 	}
+	#else
+	@:noCompletion
+	private static function setupEnvVariables():Void
+	{
+		#if macos
+		final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
+
+		if (FileSystem.exists(dataPath))
+			Sys.putEnv('VLC_DATA_PATH', dataPath);
+		#end
+
+		#if (windows || macos)
+		final pluginPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
+
+		if (FileSystem.exists(pluginPath))
+			Sys.putEnv('VLC_PLUGIN_PATH', pluginPath);
+		#end
+	}
+	#end
+
+	#if HXVLC_LOGGING
+	@:keep
+	@:noCompletion
+	@:unreflective
+	private static function instanceLogging(level:Int, ctx:cpp.RawConstPointer<LibVLC_Log_T>, fmt:cpp.ConstCharStar, args:cpp.VarList):Void
+	{
+		if (level > DefineMacro.getInt('HXVLC_VERBOSE', -1))
+			return;
+
+		if (level == DefineMacro.getInt('HXVLC_EXCLUDE_LOG_LEVEL', -1))
+			return;
+
+		logMutex.acquire();
+
+		var msg:String = Util.getStringFromFormat(fmt, args);
+
+		if (msg.length == 0)
+		{
+			logMutex.release();
+			return;
+		}
+
+		#if HXVLC_SHOW_LOG_TYPE
+		switch (level)
+		{
+			case 0: /** Debug message */
+				msg = '[DEBUG] $msg';
+			case 2: /** Important informational message */
+				msg = '[NOTICE] $msg';
+			case 3: /** Warning (potential error) message */
+				msg = '[WARNING] $msg';
+			case 4: /** Error message */
+				msg = '[ERROR] $msg';
+		}
+		#end
+
+		final fileName:cpp.ConstCharStar = untyped nullptr;
+		final lineNumber:cpp.UInt32 = 0;
+
+		LibVLC.log_get_context(ctx, untyped nullptr, cpp.RawPointer.addressOf(fileName), cpp.RawPointer.addressOf(lineNumber));
+
+		Log.trace(msg, {
+			fileName: Path.normalize(fileName),
+			lineNumber: lineNumber,
+			className: '',
+			methodName: ''
+		});
+
+		logMutex.release();
+	}
+	#end
 }

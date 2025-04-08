@@ -37,54 +37,79 @@ extern enum abstract LibVLC_Meta_T(LibVLC_Meta_T_Impl)
 {
 	@:native('libvlc_meta_Title')
 	var LibVLC_Meta_Title;
+
 	@:native('libvlc_meta_Artist')
 	var LibVLC_Meta_Artist;
+
 	@:native('libvlc_meta_Genre')
 	var LibVLC_Meta_Genre;
+
 	@:native('libvlc_meta_Copyright')
 	var LibVLC_Meta_Copyright;
+
 	@:native('libvlc_meta_Album')
 	var LibVLC_Meta_Album;
+
 	@:native('libvlc_meta_TrackNumber')
 	var LibVLC_Meta_TrackNumber;
+
 	@:native('libvlc_meta_Description')
 	var LibVLC_Meta_Description;
+
 	@:native('libvlc_meta_Rating')
 	var LibVLC_Meta_Rating;
+
 	@:native('libvlc_meta_Date')
 	var LibVLC_Meta_Date;
+
 	@:native('libvlc_meta_Setting')
 	var LibVLC_Meta_Setting;
+
 	@:native('libvlc_meta_URL')
 	var LibVLC_Meta_URL;
+
 	@:native('libvlc_meta_Language')
 	var LibVLC_Meta_Language;
+
 	@:native('libvlc_meta_NowPlaying')
 	var LibVLC_Meta_NowPlaying;
+
 	@:native('libvlc_meta_Publisher')
 	var LibVLC_Meta_Publisher;
+
 	@:native('libvlc_meta_EncodedBy')
 	var LibVLC_Meta_EncodedBy;
+
 	@:native('libvlc_meta_ArtworkURL')
 	var LibVLC_Meta_ArtworkURL;
+
 	@:native('libvlc_meta_TrackID')
 	var LibVLC_Meta_TrackID;
+
 	@:native('libvlc_meta_TrackTotal')
 	var LibVLC_Meta_TrackTotal;
+
 	@:native('libvlc_meta_Director')
 	var LibVLC_Meta_Director;
+
 	@:native('libvlc_meta_Season')
 	var LibVLC_Meta_Season;
+
 	@:native('libvlc_meta_Episode')
 	var LibVLC_Meta_Episode;
+
 	@:native('libvlc_meta_ShowName')
 	var LibVLC_Meta_ShowName;
+
 	@:native('libvlc_meta_Actors')
 	var LibVLC_Meta_Actors;
+
 	@:native('libvlc_meta_AlbumArtist')
 	var LibVLC_Meta_AlbumArtist;
+
 	@:native('libvlc_meta_DiscNumber')
 	var LibVLC_Meta_DiscNumber;
+
 	@:native('libvlc_meta_DiscTotal')
 	var LibVLC_Meta_DiscTotal;
 
@@ -133,17 +158,43 @@ extern enum abstract LibVLC_Media_Parse_Flag_T(LibVLC_Media_Parse_Flag_T_Impl)
 {
 	@:native('libvlc_media_parse_local')
 	var LibVLC_Media_Parse_Local;
+
 	@:native('libvlc_media_parse_network')
 	var LibVLC_Media_Parse_Network;
+
 	@:native('libvlc_media_fetch_local')
 	var LibVLC_Media_Fetch_Local;
+
 	@:native('libvlc_media_fetch_network')
 	var LibVLC_Media_Fetch_Network;
+
 	@:native('libvlc_media_do_interact')
 	var LibVLC_Media_Do_Interact;
 
 	@:from
 	static public inline function fromInt(i:Int):LibVLC_Media_Parse_Flag_T
+		return cast i;
+
+	@:to extern public inline function toInt():Int
+		return untyped this;
+}
+
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include('vlc/vlc.h')
+@:native('libvlc_media_slave_type_t')
+private extern class LibVLC_Media_Slave_Type_T_Impl {}
+
+@:dox(hide)
+extern enum abstract LibVLC_Media_Slave_Type_T(LibVLC_Media_Slave_Type_T_Impl)
+{
+	@:native('libvlc_media_slave_type_subtitle')
+	var LibVLC_Media_Slave_Type_Subtitle;
+
+	@:native('libvlc_media_slave_type_audio')
+	var LibVLC_Media_Slave_Type_Audio;
+
+	@:from
+	static public inline function fromInt(i:Int):LibVLC_Media_Slave_Type_T
 		return cast i;
 
 	@:to extern public inline function toInt():Int
@@ -160,10 +211,13 @@ extern enum abstract LibVLC_Media_Parsed_Status_T(LibVLC_Media_Parsed_Status_T_I
 {
 	@:native('libvlc_media_parsed_status_skipped')
 	var LibVLC_Media_Parsed_Status_Skipped;
+
 	@:native('libvlc_media_parsed_status_failed')
 	var LibVLC_Media_Parsed_Status_Failed;
+
 	@:native('libvlc_media_parsed_status_timeout')
 	var LibVLC_Media_Parsed_Status_Timeout;
+
 	@:native('libvlc_media_parsed_status_done')
 	var LibVLC_Media_Parsed_Status_Done;
 
@@ -191,14 +245,19 @@ extern enum abstract LibVLC_Audio_Output_Channel_T(LibVLC_Audio_Output_Channel_T
 {
 	@:native('libvlc_AudioChannel_Error')
 	var LibVLC_Audio_Channel_Error;
+
 	@:native('libvlc_AudioChannel_Stereo')
 	var LibVLC_Audio_Channel_Stereo;
+
 	@:native('libvlc_AudioChannel_RStereo')
 	var LibVLC_Audio_Channel_RStereo;
+
 	@:native('libvlc_AudioChannel_Left')
 	var LibVLC_Audio_Channel_Left;
+
 	@:native('libvlc_AudioChannel_Right')
 	var LibVLC_Audio_Channel_Right;
+
 	@:native('libvlc_AudioChannel_Dolbys')
 	var LibVLC_Audio_Channel_Dolbys;
 
@@ -245,130 +304,193 @@ extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 {
 	@:native('libvlc_MediaMetaChanged')
 	var LibVLC_MediaMetaChanged;
+
 	@:native('libvlc_MediaSubItemAdded')
 	var LibVLC_MediaSubItemAdded;
+
 	@:native('libvlc_MediaDurationChanged')
 	var LibVLC_MediaDurationChanged;
+
 	@:native('libvlc_MediaParsedChanged')
 	var LibVLC_MediaParsedChanged;
+
 	@:native('libvlc_MediaFreed')
 	var LibVLC_MediaFreed;
+
 	@:native('libvlc_MediaStateChanged')
 	var LibVLC_MediaStateChanged;
+
 	@:native('libvlc_MediaSubItemTreeAdded')
 	var LibVLC_MediaSubItemTreeAdded;
+
 	@:native('libvlc_MediaPlayerMediaChanged')
 	var LibVLC_MediaPlayerMediaChanged;
+
 	@:native('libvlc_MediaPlayerNothingSpecial')
 	var LibVLC_MediaPlayerNothingSpecial;
+
 	@:native('libvlc_MediaPlayerOpening')
 	var LibVLC_MediaPlayerOpening;
+
 	@:native('libvlc_MediaPlayerBuffering')
 	var LibVLC_MediaPlayerBuffering;
+
 	@:native('libvlc_MediaPlayerPlaying')
 	var LibVLC_MediaPlayerPlaying;
+
 	@:native('libvlc_MediaPlayerPaused')
 	var LibVLC_MediaPlayerPaused;
+
 	@:native('libvlc_MediaPlayerStopped')
 	var LibVLC_MediaPlayerStopped;
+
 	@:native('libvlc_MediaPlayerForward')
 	var LibVLC_MediaPlayerForward;
+
 	@:native('libvlc_MediaPlayerBackward')
 	var LibVLC_MediaPlayerBackward;
+
 	@:native('libvlc_MediaPlayerEndReached')
 	var LibVLC_MediaPlayerEndReached;
+
 	@:native('libvlc_MediaPlayerEncounteredError')
 	var LibVLC_MediaPlayerEncounteredError;
+
 	@:native('libvlc_MediaPlayerTimeChanged')
 	var LibVLC_MediaPlayerTimeChanged;
+
 	@:native('libvlc_MediaPlayerPositionChanged')
 	var LibVLC_MediaPlayerPositionChanged;
+
 	@:native('libvlc_MediaPlayerSeekableChanged')
 	var LibVLC_MediaPlayerSeekableChanged;
+
 	@:native('libvlc_MediaPlayerPausableChanged')
 	var LibVLC_MediaPlayerPausableChanged;
+
 	@:native('libvlc_MediaPlayerTitleChanged')
 	var LibVLC_MediaPlayerTitleChanged;
+
 	@:native('libvlc_MediaPlayerSnapshotTaken')
 	var LibVLC_MediaPlayerSnapshotTaken;
+
 	@:native('libvlc_MediaPlayerLengthChanged')
 	var LibVLC_MediaPlayerLengthChanged;
+
 	@:native('libvlc_MediaPlayerVout')
 	var LibVLC_MediaPlayerVout;
+
 	@:native('libvlc_MediaPlayerScrambledChanged')
 	var LibVLC_MediaPlayerScrambledChanged;
+
 	@:native('libvlc_MediaPlayerESAdded')
 	var LibVLC_MediaPlayerESAdded;
+
 	@:native('libvlc_MediaPlayerESDeleted')
 	var LibVLC_MediaPlayerESDeleted;
+
 	@:native('libvlc_MediaPlayerESSelected')
 	var LibVLC_MediaPlayerESSelected;
+
 	@:native('libvlc_MediaPlayerCorked')
 	var LibVLC_MediaPlayerCorked;
+
 	@:native('libvlc_MediaPlayerUncorked')
 	var LibVLC_MediaPlayerUncorked;
+
 	@:native('libvlc_MediaPlayerMuted')
 	var LibVLC_MediaPlayerMuted;
+
 	@:native('libvlc_MediaPlayerUnmuted')
 	var LibVLC_MediaPlayerUnmuted;
+
 	@:native('libvlc_MediaPlayerAudioVolume')
 	var LibVLC_MediaPlayerAudioVolume;
+
 	@:native('libvlc_MediaPlayerAudioDevice')
 	var LibVLC_MediaPlayerAudioDevice;
+
 	@:native('libvlc_MediaPlayerChapterChanged')
 	var LibVLC_MediaPlayerChapterChanged;
+
 	@:native('libvlc_MediaListItemAdded')
 	var LibVLC_MediaListItemAdded;
+
 	@:native('libvlc_MediaListWillAddItem')
 	var LibVLC_MediaListWillAddItem;
+
 	@:native('libvlc_MediaListItemDeleted')
 	var LibVLC_MediaListItemDeleted;
+
 	@:native('libvlc_MediaListWillDeleteItem')
 	var LibVLC_MediaListWillDeleteItem;
+
 	@:native('libvlc_MediaListEndReached')
 	var LibVLC_MediaListEndReached;
+
 	@:native('libvlc_MediaListViewItemAdded')
 	var LibVLC_MediaListViewItemAdded;
+
 	@:native('libvlc_MediaListViewWillAddItem')
 	var LibVLC_MediaListViewWillAddItem;
+
 	@:native('libvlc_MediaListViewItemDeleted')
 	var LibVLC_MediaListViewItemDeleted;
+
 	@:native('libvlc_MediaListViewWillDeleteItem')
 	var LibVLC_MediaListViewWillDeleteItem;
+
 	@:native('libvlc_MediaListPlayerPlayed')
 	var LibVLC_MediaListPlayerPlayed;
+
 	@:native('libvlc_MediaListPlayerNextItemSet')
 	var LibVLC_MediaListPlayerNextItemSet;
+
 	@:native('libvlc_MediaListPlayerStopped')
 	var LibVLC_MediaListPlayerStopped;
+
 	@:native('libvlc_MediaDiscovererStarted')
 	var LibVLC_MediaDiscovererStarted;
+
 	@:native('libvlc_MediaDiscovererEnded')
 	var LibVLC_MediaDiscovererEnded;
+
 	@:native('libvlc_RendererDiscovererItemAdded')
 	var LibVLC_RendererDiscovererItemAdded;
+
 	@:native('libvlc_RendererDiscovererItemDeleted')
 	var LibVLC_RendererDiscovererItemDeleted;
+
 	@:native('libvlc_VlmMediaAdded')
 	var LibVLC_VlmMediaAdded;
+
 	@:native('libvlc_VlmMediaRemoved')
 	var LibVLC_VlmMediaRemoved;
+
 	@:native('libvlc_VlmMediaChanged')
 	var LibVLC_VlmMediaChanged;
+
 	@:native('libvlc_VlmMediaInstanceStarted')
 	var LibVLC_VlmMediaInstanceStarted;
+
 	@:native('libvlc_VlmMediaInstanceStopped')
 	var LibVLC_VlmMediaInstanceStopped;
+
 	@:native('libvlc_VlmMediaInstanceStatusInit')
 	var LibVLC_VlmMediaInstanceStatusInit;
+
 	@:native('libvlc_VlmMediaInstanceStatusOpening')
 	var LibVLC_VlmMediaInstanceStatusOpening;
+
 	@:native('libvlc_VlmMediaInstanceStatusPlaying')
 	var LibVLC_VlmMediaInstanceStatusPlaying;
+
 	@:native('libvlc_VlmMediaInstanceStatusPause')
 	var LibVLC_VlmMediaInstanceStatusPause;
+
 	@:native('libvlc_VlmMediaInstanceStatusEnd')
 	var LibVLC_VlmMediaInstanceStatusEnd;
+
 	@:native('libvlc_VlmMediaInstanceStatusError')
 	var LibVLC_VlmMediaInstanceStatusError;
 
@@ -447,28 +569,53 @@ typedef LibVLC_Audio_Cleanup_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>)
 typedef LibVLC_Audio_Set_Volume_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, volume:Single, mute:Bool) -> Void>;
 
 @:dox(hide)
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include('vlc/vlc.h')
+@:unreflective
+@:structAccess
+@:native('libvlc_track_description_t')
+extern class LibVLC_Track_Description_T
+{
+	function new():Void;
+
+	var i_id:Int;
+	var psz_name:cpp.ConstCharStar;
+	var p_next:cpp.RawPointer<LibVLC_Track_Description_T>;
+}
+
+@:dox(hide)
 extern enum abstract LibVLC_Media_Player_Role_T(LibVLC_Media_Player_Role_T_Impl)
 {
 	@:native('libvlc_role_None')
 	var LibVLC_Role_None;
+
 	@:native('libvlc_role_Music')
 	var LibVLC_Role_Music;
+
 	@:native('libvlc_role_Video')
 	var LibVLC_Role_Video;
+
 	@:native('libvlc_role_Communication')
 	var LibVLC_Role_Communication;
+
 	@:native('libvlc_role_Game')
 	var LibVLC_Role_Game;
+
 	@:native('libvlc_role_Notification')
 	var LibVLC_Role_Notification;
+
 	@:native('libvlc_role_Animation')
 	var LibVLC_Role_Animation;
+
 	@:native('libvlc_role_Production')
 	var LibVLC_Role_Production;
+
 	@:native('libvlc_role_Accessibility')
 	var LibVLC_Role_Accessibility;
+
 	@:native('libvlc_role_Test')
 	var LibVLC_Role_Test;
+
 	@:native('libvlc_role_Last')
 	var LibVLC_Role_Last;
 
