@@ -118,6 +118,7 @@ class FlxVideoSprite extends FlxSprite
 
 	/**
 	 * Starts video playback.
+	 * 
 	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
 	public inline function play():Bool

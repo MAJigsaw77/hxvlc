@@ -16,7 +16,9 @@
 
 	<!--Window Settings-->
 
-	<window orientation="landscape" background="#000000" />
+	<window orientation="landscape" width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false" fullscreen="false" resizable="true" />
+
+	<window fullscreen="true" resizable="false" if="mobile" />
 
 	<!--Path Settings-->
 
@@ -37,7 +39,8 @@
 	<!--Libraries Settings-->
 
 	<section if="debug">
-		<haxedef name="HXVLC_VERBOSE" value="2" />
+		<haxedef name="HXVLC_VERBOSE" value="4" />
+		<haxedef name="HXVLC_SHOW_LOG_TYPE" />
 		<haxedef name="HXVLC_LOGGING" />
 	</section>
 

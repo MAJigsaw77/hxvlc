@@ -1,32 +1,21 @@
 package;
 
-#if android
-import android.content.Context;
-import android.os.Build;
-#end
-import haxe.io.Path;
-import lime.system.System;
 import hxvlc.openfl.Video;
-import openfl.display.FPS;
-import openfl.display.Sprite;
 import openfl.events.Event;
-import openfl.Lib;
-import sys.FileSystem;
 
-class Main extends Sprite
+class Main extends openfl.display.Sprite
 {
 	private var video:Video;
-	private var fps:FPS;
 
 	public static function main():Void
 	{
 		#if android
-		Sys.setCwd(Path.addTrailingSlash(VERSION.SDK_INT > 30 ? Context.getObbDir() : Context.getExternalFilesDir()));
+		Sys.setCwd(haxe.io.Path.addTrailingSlash(android.os.Build.VERSION.SDK_INT > 30 ? android.content.Context.getObbDir() : android.content.Context.getExternalFilesDir()));
 		#elseif ios
-		Sys.setCwd(System.documentsDirectory);
+		Sys.setCwd(lime.system.System.documentsDirectory);
 		#end
 
-		Lib.current.addChild(new Main());
+		openfl.Lib.current.addChild(new Main());
 	}
 
 	public function new():Void
@@ -44,7 +33,7 @@ class Main extends Sprite
 		if (hasEventListener(Event.ADDED_TO_STAGE))
 			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 
-		Lib.current.stage.frameRate = 999;
+		openfl.Lib.current.stage.frameRate = 999;
 
 		video = new Video();
 		video.onOpening.add(function():Void
@@ -60,11 +49,12 @@ class Main extends Sprite
 			if (stage.hasEventListener(Event.ENTER_FRAME))
 				stage.removeEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
 
-			video.dispose();
-
-			removeChild(video);
-
-			video = null;
+			if (video != null)
+			{
+				removeChild(video);
+				video.dispose();
+				video = null;
+			}
 		});
 		video.onFormatSetup.add(function():Void
 		{
@@ -72,14 +62,9 @@ class Main extends Sprite
 		});
 		addChild(video);
 
-		fps = new FPS(0, 0, 0xFFFFFF);
-		fps.defaultTextFormat.align = JUSTIFY;
-		fps.defaultTextFormat.size = 16;
-		addChild(fps);
-
 		try
 		{
-			final file:String = Path.join(['videos', FileSystem.readDirectory('videos')[0]]);
+			final file:String = haxe.io.Path.join(['videos', sys.FileSystem.readDirectory('videos')[0]]);
 
 			if (file != null && file.length > 0)
 				video.load(file);
@@ -100,12 +85,8 @@ class Main extends Sprite
 
 			video.width = stage.stageWidth / stage.stageHeight > aspectRatio ? stage.stageHeight * aspectRatio : stage.stageWidth;
 			video.height = stage.stageWidth / stage.stageHeight > aspectRatio ? stage.stageHeight : stage.stageWidth / aspectRatio;
-
 			video.x = (stage.stageWidth - video.width) / 2;
 			video.y = (stage.stageHeight - video.height) / 2;
-
-			fps.x = video.x + 10;
-			fps.y = video.y + 10;
 		}
 	}
 

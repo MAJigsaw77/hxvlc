@@ -42,6 +42,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the last error message.
+	 * 
 	 * @return The last error message.
 	 */
 	@:native('libvlc_errmsg')
@@ -49,6 +50,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the LibVLC version.
+	 * 
 	 * @return The LibVLC version string.
 	 */
 	@:native('libvlc_get_version')
@@ -56,6 +58,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the LibVLC compiler information.
+	 * 
 	 * @return The compiler information string.
 	 */
 	@:native('libvlc_get_compiler')
@@ -63,6 +66,7 @@ extern class LibVLC
 
 	/**
 	 * Gets the LibVLC changeset.
+	 * 
 	 * @return The changeset string.
 	 */
 	@:native('libvlc_get_changeset')

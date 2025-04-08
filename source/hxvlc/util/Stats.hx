@@ -106,6 +106,7 @@ class Stats
 
 	/**
 	 * Returns a string representation of the `Stats` object.
+	 * 
 	 * @return A string containing all the properties of the `Stats` object.
 	 */
 	@:keep

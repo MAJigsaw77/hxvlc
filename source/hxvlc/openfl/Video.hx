@@ -597,6 +597,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Gets the description of available audio tracks of the current media player.
+	 * 
 	 * @return The list containing descriptions of available audio tracks.
 	 */
 	public function getVideoDescription():Array<TrackDescription>
@@ -616,6 +617,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Gets the description of available audio tracks of the current media player.
+	 * 
 	 * @return The list containing descriptions of available audio tracks.
 	 */
 	public function getAudioDescription():Array<TrackDescription>
@@ -635,6 +637,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Gets the description of available available video subtitles of the current media player.
+	 * 
 	 * @return The list containing descriptions of available available video subtitles.
 	 */
 	public function getSpuDescription():Array<TrackDescription>
@@ -654,6 +657,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Starts playback.
+	 * 
 	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
 	public function play():Bool
@@ -746,6 +750,7 @@ class Video extends openfl.display.Bitmap
 
 	/**
 	 * Saves the metadata of the current media item.
+	 * 
 	 * @return `true` if the metadata was saved successfully, `false` otherwise.
 	 */
 	public function saveMeta():Bool

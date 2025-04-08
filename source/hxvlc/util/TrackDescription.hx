@@ -28,6 +28,7 @@ class TrackDescription
 
 	/**
 	 * Returns a string representation of the `TrackDescription` object.
+	 * 
 	 * @return A string containing all the properties of the TrackDescription object.
 	 */
 	@:keep
