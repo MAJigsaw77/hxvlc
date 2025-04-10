@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "2.1.0",
-	"releasenote": "Improved logging, Added new functionality, Enabled subtitles and Fixed some issues.",
+	"version": "2.1.1",
+	"releasenote": "Fixed OpenAL desync when pausing constanly.",
 	"contributors": [
 		"MAJigsaw77"
 	],
