@@ -55,50 +55,12 @@ git clone https://code.videolan.org/videolan/libvlcjni.git --depth=1 --recursive
 # Enter "libvlcjni" source.
 cd libvlcjni
 
-# Function to reoder Git patches.
-reorder_patches()
-{
-	local dir="$1"
-
-	shift
-
-	local REMOVE_PATCHES=("$@")
-
-	cd "$dir" || exit 1
-
-	for patch in "${REMOVE_PATCHES[@]}"; do
-		rm -f "$patch"
-	done
-
-	local i=1
-
-	for patch in $(ls | sort); do
-		local new_name=$(printf "%04d-%s" "$i" "$(echo "$patch" | cut -d- -f2-)")
-
-		if [[ "$patch" != "$new_name" ]]; then
-			mv "$patch" "$new_name"
-		fi
-
-		((i++))
-	done
-}
-
-# Remove the following patches as they change the api which is not what we need.
-reorder_patches "libvlc/patches" \
-	"0002-libvlc-events-Add-callbacks-for-record.patch" \
-	"0005-libvlc-media_player-Add-record-method.patch" \
-	"0008-input-Extract-attachment-also-when-preparsing.patch" \
-	"0010-media_player-backport-fast-seek-argument.patch"
-
-# Go back 2 dirs.
-cd ../../
-
 # Get "vlc" source.
 buildsystem/get-vlc.sh
 
 # Make prebuilt contribs bars.
 export VLC_CONTRIB_SHA=$(cd vlc && extras/ci/get-contrib-sha.sh android-$SHORT_ARCH)
-export VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc-3.0/android-$SHORT_ARCH/vlc-contrib-$TARGET_TUPLE-$VLC_CONTRIB_SHA.tar.bz2
+export VLC_PREBUILT_CONTRIBS_URL=https://artifacts.videolan.org/vlc/android-$SHORT_ARCH/vlc-contrib-$TARGET_TUPLE-$VLC_CONTRIB_SHA.tar.bz2
 
 # Compile "libvlc".
 buildsystem/compile-libvlc.sh -a $SHORT_ARCH --no-jni --release --with-prebuilt-contribs
