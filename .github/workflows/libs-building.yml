@@ -14,6 +14,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@main
+        id: setup-ndk
+        with:
+          ndk-version: r21e
+
       - name: Setup Java JDK
         uses: actions/setup-java@main
         with:
@@ -28,6 +34,9 @@ jobs:
 
       - name: Compile Libs
         run: chmod +x project/vlc/scripts/Android-Building.sh && ./project/vlc/scripts/Android-Building.sh ${{ matrix.arch }}
+        env:
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+          ANDROID_NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
 
       - name: Upload Build
         uses: actions/upload-artifact@main
