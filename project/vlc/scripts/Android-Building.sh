@@ -50,7 +50,7 @@ else
 fi
 
 # First, get "libvlcjni" source.
-git clone https://code.videolan.org/videolan/libvlcjni.git --depth=1 --recursive -b libvlcjni-3.x
+git clone https://code.videolan.org/videolan/libvlcjni.git --depth=1 --recursive
 
 # Enter "libvlcjni" source.
 cd libvlcjni
