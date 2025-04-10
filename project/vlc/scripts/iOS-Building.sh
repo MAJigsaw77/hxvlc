@@ -63,22 +63,17 @@ reorder_patches()
 # Function to download "vlc" and apply patches.
 download_vlc()
 {
-	TESTEDHASH="ac310b4b" # vlc hash that this version of VLCKit is build on
+	TESTEDHASH="17860384" # vlc hash that this version of VLCKit is build on
 
 	if ! [ -e vlc ]; then
-		git clone https://code.videolan.org/videolan/vlc.git --branch 3.0.x --single-branch vlc
+  		git clone https://code.videolan.org/videolan/vlc.git --branch master --single-branch vlc
 
 		echo "Applying patches to vlc.git"
 
 		cd vlc
 
 		git checkout -B localBranch ${TESTEDHASH}
-		git branch --set-upstream-to=3.0.x localBranch
-
-		# Apply our "build.sh" fix.
-		git apply --whitespace=fix ../project/vlc/scripts/patches/iOS/*.patch
-
-		# Apply "VLCKit" patches.
+  		git branch --set-upstream-to=origin/master localBranch
 		git am --whitespace=fix ../VLCKit/libvlc/patches/*.patch
 
 		if [ $? -ne 0 ]; then
@@ -93,11 +88,6 @@ download_vlc()
 
 		git fetch --all
 		git reset --hard ${TESTEDHASH}
-
-		# Apply our "build.sh" fix.
-		git apply --whitespace=fix ../project/vlc/scripts/patches/iOS/*.patch
-
-		# Apply "VLCKit" patches.
 		git am --whitespace=fix ../VLCKit/libvlc/patches/*.patch
 
 		cd ..
@@ -145,20 +135,8 @@ compile_vlc()
 
 # Remove the following patches as they change the api which is not what we need.
 reorder_patches "VLCKit/libvlc/patches" \
-	"0004-http-add-vlc_http_cookies_clear.patch" \
-	"0005-libvlc_media-add-cookie_jar-API.patch" \
-	"0009-input-Extract-attachment-also-when-preparsing.patch" \
-	"0011-libvlc-add-a-basic-API-to-change-freetype-s-color-bo.patch" \
-	"0013-add-auto-deinterlacer-mode-which-is-also-valid.patch" \
-	"0014-Users-will-be-able-to-change-the-deinterlace-mode-wi.patch" \
-	"0018-lib-save-configuration-after-playback-parse.patch" \
-	"0020-libvlc-media_player-Add-record-method.patch" \
-	"0021-libvlc-events-Add-callbacks-for-record.patch" \
-	"0023-transcode-add-support-for-mutliple-venc-parameters.patch" \
-	"0027-lib-media_player-add-stop-set_media-async-support.patch" \
-	"0031-lib-media_player-add-loudness-event.patch" \
-	"0032-ebur128-add-measurement-date.patch" \
-	"0036-http-cookie-fix-double-free.patch"
+	"0006-http-add-vlc_http_cookies_clear.patch" \
+	"0010-libvlc_media-add-cookie_jar-API.patch" \
 
 # Go back 3 dirs.
 cd ../../../
