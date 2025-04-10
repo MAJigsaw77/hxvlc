@@ -30,7 +30,7 @@ else
 fi
 
 # First, get "vlckit" source for thier libvlc patches.
-git clone https://code.videolan.org/videolan/VLCKit.git --depth=1 --recursive -b 3.0
+git clone https://code.videolan.org/videolan/VLCKit.git --depth=1 --recursive
 
 # Function to reoder Git patches.
 reorder_patches()
