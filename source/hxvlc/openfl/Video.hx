@@ -147,6 +147,18 @@ static void audio_play(void *data, const void *samples, unsigned count, int64_t 
 	}
 }
 
+static void audio_resume(void *data, int64_t pts)
+{
+	if (data)
+	{
+		hx::SetTopOfStack((int *)99, true);
+
+		reinterpret_cast<Video_obj *>(data)->audioResume(pts);
+
+		hx::SetTopOfStack((int *)0, true);
+	}
+}
+
 static void audio_pause(void *data, int64_t pts)
 {
 	if (data)
@@ -1348,6 +1360,24 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
+	private function audioResume(pts:cpp.Int64):Void
+	{
+		#if lime_openal
+		if (alSource != null)
+		{
+			alMutex.acquire();
+
+			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
+				AL.sourcePlay(alSource);
+
+			alMutex.release();
+		}
+		#end
+	}
+
+	@:keep
+	@:noCompletion
+	@:unreflective
 	private function audioPause(pts:cpp.Int64):Void
 	{
 		#if lime_openal
@@ -1625,8 +1655,8 @@ class Video extends openfl.display.Bitmap
 			alBufferPool = AL.genBuffers(MAX_AUDIO_BUFFER_COUNT);
 		#end
 
-		LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped NULL, untyped __cpp__('audio_flush'),
-			untyped NULL, untyped __cpp__('this'));
+		LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'),
+			untyped __cpp__('audio_flush'), untyped NULL, untyped __cpp__('this'));
 		LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
 		LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
 	}
