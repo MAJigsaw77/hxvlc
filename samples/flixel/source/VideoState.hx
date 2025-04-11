@@ -9,7 +9,6 @@ import flixel.util.FlxTimer;
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.util.Handle;
 import sys.FileSystem;
-import sys.io.File;
 
 @:nullSafety
 class VideoState extends FlxState
@@ -33,34 +32,36 @@ class VideoState extends FlxState
 
 	override function update(elapsed:Float):Void
 	{
-		if (video != null && video.bitmap != null)
+		if (video != null)
 		{
 			if (FlxG.keys.justPressed.SPACE)
-				video.bitmap.togglePaused();
+				video.togglePaused();
 
-			if (FlxG.keys.justPressed.LEFT)
-				video.bitmap.position -= 0.1;
-			else if (FlxG.keys.justPressed.RIGHT)
-				video.bitmap.position += 0.1;
-
-			if (FlxG.keys.justPressed.A)
-				video.bitmap.rate -= 0.01;
-			else if (FlxG.keys.justPressed.D)
-				video.bitmap.rate += 0.01;
+			if (video.bitmap != null)
+			{
+				if (FlxG.keys.justPressed.LEFT)
+					video.bitmap.position -= 0.1;
+				else if (FlxG.keys.justPressed.RIGHT)
+					video.bitmap.position += 0.1;
+	
+				if (FlxG.keys.justPressed.A)
+					video.bitmap.rate -= 0.01;
+				else if (FlxG.keys.justPressed.D)
+					video.bitmap.rate += 0.01;
+			}
 
 			if (FlxG.keys.justPressed.ESCAPE)
-				video.bitmap.onEndReached.dispatch();
+				video.stop();
 		}
-
-		if (Handle.loading)
-			trace("LOADING...");
 
 		super.update(elapsed);
 	}
 
 	private function setupUI():Void
 	{
-		versionInfo = new FlxText(10, FlxG.height - 10, 0, 'LibVLC ${Handle.version}', 17);
+		FlxG.camera.bgColor = FlxColor.MAGENTA;
+
+		versionInfo = new FlxText(10, FlxG.height - 10, 0, 'Version: ${Handle.version}\nCompiler: ${Handle.compiler}\nChangeset: ${Handle.changeset}', 17);
 		versionInfo.setBorderStyle(OUTLINE, FlxColor.BLACK, 2);
 		versionInfo.font = FlxAssets.FONT_DEBUGGER;
 		versionInfo.active = false;
@@ -78,9 +79,21 @@ class VideoState extends FlxState
 			if (!success)
 				return;
 
+			function finishVideo():Void
+			{
+				if (video != null)
+				{
+					remove(video);
+					video.destroy();
+					video = null;
+				}
+			}
+
 			video = new FlxVideoSprite(0, 0);
 			video.active = false;
 			video.antialiasing = true;
+			video.bitmap.onStopped.add(finishVideo);
+			video.bitmap.onEndReached.add(finishVideo);
 			video.bitmap.onFormatSetup.add(function():Void
 			{
 				if (video.bitmap != null && video.bitmap.bitmapData != null)
@@ -92,14 +105,13 @@ class VideoState extends FlxState
 					video.screenCenter();
 				}
 			});
-			video.bitmap.onEndReached.add(video.destroy);
 
 			try
 			{
 				final file:String = haxe.io.Path.join(['videos', FileSystem.readDirectory('videos')[0]]);
 
 				if (file != null && file.length > 0)
-					video.load(File.getBytes(file));
+					video.load(file);
 				else
 					video.load(FlxG.random.getObject([bigBuckBunny, elephantsDream]));
 			}

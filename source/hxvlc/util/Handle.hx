@@ -48,7 +48,7 @@ class Handle
 	@:noCompletion
 	private static final instanceMutex:Mutex = new Mutex();
 
-	#if (HXVLC_LOGGING)
+	#if HXVLC_LOGGING
 	@:noCompletion
 	private static final logMutex:Mutex = new Mutex();
 	#end
@@ -161,7 +161,7 @@ class Handle
 				}
 			}
 
-			instance = LibVLC.alloc(args.size(), untyped args.data());
+			instance = LibVLC.alloc(args.size(), args.data());
 
 			if (instance == null)
 			{
@@ -189,6 +189,11 @@ class Handle
 			}
 			else
 			{
+				final hxvlcVersion:String = DefineMacro.getString('hxvlc', 'Unknown Version');
+				final haxeVersion:String = DefineMacro.getString('haxe', 'Unknown Version');
+
+				LibVLC.set_user_agent(instance, 'hxvlc', 'hxvlc "$hxvlcVersion" (Haxe "$haxeVersion" ${Sys.systemName()})');
+
 				#if HXVLC_LOGGING
 				LibVLC.log_set(instance, untyped __cpp__('instance_logging'), untyped NULL);
 				#end
@@ -280,10 +285,7 @@ class Handle
 	@:unreflective
 	private static function instanceLogging(level:Int, ctx:cpp.RawConstPointer<LibVLC_Log_T>, fmt:cpp.ConstCharStar, args:cpp.VarList):Void
 	{
-		if (level > DefineMacro.getInt('HXVLC_VERBOSE', -1))
-			return;
-
-		if (level == DefineMacro.getInt('HXVLC_EXCLUDE_LOG_LEVEL', -1))
+		if (level > DefineMacro.getInt('HXVLC_VERBOSE', -1) || level == DefineMacro.getInt('HXVLC_EXCLUDE_LOG_LEVEL', -1))
 			return;
 
 		logMutex.acquire();
