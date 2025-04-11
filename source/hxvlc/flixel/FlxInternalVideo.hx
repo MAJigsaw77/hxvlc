@@ -130,10 +130,7 @@ class FlxInternalVideo extends Video
 		{
 			final normalizedPath:String = Path.normalize(str);
 
-			if (!normalizedPath.startsWith('/'))
-				return 'file:///$normalizedPath';
-			else
-				return 'file://$normalizedPath';
+			return (!normalizedPath.startsWith('/') ? 'file:///$normalizedPath' : 'file://$normalizedPath');
 		}
 
 		if (!Video.URL_VERIFICATION_REGEX.match(location))
