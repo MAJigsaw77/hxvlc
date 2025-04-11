@@ -1692,7 +1692,7 @@ class Video extends openfl.display.Bitmap
 
 	@:noCompletion
 	@:unreflective
-	private function addEvent(eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>, type:LibVLC_Event_E):Void
+	private function addEvent(eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>, type:Int):Void
 	{
 		if (LibVLC.event_attach(eventManager, type, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 			trace('Failed to attach event (${LibVLC.event_type_name(type)})');
