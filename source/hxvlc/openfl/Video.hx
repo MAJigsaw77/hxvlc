@@ -16,6 +16,7 @@ import lime.app.Event;
 import lime.utils.UInt8Array;
 import openfl.Lib;
 import openfl.display.BitmapData;
+import openfl.display3D.textures.RectangleTexture;
 import sys.thread.Mutex;
 
 using cpp.NativeArray;
@@ -1216,8 +1217,7 @@ class Video extends openfl.display.Bitmap
 					textureMutex.acquire();
 
 					if (bitmapData != null && bitmapData.__texture != null)
-						cast(bitmapData.__texture, openfl.display3D.textures.RectangleTexture)
-							.uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanes)));
+						cast(bitmapData.__texture, RectangleTexture).uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanes)));
 					else if (bitmapData != null && bitmapData.image != null)
 						bitmapData.setPixels(bitmapData.rect, Bytes.ofData(texturePlanes));
 
@@ -1267,14 +1267,14 @@ class Video extends openfl.display.Bitmap
 
 		MainLoop.runInMainThread(function():Void
 		{
+			textureMutex.acquire();
+
 			final sizeMismatch:Bool = bitmapData != null && (bitmapData.width != textureWidth || bitmapData.height != textureHeight);
 			final textureMismatch:Bool = bitmapData != null && bitmapData.__texture != null && !useTexture;
 			final imageMismatch:Bool = bitmapData != null && bitmapData.image != null && useTexture;
 
 			if (bitmapData == null || sizeMismatch || textureMismatch || imageMismatch)
 			{
-				textureMutex.acquire();
-
 				if (bitmapData != null)
 				{
 					if (bitmapData.__texture != null)
@@ -1307,9 +1307,9 @@ class Video extends openfl.display.Bitmap
 
 				if (onFormatSetup != null)
 					onFormatSetup.dispatch();
-
-				textureMutex.release();
 			}
+
+			textureMutex.release();
 		});
 
 		return 1;
