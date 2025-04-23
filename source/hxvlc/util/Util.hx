@@ -21,6 +21,7 @@ class Util
 	 * @param args The list of arguments to format the string with.
 	 * @return The formatted string.
 	 */
+	@:noDebug
 	public static function getStringFromFormat(fmt:cpp.ConstCharStar, args:cpp.VarList):String
 	{
 		final size:Int = untyped vsnprintf(untyped nullptr, 0, fmt, args) + 1;

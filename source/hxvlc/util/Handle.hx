@@ -282,6 +282,7 @@ class Handle
 	#if HXVLC_LOGGING
 	@:keep
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private static function instanceLogging(level:Int, ctx:cpp.RawConstPointer<LibVLC_Log_T>, fmt:cpp.ConstCharStar, args:cpp.VarList):Void
 	{
