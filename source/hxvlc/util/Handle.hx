@@ -1,6 +1,5 @@
 package hxvlc.util;
 
-import haxe.Log;
 import haxe.MainLoop;
 import haxe.io.Path;
 import hxvlc.externs.LibVLC;
@@ -148,9 +147,7 @@ class Handle
 			}
 			#end
 
-			#if !HXVLC_LOGGING
 			args.push_back("--quiet");
-			#end
 
 			if (options != null)
 			{
@@ -313,17 +310,7 @@ class Handle
 		}
 		#end
 
-		final fileName:cpp.ConstCharStar = untyped nullptr;
-		final lineNumber:cpp.UInt32 = 0;
-
-		LibVLC.log_get_context(ctx, untyped nullptr, cpp.RawPointer.addressOf(fileName), cpp.RawPointer.addressOf(lineNumber));
-
-		Log.trace(msg, {
-			fileName: Path.normalize(fileName),
-			lineNumber: lineNumber,
-			className: '',
-			methodName: ''
-		});
+		haxe.Log.trace(msg, Util.getPosFromContext(ctx));
 
 		logMutex.release();
 	}

@@ -1,7 +1,11 @@
 package hxvlc.util;
 
-import haxe.io.BytesInput;
 import haxe.Exception;
+import haxe.PosInfos;
+import haxe.io.BytesInput;
+import haxe.io.Path;
+import hxvlc.externs.LibVLC;
+import hxvlc.externs.Types;
 import sys.FileSystem;
 
 using cpp.NativeArray;
@@ -24,20 +28,46 @@ class Util
 	@:noDebug
 	public static function getStringFromFormat(fmt:cpp.ConstCharStar, args:cpp.VarList):String
 	{
-		final size:Int = untyped vsnprintf(untyped nullptr, 0, fmt, args) + 1;
+		final len:Int = untyped vsnprintf(untyped nullptr, 0, fmt, args);
 
-		if (size <= 0)
+		if (len <= 0)
 			return '';
 
-		final buffer:cpp.CastCharStar = cast cpp.Stdlib.nativeMalloc(size);
+		final buffer:cpp.CastCharStar = cast cpp.Stdlib.nativeMalloc(len + 1);
 
-		untyped vsnprintf(buffer, size, fmt, args);
+		untyped vsnprintf(buffer, len + 1, fmt, args);
 
 		final msg:String = new String(untyped buffer);
 
 		cpp.Stdlib.nativeFree(untyped buffer);
 
 		return msg;
+	}
+
+	/**
+	 * Retrieves file and line number information from a LibVLC log context.
+	 * 
+	 * This method calls `libvlc_log_get_context` to extract the source file name and 
+	 * line number associated with a particular log entry. The module information is 
+	 * ignored. If no file name is available, an empty string is returned.
+	 * 
+	 * @param ctx A pointer to a `LibVLC_Log_T` structure representing the log context.
+	 * @return A `PosInfos` object containing the normalized file name, line number, and empty class/method names.
+	 */
+	public static function getPosFromContext(ctx:cpp.RawConstPointer<LibVLC_Log_T>):PosInfos
+	{
+		final fileName:cpp.ConstCharStar = untyped nullptr;
+
+		final lineNumber:cpp.UInt32 = 0;
+
+		LibVLC.log_get_context(ctx, untyped nullptr, cpp.RawPointer.addressOf(fileName), cpp.RawPointer.addressOf(lineNumber));
+
+		return {
+			fileName: fileName != null ? Path.normalize(fileName) : '',
+			lineNumber: lineNumber,
+			className: '',
+			methodName: ''
+		};
 	}
 
 	/**
