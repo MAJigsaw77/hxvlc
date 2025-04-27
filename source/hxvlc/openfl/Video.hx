@@ -403,6 +403,9 @@ class Video extends openfl.display.Bitmap
 
 	#if lime_openal
 	@:noCompletion
+	private var alUseEXTFLOAT32:Null<Bool>;
+
+	@:noCompletion
 	private var alUseEXTMCFORMATS:Null<Bool>;
 
 	@:noCompletion
@@ -1419,47 +1422,49 @@ class Video extends openfl.display.Bitmap
 		#if lime_openal
 		alMutex.acquire();
 
-		cpp.Stdlib.nativeMemcpy(untyped format, untyped cpp.CastCharStar.fromString('S16N'), 4);
-
 		alSampleRate = rate[0];
 
+		if (alUseEXTFLOAT32 == null)
+			alUseEXTFLOAT32 = AL.isExtensionPresent('AL_EXT_FLOAT32');
+
+		if (alUseEXTMCFORMATS == null)
+			alUseEXTMCFORMATS = AL.isExtensionPresent('AL_EXT_MCFORMATS');
+
+		var alChannelsToUse:Int = channels[0];
+
+		if (alUseEXTMCFORMATS == true && alChannelsToUse > 8)
+			alChannelsToUse = 8;
+		else if (alChannelsToUse > 2)
+			alChannelsToUse = 2;
+
 		{
-			if (alUseEXTMCFORMATS == null)
-				alUseEXTMCFORMATS = AL.isExtensionPresent('AL_EXT_MCFORMATS');
+			final useFloat32:Bool = alUseEXTFLOAT32 == true && (new String(untyped format) == 'FL32');
 
-			var alChannelsToUse:cpp.UInt32 = channels[0];
-
-			if (alUseEXTMCFORMATS == true && alChannelsToUse > 8)
-				alChannelsToUse = 8;
-			else if (alChannelsToUse > 2)
-				alChannelsToUse = 2;
+			cpp.Stdlib.nativeMemcpy(untyped format, untyped cpp.CastCharStar.fromString(useFloat32 ? 'FL32' : 'S16N'), 4);
 
 			switch (alChannelsToUse)
 			{
 				case 1:
-					alFormat = AL.FORMAT_MONO16;
+					alFormat = AL.getEnumValue(useFloat32 ? 'AL_FORMAT_MONO_FLOAT32' : 'AL_FORMAT_MONO16');
 					alChannelsToUse = 1;
-					alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * alChannelsToUse;
 				case 2 | 3:
-					alFormat = AL.FORMAT_STEREO16;
+					alFormat = AL.getEnumValue(useFloat32 ? 'AL_FORMAT_STEREO_FLOAT32' : 'AL_FORMAT_STEREO16');
 					alChannelsToUse = 2;
-					alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * alChannelsToUse;
 				case 4:
-					alFormat = AL.getEnumValue('AL_FORMAT_QUAD16');
+					alFormat = AL.getEnumValue(useFloat32 ? 'AL_FORMAT_QUAD32' : 'AL_FORMAT_QUAD16');
 					alChannelsToUse = 4;
-					alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * alChannelsToUse;
 				case 5 | 6:
-					alFormat = AL.getEnumValue('AL_FORMAT_51CHN16');
+					alFormat = AL.getEnumValue(useFloat32 ? 'AL_FORMAT_51CHN32' : 'AL_FORMAT_51CHN16');
 					alChannelsToUse = 6;
-					alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * alChannelsToUse;
 				case 7 | 8:
-					alFormat = AL.getEnumValue('AL_FORMAT_71CHN16');
+					alFormat = AL.getEnumValue(useFloat32 ? 'AL_FORMAT_71CHN32' : 'AL_FORMAT_71CHN16');
 					alChannelsToUse = 8;
-					alFrameSize = cpp.Stdlib.sizeof(cpp.Int16) * alChannelsToUse;
 			}
 
-			channels[0] = alChannelsToUse;
+			alFrameSize = (useFloat32 ? cpp.Stdlib.sizeof(cpp.Float32) : cpp.Stdlib.sizeof(cpp.Int16)) * alChannelsToUse;
 		}
+
+		channels[0] = alChannelsToUse;
 
 		alMutex.release();
 
