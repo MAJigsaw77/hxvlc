@@ -1298,7 +1298,11 @@ class Video extends openfl.display.Bitmap
 							bitmapData.disposeImage();
 
 							bitmapData.__texture = Lib.current.stage.context3D.createRectangleTexture(bitmapData.width, bitmapData.height, BGRA, true);
+
+							bitmapData.__texture.__uploadFromImage(bitmapData.image);
+
 							bitmapData.__textureContext = bitmapData.__texture.__textureContext;
+
 							bitmapData.__surface = null;
 
 							bitmapData.image = null;
