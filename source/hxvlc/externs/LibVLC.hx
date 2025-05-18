@@ -326,6 +326,26 @@ extern class LibVLC
 	@:native('libvlc_media_get_parsed_status')
 	static function media_get_parsed_status(p_md:RawPointer<LibVLC_Media_T>):LibVLC_Media_Parsed_Status_T;
 
+
+	/**
+	 * Gets the elementary streams (tracks) description of a media descriptor.
+	 * 
+	 * @param p_md Pointer to the media descriptor object.
+	 * @param tracks Address to store an allocated array of elementary streams descriptions (must be freed with libvlc_media_tracks_release by the caller) [OUT].
+	 * @return The number of elementary streams (zero on error).
+	 */
+	@:native('libvlc_media_tracks_get')
+	static function media_tracks_get(p_md:RawPointer<LibVLC_Media_T>, tracks:RawPointer<RawPointer<RawPointer<LibVLC_Media_Track_T>>>):UInt32;
+
+	/**
+	 * Releases the array of media track descriptions.
+	 *
+	 * @param p_tracks The array of pointers to media track descriptions to release.
+	 * @param i_count The number of elements in the array.
+	 */
+	@:native('libvlc_media_tracks_release')
+	static function media_tracks_release(p_tracks:RawPointer<RawPointer<LibVLC_Media_Track_T>>, i_count:UInt32):Void;
+
 	/**
 	 * Releases a media list.
 	 * 

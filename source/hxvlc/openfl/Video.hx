@@ -1315,7 +1315,7 @@ class Video extends openfl.display.Bitmap
 		final originalWidth:UInt32 = width[0];
 		final originalHeight:UInt32 = height[0];
 
-		if (mediaPlayer == null || LibVLC.video_get_size(mediaPlayer.raw, 0, width, height) != 0)
+		if (!calculateVideoSize(Pointer.fromRaw(width), Pointer.fromRaw(height)))
 		{
 			width[0] = originalWidth;
 			height[0] = originalHeight;
@@ -1771,5 +1771,74 @@ class Video extends openfl.display.Bitmap
 	{
 		if (LibVLC.event_attach(eventManager.raw, type, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 			trace('Failed to attach event (${LibVLC.event_type_name(type)})');
+	}
+
+	@:noCompletion
+	@:unreflective
+	private function calculateVideoSize(width:Pointer<UInt32>, height:Pointer<UInt32>):Bool
+	{
+		if (mediaPlayer != null)
+		{
+			final currentMediaItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_player_get_media(mediaPlayer.raw));
+
+			if (currentMediaItem != null)
+			{
+				final tracks:RawPointer<RawPointer<LibVLC_Media_Track_T>> = untyped nullptr;
+
+				final count:UInt32 = LibVLC.media_tracks_get(currentMediaItem.raw, Pointer.addressOf(tracks).raw);
+
+				if (count > 0)
+				{
+					for (i in 0...count)
+					{
+						final track:Pointer<LibVLC_Media_Track_T> = Pointer.fromRaw(tracks[i]);
+
+						final trackType:LibVLC_Track_Type = untyped __cpp__('{0}->i_type', track.raw);
+						final trackID:Int = untyped __cpp__('{0}->i_id', track.raw);
+
+						if (trackType != LibVLC_Track_Video || LibVLC.video_get_track(mediaPlayer.raw) != trackID)
+							continue;
+
+						var trackWidth:UInt32 = untyped __cpp__('{0}->video->i_width', track.raw);
+						var trackHeight:UInt32 = untyped __cpp__('{0}->video->i_height', track.raw);
+
+						if (trackWidth == 0 || trackHeight == 0)
+							break;
+
+						final trackSarNum:UInt32 = untyped __cpp__('{0}->video->i_sar_num', track.raw);
+						final trackSarDen:UInt32 = untyped __cpp__('{0}->video->i_sar_den', track.raw);
+
+						if (trackSarNum > 0 && trackSarDen > 0)
+						{
+							trackWidth = Math.floor(trackWidth / trackSarDen) * trackSarNum
+								+ Math.floor((trackWidth % trackSarDen) * trackSarNum / trackSarDen);
+						}
+
+						if (untyped __cpp__('{0}->video->i_orientation', track.raw) == LibVLC_Video_Orient_Right_Bottom)
+						{
+							width[0] = trackHeight;
+							height[0] = trackWidth;
+						}
+						else
+						{
+							width[0] = trackWidth;
+							height[0] = trackHeight;
+						}
+
+						LibVLC.media_tracks_release(tracks, count);
+
+						LibVLC.media_release(currentMediaItem.raw);
+
+						return true;
+					}
+
+					LibVLC.media_tracks_release(tracks, count);
+				}
+
+				LibVLC.media_release(currentMediaItem.raw);
+			}
+		}
+
+		return false;
 	}
 }

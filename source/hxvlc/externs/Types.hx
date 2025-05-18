@@ -140,6 +140,76 @@ extern enum abstract LibVLC_Meta_T(LibVLC_Meta_T_Impl)
 private extern class LibVLC_Meta_T_Impl {}
 
 @:dox(hide)
+extern enum abstract LibVLC_Track_Type(LibVLC_Track_Type_Impl)
+{
+	@:native('libvlc_track_unknown')
+	var LibVLC_Track_Unknown;
+
+	@:native('libvlc_track_audio')
+	var LibVLC_Track_Audio;
+
+	@:native('libvlc_track_video')
+	var LibVLC_Track_Video;
+
+	@:native('libvlc_track_text')
+	var LibVLC_Track_Text;
+
+	@:from
+	static public inline function fromInt(i:Int):LibVLC_Track_Type
+		return cast i;
+
+	@:to
+	extern public inline function toInt():Int
+		return untyped this;
+}
+
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include('vlc/vlc.h')
+@:native('libvlc_track_type_t')
+private extern class LibVLC_Track_Type_Impl {}
+
+@:dox(hide)
+extern enum abstract LibVLC_Video_Orient(LibVLC_Video_Orient_Impl)
+{
+	@:native('libvlc_video_orient_top_left')
+	var LibVLC_Video_Orient_Top_Left;
+
+	@:native('libvlc_video_orient_top_right')
+	var LibVLC_Video_Orient_Top_Right;
+
+	@:native('libvlc_video_orient_bottom_left')
+	var LibVLC_Video_Orient_Bottom_Left;
+
+	@:native('libvlc_video_orient_bottom_right')
+	var LibVLC_Video_Orient_Bottom_Right;
+
+	@:native('libvlc_video_orient_left_top')
+	var LibVLC_Video_Orient_Left_Top;
+
+	@:native('libvlc_video_orient_left_bottom')
+	var LibVLC_Video_Orient_Left_Bottom;
+
+	@:native('libvlc_video_orient_right_top')
+	var LibVLC_Video_Orient_Right_Top;
+
+	@:native('libvlc_video_orient_right_bottom')
+	var LibVLC_Video_Orient_Right_Bottom;
+
+	@:from
+	static public inline function fromInt(i:Int):LibVLC_Video_Orient
+		return cast i;
+
+	@:to
+	extern public inline function toInt():Int
+		return untyped this;
+}
+
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include('vlc/vlc.h')
+@:native('libvlc_video_orient_t')
+private extern class LibVLC_Video_Orient_Impl {}
+
+@:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
 @:unreflective
@@ -165,6 +235,12 @@ extern class LibVLC_Media_Stats_T
 	var i_sent_bytes:Int;
 	var f_send_bitrate:Single;
 }
+
+@:dox(hide)
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include('vlc/vlc.h')
+@:native('libvlc_media_track_t')
+extern class LibVLC_Media_Track_T {}
 
 @:dox(hide)
 extern enum abstract LibVLC_Media_Parse_Flag_T(LibVLC_Media_Parse_Flag_T_Impl)
