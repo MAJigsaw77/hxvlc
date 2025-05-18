@@ -43,13 +43,13 @@ class FlxVideoSprite extends FlxSprite
 	 * @param x The initial X position of the sprite.
 	 * @param y The initial Y position of the sprite.
 	 */
-	public function new(?x:Float = 0, ?y:Float = 0):Void
+	public function new(?x:Float = 0, ?y:Float = 0, ?options:Array<String>):Void
 	{
 		super(x, y);
 
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
-		bitmap = new FlxInternalVideo(antialiasing);
+		bitmap = new FlxInternalVideo(antialiasing, options);
 		bitmap.forceRendering = true;
 		bitmap.onFormatSetup.add(function():Void
 		{

@@ -29,9 +29,9 @@ class FlxInternalVideo extends Video
 	 * 
 	 * @param smoothing Whether or not the video is smoothed when scaled.
 	 */
-	public function new(smoothing:Bool = true):Void
+	public function new(smoothing:Bool = true, ?options: Array<String>):Void
 	{
-		super(smoothing);
+		super(smoothing, options);
 
 		onOpening.add(function():Void
 		{

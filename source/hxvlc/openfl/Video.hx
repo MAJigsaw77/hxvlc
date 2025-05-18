@@ -429,14 +429,14 @@ class Video extends openfl.display.Bitmap
 	 * 
 	 * @param smoothing Whether or not the object is smoothed when scaled.
 	 */
-	public function new(smoothing:Bool = true):Void
+	public function new(smoothing:Bool = true, ?options:Array<String>):Void
 	{
 		super(null, AUTO, smoothing);
 
 		while (Handle.loading)
 			Sys.sleep(0.05);
 
-		Handle.init();
+		Handle.init(options);
 	}
 
 	/**
