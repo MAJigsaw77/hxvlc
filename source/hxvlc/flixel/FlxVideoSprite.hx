@@ -67,7 +67,7 @@ class FlxVideoSprite extends FlxSprite
 	 * @param options Additional options to configure the media.
 	 * @return `true` if the media was loaded successfully, `false` otherwise.
 	 */
-	public inline function load(location:Location, ?options:Array<String>):Bool
+	public function load(location:Location, ?options:Array<String>):Bool
 	{
 		return bitmap != null ? bitmap.load(location, options) : false;
 	}
@@ -79,7 +79,7 @@ class FlxVideoSprite extends FlxSprite
 	 * @param options Additional options to configure the loaded subitem.
 	 * @return `true` if the subitem was loaded successfully, `false` otherwise.
 	 */
-	public inline function loadFromSubItem(index:Int, ?options:Array<String>):Bool
+	public function loadFromSubItem(index:Int, ?options:Array<String>):Bool
 	{
 		return bitmap != null ? bitmap.loadFromSubItem(index, options) : false;
 	}
@@ -91,13 +91,13 @@ class FlxVideoSprite extends FlxSprite
 	 * @param timeout The timeout in milliseconds.
 	 * @return `true` if parsing succeeded, `false` otherwise.
 	 */
-	public inline function parseWithOptions(parse_flag:Int, timeout:Int):Bool
+	public function parseWithOptions(parse_flag:Int, timeout:Int):Bool
 	{
 		return bitmap != null ? bitmap.parseWithOptions(parse_flag, timeout) : false;
 	}
 
 	/** Stops parsing the current media item. */
-	public inline function parseStop():Void
+	public function parseStop():Void
 	{
 		if (bitmap != null)
 			bitmap.parseStop();
@@ -111,7 +111,7 @@ class FlxVideoSprite extends FlxSprite
 	 * @param select `true` if this slave should be selected when it's loaded.
 	 * @return `true` on success, `false` otherwise.
 	 */
-	public inline function addSlave(type:Int, location:String, select:Bool):Bool
+	public function addSlave(type:Int, location:String, select:Bool):Bool
 	{
 		return bitmap != null ? bitmap.addSlave(type, location, select) : false;
 	}
@@ -121,34 +121,34 @@ class FlxVideoSprite extends FlxSprite
 	 * 
 	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
-	public inline function play():Bool
+	public function play():Bool
 	{
 		return bitmap != null ? bitmap.play() : false;
 	}
 
 	/** Stops video playback. */
-	public inline function stop():Void
+	public function stop():Void
 	{
 		if (bitmap != null)
 			bitmap.stop();
 	}
 
 	/** Pauses video playback. */
-	public inline function pause():Void
+	public function pause():Void
 	{
 		if (bitmap != null)
 			bitmap.pause();
 	}
 
 	/** Resumes playback of a paused video. */
-	public inline function resume():Void
+	public function resume():Void
 	{
 		if (bitmap != null)
 			bitmap.resume();
 	}
 
 	/** Toggles between play and pause states of the video. */
-	public inline function togglePaused():Void
+	public function togglePaused():Void
 	{
 		if (bitmap != null)
 			bitmap.togglePaused();
