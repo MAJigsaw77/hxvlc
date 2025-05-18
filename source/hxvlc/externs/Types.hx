@@ -1,5 +1,18 @@
 package hxvlc.externs;
 
+import cpp.CastCharStar;
+import cpp.ConstCharStar;
+import cpp.Int64;
+import cpp.RawConstPointer;
+import cpp.RawPointer;
+import cpp.SizeT;
+import cpp.UInt32;
+import cpp.UInt64;
+import cpp.UInt8;
+import cpp.VarList;
+import cpp.Void;
+import cpp.VoidStarConstStar;
+
 /**
  * Dummy class for importing LibVLC native structures.
  */
@@ -508,65 +521,63 @@ extern enum abstract LibVLC_Event_E(LibVLC_Event_E_Impl)
 private extern class LibVLC_Event_E_Impl {}
 
 @:dox(hide)
-typedef LibVLC_Callback_T = cpp.Callable<(p_event:cpp.RawConstPointer<LibVLC_Event_T>, p_data:cpp.RawPointer<cpp.Void>) -> Void>;
+typedef LibVLC_Callback_T = cpp.Callable<(p_event:RawConstPointer<LibVLC_Event_T>, p_data:RawPointer<Void>) -> Void>;
 
 @:dox(hide)
-typedef LibVLC_Log_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, level:Int, ctx:cpp.RawConstPointer<LibVLC_Log_T>, fmt:cpp.ConstCharStar,
-		args:cpp.VarList) -> Void>;
+typedef LibVLC_Log_CB = cpp.Callable<(data:RawPointer<Void>, level:Int, ctx:RawConstPointer<LibVLC_Log_T>, fmt:ConstCharStar, args:VarList) -> Void>;
 
 @:dox(hide)
-typedef LibVLC_Media_Open_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>, datap:cpp.RawPointer<cpp.RawPointer<cpp.Void>>,
-		sizep:cpp.RawPointer<cpp.UInt64>) -> Int>;
+typedef LibVLC_Media_Open_CB = cpp.Callable<(opaque:RawPointer<Void>, datap:RawPointer<RawPointer<Void>>, sizep:RawPointer<UInt64>) -> Int>;
 
 @:dox(hide)
-typedef LibVLC_Media_Read_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>, buf:cpp.RawPointer<cpp.UInt8>, len:cpp.SizeT) -> cpp.SSizeT>;
+typedef LibVLC_Media_Read_CB = cpp.Callable<(opaque:RawPointer<Void>, buf:RawPointer<UInt8>, len:SizeT) -> cpp.SSizeT>;
 
 @:dox(hide)
-typedef LibVLC_Media_Seek_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>, offset:cpp.UInt64) -> Int>;
+typedef LibVLC_Media_Seek_CB = cpp.Callable<(opaque:RawPointer<Void>, offset:UInt64) -> Int>;
 
 @:dox(hide)
-typedef LibVLC_Media_Close_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>) -> Void>;
+typedef LibVLC_Media_Close_CB = cpp.Callable<(opaque:RawPointer<Void>) -> Void>;
 
 @:dox(hide)
-typedef LibVLC_Video_Format_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.RawPointer<cpp.Void>>, chroma:cpp.CastCharStar, width:cpp.RawPointer<cpp.UInt32>,
-		height:cpp.RawPointer<cpp.UInt32>, pitches:cpp.RawPointer<cpp.UInt32>, lines:cpp.RawPointer<cpp.UInt32>) -> cpp.UInt32>;
+typedef LibVLC_Video_Format_CB = cpp.Callable<(opaque:RawPointer<RawPointer<Void>>, chroma:CastCharStar, width:RawPointer<UInt32>, height:RawPointer<UInt32>,
+		pitches:RawPointer<UInt32>, lines:RawPointer<UInt32>) -> cpp.UInt32>;
 
 @:dox(hide)
-typedef LibVLC_Video_Cleanup_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>) -> Void>;
+typedef LibVLC_Video_Cleanup_CB = cpp.Callable<(opaque:RawPointer<Void>) -> Void>;
 
 @:dox(hide)
-typedef LibVLC_Video_Lock_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, p_pixels:cpp.RawPointer<cpp.RawPointer<cpp.Void>>) -> cpp.RawPointer<cpp.Void>>;
+typedef LibVLC_Video_Lock_CB = cpp.Callable<(data:RawPointer<Void>, p_pixels:RawPointer<RawPointer<Void>>) -> cpp.RawPointer<Void>>;
 
 @:dox(hide)
-typedef LibVLC_Video_Unlock_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, id:cpp.RawPointer<cpp.Void>, p_pixels:cpp.VoidStarConstStar) -> Void>;
+typedef LibVLC_Video_Unlock_CB = cpp.Callable<(data:RawPointer<Void>, id:RawPointer<Void>, p_pixels:VoidStarConstStar) -> Void>;
 
 @:dox(hide)
-typedef LibVLC_Video_Display_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>, picture:cpp.RawPointer<cpp.Void>) -> Void>;
+typedef LibVLC_Video_Display_CB = cpp.Callable<(opaque:RawPointer<Void>, picture:RawPointer<Void>) -> Void>;
 
 @:dox(hide)
-typedef LibVLC_Audio_Play_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, samples:cpp.RawConstPointer<cpp.Void>, count:cpp.UInt32, pts:cpp.Int64) -> Void>;
+typedef LibVLC_Audio_Play_CB = cpp.Callable<(data:RawPointer<Void>, samples:RawConstPointer<Void>, count:UInt32, pts:Int64) -> Void>;
 
 @:dox(hide)
-typedef LibVLC_Audio_Pause_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, pts:cpp.Int64) -> Void>;
+typedef LibVLC_Audio_Pause_CB = cpp.Callable<(data:RawPointer<Void>, pts:Int64) -> Void>;
 
 @:dox(hide)
-typedef LibVLC_Audio_Resume_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, pts:cpp.Int64) -> Void>;
+typedef LibVLC_Audio_Resume_CB = cpp.Callable<(data:RawPointer<Void>, pts:Int64) -> Void>;
 
 @:dox(hide)
-typedef LibVLC_Audio_Flush_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, pts:cpp.Int64) -> Void>;
+typedef LibVLC_Audio_Flush_CB = cpp.Callable<(data:RawPointer<Void>, pts:Int64) -> Void>;
 
 @:dox(hide)
-typedef LibVLC_Audio_Drain_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>) -> Void>;
+typedef LibVLC_Audio_Drain_CB = cpp.Callable<(data:RawPointer<Void>) -> Void>;
 
 @:dox(hide)
-typedef LibVLC_Audio_Setup_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.RawPointer<cpp.Void>>, format:cpp.CastCharStar, rate:cpp.RawPointer<cpp.UInt32>,
-		channels:cpp.RawPointer<cpp.UInt32>) -> Int>;
+typedef LibVLC_Audio_Setup_CB = cpp.Callable<(opaque:RawPointer<RawPointer<Void>>, format:CastCharStar, rate:RawPointer<UInt32>,
+		channels:RawPointer<UInt32>) -> Int>;
 
 @:dox(hide)
-typedef LibVLC_Audio_Cleanup_CB = cpp.Callable<(opaque:cpp.RawPointer<cpp.Void>) -> Void>;
+typedef LibVLC_Audio_Cleanup_CB = cpp.Callable<(opaque:RawPointer<Void>) -> Void>;
 
 @:dox(hide)
-typedef LibVLC_Audio_Set_Volume_CB = cpp.Callable<(data:cpp.RawPointer<cpp.Void>, volume:Single, mute:Bool) -> Void>;
+typedef LibVLC_Audio_Set_Volume_CB = cpp.Callable<(data:RawPointer<Void>, volume:Single, mute:Bool) -> Void>;
 
 @:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
@@ -579,8 +590,8 @@ extern class LibVLC_Track_Description_T
 	function new():Void;
 
 	var i_id:Int;
-	var psz_name:cpp.ConstCharStar;
-	var p_next:cpp.RawPointer<LibVLC_Track_Description_T>;
+	var psz_name:ConstCharStar;
+	var p_next:RawPointer<LibVLC_Track_Description_T>;
 }
 
 @:dox(hide)

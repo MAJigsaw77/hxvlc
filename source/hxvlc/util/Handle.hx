@@ -1,5 +1,11 @@
 package hxvlc.util;
 
+import cpp.StdVector;
+import cpp.RawConstPointer;
+import cpp.RawPointer;
+import cpp.ConstCharStar;
+import cpp.VarList;
+
 import haxe.MainLoop;
 import haxe.io.Path;
 
@@ -35,7 +41,7 @@ import sys.io.File;
 class Handle
 {
 	/** The instance of LibVLC that is used globally. */
-	public static var instance(default, null):Null<cpp.RawPointer<LibVLC_Instance_T>>;
+	public static var instance(default, null):Null<RawPointer<LibVLC_Instance_T>>;
 
 	/** Indicates whether the instance is still loading. */
 	public static var loading(default, null):Bool = false;
@@ -122,7 +128,7 @@ class Handle
 		{
 			setupEnvVariables();
 
-			final args:cpp.StdVector<cpp.ConstCharStar> = new cpp.StdVector<cpp.ConstCharStar>();
+			final args:StdVector<ConstCharStar> = new cpp.StdVector<ConstCharStar>();
 			args.push_back("--ignore-config");
 			args.push_back("--drop-late-frames");
 			args.push_back("--aout=none");
@@ -286,7 +292,7 @@ class Handle
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function instanceLogging(level:Int, ctx:cpp.RawConstPointer<LibVLC_Log_T>, fmt:cpp.ConstCharStar, args:cpp.VarList):Void
+	private static function instanceLogging(level:Int, ctx:RawConstPointer<LibVLC_Log_T>, fmt:ConstCharStar, args:VarList):Void
 	{
 		if (level > DefineMacro.getInt('HXVLC_VERBOSE', -1) || level == DefineMacro.getInt('HXVLC_EXCLUDE_LOG_LEVEL', -1))
 			return;

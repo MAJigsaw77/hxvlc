@@ -1,5 +1,15 @@
 package hxvlc.openfl;
 
+import cpp.CastCharStar;
+import cpp.RawConstPointer;
+import cpp.RawPointer;
+import cpp.SSizeT;
+import cpp.SizeT;
+import cpp.UInt32;
+import cpp.UInt64;
+import cpp.UInt8;
+import cpp.VoidStarConstStar;
+
 import haxe.Int64;
 import haxe.MainLoop;
 import haxe.io.Bytes;
@@ -394,13 +404,13 @@ class Video extends openfl.display.Bitmap
 	private var mediaInput:Null<BytesInput>;
 
 	@:noCompletion
-	private var mediaPlayer:Null<cpp.RawPointer<LibVLC_Media_Player_T>>;
+	private var mediaPlayer:Null<RawPointer<LibVLC_Media_Player_T>>;
 
 	@:noCompletion
-	private var textureWidth:cpp.UInt32 = 0;
+	private var textureWidth:UInt32 = 0;
 
 	@:noCompletion
-	private var textureHeight:cpp.UInt32 = 0;
+	private var textureHeight:UInt32 = 0;
 
 	@:noCompletion
 	private var texturePlanes:Null<BytesData>;
@@ -419,13 +429,13 @@ class Video extends openfl.display.Bitmap
 	private var alBufferPool:Null<Array<ALBuffer>>;
 
 	@:noCompletion
-	private var alSampleRate:cpp.UInt32 = 0;
+	private var alSampleRate:UInt32 = 0;
 
 	@:noCompletion
 	private var alFormat:Int = 0;
 
 	@:noCompletion
-	private var alFrameSize:cpp.UInt32 = 0;
+	private var alFrameSize:UInt32 = 0;
 	#end
 
 	/**
@@ -455,7 +465,7 @@ class Video extends openfl.display.Bitmap
 		if (Handle.instance == null)
 			return false;
 
-		var mediaItem:cpp.RawPointer<LibVLC_Media_T>;
+		var mediaItem:RawPointer<LibVLC_Media_T>;
 
 		if (location != null)
 		{
@@ -526,11 +536,11 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
 			{
-				final currentMediaSubItems:cpp.RawPointer<LibVLC_Media_List_T> = LibVLC.media_subitems(currentMediaItem);
+				final currentMediaSubItems:RawPointer<LibVLC_Media_List_T> = LibVLC.media_subitems(currentMediaItem);
 
 				if (currentMediaSubItems != null)
 				{
@@ -538,7 +548,7 @@ class Video extends openfl.display.Bitmap
 
 					if (index >= 0 && index < count)
 					{
-						final mediaSubItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_list_item_at_index(currentMediaSubItems, index);
+						final mediaSubItem:RawPointer<LibVLC_Media_T> = LibVLC.media_list_item_at_index(currentMediaSubItems, index);
 
 						if (mediaSubItem != null)
 						{
@@ -569,11 +579,11 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
 			{
-				final eventManager:cpp.RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_event_manager(currentMediaItem);
+				final eventManager:RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_event_manager(currentMediaItem);
 
 				if (eventManager != null)
 				{
@@ -595,7 +605,7 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
 				LibVLC.media_parse_stop(currentMediaItem);
@@ -626,7 +636,7 @@ class Video extends openfl.display.Bitmap
 
 		if (mediaPlayer != null)
 		{
-			final rawDescription:cpp.RawPointer<LibVLC_Track_Description_T> = LibVLC.video_get_track_description(mediaPlayer);
+			final rawDescription:RawPointer<LibVLC_Track_Description_T> = LibVLC.video_get_track_description(mediaPlayer);
 
 			if (rawDescription != null)
 				getDescription(rawDescription, description);
@@ -646,7 +656,7 @@ class Video extends openfl.display.Bitmap
 
 		if (mediaPlayer != null)
 		{
-			final rawDescription:cpp.RawPointer<LibVLC_Track_Description_T> = LibVLC.audio_get_track_description(mediaPlayer);
+			final rawDescription:RawPointer<LibVLC_Track_Description_T> = LibVLC.audio_get_track_description(mediaPlayer);
 
 			if (rawDescription != null)
 				getDescription(rawDescription, description);
@@ -666,7 +676,7 @@ class Video extends openfl.display.Bitmap
 
 		if (mediaPlayer != null)
 		{
-			final rawDescription:cpp.RawPointer<LibVLC_Track_Description_T> = LibVLC.video_get_spu_description(mediaPlayer);
+			final rawDescription:RawPointer<LibVLC_Track_Description_T> = LibVLC.video_get_spu_description(mediaPlayer);
 
 			if (rawDescription != null)
 				getDescription(rawDescription, description);
@@ -737,11 +747,11 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
 			{
-				final rawMeta:cpp.CastCharStar = LibVLC.media_get_meta(currentMediaItem, e_meta);
+				final rawMeta:CastCharStar = LibVLC.media_get_meta(currentMediaItem, e_meta);
 
 				if (rawMeta != null)
 					return new String(untyped rawMeta);
@@ -761,7 +771,7 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null && value != null)
 		{
-			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
 				LibVLC.media_set_meta(currentMediaItem, e_meta, value);
@@ -777,7 +787,7 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
 				return LibVLC.media_save_meta(currentMediaItem) != 0;
@@ -852,11 +862,11 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
 			{
-				final rawMrl:cpp.CastCharStar = LibVLC.media_get_mrl(currentMediaItem);
+				final rawMrl:CastCharStar = LibVLC.media_get_mrl(currentMediaItem);
 
 				if (rawMrl != null)
 					return new String(untyped rawMrl);
@@ -871,7 +881,7 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
 			{
@@ -890,7 +900,7 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:cpp.RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
 
 			if (currentMediaItem != null)
 				return LibVLC.media_get_duration(currentMediaItem);
@@ -1134,7 +1144,7 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function mediaOpen(sizep:cpp.RawPointer<cpp.UInt64>):Int
+	private function mediaOpen(sizep:RawPointer<UInt64>):Int
 	{
 		mediaMutex.acquire();
 
@@ -1155,7 +1165,7 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function mediaRead(buf:cpp.RawPointer<cpp.UInt8>, len:cpp.SizeT):cpp.SSizeT
+	private function mediaRead(buf:RawPointer<UInt8>, len:SizeT):SSizeT
 	{
 		mediaMutex.acquire();
 
@@ -1169,7 +1179,7 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function mediaSeek(offset:cpp.UInt64):Int
+	private function mediaSeek(offset:UInt64):Int
 	{
 		mediaMutex.acquire();
 
@@ -1192,7 +1202,7 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function videoLock(planes:cpp.RawPointer<cpp.RawPointer<cpp.Void>>):cpp.RawPointer<cpp.Void>
+	private function videoLock(planes:RawPointer<RawPointer<Void>>):RawPointer<Void>
 	{
 		textureMutex.acquire();
 
@@ -1205,7 +1215,7 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function videoUnlock(planes:cpp.VoidStarConstStar):Void
+	private function videoUnlock(planes:VoidStarConstStar):Void
 	{
 		textureMutex.release();
 	}
@@ -1213,7 +1223,7 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function videoDisplay(picture:cpp.RawPointer<cpp.Void>):Void
+	private function videoDisplay(picture:RawPointer<Void>):Void
 	{
 		if (__renderable || forceRendering)
 		{
@@ -1243,15 +1253,15 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function videoFormatSetup(chroma:cpp.CastCharStar, width:cpp.RawPointer<cpp.UInt32>, height:cpp.RawPointer<cpp.UInt32>,
-			pitches:cpp.RawPointer<cpp.UInt32>, lines:cpp.RawPointer<cpp.UInt32>):Int
+	private function videoFormatSetup(chroma:CastCharStar, width:RawPointer<UInt32>, height:RawPointer<UInt32>, pitches:RawPointer<UInt32>,
+			lines:RawPointer<UInt32>):Int
 	{
 		textureMutex.acquire();
 
 		cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('RV32'), 4);
 
-		final originalWidth:cpp.UInt32 = width[0];
-		final originalHeight:cpp.UInt32 = height[0];
+		final originalWidth:UInt32 = width[0];
+		final originalHeight:UInt32 = height[0];
 
 		if (mediaPlayer == null || LibVLC.video_get_size(mediaPlayer, 0, width, height) != 0)
 		{
@@ -1329,7 +1339,7 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function audioPlay(samples:cpp.RawPointer<cpp.UInt8>, count:cpp.UInt32, pts:cpp.Int64):Void
+	private function audioPlay(samples:RawPointer<UInt8>, count:UInt32, pts:Int64):Void
 	{
 		#if lime_openal
 		if (alSource != null && alBufferPool != null)
@@ -1371,7 +1381,7 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function audioResume(pts:cpp.Int64):Void
+	private function audioResume(pts:Int64):Void
 	{
 		#if lime_openal
 		if (alSource != null)
@@ -1389,7 +1399,7 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function audioPause(pts:cpp.Int64):Void
+	private function audioPause(pts:Int64):Void
 	{
 		#if lime_openal
 		if (alSource != null)
@@ -1407,7 +1417,7 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function audioFlush(pts:cpp.Int64):Void
+	private function audioFlush(pts:Int64):Void
 	{
 		#if lime_openal
 		if (alSource != null)
@@ -1425,7 +1435,7 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function audioSetup(format:cpp.CastCharStar, rate:cpp.RawPointer<cpp.UInt32>, channels:cpp.RawPointer<cpp.UInt32>):Int
+	private function audioSetup(format:CastCharStar, rate:RawPointer<UInt32>, channels:RawPointer<UInt32>):Int
 	{
 		#if lime_openal
 		alMutex.acquire();
@@ -1490,7 +1500,7 @@ class Video extends openfl.display.Bitmap
 	@:keep
 	@:noCompletion
 	@:unreflective
-	private function eventManagerCallbacks(p_event:cpp.RawConstPointer<LibVLC_Event_T>):Void
+	private function eventManagerCallbacks(p_event:RawConstPointer<LibVLC_Event_T>):Void
 	{
 		switch (p_event[0].type)
 		{
@@ -1606,9 +1616,9 @@ class Video extends openfl.display.Bitmap
 
 	@:noCompletion
 	@:unreflective
-	private function getDescription(rawDescription:cpp.RawPointer<LibVLC_Track_Description_T>, description:Array<TrackDescription>):Void
+	private function getDescription(rawDescription:RawPointer<LibVLC_Track_Description_T>, description:Array<TrackDescription>):Void
 	{
-		var nextDescription:cpp.RawPointer<LibVLC_Track_Description_T> = rawDescription;
+		var nextDescription:RawPointer<LibVLC_Track_Description_T> = rawDescription;
 
 		while (nextDescription != null)
 		{
@@ -1622,7 +1632,7 @@ class Video extends openfl.display.Bitmap
 
 	@:noCompletion
 	@:unreflective
-	private function setMediaToPlayer(mediaItem:cpp.RawPointer<LibVLC_Media_T>, ?options:Array<String>):Void
+	private function setMediaToPlayer(mediaItem:RawPointer<LibVLC_Media_T>, ?options:Array<String>):Void
 	{
 		if (mediaPlayer == null)
 			return;
@@ -1680,7 +1690,7 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final eventManager:cpp.RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_player_event_manager(mediaPlayer);
+			final eventManager:RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_player_event_manager(mediaPlayer);
 
 			if (eventManager != null)
 			{
@@ -1705,7 +1715,7 @@ class Video extends openfl.display.Bitmap
 
 	@:noCompletion
 	@:unreflective
-	private function addEvent(eventManager:cpp.RawPointer<LibVLC_Event_Manager_T>, type:Int):Void
+	private function addEvent(eventManager:RawPointer<LibVLC_Event_Manager_T>, type:Int):Void
 	{
 		if (LibVLC.event_attach(eventManager, type, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 			trace('Failed to attach event (${LibVLC.event_type_name(type)})');

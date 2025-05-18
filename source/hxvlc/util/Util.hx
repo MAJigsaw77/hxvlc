@@ -1,5 +1,13 @@
 package hxvlc.util;
 
+import cpp.CastCharStar;
+import cpp.ConstCharStar;
+import cpp.RawConstPointer;
+import cpp.RawPointer;
+import cpp.UInt32;
+import cpp.UInt8;
+import cpp.VarList;
+
 import haxe.Exception;
 import haxe.PosInfos;
 import haxe.io.BytesInput;
@@ -28,14 +36,14 @@ class Util
 	 * @return The formatted string.
 	 */
 	@:noDebug
-	public static function getStringFromFormat(fmt:cpp.ConstCharStar, args:cpp.VarList):String
+	public static function getStringFromFormat(fmt:ConstCharStar, args:VarList):String
 	{
 		final len:Int = untyped vsnprintf(untyped nullptr, 0, fmt, args);
 
 		if (len <= 0)
 			return '';
 
-		final buffer:cpp.CastCharStar = cast cpp.Stdlib.nativeMalloc(len + 1);
+		final buffer:CastCharStar = cast cpp.Stdlib.nativeMalloc(len + 1);
 
 		untyped vsnprintf(buffer, len + 1, fmt, args);
 
@@ -56,11 +64,11 @@ class Util
 	 * @param ctx A pointer to a `LibVLC_Log_T` structure representing the log context.
 	 * @return A `PosInfos` object containing the normalized file name, line number, and empty class/method names.
 	 */
-	public static function getPosFromContext(ctx:cpp.RawConstPointer<LibVLC_Log_T>):PosInfos
+	public static function getPosFromContext(ctx:RawConstPointer<LibVLC_Log_T>):PosInfos
 	{
-		final fileName:cpp.ConstCharStar = untyped nullptr;
+		final fileName:ConstCharStar = untyped nullptr;
 
-		final lineNumber:cpp.UInt32 = 0;
+		final lineNumber:UInt32 = 0;
 
 		LibVLC.log_get_context(ctx, untyped nullptr, cpp.RawPointer.addressOf(fileName), cpp.RawPointer.addressOf(lineNumber));
 
@@ -154,7 +162,7 @@ class Util
 	 * @param len The maximum number of bytes to read into the buffer.
 	 * @return A strictly positive number of bytes read, 0 on end-of-stream, or -1 on unrecoverable error.
 	 */
-	public static function readFromInput(input:BytesInput, buf:cpp.RawPointer<cpp.UInt8>, len:Int):Int
+	public static function readFromInput(input:BytesInput, buf:RawPointer<UInt8>, len:Int):Int
 	{
 		if (input.position >= input.length)
 			return 0;

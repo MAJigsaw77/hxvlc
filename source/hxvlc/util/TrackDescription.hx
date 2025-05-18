@@ -1,5 +1,7 @@
 package hxvlc.util;
 
+import cpp.Struct;
+
 import hxvlc.externs.Types;
 
 /**
@@ -48,7 +50,7 @@ class TrackDescription
 	 * @return A `TrackDescription` object populated with the provided data.
 	 */
 	@:unreflective
-	public static function fromTrackDescription(track_description:cpp.Struct<LibVLC_Track_Description_T>):TrackDescription
+	public static function fromTrackDescription(track_description:Struct<LibVLC_Track_Description_T>):TrackDescription
 	{
 		final description:TrackDescription = new TrackDescription();
 
