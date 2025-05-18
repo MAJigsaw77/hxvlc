@@ -1,10 +1,8 @@
 package hxvlc.util;
 
-import cpp.StdVector;
-import cpp.RawConstPointer;
-import cpp.RawPointer;
 import cpp.ConstCharStar;
-import cpp.VarList;
+import cpp.Pointer;
+import cpp.StdVector;
 
 import haxe.MainLoop;
 import haxe.io.Path;
@@ -41,7 +39,7 @@ import sys.io.File;
 class Handle
 {
 	/** The instance of LibVLC that is used globally. */
-	public static var instance(default, null):Null<RawPointer<LibVLC_Instance_T>>;
+	public static var instance(default, null):Null<Pointer<LibVLC_Instance_T>>;
 
 	/** Indicates whether the instance is still loading. */
 	public static var loading(default, null):Bool = false;
@@ -103,7 +101,7 @@ class Handle
 
 		if (instance != null)
 		{
-			LibVLC.release(instance);
+			LibVLC.release(instance.raw);
 			instance = null;
 		}
 
@@ -169,7 +167,7 @@ class Handle
 				}
 			}
 
-			instance = LibVLC.alloc(args.size(), args.data());
+			instance = Pointer.fromRaw(LibVLC.alloc(args.size(), args.data()));
 
 			if (instance == null)
 			{
@@ -200,10 +198,10 @@ class Handle
 				final hxvlcVersion:String = DefineMacro.getString('hxvlc', 'Unknown Version');
 				final haxeVersion:String = DefineMacro.getString('haxe', 'Unknown Version');
 
-				LibVLC.set_user_agent(instance, 'hxvlc', 'hxvlc "$hxvlcVersion" (Haxe "$haxeVersion" ${Sys.systemName()})');
+				LibVLC.set_user_agent(instance.raw, 'hxvlc', 'hxvlc "$hxvlcVersion" (Haxe "$haxeVersion" ${Sys.systemName()})');
 
 				#if HXVLC_LOGGING
-				LibVLC.log_set(instance, untyped __cpp__('instance_logging'), untyped NULL);
+				LibVLC.log_set(instance.raw, untyped __cpp__('instance_logging'), untyped NULL);
 				#end
 			}
 		}

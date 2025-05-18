@@ -2,8 +2,9 @@ package hxvlc.util;
 
 import cpp.CastCharStar;
 import cpp.ConstCharStar;
+import cpp.Pointer;
 import cpp.RawConstPointer;
-import cpp.RawPointer;
+import cpp.Stdlib;
 import cpp.UInt32;
 import cpp.UInt8;
 import cpp.VarList;
@@ -18,11 +19,14 @@ import hxvlc.externs.Types;
 
 import sys.FileSystem;
 
+using StringTools;
+
 using cpp.NativeArray;
 
 /**
  * Utility class providing helper methods for common operations.
  */
+@:access(haxe.io.BytesInput)
 @:unreflective
 class Util
 {
@@ -43,13 +47,13 @@ class Util
 		if (len <= 0)
 			return '';
 
-		final buffer:CastCharStar = cast cpp.Stdlib.nativeMalloc(len + 1);
+		final buffer:CastCharStar = cast Stdlib.nativeMalloc(len + 1);
 
 		untyped vsnprintf(buffer, len + 1, fmt, args);
 
 		final msg:String = new String(untyped buffer);
 
-		cpp.Stdlib.nativeFree(untyped buffer);
+		Stdlib.nativeFree(untyped buffer);
 
 		return msg;
 	}
@@ -70,7 +74,7 @@ class Util
 
 		final lineNumber:UInt32 = 0;
 
-		LibVLC.log_get_context(ctx, untyped nullptr, cpp.RawPointer.addressOf(fileName), cpp.RawPointer.addressOf(lineNumber));
+		LibVLC.log_get_context(ctx, untyped nullptr, Pointer.addressOf(fileName).raw, Pointer.addressOf(lineNumber).raw);
 
 		return {
 			fileName: fileName != null ? Path.normalize(fileName) : '',
@@ -84,8 +88,10 @@ class Util
 	 * Creates directories recursively.
 	 * 
 	 * This method ensures that all directories in the specified path are created.
-	 * If a directory already exists, it is skipped. If a file exists with the same name
-	 * as a directory, it is deleted before creating the directory.
+	 * 
+	 * If a directory already exists, it is skipped.
+	 * 
+	 * If a file exists with the same name as a directory, it is deleted before creating the directory.
 	 * 
 	 * @param directory The path of the directory to create.
 	 */
@@ -155,6 +161,22 @@ class Util
 	}
 
 	/**
+	 * Converts an absolute file path to a URL string.
+	 *
+	 * @param path The absolute file path to convert.
+	 * @return The corresponding URL string.
+	 */
+	public static function convertAbsToURL(path:String):String
+	{
+		final normalizedPath:String = Path.normalize(path);
+
+		if (!normalizedPath.startsWith('/'))
+			return 'file:///$normalizedPath';
+		else
+			return 'file://$normalizedPath';
+	}
+
+	/**
 	 * Reads data from a `BytesInput` stream into a raw memory buffer.
 	 *
 	 * @param input The `BytesInput` object acting as the source bitstream.
@@ -162,7 +184,7 @@ class Util
 	 * @param len The maximum number of bytes to read into the buffer.
 	 * @return A strictly positive number of bytes read, 0 on end-of-stream, or -1 on unrecoverable error.
 	 */
-	public static function readFromInput(input:BytesInput, buf:RawPointer<UInt8>, len:Int):Int
+	public static function readFromInput(input:BytesInput, buf:Pointer<UInt8>, len:Int):Int
 	{
 		if (input.position >= input.length)
 			return 0;
@@ -171,10 +193,13 @@ class Util
 
 		final read:Int = len < remaining ? len : remaining;
 
-		if (input.position > (input.length - read))
+		if (input.position > (input.length - read) || input.b == null)
 			return -1;
 
-		cpp.Stdlib.nativeMemcpy(untyped buf, untyped cpp.RawPointer.addressOf(input.b.getBase().getBase()[input.position]), read);
+		{
+			@:nullSafety(Off)
+			Stdlib.memcpy(buf, Pointer.addressOf(input.b.getBase().getBase()[input.position]), read);
+		}
 
 		input.position += read;
 

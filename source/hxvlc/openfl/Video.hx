@@ -1,10 +1,14 @@
 package hxvlc.openfl;
 
 import cpp.CastCharStar;
+import cpp.Float32;
+import cpp.Int16;
+import cpp.Pointer;
 import cpp.RawConstPointer;
 import cpp.RawPointer;
 import cpp.SSizeT;
 import cpp.SizeT;
+import cpp.Stdlib;
 import cpp.UInt32;
 import cpp.UInt64;
 import cpp.UInt8;
@@ -404,7 +408,7 @@ class Video extends openfl.display.Bitmap
 	private var mediaInput:Null<BytesInput>;
 
 	@:noCompletion
-	private var mediaPlayer:Null<RawPointer<LibVLC_Media_Player_T>>;
+	private var mediaPlayer:Null<Pointer<LibVLC_Media_Player_T>>;
 
 	@:noCompletion
 	private var textureWidth:UInt32 = 0;
@@ -465,7 +469,7 @@ class Video extends openfl.display.Bitmap
 		if (Handle.instance == null)
 			return false;
 
-		var mediaItem:RawPointer<LibVLC_Media_T>;
+		var mediaItem:Pointer<LibVLC_Media_T>;
 
 		if (location != null)
 		{
@@ -474,13 +478,13 @@ class Video extends openfl.display.Bitmap
 				final location:String = cast(location, String);
 
 				if (URL_VERIFICATION_REGEX.match(location))
-					mediaItem = LibVLC.media_new_location(Handle.instance, location);
+					mediaItem = Pointer.fromRaw(LibVLC.media_new_location(Handle.instance.raw, location));
 				else
-					mediaItem = LibVLC.media_new_path(Handle.instance, Util.normalizePath(location));
+					mediaItem = Pointer.fromRaw(LibVLC.media_new_path(Handle.instance.raw, Util.normalizePath(location)));
 			}
 			else if ((location is Int))
 			{
-				mediaItem = LibVLC.media_new_fd(Handle.instance, cast(location, Int));
+				mediaItem = Pointer.fromRaw(LibVLC.media_new_fd(Handle.instance.raw, cast(location, Int)));
 			}
 			else if ((location is Bytes))
 			{
@@ -488,8 +492,8 @@ class Video extends openfl.display.Bitmap
 
 				mediaInput = new BytesInput(cast(location, Bytes));
 
-				mediaItem = LibVLC.media_new_callbacks(Handle.instance, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
-					untyped __cpp__('media_seek'), untyped NULL, untyped __cpp__('this'));
+				mediaItem = Pointer.fromRaw(LibVLC.media_new_callbacks(Handle.instance.raw, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
+					untyped __cpp__('media_seek'), untyped NULL, untyped __cpp__('this')));
 
 				mediaMutex.release();
 			}
@@ -501,7 +505,7 @@ class Video extends openfl.display.Bitmap
 
 		if (mediaPlayer == null)
 		{
-			mediaPlayer = LibVLC.media_player_new(Handle.instance);
+			mediaPlayer = Pointer.fromRaw(LibVLC.media_player_new(Handle.instance.raw));
 
 			if (mediaPlayer != null)
 			{
@@ -536,31 +540,31 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_player_get_media(mediaPlayer.raw));
 
 			if (currentMediaItem != null)
 			{
-				final currentMediaSubItems:RawPointer<LibVLC_Media_List_T> = LibVLC.media_subitems(currentMediaItem);
+				final currentMediaSubItems:Pointer<LibVLC_Media_List_T> = Pointer.fromRaw(LibVLC.media_subitems(currentMediaItem.raw));
 
 				if (currentMediaSubItems != null)
 				{
-					final count:Int = LibVLC.media_list_count(currentMediaSubItems);
+					final count:Int = LibVLC.media_list_count(currentMediaSubItems.raw);
 
 					if (index >= 0 && index < count)
 					{
-						final mediaSubItem:RawPointer<LibVLC_Media_T> = LibVLC.media_list_item_at_index(currentMediaSubItems, index);
+						final mediaSubItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_list_item_at_index(currentMediaSubItems.raw, index));
 
 						if (mediaSubItem != null)
 						{
 							setMediaToPlayer(mediaSubItem, options);
 
-							LibVLC.media_list_release(currentMediaSubItems);
+							LibVLC.media_list_release(currentMediaSubItems.raw);
 
 							return true;
 						}
 					}
 
-					LibVLC.media_list_release(currentMediaSubItems);
+					LibVLC.media_list_release(currentMediaSubItems.raw);
 				}
 			}
 		}
@@ -579,11 +583,11 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_player_get_media(mediaPlayer.raw));
 
 			if (currentMediaItem != null)
 			{
-				final eventManager:RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_event_manager(currentMediaItem);
+				final eventManager:Pointer<LibVLC_Event_Manager_T> = Pointer.fromRaw(LibVLC.media_event_manager(currentMediaItem.raw));
 
 				if (eventManager != null)
 				{
@@ -593,7 +597,7 @@ class Video extends openfl.display.Bitmap
 				else
 					trace('Unable to initialize the LibVLC media event manager.');
 
-				return LibVLC.media_parse_with_options(currentMediaItem, parse_flag, timeout) == 0;
+				return LibVLC.media_parse_with_options(currentMediaItem.raw, parse_flag, timeout) == 0;
 			}
 		}
 
@@ -605,10 +609,10 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_player_get_media(mediaPlayer.raw));
 
 			if (currentMediaItem != null)
-				LibVLC.media_parse_stop(currentMediaItem);
+				LibVLC.media_parse_stop(currentMediaItem.raw);
 		}
 	}
 
@@ -622,7 +626,7 @@ class Video extends openfl.display.Bitmap
 	 */
 	public function addSlave(type:Int, url:String, select:Bool):Bool
 	{
-		return mediaPlayer != null && LibVLC.media_player_add_slave(mediaPlayer, type, url, select) == 0;
+		return mediaPlayer != null && LibVLC.media_player_add_slave(mediaPlayer.raw, type, url, select) == 0;
 	}
 
 	/**
@@ -636,7 +640,7 @@ class Video extends openfl.display.Bitmap
 
 		if (mediaPlayer != null)
 		{
-			final rawDescription:RawPointer<LibVLC_Track_Description_T> = LibVLC.video_get_track_description(mediaPlayer);
+			final rawDescription:Pointer<LibVLC_Track_Description_T> = Pointer.fromRaw(LibVLC.video_get_track_description(mediaPlayer.raw));
 
 			if (rawDescription != null)
 				getDescription(rawDescription, description);
@@ -656,7 +660,7 @@ class Video extends openfl.display.Bitmap
 
 		if (mediaPlayer != null)
 		{
-			final rawDescription:RawPointer<LibVLC_Track_Description_T> = LibVLC.audio_get_track_description(mediaPlayer);
+			final rawDescription:Pointer<LibVLC_Track_Description_T> = Pointer.fromRaw(LibVLC.audio_get_track_description(mediaPlayer.raw));
 
 			if (rawDescription != null)
 				getDescription(rawDescription, description);
@@ -676,7 +680,7 @@ class Video extends openfl.display.Bitmap
 
 		if (mediaPlayer != null)
 		{
-			final rawDescription:RawPointer<LibVLC_Track_Description_T> = LibVLC.video_get_spu_description(mediaPlayer);
+			final rawDescription:Pointer<LibVLC_Track_Description_T> = Pointer.fromRaw(LibVLC.video_get_spu_description(mediaPlayer.raw));
 
 			if (rawDescription != null)
 				getDescription(rawDescription, description);
@@ -692,49 +696,49 @@ class Video extends openfl.display.Bitmap
 	 */
 	public function play():Bool
 	{
-		return mediaPlayer != null && LibVLC.media_player_play(mediaPlayer) == 0;
+		return mediaPlayer != null && LibVLC.media_player_play(mediaPlayer.raw) == 0;
 	}
 
 	/** Stops playback. */
 	public function stop():Void
 	{
 		if (mediaPlayer != null)
-			LibVLC.media_player_stop(mediaPlayer);
+			LibVLC.media_player_stop(mediaPlayer.raw);
 	}
 
 	/** Pauses playback. */
 	public function pause():Void
 	{
 		if (mediaPlayer != null)
-			LibVLC.media_player_set_pause(mediaPlayer, 1);
+			LibVLC.media_player_set_pause(mediaPlayer.raw, 1);
 	}
 
 	/** Resumes playback. */
 	public function resume():Void
 	{
 		if (mediaPlayer != null)
-			LibVLC.media_player_set_pause(mediaPlayer, 0);
+			LibVLC.media_player_set_pause(mediaPlayer.raw, 0);
 	}
 
 	/** Toggles the pause state. */
 	public function togglePaused():Void
 	{
 		if (mediaPlayer != null)
-			LibVLC.media_player_pause(mediaPlayer);
+			LibVLC.media_player_pause(mediaPlayer.raw);
 	}
 
 	/** Moves to the previous chapter, if supported. */
 	public function previousChapter():Void
 	{
 		if (mediaPlayer != null)
-			LibVLC.media_player_previous_chapter(mediaPlayer);
+			LibVLC.media_player_previous_chapter(mediaPlayer.raw);
 	}
 
 	/** Moves to the next chapter, if supported. */
 	public function nextChapter():Void
 	{
 		if (mediaPlayer != null)
-			LibVLC.media_player_next_chapter(mediaPlayer);
+			LibVLC.media_player_next_chapter(mediaPlayer.raw);
 	}
 
 	/**
@@ -747,11 +751,11 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_player_get_media(mediaPlayer.raw));
 
 			if (currentMediaItem != null)
 			{
-				final rawMeta:CastCharStar = LibVLC.media_get_meta(currentMediaItem, e_meta);
+				final rawMeta:CastCharStar = LibVLC.media_get_meta(currentMediaItem.raw, e_meta);
 
 				if (rawMeta != null)
 					return new String(untyped rawMeta);
@@ -771,10 +775,10 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null && value != null)
 		{
-			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_player_get_media(mediaPlayer.raw));
 
 			if (currentMediaItem != null)
-				LibVLC.media_set_meta(currentMediaItem, e_meta, value);
+				LibVLC.media_set_meta(currentMediaItem.raw, e_meta, value);
 		}
 	}
 
@@ -787,10 +791,10 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_player_get_media(mediaPlayer.raw));
 
 			if (currentMediaItem != null)
-				return LibVLC.media_save_meta(currentMediaItem) != 0;
+				return LibVLC.media_save_meta(currentMediaItem.raw) != 0;
 		}
 
 		return false;
@@ -801,7 +805,7 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			LibVLC.media_player_release(mediaPlayer);
+			LibVLC.media_player_release(mediaPlayer.raw);
 			mediaPlayer = null;
 		}
 
@@ -862,11 +866,11 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_player_get_media(mediaPlayer.raw));
 
 			if (currentMediaItem != null)
 			{
-				final rawMrl:CastCharStar = LibVLC.media_get_mrl(currentMediaItem);
+				final rawMrl:CastCharStar = LibVLC.media_get_mrl(currentMediaItem.raw);
 
 				if (rawMrl != null)
 					return new String(untyped rawMrl);
@@ -881,13 +885,13 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_player_get_media(mediaPlayer.raw));
 
 			if (currentMediaItem != null)
 			{
 				final currentMediaStats:LibVLC_Media_Stats_T = new LibVLC_Media_Stats_T();
 
-				if (LibVLC.media_get_stats(currentMediaItem, cpp.RawPointer.addressOf(currentMediaStats)) != 0)
+				if (LibVLC.media_get_stats(currentMediaItem.raw, Pointer.addressOf(currentMediaStats).raw) != 0)
 					return Stats.fromMediaStats(currentMediaStats);
 			}
 		}
@@ -900,10 +904,10 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final currentMediaItem:RawPointer<LibVLC_Media_T> = LibVLC.media_player_get_media(mediaPlayer);
+			final currentMediaItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_player_get_media(mediaPlayer.raw));
 
 			if (currentMediaItem != null)
-				return LibVLC.media_get_duration(currentMediaItem);
+				return LibVLC.media_get_duration(currentMediaItem.raw);
 		}
 
 		return -1;
@@ -912,26 +916,26 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private function get_isPlaying():Bool
 	{
-		return mediaPlayer != null && LibVLC.media_player_is_playing(mediaPlayer) != 0;
+		return mediaPlayer != null && LibVLC.media_player_is_playing(mediaPlayer.raw) != 0;
 	}
 
 	@:noCompletion
 	private function get_length():Int64
 	{
-		return mediaPlayer != null ? LibVLC.media_player_get_length(mediaPlayer) : -1;
+		return mediaPlayer != null ? LibVLC.media_player_get_length(mediaPlayer.raw) : -1;
 	}
 
 	@:noCompletion
 	private function get_time():Int64
 	{
-		return mediaPlayer != null ? LibVLC.media_player_get_time(mediaPlayer) : -1;
+		return mediaPlayer != null ? LibVLC.media_player_get_time(mediaPlayer.raw) : -1;
 	}
 
 	@:noCompletion
 	private function set_time(value:Int64):Int64
 	{
 		if (mediaPlayer != null)
-			LibVLC.media_player_set_time(mediaPlayer, value);
+			LibVLC.media_player_set_time(mediaPlayer.raw, value);
 
 		return value;
 	}
@@ -939,14 +943,14 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private function get_position():Single
 	{
-		return mediaPlayer != null ? LibVLC.media_player_get_position(mediaPlayer) : -1.0;
+		return mediaPlayer != null ? LibVLC.media_player_get_position(mediaPlayer.raw) : -1.0;
 	}
 
 	@:noCompletion
 	private function set_position(value:Single):Single
 	{
 		if (mediaPlayer != null)
-			LibVLC.media_player_set_position(mediaPlayer, value);
+			LibVLC.media_player_set_position(mediaPlayer.raw, value);
 
 		return value;
 	}
@@ -954,14 +958,14 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private function get_chapter():Int
 	{
-		return mediaPlayer != null ? LibVLC.media_player_get_chapter(mediaPlayer) : -1;
+		return mediaPlayer != null ? LibVLC.media_player_get_chapter(mediaPlayer.raw) : -1;
 	}
 
 	@:noCompletion
 	private function set_chapter(value:Int):Int
 	{
 		if (mediaPlayer != null)
-			LibVLC.media_player_set_chapter(mediaPlayer, value);
+			LibVLC.media_player_set_chapter(mediaPlayer.raw, value);
 
 		return value;
 	}
@@ -969,20 +973,20 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private function get_chapterCount():Int
 	{
-		return mediaPlayer != null ? LibVLC.media_player_get_chapter_count(mediaPlayer) : -1;
+		return mediaPlayer != null ? LibVLC.media_player_get_chapter_count(mediaPlayer.raw) : -1;
 	}
 
 	@:noCompletion
 	private function get_rate():Single
 	{
-		return mediaPlayer != null ? LibVLC.media_player_get_rate(mediaPlayer) : 1;
+		return mediaPlayer != null ? LibVLC.media_player_get_rate(mediaPlayer.raw) : 1;
 	}
 
 	@:noCompletion
 	private function set_rate(value:Single):Single
 	{
 		if (mediaPlayer != null)
-			LibVLC.media_player_set_rate(mediaPlayer, value);
+			LibVLC.media_player_set_rate(mediaPlayer.raw, value);
 
 		return value;
 	}
@@ -990,13 +994,13 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private function get_isSeekable():Bool
 	{
-		return mediaPlayer != null && LibVLC.media_player_is_seekable(mediaPlayer) != 0;
+		return mediaPlayer != null && LibVLC.media_player_is_seekable(mediaPlayer.raw) != 0;
 	}
 
 	@:noCompletion
 	private function get_canPause():Bool
 	{
-		return mediaPlayer != null && LibVLC.media_player_can_pause(mediaPlayer) != 0;
+		return mediaPlayer != null && LibVLC.media_player_can_pause(mediaPlayer.raw) != 0;
 	}
 
 	@:noCompletion
@@ -1023,14 +1027,14 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private function get_role():UInt
 	{
-		return mediaPlayer != null ? LibVLC.media_player_get_role(mediaPlayer) : 0;
+		return mediaPlayer != null ? LibVLC.media_player_get_role(mediaPlayer.raw) : 0;
 	}
 
 	@:noCompletion
 	private function set_role(value:UInt):UInt
 	{
 		if (mediaPlayer != null)
-			LibVLC.media_player_set_role(mediaPlayer, value);
+			LibVLC.media_player_set_role(mediaPlayer.raw, value);
 
 		return value;
 	}
@@ -1038,20 +1042,20 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private function get_videoTrackCount():Int
 	{
-		return mediaPlayer != null ? LibVLC.video_get_track_count(mediaPlayer) : -1;
+		return mediaPlayer != null ? LibVLC.video_get_track_count(mediaPlayer.raw) : -1;
 	}
 
 	@:noCompletion
 	private function get_videoTrack():Int
 	{
-		return mediaPlayer != null ? LibVLC.video_get_track(mediaPlayer) : -1;
+		return mediaPlayer != null ? LibVLC.video_get_track(mediaPlayer.raw) : -1;
 	}
 
 	@:noCompletion
 	private function set_videoTrack(value:Int):Int
 	{
 		if (mediaPlayer != null)
-			LibVLC.video_set_track(mediaPlayer, value);
+			LibVLC.video_set_track(mediaPlayer.raw, value);
 
 		return value;
 	}
@@ -1059,20 +1063,20 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private function get_audioTrackCount():Int
 	{
-		return mediaPlayer != null ? LibVLC.audio_get_track_count(mediaPlayer) : -1;
+		return mediaPlayer != null ? LibVLC.audio_get_track_count(mediaPlayer.raw) : -1;
 	}
 
 	@:noCompletion
 	private function get_audioTrack():Int
 	{
-		return mediaPlayer != null ? LibVLC.audio_get_track(mediaPlayer) : -1;
+		return mediaPlayer != null ? LibVLC.audio_get_track(mediaPlayer.raw) : -1;
 	}
 
 	@:noCompletion
 	private function set_audioTrack(value:Int):Int
 	{
 		if (mediaPlayer != null)
-			LibVLC.audio_set_track(mediaPlayer, value);
+			LibVLC.audio_set_track(mediaPlayer.raw, value);
 
 		return value;
 	}
@@ -1080,14 +1084,14 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private function get_audioDelay():Int64
 	{
-		return mediaPlayer != null ? LibVLC.audio_get_delay(mediaPlayer) : 0;
+		return mediaPlayer != null ? LibVLC.audio_get_delay(mediaPlayer.raw) : 0;
 	}
 
 	@:noCompletion
 	private function set_audioDelay(value:Int64):Int64
 	{
 		if (mediaPlayer != null)
-			LibVLC.audio_set_delay(mediaPlayer, value);
+			LibVLC.audio_set_delay(mediaPlayer.raw, value);
 
 		return value;
 	}
@@ -1095,20 +1099,20 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private function get_spuTrackCount():Int
 	{
-		return mediaPlayer != null ? LibVLC.video_get_spu_count(mediaPlayer) : -1;
+		return mediaPlayer != null ? LibVLC.video_get_spu_count(mediaPlayer.raw) : -1;
 	}
 
 	@:noCompletion
 	private function get_spuTrack():Int
 	{
-		return mediaPlayer != null ? LibVLC.video_get_spu(mediaPlayer) : -1;
+		return mediaPlayer != null ? LibVLC.video_get_spu(mediaPlayer.raw) : -1;
 	}
 
 	@:noCompletion
 	private function set_spuTrack(value:Int):Int
 	{
 		if (mediaPlayer != null)
-			LibVLC.video_set_spu(mediaPlayer, value);
+			LibVLC.video_set_spu(mediaPlayer.raw, value);
 
 		return value;
 	}
@@ -1116,14 +1120,14 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	private function get_spuDelay():Int64
 	{
-		return mediaPlayer != null ? LibVLC.video_get_spu_delay(mediaPlayer) : 0;
+		return mediaPlayer != null ? LibVLC.video_get_spu_delay(mediaPlayer.raw) : 0;
 	}
 
 	@:noCompletion
 	private function set_spuDelay(value:Int64):Int64
 	{
 		if (mediaPlayer != null)
-			LibVLC.video_set_spu_delay(mediaPlayer, value);
+			LibVLC.video_set_spu_delay(mediaPlayer.raw, value);
 
 		return value;
 	}
@@ -1169,7 +1173,7 @@ class Video extends openfl.display.Bitmap
 	{
 		mediaMutex.acquire();
 
-		final bytesRead:Int = mediaInput != null ? Util.readFromInput(mediaInput, untyped buf, cast len) : -1;
+		final bytesRead:Int = mediaInput != null ? Util.readFromInput(mediaInput, Pointer.fromRaw(buf), cast len) : -1;
 
 		mediaMutex.release();
 
@@ -1258,12 +1262,12 @@ class Video extends openfl.display.Bitmap
 	{
 		textureMutex.acquire();
 
-		cpp.Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('RV32'), 4);
+		Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString('RV32'), 4);
 
 		final originalWidth:UInt32 = width[0];
 		final originalHeight:UInt32 = height[0];
 
-		if (mediaPlayer == null || LibVLC.video_get_size(mediaPlayer, 0, width, height) != 0)
+		if (mediaPlayer == null || LibVLC.video_get_size(mediaPlayer.raw, 0, width, height) != 0)
 		{
 			width[0] = originalWidth;
 			height[0] = originalHeight;
@@ -1458,7 +1462,7 @@ class Video extends openfl.display.Bitmap
 		{
 			final useFloat32:Bool = alUseEXTFLOAT32 == true && (new String(untyped format) == 'FL32');
 
-			cpp.Stdlib.nativeMemcpy(untyped format, untyped cpp.CastCharStar.fromString(useFloat32 ? 'FL32' : 'S16N'), 4);
+			Stdlib.nativeMemcpy(untyped format, untyped cpp.CastCharStar.fromString(useFloat32 ? 'FL32' : 'S16N'), 4);
 
 			switch (alChannelsToUse)
 			{
@@ -1479,7 +1483,7 @@ class Video extends openfl.display.Bitmap
 					alChannelsToUse = 8;
 			}
 
-			alFrameSize = (useFloat32 ? cpp.Stdlib.sizeof(cpp.Float32) : cpp.Stdlib.sizeof(cpp.Int16)) * alChannelsToUse;
+			alFrameSize = (useFloat32 ? Stdlib.sizeof(Float32) : Stdlib.sizeof(Int16)) * alChannelsToUse;
 		}
 
 		channels[0] = alChannelsToUse;
@@ -1616,23 +1620,23 @@ class Video extends openfl.display.Bitmap
 
 	@:noCompletion
 	@:unreflective
-	private function getDescription(rawDescription:RawPointer<LibVLC_Track_Description_T>, description:Array<TrackDescription>):Void
+	private function getDescription(rawDescription:Pointer<LibVLC_Track_Description_T>, description:Array<TrackDescription>):Void
 	{
-		var nextDescription:RawPointer<LibVLC_Track_Description_T> = rawDescription;
+		var nextDescription:Pointer<LibVLC_Track_Description_T> = rawDescription;
 
 		while (nextDescription != null)
 		{
 			description.push(TrackDescription.fromTrackDescription(nextDescription[0]));
 
-			nextDescription = nextDescription[0].p_next;
+			nextDescription = Pointer.fromRaw(nextDescription[0].p_next);
 		}
 
-		LibVLC.track_description_list_release(rawDescription);
+		LibVLC.track_description_list_release(rawDescription.raw);
 	}
 
 	@:noCompletion
 	@:unreflective
-	private function setMediaToPlayer(mediaItem:RawPointer<LibVLC_Media_T>, ?options:Array<String>):Void
+	private function setMediaToPlayer(mediaItem:Pointer<LibVLC_Media_T>, ?options:Array<String>):Void
 	{
 		if (mediaPlayer == null)
 			return;
@@ -1642,13 +1646,13 @@ class Video extends openfl.display.Bitmap
 			for (option in options)
 			{
 				if (option != null && option.length > 0)
-					LibVLC.media_add_option(mediaItem, option);
+					LibVLC.media_add_option(mediaItem.raw, option);
 			}
 		}
 
-		LibVLC.media_player_set_media(mediaPlayer, mediaItem);
+		LibVLC.media_player_set_media(mediaPlayer.raw, mediaItem.raw);
 
-		LibVLC.media_release(mediaItem);
+		LibVLC.media_release(mediaItem.raw);
 	}
 
 	@:noCompletion
@@ -1658,9 +1662,9 @@ class Video extends openfl.display.Bitmap
 		if (mediaPlayer == null)
 			return;
 
-		LibVLC.video_set_callbacks(mediaPlayer, untyped __cpp__('video_lock'), untyped __cpp__('video_unlock'), untyped __cpp__('video_display'),
+		LibVLC.video_set_callbacks(mediaPlayer.raw, untyped __cpp__('video_lock'), untyped __cpp__('video_unlock'), untyped __cpp__('video_display'),
 			untyped __cpp__('this'));
-		LibVLC.video_set_format_callbacks(mediaPlayer, untyped __cpp__('video_format_setup'), untyped NULL);
+		LibVLC.video_set_format_callbacks(mediaPlayer.raw, untyped __cpp__('video_format_setup'), untyped NULL);
 	}
 
 	@:noCompletion
@@ -1678,10 +1682,10 @@ class Video extends openfl.display.Bitmap
 			alBufferPool = AL.genBuffers(MAX_AUDIO_BUFFER_COUNT);
 		#end
 
-		LibVLC.audio_set_callbacks(mediaPlayer, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'),
+		LibVLC.audio_set_callbacks(mediaPlayer.raw, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'),
 			untyped __cpp__('audio_flush'), untyped NULL, untyped __cpp__('this'));
-		LibVLC.audio_set_volume_callback(mediaPlayer, untyped __cpp__('audio_set_volume'));
-		LibVLC.audio_set_format_callbacks(mediaPlayer, untyped __cpp__('audio_setup'), untyped NULL);
+		LibVLC.audio_set_volume_callback(mediaPlayer.raw, untyped __cpp__('audio_set_volume'));
+		LibVLC.audio_set_format_callbacks(mediaPlayer.raw, untyped __cpp__('audio_setup'), untyped NULL);
 	}
 
 	@:noCompletion
@@ -1690,7 +1694,7 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 		{
-			final eventManager:RawPointer<LibVLC_Event_Manager_T> = LibVLC.media_player_event_manager(mediaPlayer);
+			final eventManager:Pointer<LibVLC_Event_Manager_T> = Pointer.fromRaw(LibVLC.media_player_event_manager(mediaPlayer.raw));
 
 			if (eventManager != null)
 			{
@@ -1715,9 +1719,9 @@ class Video extends openfl.display.Bitmap
 
 	@:noCompletion
 	@:unreflective
-	private function addEvent(eventManager:RawPointer<LibVLC_Event_Manager_T>, type:Int):Void
+	private function addEvent(eventManager:Pointer<LibVLC_Event_Manager_T>, type:Int):Void
 	{
-		if (LibVLC.event_attach(eventManager, type, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+		if (LibVLC.event_attach(eventManager.raw, type, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
 			trace('Failed to attach event (${LibVLC.event_type_name(type)})');
 	}
 }
