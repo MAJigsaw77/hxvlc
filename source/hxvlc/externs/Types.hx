@@ -212,7 +212,6 @@ private extern class LibVLC_Video_Orient_Impl {}
 @:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
-@:unreflective
 @:structAccess
 @:native('libvlc_media_stats_t')
 extern class LibVLC_Media_Stats_T
@@ -330,40 +329,6 @@ private extern class LibVLC_Media_Parsed_Status_T_Impl {}
 extern class LibVLC_Media_Player_T {}
 
 @:dox(hide)
-extern enum abstract LibVLC_Audio_Output_Channel_T(LibVLC_Audio_Output_Channel_T_Impl)
-{
-	@:native('libvlc_AudioChannel_Error')
-	var LibVLC_Audio_Channel_Error;
-
-	@:native('libvlc_AudioChannel_Stereo')
-	var LibVLC_Audio_Channel_Stereo;
-
-	@:native('libvlc_AudioChannel_RStereo')
-	var LibVLC_Audio_Channel_RStereo;
-
-	@:native('libvlc_AudioChannel_Left')
-	var LibVLC_Audio_Channel_Left;
-
-	@:native('libvlc_AudioChannel_Right')
-	var LibVLC_Audio_Channel_Right;
-
-	@:native('libvlc_AudioChannel_Dolbys')
-	var LibVLC_Audio_Channel_Dolbys;
-
-	@:from
-	static public inline function fromInt(i:Int):LibVLC_Audio_Output_Channel_T
-		return cast i;
-
-	@:to extern public inline function toInt():Int
-		return untyped this;
-}
-
-@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
-@:include('vlc/vlc.h')
-@:native('libvlc_audio_output_channel_t')
-private extern class LibVLC_Audio_Output_Channel_T_Impl {}
-
-@:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
 @:native('libvlc_event_manager_t')
@@ -372,7 +337,6 @@ extern class LibVLC_Event_Manager_T {}
 @:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
-@:unreflective
 @:structAccess
 @:native('libvlc_event_t')
 extern class LibVLC_Event_T
@@ -658,7 +622,6 @@ typedef LibVLC_Audio_Set_Volume_CB = cpp.Callable<(data:RawPointer<Void>, volume
 @:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
-@:unreflective
 @:structAccess
 @:native('libvlc_track_description_t')
 extern class LibVLC_Track_Description_T
