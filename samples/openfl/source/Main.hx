@@ -1,6 +1,7 @@
 package;
 
 import hxvlc.openfl.Video;
+
 import openfl.events.Event;
 
 class Main extends openfl.display.Sprite

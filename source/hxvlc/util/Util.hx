@@ -4,8 +4,10 @@ import haxe.Exception;
 import haxe.PosInfos;
 import haxe.io.BytesInput;
 import haxe.io.Path;
+
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
+
 import sys.FileSystem;
 
 using cpp.NativeArray;

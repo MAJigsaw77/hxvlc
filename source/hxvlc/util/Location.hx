@@ -1,6 +1,7 @@
 package hxvlc.util;
 
 import haxe.io.Bytes;
+
 import hxvlc.util.typeLimit.OneOfThree;
 
 /**

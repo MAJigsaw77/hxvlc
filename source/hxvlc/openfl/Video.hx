@@ -5,6 +5,7 @@ import haxe.MainLoop;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
 import haxe.io.BytesInput;
+
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.util.Handle;
@@ -12,11 +13,14 @@ import hxvlc.util.Stats;
 import hxvlc.util.TrackDescription;
 import hxvlc.util.Util;
 import hxvlc.util.macros.DefineMacro;
+
 import lime.app.Event;
 import lime.utils.UInt8Array;
+
 import openfl.Lib;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.RectangleTexture;
+
 import sys.thread.Mutex;
 
 using cpp.NativeArray;

@@ -2,13 +2,17 @@ package hxvlc.flixel;
 
 #if flixel
 import flixel.FlxG;
+
 import haxe.io.Bytes;
 import haxe.io.Path;
+
 import hxvlc.externs.Types;
 import hxvlc.openfl.Video;
 import hxvlc.util.Location;
 import hxvlc.util.macros.DefineMacro;
+
 import openfl.utils.Assets;
+
 import sys.FileSystem;
 
 using StringTools;

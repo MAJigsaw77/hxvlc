@@ -4,8 +4,10 @@ package;
 import android.content.Context;
 import android.os.Build;
 #end
+
 import flixel.FlxG;
 import flixel.FlxGame;
+
 import openfl.Lib;
 import openfl.display.Sprite;
 import openfl.events.Event;
