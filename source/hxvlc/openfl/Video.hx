@@ -566,6 +566,8 @@ class Video extends openfl.display.Bitmap
 
 					LibVLC.media_list_release(currentMediaSubItems.raw);
 				}
+
+				LibVLC.media_release(currentMediaItem.raw);
 			}
 		}
 
@@ -597,7 +599,11 @@ class Video extends openfl.display.Bitmap
 				else
 					trace('Unable to initialize the LibVLC media event manager.');
 
-				return LibVLC.media_parse_with_options(currentMediaItem.raw, parse_flag, timeout) == 0;
+				final result:Bool = LibVLC.media_parse_with_options(currentMediaItem.raw, parse_flag, timeout) == 0;
+
+				LibVLC.media_release(currentMediaItem.raw);
+
+				return result;
 			}
 		}
 
@@ -612,7 +618,10 @@ class Video extends openfl.display.Bitmap
 			final currentMediaItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_player_get_media(mediaPlayer.raw));
 
 			if (currentMediaItem != null)
+			{
 				LibVLC.media_parse_stop(currentMediaItem.raw);
+				LibVLC.media_release(currentMediaItem.raw);
+			}
 		}
 	}
 
@@ -758,7 +767,15 @@ class Video extends openfl.display.Bitmap
 				final rawMeta:CastCharStar = LibVLC.media_get_meta(currentMediaItem.raw, e_meta);
 
 				if (rawMeta != null)
-					return new String(untyped rawMeta);
+				{
+					final meta:String = new String(untyped rawMeta);
+
+					LibVLC.media_release(currentMediaItem.raw);
+
+					return meta;
+				}
+				else
+					LibVLC.media_release(currentMediaItem.raw);
 			}
 		}
 
@@ -778,7 +795,10 @@ class Video extends openfl.display.Bitmap
 			final currentMediaItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_player_get_media(mediaPlayer.raw));
 
 			if (currentMediaItem != null)
+			{
 				LibVLC.media_set_meta(currentMediaItem.raw, e_meta, value);
+				LibVLC.media_release(currentMediaItem.raw);
+			}
 		}
 	}
 
@@ -794,7 +814,13 @@ class Video extends openfl.display.Bitmap
 			final currentMediaItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_player_get_media(mediaPlayer.raw));
 
 			if (currentMediaItem != null)
-				return LibVLC.media_save_meta(currentMediaItem.raw) != 0;
+			{
+				final result:Bool = LibVLC.media_save_meta(currentMediaItem.raw) != 0;
+
+				LibVLC.media_release(currentMediaItem.raw);
+
+				return result;
+			}
 		}
 
 		return false;
@@ -873,7 +899,15 @@ class Video extends openfl.display.Bitmap
 				final rawMrl:CastCharStar = LibVLC.media_get_mrl(currentMediaItem.raw);
 
 				if (rawMrl != null)
-					return new String(untyped rawMrl);
+				{
+					final mrl:String = new String(untyped rawMrl);
+
+					LibVLC.media_release(currentMediaItem.raw);
+
+					return mrl;
+				}
+				else
+					LibVLC.media_release(currentMediaItem.raw);
 			}
 		}
 
@@ -892,7 +926,15 @@ class Video extends openfl.display.Bitmap
 				final currentMediaStats:LibVLC_Media_Stats_T = new LibVLC_Media_Stats_T();
 
 				if (LibVLC.media_get_stats(currentMediaItem.raw, Pointer.addressOf(currentMediaStats).raw) != 0)
-					return Stats.fromMediaStats(currentMediaStats);
+				{
+					final stats:Stats = Stats.fromMediaStats(currentMediaStats);
+
+					LibVLC.media_release(currentMediaItem.raw);
+
+					return stats;
+				}
+				else
+					LibVLC.media_release(currentMediaItem.raw);
 			}
 		}
 
@@ -907,7 +949,13 @@ class Video extends openfl.display.Bitmap
 			final currentMediaItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_player_get_media(mediaPlayer.raw));
 
 			if (currentMediaItem != null)
-				return LibVLC.media_get_duration(currentMediaItem.raw);
+			{
+				final duration:Int64 = LibVLC.media_get_duration(currentMediaItem.raw);
+
+				LibVLC.media_release(currentMediaItem.raw);
+
+				return duration;
+			}
 		}
 
 		return -1;

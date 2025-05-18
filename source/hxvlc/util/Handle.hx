@@ -14,6 +14,11 @@ import hxvlc.util.macros.DefineMacro;
 import sys.FileSystem;
 import sys.thread.Mutex;
 
+#if HXVLC_LOGGING
+import cpp.RawConstPointer;
+import cpp.VarList;
+#end
+
 #if android
 import haxe.Exception;
 
