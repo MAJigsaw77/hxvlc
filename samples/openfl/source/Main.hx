@@ -11,7 +11,7 @@ class Main extends openfl.display.Sprite
 	public static function main():Void
 	{
 		#if android
-		Sys.setCwd(haxe.io.Path.addTrailingSlash(android.os.Build.VERSION.SDK_INT > 30 ? android.content.Context.getObbDir() : android.content.Context.getExternalFilesDir()));
+		Sys.setCwd(haxe.io.Path.addTrailingSlash(extension.androidtools.os.Build.VERSION.SDK_INT > 30 ? extension.androidtools.content.Context.getObbDir() : extension.androidtools.content.Context.getExternalFilesDir()));
 		#elseif ios
 		Sys.setCwd(lime.system.System.documentsDirectory);
 		#end
