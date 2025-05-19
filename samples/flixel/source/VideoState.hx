@@ -110,7 +110,7 @@ class VideoState extends FlxState
 
 			try
 			{
-				final file:String = haxe.io.Path.join(['videos', FileSystem.readDirectory('videos')[0]]);
+				final file:String = haxe.io.Path.join(['assets', FileSystem.readDirectory('assets')[0]]);
 
 				if (file != null && file.length > 0)
 					video.load(file);

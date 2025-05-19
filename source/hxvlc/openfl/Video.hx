@@ -1285,13 +1285,18 @@ class Video extends openfl.display.Bitmap
 				{
 					textureMutex.acquire();
 
-					if (bitmapData != null && bitmapData.__texture != null)
-						cast(bitmapData.__texture, RectangleTexture).uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanes)));
-					else if (bitmapData != null && bitmapData.image != null)
-						bitmapData.setPixels(bitmapData.rect, Bytes.ofData(texturePlanes));
+					if (bitmapData != null)
+					{
+						final texturePlanesData:Bytes = Bytes.ofData(texturePlanes);
 
-					if (__renderable)
-						__setRenderDirty();
+						if (bitmapData.__texture != null)
+							cast(bitmapData.__texture, RectangleTexture).uploadFromTypedArray(UInt8Array.fromBytes(texturePlanesData));
+						else if (bitmapData.image != null)
+							bitmapData.setPixels(bitmapData.rect, texturePlanesData);
+
+						if (__renderable)
+							__setRenderDirty();
+					}
 
 					if (onDisplay != null)
 						onDisplay.dispatch();
@@ -1315,6 +1320,11 @@ class Video extends openfl.display.Bitmap
 		final originalWidth:UInt32 = width[0];
 		final originalHeight:UInt32 = height[0];
 
+		// The width and height passed from VLC are the buffer size rather than
+		// the correct video display size, and may be the next multiple of 32
+		// up from the original dimension, e.g. 1080 would become 1088. VLC 4.0
+		// will pass the correct display size in *(width+1) and *(height+1) but
+		// for now we need to calculate it ourselves.
 		if (!calculateVideoSize(Pointer.fromRaw(width), Pointer.fromRaw(height)))
 		{
 			width[0] = originalWidth;
@@ -1773,6 +1783,9 @@ class Video extends openfl.display.Bitmap
 			trace('Failed to attach event (${LibVLC.event_type_name(type)})');
 	}
 
+	/**
+	 * @see https://github.com/obsproject/obs-studio/blob/5d1f0efc43c64c25f5edd4101bc1f0013bcacb60/plugins/vlc-video/vlc-video-source.c#L385
+	 */
 	@:noCompletion
 	@:unreflective
 	private function calculateVideoSize(width:Pointer<UInt32>, height:Pointer<UInt32>):Bool
