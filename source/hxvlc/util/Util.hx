@@ -168,12 +168,11 @@ class Util
 	 */
 	public static function convertAbsToURL(path:String):String
 	{
-		final normalizedPath:String = Path.normalize(path);
-
-		if (!normalizedPath.startsWith('/'))
-			return 'file:///$normalizedPath';
-		else
-			return 'file://$normalizedPath';
+		#if windows
+		return 'file:///${Path.normalize(FileSystem.absolutePath(path))}';
+		#else
+		return 'file://${Path.normalize(FileSystem.absolutePath(path))}';
+		#end
 	}
 
 	/**
@@ -196,10 +195,7 @@ class Util
 		if (input.position > (input.length - read) || input.b == null)
 			return -1;
 
-		{
-			@:nullSafety(Off)
-			Stdlib.memcpy(buf, Pointer.addressOf(input.b.getBase().getBase()[input.position]), read);
-		}
+		Stdlib.nativeMemcpy(cast buf.raw, cast Pointer.addressOf(input.b.getBase().getBase()[input.position]).constRaw, read);
 
 		input.position += read;
 
