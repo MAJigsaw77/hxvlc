@@ -1787,6 +1787,7 @@ class Video extends openfl.display.Bitmap
 	 * @see https://github.com/obsproject/obs-studio/blob/5d1f0efc43c64c25f5edd4101bc1f0013bcacb60/plugins/vlc-video/vlc-video-source.c#L385
 	 */
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function calculateVideoSize(width:Pointer<UInt32>, height:Pointer<UInt32>):Bool
 	{
