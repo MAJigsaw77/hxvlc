@@ -1450,7 +1450,7 @@ class Video extends openfl.display.Bitmap
 		{
 			alMutex.acquire();
 
-			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
+			if (AL.getSourcei(alSource, AL.SOURCE_STATE) == AL.PAUSED)
 				AL.sourcePlay(alSource);
 
 			alMutex.release();

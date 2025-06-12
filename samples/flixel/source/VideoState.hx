@@ -41,6 +41,15 @@ class VideoState extends FlxState
 
 			if (video.bitmap != null)
 			{
+				if (FlxG.keys.justPressed.R)
+				{
+					video.pause();
+
+					video.bitmap.position = 0.0;
+
+					video.resume();
+				}
+
 				if (FlxG.keys.justPressed.LEFT)
 					video.bitmap.position -= 0.1;
 				else if (FlxG.keys.justPressed.RIGHT)
@@ -51,9 +60,6 @@ class VideoState extends FlxState
 				else if (FlxG.keys.justPressed.D)
 					video.bitmap.rate += 0.01;
 			}
-
-			if (FlxG.keys.justPressed.ESCAPE)
-				video.stop();
 		}
 
 		super.update(elapsed);
@@ -94,7 +100,10 @@ class VideoState extends FlxState
 			video = new FlxVideoSprite(0, 0);
 			video.active = false;
 			video.antialiasing = true;
-			video.bitmap.onStopped.add(finishVideo);
+			video.bitmap.onEncounteredError.add(function(message:String):Void
+			{
+				trace('VLC Error: $message');
+			});
 			video.bitmap.onEndReached.add(finishVideo);
 			video.bitmap.onFormatSetup.add(function():Void
 			{
