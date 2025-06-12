@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "2.2.1",
-	"releasenote": "Some fixes to null safety and an extern type issue.",
+	"version": "2.2.2",
+	"releasenote": "Only resume audio from PAUSED state to handle pause/seek/resume correctly.",
 	"contributors": [
 		"MAJigsaw77"
 	],
