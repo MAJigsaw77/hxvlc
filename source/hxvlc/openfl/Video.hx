@@ -433,6 +433,9 @@ class Video extends openfl.display.Bitmap
 	private var alBufferPool:Null<Array<ALBuffer>>;
 
 	@:noCompletion
+	private var alSamples:Null<BytesData>;
+
+	@:noCompletion
 	private var alSampleRate:UInt32 = 0;
 
 	@:noCompletion
@@ -865,13 +868,8 @@ class Video extends openfl.display.Bitmap
 			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.STOPPED)
 				AL.sourceStop(alSource);
 
-			final queuedBuffers:Int = AL.getSourcei(alSource, AL.BUFFERS_QUEUED);
-
-			if (queuedBuffers > 0)
-			{
-				for (alBuffer in AL.sourceUnqueueBuffers(alSource, queuedBuffers))
-					AL.deleteBuffer(alBuffer);
-			}
+			for (alBuffer in AL.sourceUnqueueBuffers(alSource, AL.getSourcei(alSource, AL.BUFFERS_QUEUED)))
+				AL.deleteBuffer(alBuffer);
 
 			AL.deleteSource(alSource);
 			alSource = null;
@@ -1374,11 +1372,8 @@ class Video extends openfl.display.Bitmap
 							bitmapData.disposeImage();
 
 							bitmapData.__texture = Lib.current.stage.context3D.createRectangleTexture(bitmapData.width, bitmapData.height, BGRA, true);
-
 							bitmapData.__texture.__uploadFromImage(bitmapData.image);
-
 							bitmapData.__textureContext = bitmapData.__texture.__textureContext;
-
 							bitmapData.__surface = null;
 
 							bitmapData.image = null;
@@ -1408,34 +1403,30 @@ class Video extends openfl.display.Bitmap
 		{
 			alMutex.acquire();
 
-			final processedBuffers:Int = AL.getSourcei(alSource, AL.BUFFERS_PROCESSED);
+			for (alBuffer in AL.sourceUnqueueBuffers(alSource, AL.getSourcei(alSource, AL.BUFFERS_PROCESSED)))
+				alBufferPool.push(alBuffer);
 
-			if (processedBuffers > 0)
+			final alBuffer:Null<ALBuffer> = alBufferPool.shift();
+
+			if (alBuffer == null)
 			{
-				for (alBuffer in AL.sourceUnqueueBuffers(alSource, processedBuffers))
-					alBufferPool.push(alBuffer);
+				alMutex.release();
+				return;
 			}
 
-			if (alBufferPool.length > 0)
-			{
-				final alBuffer:Null<ALBuffer> = alBufferPool.shift();
+			if (alSamples == null)
+				alSamples = new BytesData();
 
-				if (alBuffer != null)
-				{
-					final alSamples:BytesData = new BytesData();
-
-					alSamples.setUnmanagedData(cast samples, count);
-
-					AL.bufferData(alBuffer, alFormat, UInt8Array.fromBytes(Bytes.ofData(alSamples)), alSamples.length * alFrameSize, alSampleRate);
-
-					AL.sourceQueueBuffer(alSource, alBuffer);
-
-					if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
-						AL.sourcePlay(alSource);
-				}
-			}
+			alSamples.setUnmanagedData(cast samples, count);
 
 			alMutex.release();
+
+			AL.bufferData(alBuffer, alFormat, UInt8Array.fromBytes(Bytes.ofData(alSamples)), alSamples.length * alFrameSize, alSampleRate);
+
+			AL.sourceQueueBuffer(alSource, alBuffer);
+
+			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
+				AL.sourcePlay(alSource);
 		}
 		#end
 	}
@@ -1503,6 +1494,9 @@ class Video extends openfl.display.Bitmap
 		alMutex.acquire();
 
 		alSampleRate = rate[0];
+
+		if (alSamples == null)
+			alSamples = new BytesData();
 
 		if (alUseEXTFLOAT32 == null)
 			alUseEXTFLOAT32 = AL.isExtensionPresent('AL_EXT_FLOAT32');
