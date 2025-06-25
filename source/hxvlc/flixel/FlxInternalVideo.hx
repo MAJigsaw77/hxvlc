@@ -29,11 +29,7 @@ class FlxInternalVideo extends Video
 	@:noCompletion
 	private var resumeOnFocus:Bool = false;
 
-	/**
-	 * Initializes a FlxVideo object.
-	 * 
-	 * @param smoothing Whether or not the video is smoothed when scaled.
-	 */
+	@:inheritDoc(hxvlc.openfl.Video.new)
 	public function new(smoothing:Bool = true):Void
 	{
 		super(smoothing);
@@ -60,13 +56,7 @@ class FlxInternalVideo extends Video
 		});
 	}
 
-	/**
-	 * Loads a video.
-	 * 
-	 * @param location The local filesystem path, the media location URL, the ID of an open file descriptor, or the bitstream input.
-	 * @param options Additional options to add to the LibVLC Media.
-	 * @return `true` if the video loaded successfully, `false` otherwise.
-	 */
+	@:inheritDoc(hxvlc.openfl.Video.load)
 	public override function load(location:Location, ?options:Array<String>):Bool
 	{
 		if (location != null && !(location is Int) && !(location is Bytes) && (location is String))
@@ -121,14 +111,7 @@ class FlxInternalVideo extends Video
 		return super.load(location, options);
 	}
 
-	/**
-	 * Adds a slave to the current media player.
-	 * 
-	 * @param type The slave type.
-	 * @param uri URI of the slave (should contain a valid scheme).
-	 * @param select `true` if this slave should be selected when it's loaded.
-	 * @return `true` on success, `false` otherwise.
-	 */
+	@:inheritDoc(hxvlc.openfl.Video.addSlave)
 	public override function addSlave(type:Int, location:String, select:Bool):Bool
 	{
 		if (!Video.URL_VERIFICATION_REGEX.match(location))
@@ -156,7 +139,7 @@ class FlxInternalVideo extends Video
 		return super.addSlave(type, location, select);
 	}
 
-	/** Frees the memory that is used to store the Video object. */
+	@:inheritDoc(hxvlc.openfl.Video.dispose)
 	public override function dispose():Void
 	{
 		if (FlxG.signals.focusGained.has(onFocusGained))

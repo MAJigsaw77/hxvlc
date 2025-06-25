@@ -17,6 +17,8 @@ import sys.thread.Mutex;
 #if HXVLC_LOGGING
 import cpp.RawConstPointer;
 import cpp.VarList;
+
+import haxe.Log;
 #end
 
 #if android
@@ -324,7 +326,7 @@ class Handle
 		}
 		#end
 
-		haxe.Log.trace(msg, Util.getPosFromContext(ctx));
+		Log.trace(msg, Util.getPosFromContext(ctx));
 
 		logMutex.release();
 	}
