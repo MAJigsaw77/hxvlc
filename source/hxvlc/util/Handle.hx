@@ -20,7 +20,6 @@ import cpp.VarList;
 
 import haxe.Log;
 #end
-
 #if android
 import haxe.Exception;
 
