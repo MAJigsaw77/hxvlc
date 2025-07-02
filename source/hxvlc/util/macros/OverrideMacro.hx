@@ -7,8 +7,17 @@ import haxe.macro.Type;
 import haxe.macro.TypeTools;
 #end
 
+/**
+ * Utility class used for overriding methods in classes.   
+ */
 class OverrideMacro {
     #if macro
+    /**
+     * Override method `name` with an empty function body.
+     *
+     * @param name The name of the method to override.
+     * @return An array of the class fields that contains the new overriden method.
+     */
     public static function overrideEmpty(name:String):Array<Field> {
         final cls = Context.getLocalClass();
         final tcls = cls.get();
