@@ -55,7 +55,12 @@ class FlxVideoSprite extends FlxSprite
 		bitmap.onFormatSetup.add(function():Void
 		{
 			if (bitmap != null && bitmap.bitmapData != null)
-				loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
+			{
+				if (bitmap.bitmapData.width != frameWidth || bitmap.bitmapData.height != frameHeight)
+					loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
+				else
+					graphic.bitmap = bitmap.bitmapData;
+			}
 		});
 		bitmap.visible = false;
 		FlxG.game.addChild(bitmap);
