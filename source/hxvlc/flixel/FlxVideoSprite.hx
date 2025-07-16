@@ -56,7 +56,7 @@ class FlxVideoSprite extends FlxSprite
 		{
 			if (bitmap != null && bitmap.bitmapData != null)
 			{
-				if (bitmap.bitmapData.width != frameWidth || bitmap.bitmapData.height != frameHeight)
+				if (graphic == null || graphic.isDestroyed || bitmap.bitmapData.width != frameWidth || bitmap.bitmapData.height != frameHeight)
 					loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
 				else
 					graphic.bitmap = bitmap.bitmapData;
