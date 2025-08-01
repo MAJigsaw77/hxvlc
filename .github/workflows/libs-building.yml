@@ -15,6 +15,7 @@ jobs:
         uses: actions/checkout@main
 
       - name: Setup Android NDK
+        if: ${{ matrix.arch == 'armv7a' || matrix.arch == 'x86' }}
         uses: nttld/setup-ndk@main
         id: setup-ndk
         with:
@@ -32,7 +33,15 @@ jobs:
       - name: Set Git Config User
         run: git config --global user.name "github-actions[bot]" && git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Compile Libs
+      - name: Compile Libs 64bit
+        if: ${{ matrix.arch == 'arm64' || matrix.arch == 'x86_64' }}
+        run: chmod +x project/vlc/scripts/Android-Building.sh && ./project/vlc/scripts/Android-Building.sh ${{ matrix.arch }}
+        env:
+          ANDROID_NDK_HOME: $ANDROID_NDK_LATEST_HOME
+          ANDROID_NDK: $ANDROID_NDK_LATEST_HOME
+
+      - name: Compile Libs 32bit
+        if: ${{ matrix.arch == 'armv7a' || matrix.arch == 'x86' }}
         run: chmod +x project/vlc/scripts/Android-Building.sh && ./project/vlc/scripts/Android-Building.sh ${{ matrix.arch }}
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
