@@ -1,5 +1,5 @@
 diff --git a/extras/package/apple/build.conf b/extras/package/apple/build.conf
-index cb72bec33e..ec8556d939 100644
+index 10f5c15d7c..0406ded7eb 100644
 --- a/extras/package/apple/build.conf
 +++ b/extras/package/apple/build.conf
 @@ -14,8 +14,14 @@
