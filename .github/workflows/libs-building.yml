@@ -14,10 +14,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
-      - name: Setup Android NDK
+      - name: Setup Android NDK 64bit
+        if: ${{ matrix.arch == 'arm64' || matrix.arch == 'x86_64' }}
+        uses: nttld/setup-ndk@main
+        id: setup-ndk-64
+        with:
+          ndk-version: r28c
+
+      - name: Setup Android NDK 32bit
         if: ${{ matrix.arch == 'armv7a' || matrix.arch == 'x86' }}
         uses: nttld/setup-ndk@main
-        id: setup-ndk
+        id: setup-ndk-32
         with:
           ndk-version: r21e
 
@@ -37,15 +44,15 @@ jobs:
         if: ${{ matrix.arch == 'arm64' || matrix.arch == 'x86_64' }}
         run: chmod +x project/vlc/scripts/Android-Building.sh && ./project/vlc/scripts/Android-Building.sh ${{ matrix.arch }}
         env:
-          ANDROID_NDK_HOME: ${{ env.ANDROID_NDK_LATEST_HOME }}
-          ANDROID_NDK: ${{ env.ANDROID_NDK_LATEST_HOME }}
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk-64.outputs.ndk-path }}
+          ANDROID_NDK: ${{ steps.setup-ndk-64.outputs.ndk-path }}
 
       - name: Compile Libs 32bit
         if: ${{ matrix.arch == 'armv7a' || matrix.arch == 'x86' }}
         run: chmod +x project/vlc/scripts/Android-Building.sh && ./project/vlc/scripts/Android-Building.sh ${{ matrix.arch }}
         env:
-          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
-          ANDROID_NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk-32.outputs.ndk-path }}
+          ANDROID_NDK: ${{ steps.setup-ndk-32.outputs.ndk-path }}
 
       - name: Upload Build
         uses: actions/upload-artifact@main
