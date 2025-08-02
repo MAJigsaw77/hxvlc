@@ -46,6 +46,9 @@ import lime.media.openal.ALSource;
 #end
 
 /** This class is a video player that uses LibVLC for seamless integration with OpenFL display objects. */
+#if !macro
+@:build(hxvlc.util.macros.OverrideMacro.overrideEmpty("__enterFrame"))
+#end
 @:access(openfl.display.BitmapData)
 @:cppNamespaceCode('
 static int media_open(void *opaque, void **datap, uint64_t *sizep)
@@ -1177,9 +1180,6 @@ class Video extends openfl.display.Bitmap
 
 		return value;
 	}
-
-	@:noCompletion
-	private override function __enterFrame(deltaTime:Int):Void {}
 
 	@:noCompletion
 	private override function set_bitmapData(value:BitmapData):BitmapData
