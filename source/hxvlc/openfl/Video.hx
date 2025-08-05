@@ -288,10 +288,10 @@ class Video extends openfl.display.Bitmap
 	/** Indicates whether the media is currently playing. */
 	public var isPlaying(get, never):Bool;
 
-	/** Length of the media in microseconds. */
+	/** Length of the media in miliseconds. */
 	public var length(get, never):Int64;
 
-	/** Current time position in the media in microseconds. */
+	/** Current time position in the media in miliseconds. */
 	public var time(get, set):Int64;
 
 	/** Current playback position as a percentage (0.0 to 1.0). */
@@ -362,6 +362,15 @@ class Video extends openfl.display.Bitmap
 
 	/** Event triggered when the media changes. */
 	public var onMediaChanged(default, null):Event<Void->Void> = new Event<Void->Void>();
+
+	/** Event triggered when a new Elementary Stream (ES) is added. */
+	public var onESAdded(default, null):Event<Int->Int->Void> = new Event<Int->Int->Void>();
+
+	/** Event triggered when an Elementary Stream (ES) is deleted. */
+	public var onESDeleted(default, null):Event<Int->Int->Void> = new Event<Int->Int->Void>();
+
+	/** Event triggered when an Elementary Stream (ES) is selected. */
+	public var onESSelected(default, null):Event<Int->Int->Void> = new Event<Int->Int->Void>();
 
 	/** Event triggered when the media is corked. */
 	public var onCorked(default, null):Event<Void->Void> = new Event<Void->Void>();
@@ -1603,6 +1612,33 @@ class Video extends openfl.display.Bitmap
 							onEncounteredError.dispatch('Unknown error');
 					}
 				});
+			case event if (event == LibVLC_MediaPlayerESAdded):
+				final iType:LibVLC_Track_Type = untyped __cpp__('{0}.u.media_player_es_changed.i_type', p_event[0]);
+				final iID:Int = untyped __cpp__('{0}.u.media_player_es_changed.i_id', p_event[0]);
+
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onESAdded != null)
+						onESAdded.dispatch((iType : Int), iID);
+				});
+			case event if (event == LibVLC_MediaPlayerESDeleted):
+				final iType:LibVLC_Track_Type = untyped __cpp__('{0}.u.media_player_es_changed.i_type', p_event[0]);
+				final iID:Int = untyped __cpp__('{0}.u.media_player_es_changed.i_id', p_event[0]);
+
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onESDeleted != null)
+						onESDeleted.dispatch((iType : Int), iID);
+				});
+			case event if (event == LibVLC_MediaPlayerESSelected):
+				final iType:LibVLC_Track_Type = untyped __cpp__('{0}.u.media_player_es_changed.i_type', p_event[0]);
+				final iID:Int = untyped __cpp__('{0}.u.media_player_es_changed.i_id', p_event[0]);
+
+				MainLoop.runInMainThread(function():Void
+				{
+					if (onESSelected != null)
+						onESSelected.dispatch((iType : Int), iID);
+				});
 			case event if (event == LibVLC_MediaPlayerCorked):
 				MainLoop.runInMainThread(function():Void
 				{
@@ -1757,6 +1793,9 @@ class Video extends openfl.display.Bitmap
 				addEvent(eventManager, LibVLC_MediaPlayerEndReached);
 				addEvent(eventManager, LibVLC_MediaPlayerEncounteredError);
 				addEvent(eventManager, LibVLC_MediaPlayerMediaChanged);
+				addEvent(eventManager, LibVLC_MediaPlayerESAdded);
+				addEvent(eventManager, LibVLC_MediaPlayerESDeleted);
+				addEvent(eventManager, LibVLC_MediaPlayerESSelected);
 				addEvent(eventManager, LibVLC_MediaPlayerCorked);
 				addEvent(eventManager, LibVLC_MediaPlayerUncorked);
 				addEvent(eventManager, LibVLC_MediaPlayerTimeChanged);
