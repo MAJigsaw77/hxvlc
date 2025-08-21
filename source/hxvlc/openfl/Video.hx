@@ -33,7 +33,6 @@ import lime.utils.UInt8Array;
 
 import openfl.Lib;
 import openfl.display.BitmapData;
-import openfl.display3D.textures.RectangleTexture;
 
 import sys.thread.Mutex;
 
@@ -47,6 +46,8 @@ import lime.media.openal.ALSource;
 
 /** This class is a video player that uses LibVLC for seamless integration with OpenFL display objects. */
 @:access(openfl.display.BitmapData)
+@:access(openfl.display3D.Context3D)
+@:access(openfl.display3D.textures.TextureBase)
 @:cppNamespaceCode('
 static int media_open(void *opaque, void **datap, uint64_t *sizep)
 {
@@ -1297,7 +1298,18 @@ class Video extends openfl.display.Bitmap
 						final texturePlanesData:Bytes = Bytes.ofData(texturePlanes);
 
 						if (bitmapData.__texture != null)
-							cast(bitmapData.__texture, RectangleTexture).uploadFromTypedArray(UInt8Array.fromBytes(texturePlanesData));
+						{
+							@:nullSafety(Off)
+							{
+								bitmapData.__texture.__context.__bindGLTexture2D(bitmapData.__texture.__textureID);
+
+								bitmapData.__texture.__context.gl.texSubImage2D(bitmapData.__texture.__textureTarget, 0, 0, 0, bitmapData.__texture.__width,
+									bitmapData.__texture.__height, bitmapData.__texture.__format, bitmapData.__texture.__context.gl.UNSIGNED_BYTE,
+									UInt8Array.fromBytes(texturePlanesData));
+
+								bitmapData.__texture.__context.__bindGLTexture2D(null);
+							}
+						}
 						else if (bitmapData.image != null)
 							bitmapData.setPixels(bitmapData.rect, texturePlanesData);
 
