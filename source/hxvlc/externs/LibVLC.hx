@@ -325,7 +325,6 @@ extern class LibVLC
 	@:native('libvlc_media_get_parsed_status')
 	static function media_get_parsed_status(p_md:RawPointer<LibVLC_Media_T>):LibVLC_Media_Parsed_Status_T;
 
-
 	/**
 	 * Gets the elementary streams (tracks) description of a media descriptor.
 	 * 
