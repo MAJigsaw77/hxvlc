@@ -238,8 +238,71 @@ extern class LibVLC_Media_Stats_T
 @:dox(hide)
 @:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
 @:include('vlc/vlc.h')
+@:structAccess
+@:native('libvlc_audio_track_t')
+extern class LibVLC_Audio_Track_T
+{
+	function new():Void;
+
+	var i_channels:UInt32;
+	var i_rate:UInt32;
+}
+
+@:dox(hide)
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include('vlc/vlc.h')
+@:structAccess
+@:native('libvlc_video_track_t')
+extern class LibVLC_Video_Track_T
+{
+	function new():Void;
+
+	var i_height:UInt32;
+	var i_width:UInt32;
+	var i_sar_num:UInt32;
+	var i_sar_den:UInt32;
+	var i_frame_rate_num:UInt32;
+	var i_frame_rate_den:UInt32;
+	var i_orientation:LibVLC_Video_Orient;
+}
+
+@:dox(hide)
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include('vlc/vlc.h')
+@:structAccess
+@:native('libvlc_subtitle_track_t')
+extern class LibVLC_Subtitle_Track_T
+{
+	function new():Void;
+
+	var psz_encoding:CastCharStar;
+}
+
+@:dox(hide)
+@:buildXml('<include name="${haxelib:hxvlc}/project/Build.xml" />')
+@:include('vlc/vlc.h')
+@:structAccess
 @:native('libvlc_media_track_t')
-extern class LibVLC_Media_Track_T {}
+extern class LibVLC_Media_Track_T
+{
+	function new():Void;
+
+	var i_codec:UInt32;
+	var i_original_fourcc:UInt32;
+	var i_id:Int;
+	var i_type:LibVLC_Track_Type;
+
+	var i_profile:Int;
+	var i_level:Int;
+
+	var audio:RawPointer<LibVLC_Audio_Track_T>;
+	var video:RawPointer<LibVLC_Video_Track_T>;
+	var subtitle:RawPointer<LibVLC_Subtitle_Track_T>;
+
+	var i_bitrate:UInt32;
+	var psz_language:CastCharStar;
+	var psz_description:CastCharStar;
+}
 
 @:dox(hide)
 extern enum abstract LibVLC_Media_Parse_Flag_T(LibVLC_Media_Parse_Flag_T_Impl)

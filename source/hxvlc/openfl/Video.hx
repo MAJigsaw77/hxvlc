@@ -852,43 +852,49 @@ class Video extends openfl.display.Bitmap
 
 		mediaInput = null;
 
-		mediaMutex.release();
+		{
+			mediaMutex.release();
+		}
 
 		textureMutex.acquire();
 
-		if (bitmapData != null)
 		{
-			if (bitmapData.__texture != null)
-				bitmapData.__texture.dispose();
+			if (bitmapData != null)
+			{
+				if (bitmapData.__texture != null)
+					bitmapData.__texture.dispose();
 
-			bitmapData.dispose();
+				bitmapData.dispose();
+			}
+
+			textureWidth = 0;
+			textureHeight = 0;
+			texturePlanes = null;
 		}
-
-		textureWidth = 0;
-		textureHeight = 0;
-		texturePlanes = null;
 
 		textureMutex.release();
 
 		#if lime_openal
 		alMutex.acquire();
 
-		if (alSource != null)
 		{
-			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.STOPPED)
-				AL.sourceStop(alSource);
+			if (alSource != null)
+			{
+				if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.STOPPED)
+					AL.sourceStop(alSource);
 
-			for (alBuffer in AL.sourceUnqueueBuffers(alSource, AL.getSourcei(alSource, AL.BUFFERS_QUEUED)))
-				AL.deleteBuffer(alBuffer);
+				for (alBuffer in AL.sourceUnqueueBuffers(alSource, AL.getSourcei(alSource, AL.BUFFERS_QUEUED)))
+					AL.deleteBuffer(alBuffer);
 
-			AL.deleteSource(alSource);
-			alSource = null;
-		}
+				AL.deleteSource(alSource);
+				alSource = null;
+			}
 
-		if (alBufferPool != null)
-		{
-			AL.deleteBuffers(alBufferPool);
-			alBufferPool = null;
+			if (alBufferPool != null)
+			{
+				AL.deleteBuffers(alBufferPool);
+				alBufferPool = null;
+			}
 		}
 
 		alMutex.release();
@@ -1289,7 +1295,7 @@ class Video extends openfl.display.Bitmap
 		{
 			MainLoop.runInMainThread(function():Void
 			{
-				if (texturePlanes != null)
+				if (isValid() && texturePlanes != null)
 				{
 					textureMutex.acquire();
 
@@ -1365,6 +1371,9 @@ class Video extends openfl.display.Bitmap
 
 		MainLoop.runInMainThread(function():Void
 		{
+			if (!isValid())
+				return;
+
 			textureMutex.acquire();
 
 			final sizeMismatch:Bool = bitmapData != null && (bitmapData.width != textureWidth || bitmapData.height != textureHeight);
@@ -1393,11 +1402,15 @@ class Video extends openfl.display.Bitmap
 							bitmapData.disposeImage();
 
 							bitmapData.__texture = Lib.current.stage.context3D.createRectangleTexture(bitmapData.width, bitmapData.height, BGRA, true);
-							bitmapData.__texture.__uploadFromImage(bitmapData.image);
 							bitmapData.__textureContext = bitmapData.__texture.__textureContext;
 							bitmapData.__surface = null;
 
-							bitmapData.image = null;
+							if (bitmapData.image != null)
+							{
+								bitmapData.__texture.__uploadFromImage(bitmapData.image);
+
+								bitmapData.image = null;
+							}
 						}
 						else
 							trace('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
@@ -1584,31 +1597,31 @@ class Video extends openfl.display.Bitmap
 			case event if (event == LibVLC_MediaPlayerOpening):
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onOpening != null)
+					if (isValid() && onOpening != null)
 						onOpening.dispatch();
 				});
 			case event if (event == LibVLC_MediaPlayerPlaying):
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onPlaying != null)
+					if (isValid() && onPlaying != null)
 						onPlaying.dispatch();
 				});
 			case event if (event == LibVLC_MediaPlayerStopped):
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onStopped != null)
+					if (isValid() && onStopped != null)
 						onStopped.dispatch();
 				});
 			case event if (event == LibVLC_MediaPlayerPaused):
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onPaused != null)
+					if (isValid() && onPaused != null)
 						onPaused.dispatch();
 				});
 			case event if (event == LibVLC_MediaPlayerEndReached):
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onEndReached != null)
+					if (isValid() && onEndReached != null)
 						onEndReached.dispatch();
 				});
 			case event if (event == LibVLC_MediaPlayerEncounteredError):
@@ -1616,7 +1629,7 @@ class Video extends openfl.display.Bitmap
 
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onEncounteredError != null)
+					if (isValid() && onEncounteredError != null)
 					{
 						if (errmsg != null && errmsg.length > 0)
 							onEncounteredError.dispatch(errmsg);
@@ -1630,7 +1643,7 @@ class Video extends openfl.display.Bitmap
 
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onESAdded != null)
+					if (isValid() && onESAdded != null)
 						onESAdded.dispatch((iType : Int), iID);
 				});
 			case event if (event == LibVLC_MediaPlayerESDeleted):
@@ -1639,7 +1652,7 @@ class Video extends openfl.display.Bitmap
 
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onESDeleted != null)
+					if (isValid() && onESDeleted != null)
 						onESDeleted.dispatch((iType : Int), iID);
 				});
 			case event if (event == LibVLC_MediaPlayerESSelected):
@@ -1648,19 +1661,19 @@ class Video extends openfl.display.Bitmap
 
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onESSelected != null)
+					if (isValid() && onESSelected != null)
 						onESSelected.dispatch((iType : Int), iID);
 				});
 			case event if (event == LibVLC_MediaPlayerCorked):
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onCorked != null)
+					if (isValid() && onCorked != null)
 						onCorked.dispatch();
 				});
 			case event if (event == LibVLC_MediaPlayerUncorked):
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onUncorked != null)
+					if (isValid() && onUncorked != null)
 						onUncorked.dispatch();
 				});
 			case event if (event == LibVLC_MediaPlayerTimeChanged):
@@ -1668,7 +1681,7 @@ class Video extends openfl.display.Bitmap
 
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onTimeChanged != null)
+					if (isValid() && onTimeChanged != null)
 						onTimeChanged.dispatch(newTime);
 				});
 			case event if (event == LibVLC_MediaPlayerPositionChanged):
@@ -1676,7 +1689,7 @@ class Video extends openfl.display.Bitmap
 
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onPositionChanged != null)
+					if (isValid() && onPositionChanged != null)
 						onPositionChanged.dispatch(newPosition);
 				});
 			case event if (event == LibVLC_MediaPlayerLengthChanged):
@@ -1684,7 +1697,7 @@ class Video extends openfl.display.Bitmap
 
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onLengthChanged != null)
+					if (isValid() && onLengthChanged != null)
 						onLengthChanged.dispatch(newLength);
 				});
 			case event if (event == LibVLC_MediaPlayerChapterChanged):
@@ -1692,13 +1705,13 @@ class Video extends openfl.display.Bitmap
 
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onChapterChanged != null)
+					if (isValid() && onChapterChanged != null)
 						onChapterChanged.dispatch(newChapter);
 				});
 			case event if (event == LibVLC_MediaPlayerMediaChanged):
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onMediaChanged != null)
+					if (isValid() && onMediaChanged != null)
 						onMediaChanged.dispatch();
 				});
 			case event if (event == LibVLC_MediaParsedChanged):
@@ -1706,16 +1719,23 @@ class Video extends openfl.display.Bitmap
 
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onMediaParsedChanged != null)
+					if (isValid() && onMediaParsedChanged != null)
 						onMediaParsedChanged.dispatch(newStatus);
 				});
 			case event if (event == LibVLC_MediaMetaChanged):
 				MainLoop.runInMainThread(function():Void
 				{
-					if (onMediaMetaChanged != null)
+					if (isValid() && onMediaMetaChanged != null)
 						onMediaMetaChanged.dispatch();
 				});
 		}
+	}
+
+	@:noCompletion
+	@:unreflective
+	private inline function isValid():Bool
+	{
+		return mediaPlayer != null;
 	}
 
 	@:noCompletion
@@ -1846,53 +1866,46 @@ class Video extends openfl.display.Bitmap
 
 				final count:UInt32 = LibVLC.media_tracks_get(currentMediaItem.raw, Pointer.addressOf(tracks).raw);
 
-				if (count > 0)
+				for (i in 0...count)
 				{
-					for (i in 0...count)
+					final track:RawPointer<LibVLC_Media_Track_T> = tracks[i];
+
+					if (track[0].i_type != LibVLC_Track_Video || LibVLC.video_get_track(mediaPlayer.raw) != track[0].i_id)
+						continue;
+
+					var trackWidth:UInt32 = track[0].video[0].i_width;
+					var trackHeight:UInt32 = track[0].video[0].i_height;
+
+					if (trackWidth == 0 || trackHeight == 0)
+						break;
+
+					final trackSarNum:UInt32 = track[0].video[0].i_sar_num;
+					final trackSarDen:UInt32 = track[0].video[0].i_sar_den;
+
+					if (trackSarNum > 0 && trackSarDen > 0)
 					{
-						final track:Pointer<LibVLC_Media_Track_T> = Pointer.fromRaw(tracks[i]);
+						trackWidth = Math.floor(trackWidth / trackSarDen) * trackSarNum + Math.floor((trackWidth % trackSarDen) * trackSarNum / trackSarDen);
+					}
 
-						final trackType:LibVLC_Track_Type = untyped __cpp__('{0}->i_type', track.raw);
-						final trackID:Int = untyped __cpp__('{0}->i_id', track.raw);
-
-						if (trackType != LibVLC_Track_Video || LibVLC.video_get_track(mediaPlayer.raw) != trackID)
-							continue;
-
-						var trackWidth:UInt32 = untyped __cpp__('{0}->video->i_width', track.raw);
-						var trackHeight:UInt32 = untyped __cpp__('{0}->video->i_height', track.raw);
-
-						if (trackWidth == 0 || trackHeight == 0)
-							break;
-
-						final trackSarNum:UInt32 = untyped __cpp__('{0}->video->i_sar_num', track.raw);
-						final trackSarDen:UInt32 = untyped __cpp__('{0}->video->i_sar_den', track.raw);
-
-						if (trackSarNum > 0 && trackSarDen > 0)
-						{
-							trackWidth = Math.floor(trackWidth / trackSarDen) * trackSarNum
-								+ Math.floor((trackWidth % trackSarDen) * trackSarNum / trackSarDen);
-						}
-
-						if (untyped __cpp__('{0}->video->i_orientation', track.raw) == LibVLC_Video_Orient_Right_Bottom)
-						{
-							width[0] = trackHeight;
-							height[0] = trackWidth;
-						}
-						else
-						{
-							width[0] = trackWidth;
-							height[0] = trackHeight;
-						}
-
-						LibVLC.media_tracks_release(tracks, count);
-
-						LibVLC.media_release(currentMediaItem.raw);
-
-						return true;
+					if (track[0].video[0].i_orientation == LibVLC_Video_Orient_Right_Bottom)
+					{
+						width[0] = trackHeight;
+						height[0] = trackWidth;
+					}
+					else
+					{
+						width[0] = trackWidth;
+						height[0] = trackHeight;
 					}
 
 					LibVLC.media_tracks_release(tracks, count);
+
+					LibVLC.media_release(currentMediaItem.raw);
+
+					return true;
 				}
+
+				LibVLC.media_tracks_release(tracks, count);
 
 				LibVLC.media_release(currentMediaItem.raw);
 			}
