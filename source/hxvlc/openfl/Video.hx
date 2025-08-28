@@ -307,6 +307,9 @@ class Video extends openfl.display.Bitmap
 	/** Playback rate of the video. */
 	public var rate(get, set):Single;
 
+	/** Frame rate of the video. */
+	public var fps(get, never):Float;
+
 	/** Indicates whether seeking is supported. */
 	public var isSeekable(get, never):Bool;
 
@@ -1051,6 +1054,49 @@ class Video extends openfl.display.Bitmap
 			LibVLC.media_player_set_rate(mediaPlayer.raw, value);
 
 		return value;
+	}
+
+	@:noCompletion
+	private function get_fps():Float
+	{
+		if (mediaPlayer != null)
+		{
+			final currentMediaItem:Pointer<LibVLC_Media_T> = Pointer.fromRaw(LibVLC.media_player_get_media(mediaPlayer.raw));
+
+			if (currentMediaItem != null)
+			{
+				final tracks:RawPointer<RawPointer<LibVLC_Media_Track_T>> = untyped nullptr;
+
+				final count:UInt32 = LibVLC.media_tracks_get(currentMediaItem.raw, Pointer.addressOf(tracks).raw);
+
+				for (i in 0...count)
+				{
+					final track:RawPointer<LibVLC_Media_Track_T> = tracks[i];
+
+					if (track[0].i_type != LibVLC_Track_Video || LibVLC.video_get_track(mediaPlayer.raw) != track[0].i_id)
+						continue;
+
+					if (track[0].video[0].i_frame_rate_num > 0 && track[0].video[0].i_frame_rate_den > 0)
+					{
+						final fps:Float = track[0].video[0].i_frame_rate_num / track[0].video[0].i_frame_rate_den;
+
+						LibVLC.media_tracks_release(tracks, count);
+
+						LibVLC.media_release(currentMediaItem.raw);
+
+						return fps;
+					}
+
+					break;
+				}
+
+				LibVLC.media_tracks_release(tracks, count);
+
+				LibVLC.media_release(currentMediaItem.raw);
+			}
+		}
+
+		return 0.0;
 	}
 
 	@:noCompletion
