@@ -63,7 +63,7 @@ reorder_patches()
 # Function to download "vlc" and apply patches.
 download_vlc()
 {
-	TESTEDHASH="ac310b4b" # vlc hash that this version of VLCKit is build on
+	TESTEDHASH="8c62ca27" # vlc hash that this version of VLCKit is build on
 
 	if ! [ -e vlc ]; then
 		git clone https://code.videolan.org/videolan/vlc.git --branch 3.0.x --single-branch vlc
