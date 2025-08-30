@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "2.2.2",
-	"releasenote": "Only resume audio from PAUSED state to handle pause/seek/resume correctly.",
+	"version": "2.2.3",
+	"releasenote": "Some performance improvements and added support for 16K page sizes on Android.",
 	"contributors": [
 		"MAJigsaw77"
 	],
