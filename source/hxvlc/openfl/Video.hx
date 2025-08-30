@@ -22,6 +22,7 @@ import haxe.io.BytesInput;
 
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
+import hxvlc.openfl.textures.VideoTexture;
 import hxvlc.util.Handle;
 import hxvlc.util.Stats;
 import hxvlc.util.TrackDescription;
@@ -46,8 +47,6 @@ import lime.media.openal.ALSource;
 
 /** This class is a video player that uses LibVLC for seamless integration with OpenFL display objects. */
 @:access(openfl.display.BitmapData)
-@:access(openfl.display3D.Context3D)
-@:access(openfl.display3D.textures.TextureBase)
 @:cppNamespaceCode('
 static int media_open(void *opaque, void **datap, uint64_t *sizep)
 {
@@ -1350,18 +1349,7 @@ class Video extends openfl.display.Bitmap
 						final texturePlanesData:Bytes = Bytes.ofData(texturePlanes);
 
 						if (bitmapData.__texture != null)
-						{
-							@:nullSafety(Off)
-							{
-								bitmapData.__texture.__context.__bindGLTexture2D(bitmapData.__texture.__textureID);
-
-								bitmapData.__texture.__context.gl.texSubImage2D(bitmapData.__texture.__textureTarget, 0, 0, 0, bitmapData.__texture.__width,
-									bitmapData.__texture.__height, bitmapData.__texture.__format, bitmapData.__texture.__context.gl.UNSIGNED_BYTE,
-									UInt8Array.fromBytes(texturePlanesData));
-
-								bitmapData.__texture.__context.__bindGLTexture2D(null);
-							}
-						}
+							cast(bitmapData.__texture, VideoTexture).uploadFromTypedArray(UInt8Array.fromBytes(texturePlanesData));
 						else if (bitmapData.image != null)
 							bitmapData.setPixels(bitmapData.rect, texturePlanesData);
 
@@ -1447,16 +1435,13 @@ class Video extends openfl.display.Bitmap
 						{
 							bitmapData.disposeImage();
 
-							bitmapData.__texture = Lib.current.stage.context3D.createRectangleTexture(bitmapData.width, bitmapData.height, BGRA, true);
-							bitmapData.__textureContext = bitmapData.__texture.__textureContext;
-							bitmapData.__surface = null;
-
-							if (bitmapData.image != null)
 							{
-								bitmapData.__texture.__uploadFromImage(bitmapData.image);
-
-								bitmapData.image = null;
+								bitmapData.__texture = new VideoTexture(Lib.current.stage.context3D, bitmapData);
+								bitmapData.__textureContext = bitmapData.__texture.__textureContext;
+								bitmapData.__surface = null;
 							}
+
+							bitmapData.image = null;
 						}
 						else
 							trace('Unable to utilize GPU texture, resorting to CPU-based image rendering.');
