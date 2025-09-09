@@ -1254,6 +1254,7 @@ class Video extends openfl.display.Bitmap
 
 	@:keep
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function mediaOpen(sizep:RawPointer<UInt64>):Int
 	{
@@ -1275,6 +1276,7 @@ class Video extends openfl.display.Bitmap
 
 	@:keep
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function mediaRead(buf:RawPointer<UInt8>, len:SizeT):SSizeT
 	{
@@ -1289,6 +1291,7 @@ class Video extends openfl.display.Bitmap
 
 	@:keep
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function mediaSeek(offset:UInt64):Int
 	{
@@ -1312,6 +1315,7 @@ class Video extends openfl.display.Bitmap
 
 	@:keep
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function videoLock(planes:RawPointer<RawPointer<Void>>):RawPointer<Void>
 	{
@@ -1325,6 +1329,7 @@ class Video extends openfl.display.Bitmap
 
 	@:keep
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function videoUnlock(planes:VoidStarConstStar):Void
 	{
@@ -1333,6 +1338,7 @@ class Video extends openfl.display.Bitmap
 
 	@:keep
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function videoDisplay(picture:RawPointer<Void>):Void
 	{
@@ -1368,6 +1374,7 @@ class Video extends openfl.display.Bitmap
 
 	@:keep
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function videoFormatSetup(chroma:CastCharStar, width:RawPointer<UInt32>, height:RawPointer<UInt32>, pitches:RawPointer<UInt32>,
 			lines:RawPointer<UInt32>):Int
@@ -1460,6 +1467,7 @@ class Video extends openfl.display.Bitmap
 
 	@:keep
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function audioPlay(samples:RawPointer<UInt8>, count:UInt32, pts:Int64):Void
 	{
@@ -1498,6 +1506,7 @@ class Video extends openfl.display.Bitmap
 
 	@:keep
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function audioResume(pts:Int64):Void
 	{
@@ -1516,6 +1525,7 @@ class Video extends openfl.display.Bitmap
 
 	@:keep
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function audioPause(pts:Int64):Void
 	{
@@ -1534,6 +1544,7 @@ class Video extends openfl.display.Bitmap
 
 	@:keep
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function audioFlush(pts:Int64):Void
 	{
@@ -1552,6 +1563,7 @@ class Video extends openfl.display.Bitmap
 
 	@:keep
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function audioSetup(format:CastCharStar, rate:RawPointer<UInt32>, channels:RawPointer<UInt32>):Int
 	{
@@ -1615,11 +1627,13 @@ class Video extends openfl.display.Bitmap
 
 	@:keep
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function audioSetVolume(volume:Single, mute:Bool):Void {}
 
 	@:keep
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function eventManagerCallbacks(p_event:RawConstPointer<LibVLC_Event_T>):Void
 	{
@@ -1763,6 +1777,7 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private inline function isValid():Bool
 	{
@@ -1770,6 +1785,7 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function getDescription(rawDescription:Pointer<LibVLC_Track_Description_T>, description:Array<TrackDescription>):Void
 	{
@@ -1786,6 +1802,7 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function setMediaToPlayer(mediaItem:Pointer<LibVLC_Media_T>, ?options:Array<String>):Void
 	{
@@ -1807,6 +1824,7 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function setupVideo():Void
 	{
@@ -1819,6 +1837,7 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function setupAudio():Void
 	{
@@ -1840,6 +1859,7 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function setupEvents():Void
 	{
@@ -1872,6 +1892,7 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:noCompletion
+	@:noDebug
 	@:unreflective
 	private function addEvent(eventManager:Pointer<LibVLC_Event_Manager_T>, type:Int):Void
 	{
