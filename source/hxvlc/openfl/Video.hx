@@ -1443,7 +1443,7 @@ class Video extends openfl.display.Bitmap
 							bitmapData.disposeImage();
 
 							{
-								bitmapData.__texture = new VideoTexture(Lib.current.stage.context3D, bitmapData);
+								bitmapData.__texture = new VideoTexture(Lib.current.stage.context3D, bitmapData, textureWidth * textureHeight * 4);
 								bitmapData.__textureContext = bitmapData.__texture.__textureContext;
 								bitmapData.__surface = null;
 							}
