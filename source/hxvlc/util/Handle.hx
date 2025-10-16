@@ -208,7 +208,7 @@ class Handle
 				LibVLC.set_user_agent(instance.raw, 'hxvlc', 'hxvlc "$hxvlcVersion" (Haxe "$haxeVersion" ${Sys.systemName()})');
 
 				#if HXVLC_LOGGING
-				LibVLC.log_set(instance.raw, untyped __cpp__('instance_logging'), untyped NULL);
+				LibVLC.log_set(instance.raw, untyped instance_logging, untyped NULL);
 				#end
 			}
 		}

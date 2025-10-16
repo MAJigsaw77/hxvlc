@@ -507,8 +507,8 @@ class Video extends openfl.display.Bitmap
 
 				mediaInput = new BytesInput(cast(location, Bytes));
 
-				mediaItem = Pointer.fromRaw(LibVLC.media_new_callbacks(Handle.instance.raw, untyped __cpp__('media_open'), untyped __cpp__('media_read'),
-					untyped __cpp__('media_seek'), untyped NULL, untyped __cpp__('this')));
+				mediaItem = Pointer.fromRaw(LibVLC.media_new_callbacks(Handle.instance.raw, untyped media_open, untyped media_read, untyped media_seek,
+					untyped NULL, untyped __cpp__('this')));
 
 				mediaMutex.release();
 			}
@@ -1798,9 +1798,7 @@ class Video extends openfl.display.Bitmap
 
 			if (texture != null)
 			{
-				final texturePlanesArray:UInt8Array = UInt8Array.fromBytes(Bytes.ofData(texturePlanes));
-
-				texture.uploadFromTypedArray(texturePlanesArray);
+				texture.uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(texturePlanes)));
 
 				if (__renderable)
 					__setRenderDirty();
@@ -1860,9 +1858,8 @@ class Video extends openfl.display.Bitmap
 		if (mediaPlayer == null)
 			return;
 
-		LibVLC.video_set_callbacks(mediaPlayer.raw, untyped __cpp__('video_lock'), untyped __cpp__('video_unlock'), untyped __cpp__('video_display'),
-			untyped __cpp__('this'));
-		LibVLC.video_set_format_callbacks(mediaPlayer.raw, untyped __cpp__('video_format_setup'), untyped NULL);
+		LibVLC.video_set_callbacks(mediaPlayer.raw, untyped video_lock, untyped video_unlock, untyped video_display, untyped __cpp__('this'));
+		LibVLC.video_set_format_callbacks(mediaPlayer.raw, untyped video_format_setup, untyped NULL);
 	}
 
 	@:noCompletion
@@ -1881,10 +1878,10 @@ class Video extends openfl.display.Bitmap
 			alBufferPool = AL.genBuffers(MAX_AUDIO_BUFFER_COUNT);
 		#end
 
-		LibVLC.audio_set_callbacks(mediaPlayer.raw, untyped __cpp__('audio_play'), untyped __cpp__('audio_pause'), untyped __cpp__('audio_resume'),
-			untyped __cpp__('audio_flush'), untyped NULL, untyped __cpp__('this'));
-		LibVLC.audio_set_volume_callback(mediaPlayer.raw, untyped __cpp__('audio_set_volume'));
-		LibVLC.audio_set_format_callbacks(mediaPlayer.raw, untyped __cpp__('audio_setup'), untyped NULL);
+		LibVLC.audio_set_callbacks(mediaPlayer.raw, untyped audio_play, untyped audio_pause, untyped audio_resume, untyped audio_flush, untyped NULL,
+			untyped __cpp__('this'));
+		LibVLC.audio_set_volume_callback(mediaPlayer.raw, untyped audio_set_volume);
+		LibVLC.audio_set_format_callbacks(mediaPlayer.raw, untyped audio_setup, untyped NULL);
 	}
 
 	@:noCompletion
@@ -1925,7 +1922,7 @@ class Video extends openfl.display.Bitmap
 	@:unreflective
 	private function addEvent(eventManager:Pointer<LibVLC_Event_Manager_T>, type:Int):Void
 	{
-		if (LibVLC.event_attach(eventManager.raw, type, untyped __cpp__('event_manager_callbacks'), untyped __cpp__('this')) != 0)
+		if (LibVLC.event_attach(eventManager.raw, type, untyped event_manager_callbacks, untyped __cpp__('this')) != 0)
 			trace('Failed to attach event (${LibVLC.event_type_name(type)})');
 	}
 
