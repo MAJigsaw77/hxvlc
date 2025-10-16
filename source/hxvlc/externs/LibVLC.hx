@@ -89,7 +89,7 @@ extern class LibVLC
 	 */
 	@:native('libvlc_event_attach')
 	static function event_attach(p_event_manager:RawPointer<LibVLC_Event_Manager_T>, i_event_type:Int, f_callback:LibVLC_Callback_T,
-		user_data:RawPointer<Void>):Int;
+		user_data:RawPointer<cpp.Void>):Int;
 
 	/**
 	 * Detaches an event callback.
@@ -101,7 +101,7 @@ extern class LibVLC
 	 */
 	@:native('libvlc_event_detach')
 	static function event_detach(p_event_manager:RawPointer<LibVLC_Event_Manager_T>, i_event_type:Int, f_callback:LibVLC_Callback_T,
-		user_data:RawPointer<Void>):Void;
+		user_data:RawPointer<cpp.Void>):Void;
 
 	/**
 	 * Get an event's type name.
@@ -127,7 +127,7 @@ extern class LibVLC
 	 * @param data User data to pass to the callback.
 	 */
 	@:native('libvlc_log_set')
-	static function log_set(p_instance:RawPointer<LibVLC_Instance_T>, cb:LibVLC_Log_CB, data:RawPointer<Void>):Void;
+	static function log_set(p_instance:RawPointer<LibVLC_Instance_T>, cb:LibVLC_Log_CB, data:RawPointer<cpp.Void>):Void;
 
 	/**
 	 * Gets log message debug information.
@@ -200,7 +200,7 @@ extern class LibVLC
 	 */
 	@:native('libvlc_media_new_callbacks')
 	static function media_new_callbacks(p_instance:RawPointer<LibVLC_Instance_T>, open_cb:LibVLC_Media_Open_CB, read_cb:LibVLC_Media_Read_CB,
-		seek_cb:LibVLC_Media_Seek_CB, close_cb:LibVLC_Media_Close_CB, opaque:RawPointer<Void>):RawPointer<LibVLC_Media_T>;
+		seek_cb:LibVLC_Media_Seek_CB, close_cb:LibVLC_Media_Close_CB, opaque:RawPointer<cpp.Void>):RawPointer<LibVLC_Media_T>;
 
 	/**
 	 * Adds an option to a media descriptor.
@@ -629,7 +629,7 @@ extern class LibVLC
 	 */
 	@:native('libvlc_video_set_callbacks')
 	static function video_set_callbacks(mp:RawPointer<LibVLC_Media_Player_T>, lock:LibVLC_Video_Lock_CB, unlock:LibVLC_Video_Unlock_CB,
-		display:LibVLC_Video_Display_CB, opaque:RawPointer<Void>):Void;
+		display:LibVLC_Video_Display_CB, opaque:RawPointer<cpp.Void>):Void;
 
 	/**
 	 * Sets the video format.
@@ -797,7 +797,7 @@ extern class LibVLC
 	 */
 	@:native('libvlc_audio_set_callbacks')
 	static function audio_set_callbacks(mp:RawPointer<LibVLC_Media_Player_T>, play:LibVLC_Audio_Play_CB, pause:LibVLC_Audio_Pause_CB,
-		resume:LibVLC_Audio_Resume_CB, flush:LibVLC_Audio_Flush_CB, drain:LibVLC_Audio_Drain_CB, opaque:RawPointer<Void>):Void;
+		resume:LibVLC_Audio_Resume_CB, flush:LibVLC_Audio_Flush_CB, drain:LibVLC_Audio_Drain_CB, opaque:RawPointer<cpp.Void>):Void;
 
 	/**
 	 * Sets the audio volume callback.

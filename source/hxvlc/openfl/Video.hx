@@ -1321,7 +1321,7 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private function videoLock(planes:RawPointer<RawPointer<Void>>):RawPointer<Void>
+	private function videoLock(planes:RawPointer<RawPointer<cpp.Void>>):RawPointer<cpp.Void>
 	{
 		textureMutex.acquire();
 
@@ -1344,7 +1344,7 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private function videoDisplay(picture:RawPointer<Void>):Void
+	private function videoDisplay(picture:RawPointer<cpp.Void>):Void
 	{
 		if ((__renderable || forceRendering) && bitmapData != null)
 		{
