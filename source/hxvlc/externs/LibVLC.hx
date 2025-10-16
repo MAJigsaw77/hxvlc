@@ -6,7 +6,6 @@ import cpp.Int64;
 import cpp.RawConstPointer;
 import cpp.RawPointer;
 import cpp.UInt32;
-import cpp.Void;
 
 import hxvlc.externs.Types;
 
