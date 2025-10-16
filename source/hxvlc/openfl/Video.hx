@@ -13,6 +13,7 @@ import cpp.UInt32;
 import cpp.UInt64;
 import cpp.UInt8;
 import cpp.VoidStarConstStar;
+import cpp.vm.Gc;
 
 import haxe.Int64;
 import haxe.MainLoop;
@@ -466,10 +467,14 @@ class Video extends openfl.display.Bitmap
 	{
 		super(null, AUTO, smoothing);
 
-		while (Handle.loading)
-			Sys.sleep(0.05);
+		{
+			while (Handle.loading)
+				Sys.sleep(0.05);
 
-		Handle.init();
+			Handle.init();
+		}
+
+		Gc.doNotKill(this);
 	}
 
 	/**
