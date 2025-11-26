@@ -63,11 +63,6 @@ class Handle
 	@:noCompletion
 	private static final instanceMutex:Mutex = new Mutex();
 
-	#if HXVLC_LOGGING
-	@:noCompletion
-	private static final logMutex:Mutex = new Mutex();
-	#end
-
 	/**
 	 * Initializes the LibVLC instance if it isn't already.
 	 * 
@@ -302,15 +297,10 @@ class Handle
 		if (level > DefineMacro.getInt('HXVLC_VERBOSE', -1) || level == DefineMacro.getInt('HXVLC_EXCLUDE_LOG_LEVEL', -1))
 			return;
 
-		logMutex.acquire();
-
 		var msg:String = Util.getStringFromFormat(fmt, args);
 
 		if (msg.length == 0)
-		{
-			logMutex.release();
 			return;
-		}
 
 		#if HXVLC_SHOW_LOG_TYPE
 		switch (level)
@@ -326,9 +316,7 @@ class Handle
 		}
 		#end
 
-		Log.trace(msg, Util.getPosFromContext(ctx));
-
-		logMutex.release();
+		MainLoop.runInMainThread(Log.trace.bind(msg, Util.getPosFromContext(ctx)));
 	}
 	#end
 }

@@ -27,6 +27,15 @@ using cpp.NativeArray;
  * Utility class providing helper methods for common operations.
  */
 @:access(haxe.io.BytesInput)
+@:cppInclude('stdarg.h')
+@:cppNamespaceCode('static int vsnprintf_safe(char* buffer, size_t size, const char* fmt, va_list args)
+{
+    va_list copy;
+    va_copy(copy, args);
+    int len = vsnprintf(buffer, size, fmt, copy);
+    va_end(copy);
+    return len;
+}')
 @:unreflective
 class Util
 {
@@ -42,14 +51,14 @@ class Util
 	@:noDebug
 	public static function getStringFromFormat(fmt:ConstCharStar, args:VarList):String
 	{
-		final len:Int = untyped vsnprintf(untyped nullptr, 0, fmt, args);
+		final len:Int = untyped vsnprintf_safe(untyped nullptr, 0, fmt, args);
 
 		if (len <= 0)
 			return '';
 
 		final buffer:CastCharStar = cast Stdlib.nativeMalloc(len + 1);
 
-		untyped vsnprintf(buffer, len + 1, fmt, args);
+		untyped vsnprintf_safe(buffer, len + 1, fmt, args);
 
 		final msg:String = new String(untyped buffer);
 
