@@ -129,22 +129,39 @@ class Handle
 			setupEnvVariables();
 
 			final args:StdVector<ConstCharStar> = new cpp.StdVector<ConstCharStar>();
-			args.push_back("--ignore-config");
-			args.push_back("--drop-late-frames");
-			args.push_back("--aout=none");
-			args.push_back("--intf=none");
-			args.push_back("--vout=none");
-			args.push_back("--no-interact");
-			args.push_back("--no-keyboard-events");
-			args.push_back("--no-mouse-events");
-			#if !HXVLC_SHARE_DIRECTORY
-			args.push_back("--no-lua");
+
+			args.push_back("--audio-resampler=soxr");   // High-quality audio resampler (default in VLC 4.0)
+			args.push_back("--ignore-config");          // Ignore any existing VLC config files
+			args.push_back("--drop-late-frames");       // Drop late video frames instead of trying to render them
+
+			args.push_back("--aout=none");              // Disable audio output (we use amem)
+			args.push_back("--intf=none");              // Disable interface / UI
+			args.push_back("--vout=none");              // Disable video output (we use vmem)
+
+			args.push_back("--text-renderer=freetype"); // Use Freetype for subtitles/text overlays
+
+			#if ios
+			args.push_back("--no-color");               // Disable colored console output (cleaner Xcode log)
 			#end
-			args.push_back("--no-snapshot-preview");
-			args.push_back("--no-sub-autodetect-file");
-			args.push_back("--no-video-title-show");
-			args.push_back("--no-volume-save");
-			args.push_back("--no-xlib");
+
+			#if !HXVLC_SHARE_DIRECTORY
+			args.push_back("--no-lua");                 // Disable Lua scripting engine if not using shared directory
+			#end
+
+			args.push_back("--no-interact");            // Disable interaction prompts
+			args.push_back("--no-keyboard-events");     // Disable keyboard input
+			args.push_back("--no-mouse-events");        // Disable mouse events
+			args.push_back("--no-snapshot-preview");    // Disable snapshot previews
+			args.push_back("--no-sout-keep");           // Disable streaming output persistence
+			args.push_back("--no-sub-autodetect-file"); // Don’t automatically load subtitle files
+			args.push_back("--no-video-title-show");    // Don’t show video title overlay at playback start
+
+			#if (macos || ios)
+			args.push_back("--no-videotoolbox");        // Disable VideoToolbox hardware decoding (to make subtitles work)
+			#end
+
+			args.push_back("--no-volume-save");         // Don’t save last volume level
+			args.push_back("--no-xlib");                // Disable X11 output (irrelevant on Apple)
 
 			#if (windows || macos)
 			final pluginPath:Null<String> = Sys.getEnv('VLC_PLUGIN_PATH');
