@@ -37,22 +37,6 @@ class FlxInternalVideo extends Video
 		onOpening.add(function():Void
 		{
 			role = LibVLC_Role_Game;
-
-			if (!FlxG.signals.focusGained.has(onFocusGained))
-				FlxG.signals.focusGained.add(onFocusGained);
-
-			if (!FlxG.signals.focusLost.has(onFocusLost))
-				FlxG.signals.focusLost.add(onFocusLost);
-
-			#if (FLX_SOUND_SYSTEM && flixel >= version("5.9.0"))
-			if (!FlxG.sound.onVolumeChange.has(onVolumeChange))
-				FlxG.sound.onVolumeChange.add(onVolumeChange);
-			#elseif (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
-			if (!FlxG.signals.postUpdate.has(onVolumeUpdate))
-				FlxG.signals.postUpdate.add(onVolumeUpdate);
-			#end
-
-			onVolumeChange(#if FLX_SOUND_SYSTEM (FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume #else 1 #end);
 		});
 	}
 
@@ -68,7 +52,7 @@ class FlxInternalVideo extends Video
 				final absolutePath:String = FileSystem.absolutePath(location);
 
 				if (FileSystem.exists(absolutePath))
-					return super.load(absolutePath, options);
+					return loadInternal(absolutePath, options);
 				else if (Assets.exists(location))
 				{
 					final assetPath:Null<String> = Assets.getPath(location);
@@ -76,9 +60,9 @@ class FlxInternalVideo extends Video
 					if (assetPath != null)
 					{
 						if (FileSystem.exists(assetPath) && Path.isAbsolute(assetPath))
-							return super.load(assetPath, options);
+							return loadInternal(assetPath, options);
 						else if (FileSystem.exists(assetPath) && !Path.isAbsolute(assetPath))
-							return super.load(FileSystem.absolutePath(assetPath), options);
+							return loadInternal(FileSystem.absolutePath(assetPath), options);
 						else if (!Path.isAbsolute(assetPath))
 						{
 							try
@@ -86,7 +70,7 @@ class FlxInternalVideo extends Video
 								final assetBytes:Bytes = Assets.getBytes(location);
 
 								if (assetBytes != null)
-									return super.load(assetBytes, options);
+									return loadInternal(assetBytes, options);
 							}
 							catch (e:Dynamic)
 							{
@@ -108,7 +92,7 @@ class FlxInternalVideo extends Video
 			}
 		}
 
-		return super.load(location, options);
+		return loadInternal(location, options);
 	}
 
 	@:inheritDoc(hxvlc.openfl.Video.addSlave)
@@ -157,6 +141,33 @@ class FlxInternalVideo extends Video
 		#end
 
 		super.dispose();
+	}
+
+	@:noCompletion
+	private function loadInternal(location:Location, ?options:Array<String>):Bool
+	{
+		final loaded:Bool = super.load(location, options);
+
+		if (loaded)
+		{
+			if (!FlxG.signals.focusGained.has(onFocusGained))
+				FlxG.signals.focusGained.add(onFocusGained);
+
+			if (!FlxG.signals.focusLost.has(onFocusLost))
+				FlxG.signals.focusLost.add(onFocusLost);
+
+			#if (FLX_SOUND_SYSTEM && flixel >= version("5.9.0"))
+			if (!FlxG.sound.onVolumeChange.has(onVolumeChange))
+				FlxG.sound.onVolumeChange.add(onVolumeChange);
+			#elseif (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
+			if (!FlxG.signals.postUpdate.has(onVolumeUpdate))
+				FlxG.signals.postUpdate.add(onVolumeUpdate);
+			#end
+
+			onVolumeChange(#if FLX_SOUND_SYSTEM (FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume #else 1 #end);
+		}
+
+		return loaded;
 	}
 
 	@:noCompletion
