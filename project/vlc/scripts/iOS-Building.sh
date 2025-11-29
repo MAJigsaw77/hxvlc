@@ -79,7 +79,7 @@ download_vlc()
 		git apply --whitespace=fix ../project/vlc/scripts/patches/iOS/*.patch
 
 		# Apply "VLCKit" patches.
-		git am --whitespace=fix ../VLCKit/libvlc/patches/*.patch
+		git apply --whitespace=fix ../VLCKit/libvlc/patches/*.patch
 
 		if [ $? -ne 0 ]; then
 			git am --abort
@@ -98,7 +98,7 @@ download_vlc()
 		git apply --whitespace=fix ../project/vlc/scripts/patches/iOS/*.patch
 
 		# Apply "VLCKit" patches.
-		git am --whitespace=fix ../VLCKit/libvlc/patches/*.patch
+		git apply --whitespace=fix ../VLCKit/libvlc/patches/*.patch
 
 		cd ..
 	fi
