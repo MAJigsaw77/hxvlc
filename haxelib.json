@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "2.2.4",
-	"releasenote": "Fix cpp errors in debug.",
+	"version": "2.2.5",
+	"releasenote": "Optimized Videos Rendering, Fixed subtitles from not showing on Apple targets and some other stuff.",
 	"contributors": [
 		"MAJigsaw77"
 	],
