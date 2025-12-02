@@ -16,7 +16,6 @@ import cpp.VoidStarConstStar;
 import cpp.vm.Gc;
 
 import haxe.Int64;
-import haxe.MainLoop;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
 import haxe.io.BytesInput;
@@ -25,6 +24,7 @@ import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
 import hxvlc.openfl.textures.VideoTexture;
 import hxvlc.util.Handle;
+import hxvlc.util.MainLoop;
 import hxvlc.util.Stats;
 import hxvlc.util.TrackDescription;
 import hxvlc.util.Util;

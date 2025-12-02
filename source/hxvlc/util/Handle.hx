@@ -4,11 +4,11 @@ import cpp.ConstCharStar;
 import cpp.Pointer;
 import cpp.StdVector;
 
-import haxe.MainLoop;
 import haxe.io.Path;
 
 import hxvlc.externs.LibVLC;
 import hxvlc.externs.Types;
+import hxvlc.util.MainLoop;
 import hxvlc.util.macros.DefineMacro;
 
 import sys.FileSystem;
