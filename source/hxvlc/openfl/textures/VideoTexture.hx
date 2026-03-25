@@ -22,31 +22,29 @@ class VideoTexture extends TextureBase
 	 * Initializes a VideoTexture object.
 	 * 
 	 * @param context The context to use for texture operations.
-	 * @param bitmapData Initial bitmap data to populate the texture.
-	 * @param frameSize The size in bytes of a single video frame, used for buffer allocation.
-	 * @param optimizeForRenderToTexture Whether to optimize this texture for render-to-texture operations (used by default).
+	 * @param width The width dimension to allocate for the texture.
+	 * @param height The height dimension to allocate for the texture.
+	 * @param data The pixel data to initializes the texture with.
 	 */
-	public function new(context:Context3D, bitmapData:BitmapData, frameSize:Int, optimizeForRenderToTexture:Bool = true):Void
+	public function new(context:Context3D, width:Int, height:Int, ?data:UInt8Array):Void
 	{
 		super(context);
 
-		__width = bitmapData.width;
-		__height = bitmapData.height;
-		__optimizeForRenderToTexture = optimizeForRenderToTexture;
+		__width = width;
+		__height = height;
 		__textureTarget = __context.gl.TEXTURE_2D;
-		__frameSize = frameSize;
+		__frameSize = width * height * 4;
 
 		@:nullSafety(Off)
 		{
 			__context.__bindGLTexture2D(__textureID);
 
-			__context.gl.texImage2D(__textureTarget, 0, __internalFormat, __width, __height, 0, __format, __context.gl.UNSIGNED_BYTE, bitmapData.image.data);
+			__context.gl.texImage2D(__textureTarget, 0, __internalFormat, __width, __height, 0, __format, __context.gl.UNSIGNED_BYTE, data);
 
 			__context.__bindGLTexture2D(null);
 		}
 
-		if (optimizeForRenderToTexture)
-			__getGLFramebuffer(true, 0, 0);
+		__getGLFramebuffer(false, 0, 0);
 	}
 
 	/**
