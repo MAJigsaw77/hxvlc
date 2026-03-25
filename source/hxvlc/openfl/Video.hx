@@ -34,6 +34,7 @@ import lime.utils.UInt8Array;
 import openfl.Lib;
 import openfl.display.BitmapData;
 
+import sys.thread.Thread;
 import sys.thread.Mutex;
 
 using cpp.NativeArray;
@@ -189,6 +190,18 @@ static void audio_pause(void *data, int64_t pts)
 	}
 }
 
+static void audio_drain(void *data)
+{
+	if (data)
+	{
+		hx::SetTopOfStack((int *)99, true);
+
+		reinterpret_cast<Video_obj *>(data)->audioDrain();
+
+		hx::SetTopOfStack((int *)0, true);
+	}
+}
+
 static void audio_flush(void *data, int64_t pts)
 {
 	if (data)
@@ -243,9 +256,13 @@ static void event_manager_callbacks(const libvlc_event_t *p_event, void *p_data)
 class Video extends openfl.display.Bitmap
 {
 	#if lime_openal
-	/** The number of buffers used for the buffer pool. */
+	/** The number of buffers used for audio playback in hxvlc videos. */
 	@:noCompletion
-	private static final MAX_AUDIO_BUFFER_COUNT:Int = DefineMacro.getInt('HXVLC_MAX_AUDIO_BUFFER_COUNT', 255);
+	private static final MAX_AUDIO_BUFFER_COUNT:Int = DefineMacro.getInt('HXVLC_MAX_AUDIO_BUFFER_COUNT', 8);
+
+	/** THe number of length (not samples) to allocate to the buffers used for audio playback. (Minimum is 0x1000 or 4096) */
+	@:noCompletion
+	private static final AUDIO_BUFFER_LENGTH:Int = DefineMacro.getInt('HXVLC_AUDIO_BUFFER_LENGTH', 0x4000);
 	#end
 
 	/**
@@ -432,10 +449,10 @@ class Video extends openfl.display.Bitmap
 	private var alSource:Null<ALSource>;
 
 	@:noCompletion
-	private var alBufferPool:Null<Array<ALBuffer>>;
+	private var alBuffers:Null<Array<ALBuffer>>;
 
 	@:noCompletion
-	private var alSamples:Null<BytesData>;
+	private var alSamples:Null<UInt8Array>;
 
 	@:noCompletion
 	private var alSampleRate:UInt32 = 0;
@@ -445,6 +462,15 @@ class Video extends openfl.display.Bitmap
 
 	@:noCompletion
 	private var alFrameSize:UInt32 = 0;
+
+	@:noCompletion
+	private var alNextBuffer:Int = 0;
+
+	@:noCompletion
+	private var alPendingByteDatas:Null<Array<BytesData>>;
+
+	@:noCompletion
+	private var alByteDataPool:Null<Array<BytesData>>;
 	#end
 
 	/**
@@ -875,25 +901,35 @@ class Video extends openfl.display.Bitmap
 		#if lime_openal
 		alMutex.acquire();
 
-		{
 			if (alSource != null)
 			{
 				if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.STOPPED)
 					AL.sourceStop(alSource);
 
-				for (alBuffer in AL.sourceUnqueueBuffers(alSource, AL.getSourcei(alSource, AL.BUFFERS_QUEUED)))
-					AL.deleteBuffer(alBuffer);
-
+			AL.sourceUnqueueBuffers(alSource, AL.getSourcei(alSource, AL.BUFFERS_QUEUED));
 				AL.deleteSource(alSource);
 				alSource = null;
 			}
 
-			if (alBufferPool != null)
+		if (alBuffers != null)
 			{
-				AL.deleteBuffers(alBufferPool);
-				alBufferPool = null;
+			AL.deleteBuffers(alBuffers);
+			alBuffers = null;
 			}
+
+		if (alPendingByteDatas != null)
+		{
+			for (byteData in alPendingByteDatas) byteData.setSize(0);
+			alPendingByteDatas = null;
 		}
+
+		if (alByteDataPool != null)
+		{
+			for (byteData in alByteDataPool) byteData.setSize(0);
+			alByteDataPool = null;
+		}
+
+		alSamples = null;
 
 		alMutex.release();
 		#end
@@ -1362,37 +1398,76 @@ class Video extends openfl.display.Bitmap
 	@:noCompletion
 	@:noDebug
 	@:unreflective
+	private function audioQueueBuffer():Void
+	@:nullSafety(Off)
+	@:privateAccess
+	{
+		#if lime_openal
+		var n = 0, len = 0;
+		while (n < alPendingByteDatas.length && len + alPendingByteDatas[n].length <= AUDIO_BUFFER_LENGTH)
+		{
+			len += alPendingByteDatas[n].length;
+			n++;
+		}
+
+		if (n == 0) return;
+
+		final alBuffer:ALBuffer = alBuffers[alNextBuffer];
+
+		if (alBuffer == null) return;
+		else if (++alNextBuffer == alBuffers.length) alNextBuffer = 0;
+
+		var sampleData = alSamples.buffer.getData(), byteData:BytesData;
+		len = 0;
+
+		for (i in 0...n)
+			{
+			byteData = alPendingByteDatas.shift();
+			sampleData.blit(len, byteData, 0, byteData.length);
+			len += byteData.length;
+
+			alByteDataPool.push(byteData);
+			}
+
+		AL.bufferData(alBuffer, alFormat, alSamples, len, alSampleRate);
+		AL.sourceQueueBuffer(alSource, alBuffer);
+		#end
+	}
+
+	@:keep
+	@:noCompletion
+	@:noDebug
+	@:unreflective
 	private function audioPlay(samples:RawPointer<UInt8>, count:UInt32, pts:Int64):Void
 	{
 		#if lime_openal
-		if (alSource != null && alBufferPool != null)
+		if (alSource != null)
+		@:nullSafety(Off)
+		@:privateAccess
 		{
 			alMutex.acquire();
 
-			for (alBuffer in AL.sourceUnqueueBuffers(alSource, AL.getSourcei(alSource, AL.BUFFERS_PROCESSED)))
-				alBufferPool.push(alBuffer);
+			var byteData = alByteDataPool.pop();
+			if (byteData == null) byteData = new BytesData();
 
-			final alBuffer:Null<ALBuffer> = alBufferPool.shift();
+			var len = count * alFrameSize;
+			if (byteData.length != len) byteData.setSize(len);
 
-			if (alBuffer == null)
+			Stdlib.nativeMemcpy(untyped byteData.getBase().getBase(), untyped samples, len);
+			alPendingByteDatas.push(byteData);
+
+			AL.sourceUnqueueBuffers(alSource, AL.getSourcei(alSource, AL.BUFFERS_PROCESSED));
+
+			if (AL.getSourcei(alSource, AL.BUFFERS_QUEUED) < alBuffers.length)
 			{
-				alMutex.release();
-				return;
+				audioQueueBuffer();
+			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
+				{
+				AL.sourcePlay(alSource);
+		}
 			}
 
-			if (alSamples == null)
-				alSamples = new BytesData();
-
-			alSamples.setUnmanagedData(cast samples, count);
-
 			alMutex.release();
-
-			AL.bufferData(alBuffer, alFormat, UInt8Array.fromBytes(Bytes.ofData(alSamples)), alSamples.length * alFrameSize, alSampleRate);
-
-			AL.sourceQueueBuffer(alSource, alBuffer);
-
-			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
-				AL.sourcePlay(alSource);
 		}
 		#end
 	}
@@ -1449,7 +1524,69 @@ class Video extends openfl.display.Bitmap
 			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.STOPPED)
 				AL.sourceStop(alSource);
 
+			if (alByteDataPool != null && alPendingByteDatas != null)
+			{
+				for (byteData in alPendingByteDatas) alByteDataPool.push(byteData);
+				alPendingByteDatas.resize(0);
+			}
+
+			AL.sourceUnqueueBuffers(alSource, AL.getSourcei(alSource, AL.BUFFERS_QUEUED));
+
 			alMutex.release();
+		}
+		#end
+	}
+
+	@:keep
+	@:noCompletion
+	@:noDebug
+	@:unreflective
+	private function audioDrain():Void
+	{
+		#if lime_openal
+		if (alSource != null)
+		@:nullSafety(Off)
+		{
+			alMutex.acquire();
+
+			AL.sourceUnqueueBuffers(alSource, AL.getSourcei(alSource, AL.BUFFERS_PROCESSED));
+
+			while (AL.getSourcei(alSource, AL.BUFFERS_QUEUED) < alBuffers.length && alPendingByteDatas.length != 0)
+			{
+				audioQueueBuffer();
+			}
+
+			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
+			{
+				AL.sourcePlay(alSource);
+			}
+
+			alMutex.release();
+
+			Thread.create(function():Void
+			{
+				var video = this;
+				while (video.alSource != null && video.alPendingByteDatas.length != 0)
+				{
+					alMutex.acquire();
+
+					AL.sourceUnqueueBuffers(video.alSource, AL.getSourcei(video.alSource, AL.BUFFERS_PROCESSED));
+
+					if (AL.getSourcei(video.alSource, AL.BUFFERS_QUEUED) < video.alBuffers.length)
+					{
+						video.audioQueueBuffer();
+					}
+
+					if (AL.getSourcei(video.alSource, AL.SOURCE_STATE) != AL.PLAYING)
+					{
+						AL.sourcePlay(video.alSource);
+					}
+
+					alMutex.release();
+
+					Sys.sleep(0.04);
+				}
+			});
 		}
 		#end
 	}
@@ -1464,9 +1601,6 @@ class Video extends openfl.display.Bitmap
 		alMutex.acquire();
 
 		alSampleRate = rate[0];
-
-		if (alSamples == null)
-			alSamples = new BytesData();
 
 		if (alUseEXTFLOAT32 == null)
 			alUseEXTFLOAT32 = AL.isExtensionPresent('AL_EXT_FLOAT32');
@@ -1797,11 +1931,20 @@ class Video extends openfl.display.Bitmap
 		if (alSource == null)
 			alSource = AL.createSource();
 
-		if (alBufferPool == null)
-			alBufferPool = AL.genBuffers(MAX_AUDIO_BUFFER_COUNT);
+		if (alBuffers == null)
+			alBuffers = AL.genBuffers(MAX_AUDIO_BUFFER_COUNT);
+
+		if (alSamples == null)
+			alSamples = UInt8Array.fromBytes(Bytes.alloc(AUDIO_BUFFER_LENGTH));
+
+		if (alPendingByteDatas == null)
+			alPendingByteDatas = [];
+
+		if (alByteDataPool == null)
+			alByteDataPool = [];
 		#end
 
-		LibVLC.audio_set_callbacks(mediaPlayer.raw, untyped audio_play, untyped audio_pause, untyped audio_resume, untyped audio_flush, untyped NULL,
+		LibVLC.audio_set_callbacks(mediaPlayer.raw, untyped audio_play, untyped audio_pause, untyped audio_resume, untyped audio_flush, untyped audio_drain,
 			untyped __cpp__('this'));
 		LibVLC.audio_set_volume_callback(mediaPlayer.raw, untyped audio_set_volume);
 		LibVLC.audio_set_format_callbacks(mediaPlayer.raw, untyped audio_setup, untyped NULL);
