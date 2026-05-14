@@ -244,13 +244,6 @@ class Handle
 	@:noCompletion
 	private static function setupEnvVariables():Void
 	{
-		#if macos
-		final dataPath:String = Path.join([Path.directory(Sys.programPath()), 'share']);
-
-		if (FileSystem.exists(dataPath))
-			Sys.putEnv('VLC_DATA_PATH', dataPath);
-		#end
-
 		#if (windows || macos)
 		final pluginPath:String = Path.join([Path.directory(Sys.programPath()), 'plugins']);
 
