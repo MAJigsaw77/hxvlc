@@ -708,9 +708,6 @@ extern class LibVLC
 	static function log_get_context(ctx:RawConstPointer<LibVLC_Log_T>, module:RawPointer<ConstCharStar>, file:RawPointer<ConstCharStar>,
 		line:RawPointer<UInt32>):Void;
 
-	@:native('libvlc_delay')
-	static function delay(pts:Int64):Int64;
-
 	@:native('libvlc_media_new_location')
 	static function media_new_location(p_instance:RawPointer<LibVLC_Instance_T>, psz_mrl:ConstCharStar):RawPointer<LibVLC_Media_T>;
 
@@ -881,12 +878,6 @@ extern class LibVLC
 	@:native('libvlc_video_set_spu')
 	static function video_set_spu(p_mi:RawPointer<LibVLC_Media_Player_T>, i_spu:Int):Int;
 
-	@:native('libvlc_video_get_spu_delay')
-	static function video_get_spu_delay(p_mi:RawPointer<LibVLC_Media_Player_T>):Int64;
-
-	@:native('libvlc_video_set_spu_delay')
-	static function video_set_spu_delay(p_mi:RawPointer<LibVLC_Media_Player_T>, i_delay:Int64):Int;
-
 	@:native('libvlc_video_get_track_count')
 	static function video_get_track_count(p_mi:RawPointer<LibVLC_Media_Player_T>):Int;
 
@@ -918,12 +909,6 @@ extern class LibVLC
 	@:native('libvlc_audio_set_format')
 	static function audio_set_format(mp:RawPointer<LibVLC_Media_Player_T>, format:ConstCharStar, rate:UInt32, channels:UInt32):Void;
 
-	@:native('libvlc_audio_get_delay')
-	static function audio_get_delay(p_mi:RawPointer<LibVLC_Media_Player_T>):Int64;
-
-	@:native('libvlc_audio_set_delay')
-	static function audio_set_delay(p_mi:RawPointer<LibVLC_Media_Player_T>, i_delay:Int64):Int;
-
 	@:native('libvlc_audio_get_track_count')
 	static function audio_get_track_count(p_mi:RawPointer<LibVLC_Media_Player_T>):Int;
 
@@ -935,10 +920,4 @@ extern class LibVLC
 
 	@:native('libvlc_audio_set_track')
 	static function audio_set_track(p_mi:RawPointer<LibVLC_Media_Player_T>, i_track:Int):Int;
-
-	@:native('libvlc_media_player_get_role')
-	static function media_player_get_role(p_mi:RawPointer<LibVLC_Media_Player_T>):Int;
-
-	@:native('libvlc_media_player_set_role')
-	static function media_player_set_role(p_mi:RawPointer<LibVLC_Media_Player_T>, role:UInt32):Int;
 }

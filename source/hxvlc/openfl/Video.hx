@@ -315,9 +315,6 @@ class Video extends openfl.display.Bitmap
 	/** Volume level (0.0 to 1.0). */
 	public var volume(get, set):Float;
 
-	/** Role of the media. */
-	public var role(get, set):UInt;
-
 	/** Total number of available video tracks. */
 	public var videoTrackCount(get, never):Int;
 
@@ -330,17 +327,11 @@ class Video extends openfl.display.Bitmap
 	/** Selected audio track. */
 	public var audioTrack(get, set):Int;
 
-	/** Audio delay in microseconds. */
-	public var audioDelay(get, set):Int64;
-
 	/** Total number of available subtitle tracks. */
 	public var spuTrackCount(get, never):Int;
 
 	/** Selected subtitle track. */
 	public var spuTrack(get, set):Int;
-
-	/** Subtitle delay in microseconds. */
-	public var spuDelay(get, set):Int64;
 
 	/** Event triggered when the media is opening. */
 	public var onOpening(default, null):Event<Void->Void> = new Event<Void->Void>();
@@ -1099,21 +1090,6 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:noCompletion
-	private function get_role():UInt
-	{
-		return mediaPlayer != null ? LibVLC.media_player_get_role(mediaPlayer.raw) : 0;
-	}
-
-	@:noCompletion
-	private function set_role(value:UInt):UInt
-	{
-		if (mediaPlayer != null)
-			LibVLC.media_player_set_role(mediaPlayer.raw, value);
-
-		return value;
-	}
-
-	@:noCompletion
 	private function get_videoTrackCount():Int
 	{
 		return mediaPlayer != null ? LibVLC.video_get_track_count(mediaPlayer.raw) : -1;
@@ -1156,21 +1132,6 @@ class Video extends openfl.display.Bitmap
 	}
 
 	@:noCompletion
-	private function get_audioDelay():Int64
-	{
-		return mediaPlayer != null ? LibVLC.audio_get_delay(mediaPlayer.raw) : 0;
-	}
-
-	@:noCompletion
-	private function set_audioDelay(value:Int64):Int64
-	{
-		if (mediaPlayer != null)
-			LibVLC.audio_set_delay(mediaPlayer.raw, value);
-
-		return value;
-	}
-
-	@:noCompletion
 	private function get_spuTrackCount():Int
 	{
 		return mediaPlayer != null ? LibVLC.video_get_spu_count(mediaPlayer.raw) : -1;
@@ -1187,21 +1148,6 @@ class Video extends openfl.display.Bitmap
 	{
 		if (mediaPlayer != null)
 			LibVLC.video_set_spu(mediaPlayer.raw, value);
-
-		return value;
-	}
-
-	@:noCompletion
-	private function get_spuDelay():Int64
-	{
-		return mediaPlayer != null ? LibVLC.video_get_spu_delay(mediaPlayer.raw) : 0;
-	}
-
-	@:noCompletion
-	private function set_spuDelay(value:Int64):Int64
-	{
-		if (mediaPlayer != null)
-			LibVLC.video_set_spu_delay(mediaPlayer.raw, value);
 
 		return value;
 	}

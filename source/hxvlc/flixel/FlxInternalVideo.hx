@@ -28,17 +28,6 @@ class FlxInternalVideo extends Video
 	@:noCompletion
 	private var resumeOnFocus:Bool = false;
 
-	@:inheritDoc(hxvlc.openfl.Video.new)
-	public function new(smoothing:Bool = true):Void
-	{
-		super(smoothing);
-
-		onOpening.add(function():Void
-		{
-			role = LibVLC_Role_Game;
-		});
-	}
-
 	@:inheritDoc(hxvlc.openfl.Video.load)
 	public override function load(location:Location, ?options:Array<String>):Bool
 	{
