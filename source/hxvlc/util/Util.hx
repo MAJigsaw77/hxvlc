@@ -93,63 +93,6 @@ class Util
 	}
 
 	/**
-	 * Creates directories recursively.
-	 * 
-	 * This method ensures that all directories in the specified path are created.
-	 * 
-	 * If a directory already exists, it is skipped.
-	 * 
-	 * If a file exists with the same name as a directory, it is deleted before creating the directory.
-	 * 
-	 * @param directory The path of the directory to create.
-	 */
-	public static function mkDirs(directory:String):Void
-	{
-		try
-		{
-			if (FileSystem.exists(directory) && FileSystem.isDirectory(directory))
-				return;
-		}
-		catch (e:Dynamic) {}
-
-		var total:String = '';
-
-		if (directory.substr(0, 1) == '/')
-			total = '/';
-
-		final parts:Array<String> = directory.split('/');
-
-		if (parts.length > 0 && parts[0].indexOf(':') > -1)
-			parts.shift();
-
-		for (part in parts)
-		{
-			if (part != '.' && part.length > 0)
-			{
-				if (total != '/' && total.length > 0)
-					total += '/';
-
-				total += part;
-
-				try
-				{
-					if (FileSystem.exists(total) && !FileSystem.isDirectory(total))
-						FileSystem.deleteFile(total);
-
-					if (!FileSystem.exists(total))
-						FileSystem.createDirectory(total);
-				}
-				catch (e:Exception)
-				{
-					trace('Failed to create "$total" directory, ${e.message}');
-
-					break;
-				}
-			}
-		}
-	}
-
-	/**
 	 * Normalizes a file path based on the operating system.
 	 * 
 	 * On Windows, it converts forward slashes ('/') to backslashes ('\') 
