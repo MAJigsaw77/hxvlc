@@ -6,10 +6,8 @@ import flixel.FlxG;
 import haxe.io.Bytes;
 import haxe.io.Path;
 
-import hxvlc.externs.LibVLC;
 import hxvlc.openfl.Video;
 import hxvlc.util.Location;
-import hxvlc.util.Util;
 
 import openfl.utils.Assets;
 
@@ -86,12 +84,21 @@ class FlxInternalVideo extends Video
 	@:inheritDoc(hxvlc.openfl.Video.addSlave)
 	public override function addSlave(type:Int, location:String, select:Bool):Bool
 	{
+		function convertAbsToURL(path:String):String
+		{
+			#if windows
+			return 'file:///${Path.normalize(FileSystem.absolutePath(path))}';
+			#else
+			return 'file://${Path.normalize(FileSystem.absolutePath(path))}';
+			#end
+		}
+
 		if (!Video.URL_VERIFICATION_REGEX.match(location))
 		{
 			final absolutePath:String = FileSystem.absolutePath(location);
 
 			if (FileSystem.exists(absolutePath))
-				return super.addSlave(type, Util.convertAbsToURL(absolutePath), select);
+				return super.addSlave(type, convertAbsToURL(location), select);
 			else if (Assets.exists(location))
 			{
 				final assetPath:Null<String> = Assets.getPath(location);
@@ -99,7 +106,7 @@ class FlxInternalVideo extends Video
 				if (assetPath != null)
 				{
 					if (FileSystem.exists(assetPath) && Path.isAbsolute(assetPath))
-						return super.addSlave(type, Util.convertAbsToURL(assetPath), select);
+						return super.addSlave(type, convertAbsToURL(assetPath), select);
 					else if (FileSystem.exists(assetPath) && !Path.isAbsolute(assetPath))
 						return super.addSlave(type, FileSystem.absolutePath(assetPath), select);
 				}

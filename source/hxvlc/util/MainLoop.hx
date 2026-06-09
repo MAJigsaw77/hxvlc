@@ -9,12 +9,12 @@ import haxe.EventLoop;
 @:forwardStatics
 abstract MainLoop(haxe.MainLoop)
 {
-	public static inline function runInMainThread(f:Void->Void)
+	public static inline function runInMainThread(f:Void->Void):Void
 	{
 		EventLoop.main.run(f);
 	}
 
-	public static inline function addThread(f:Void->Void)
+	public static inline function addThread(f:Void->Void):Void
 	{
 		EventLoop.addTask(f);
 	}

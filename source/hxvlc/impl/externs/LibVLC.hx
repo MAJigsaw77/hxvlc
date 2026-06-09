@@ -1,4 +1,4 @@
-package hxvlc.externs;
+package hxvlc.impl.externs;
 
 import cpp.CastCharStar;
 import cpp.ConstCharStar;

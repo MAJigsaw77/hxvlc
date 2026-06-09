@@ -32,7 +32,6 @@ import hxvlc.util.Location;
  * 	FlxTimer.wait(0.001, () -> video.play());
  * ```
  */
-@:nullSafety
 class FlxVideoSprite extends FlxSprite
 {
 	/** The video bitmap object. */
@@ -51,7 +50,6 @@ class FlxVideoSprite extends FlxSprite
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
 		bitmap = new FlxInternalVideo(antialiasing);
-		bitmap.forceRendering = true;
 		bitmap.onFormatSetup.add(function():Void
 		{
 			if (bitmap != null && bitmap.bitmapData != null)
@@ -134,6 +132,15 @@ class FlxVideoSprite extends FlxSprite
 		if (bitmap != null)
 		{
 			FlxG.removeChild(bitmap);
+
+			if (bitmap.bitmapData != null)
+			{
+				bitmap.bitmapData.dispose();
+
+				@:nullSafety(Off)
+				bitmap.bitmapData = null;
+			}
+
 			bitmap.dispose();
 			bitmap = null;
 		}

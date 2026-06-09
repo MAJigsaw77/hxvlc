@@ -1,8 +1,8 @@
-package hxvlc.util;
+package hxvlc.impl;
 
 import cpp.Struct;
 
-import hxvlc.externs.LibVLC;
+import hxvlc.impl.externs.LibVLC;
 
 /**
  * Represents various statistics related to media processing.

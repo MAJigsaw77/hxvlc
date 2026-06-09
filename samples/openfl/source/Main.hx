@@ -1,51 +1,38 @@
 package;
 
+import openfl.display.FPS;
+
 import hxvlc.openfl.Video;
 
+import openfl.display.Sprite;
 import openfl.events.Event;
+import openfl.utils.Assets;
 
-class Main extends openfl.display.Sprite
+class Main extends Sprite
 {
-	private var video:Video;
-
-	public static function main():Void
-	{
-		#if android
-		Sys.setCwd(haxe.io.Path.addTrailingSlash(extension.androidtools.os.Build.VERSION.SDK_INT > 30 ? extension.androidtools.content.Context.getObbDir() : extension.androidtools.content.Context.getExternalFilesDir()));
-		#elseif ios
-		Sys.setCwd(lime.system.System.documentsDirectory);
-		#end
-
-		openfl.Lib.current.addChild(new Main());
-	}
+	var video:Video;
+	var fps:FPS;
 
 	public function new():Void
 	{
 		super();
 
-		if (stage != null)
-			onAddedToStage();
-		else
-			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-	}
-
-	private function onAddedToStage(?event:Event):Void
-	{
-		if (hasEventListener(Event.ADDED_TO_STAGE))
-			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-
-		openfl.Lib.current.stage.frameRate = 999;
-
 		video = new Video();
 		video.onOpening.add(function():Void
 		{
-			stage.nativeWindow.addEventListener(Event.ACTIVATE, stage_onActivate);
-			stage.nativeWindow.addEventListener(Event.DEACTIVATE, stage_onDeactivate);
+			if (!stage.nativeWindow.hasEventListener(Event.ACTIVATE))
+				stage.nativeWindow.addEventListener(Event.ACTIVATE, stage_onActivate);
+
+			if (!stage.nativeWindow.hasEventListener(Event.DEACTIVATE))
+				stage.nativeWindow.addEventListener(Event.DEACTIVATE, stage_onDeactivate);
 		});
 		video.onEndReached.add(function():Void
 		{
-			stage.nativeWindow.removeEventListener(Event.ACTIVATE, stage_onActivate);
-			stage.nativeWindow.removeEventListener(Event.DEACTIVATE, stage_onDeactivate);
+			if (stage.nativeWindow.hasEventListener(Event.ACTIVATE))
+				stage.nativeWindow.removeEventListener(Event.ACTIVATE, stage_onActivate);
+
+			if (stage.nativeWindow.hasEventListener(Event.DEACTIVATE))
+				stage.nativeWindow.removeEventListener(Event.DEACTIVATE, stage_onDeactivate);
 
 			if (stage.hasEventListener(Event.ENTER_FRAME))
 				stage.removeEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
@@ -53,32 +40,35 @@ class Main extends openfl.display.Sprite
 			if (video != null)
 			{
 				removeChild(video);
+
+				if (video.bitmapData != null)
+				{
+					video.bitmapData.dispose();
+					video.bitmapData = null;
+				}
+
 				video.dispose();
+
 				video = null;
 			}
 		});
 		video.onFormatSetup.add(function():Void
 		{
-			stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
+			if (!stage.hasEventListener(Event.ENTER_FRAME))
+				stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
 		});
+
 		addChild(video);
 
-		try
-		{
-			final file:String = haxe.io.Path.join(['videos', sys.FileSystem.readDirectory('videos')[0]]);
+		if (video.load('assets/video.mp4'))
+			video.play();
 
-			if (file != null && file.length > 0)
-				video.load(file);
-			else
-				video.load('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
-		}
-		catch (e:Dynamic)
-			video.load('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
-
-		video.play();
+		fps = new FPS(10, 10, 0xFF0000);
+		addChild(fps);
 	}
 
-	private inline function stage_onEnterFrame(event:Event):Void
+	@:noCompletion
+	private function stage_onEnterFrame(_):Void
 	{
 		if (video != null && video.bitmapData != null)
 		{
@@ -86,18 +76,21 @@ class Main extends openfl.display.Sprite
 
 			video.width = stage.stageWidth / stage.stageHeight > aspectRatio ? stage.stageHeight * aspectRatio : stage.stageWidth;
 			video.height = stage.stageWidth / stage.stageHeight > aspectRatio ? stage.stageHeight : stage.stageWidth / aspectRatio;
+
 			video.x = (stage.stageWidth - video.width) / 2;
 			video.y = (stage.stageHeight - video.height) / 2;
 		}
 	}
 
-	private inline function stage_onActivate(event:Event):Void
+	@:noCompletion
+	private function stage_onActivate(event:Event):Void
 	{
-		video?.resume();
+		video.resume();
 	}
 
-	private inline function stage_onDeactivate(event:Event):Void
+	@:noCompletion
+	private function stage_onDeactivate(event:Event):Void
 	{
-		video?.pause();
+		video.pause();
 	}
 }
