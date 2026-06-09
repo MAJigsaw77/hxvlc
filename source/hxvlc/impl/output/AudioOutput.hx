@@ -17,8 +17,17 @@ import sys.thread.Mutex;
 
 class AudioOutput
 {
+	/** Maps the audio format to a supported format. */
+	public var onMapFormat:Null<String->String>;
+
+	/** Maps the audio channel count to a supported layout. */
+	public var onMapChannels:Null<Int->Int>;
+
+	/** Maps the audio sample rate to a supported value. */
+	public var onMapRate:Null<Int->Int>;
+
 	/** Called when audio samples are ready to be played. */
-	public var onPlay:Null<(samples:Null<BytesData>) -> Void>;
+	public var onPlay:Null<Null<BytesData>->Void>;
 
 	/** Called when audio playback is paused. */
 	public var onPause:Null<Void->Void>;
@@ -39,34 +48,19 @@ class AudioOutput
 	private var mutex:Mutex;
 
 	@:noCompletion
-	private var format:String;
-
-	@:noCompletion
-	private var rate:Null<Int>;
-
-	@:noCompletion
-	private var channels:Null<Int>;
-
-	@:noCompletion
 	private var samples:Null<BytesData>;
 
 	/**
 	 * Creates a new AudioOutput instance for handling audio output.
 	 * 
 	 * @param mediaPlayer The media player to attach audio callbacks to.
-	 * @param format The audio format string (e.g., "S16N").
-	 * @param rate (Optional) The sample rate. If not provided, it will use the default coming from LibVLC.
-	 * @param channels (Optional) The number of audio channels. If not provided, it will use the default coming from LibVLC.
 	 */
-	public function new(mediaPlayer:MediaPlayer, format:String, ?rate:Int, ?channels:Int):Void
+	public function new(mediaPlayer:MediaPlayer):Void
 	{
 		if (mediaPlayer.nativeMediaPlayer == null)
 			return;
 
 		this.mutex = new Mutex();
-		this.format = format;
-		this.rate = rate;
-		this.channels = channels;
 
 		LibVLC.audio_set_callbacks(mediaPlayer.nativeMediaPlayer, Function.fromStaticFunction(audioPlay), Function.fromStaticFunction(audioPause),
 			Function.fromStaticFunction(audioResume), Function.fromStaticFunction(audioFlush), Function.fromStaticFunction(audioDrain),
@@ -204,7 +198,8 @@ class AudioOutput
 	private static function audioSetVolume(data:RawPointer<cpp.Void>, volume:Single, mute:Bool):Void
 	{
 		// Empty because the way LibVLC handles the audio volume's isnt really nice,
-		// and this callback cant be removed as if removed, LibVLC will make the samples volume be changed which is really bad.
+		// and this callback cant be removed as if removed,
+		// LibVLC will make the samples volume be changed which is really bad.
 	}
 
 	@:noCompletion
@@ -221,13 +216,21 @@ class AudioOutput
 
 			untyped __cpp__('hx::SetTopOfStack(&stackBase, true)');
 
-			Stdlib.nativeMemcpy(untyped format, untyped cpp.CastCharStar.fromString(audioOutput.format), audioOutput.format.length);
+			final inFormat:String = new String(untyped format);
+			final inRate:Int = rate[0];
+			final inChannels:Int = channels[0];
 
-			if (audioOutput.rate != null && audioOutput.rate > 0)
-				rate[0] = audioOutput.rate;
+			final outFormat:String = audioOutput.onMapFormat != null ? audioOutput.onMapFormat(inFormat) : inFormat;
+			final outRate:Int = audioOutput.onMapRate != null ? audioOutput.onMapRate(inRate) : inRate;
+			final outChannels:Int = audioOutput.onMapChannels != null ? audioOutput.onMapChannels(inChannels) : inChannels;
 
-			if (audioOutput.channels != null && audioOutput.channels > 0)
-				channels[0] = audioOutput.channels;
+			Stdlib.nativeMemcpy(untyped format, untyped cpp.CastCharStar.fromString(outFormat), outFormat.length);
+
+			if (outRate > 0)
+				rate[0] = outRate;
+
+			if (outChannels > 0)
+				channels[0] = outChannels;
 
 			if (audioOutput.onFormatSetup != null)
 			{

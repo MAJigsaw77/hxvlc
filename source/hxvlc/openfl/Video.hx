@@ -1,9 +1,8 @@
 package hxvlc.openfl;
 
-import lime.graphics.Image;
-import lime.utils.ArrayBuffer;
-
 import cpp.Char;
+import cpp.Float32;
+import cpp.Int16;
 import cpp.NativeArray;
 import cpp.RawConstPointer;
 import cpp.RawPointer;
@@ -27,6 +26,7 @@ import hxvlc.util.Handle;
 import hxvlc.util.Location;
 
 import lime.app.Event;
+import lime.graphics.Image;
 import lime.media.openal.AL;
 import lime.media.openal.ALBuffer;
 import lime.media.openal.ALSource;
@@ -171,7 +171,7 @@ class Video extends Bitmap
 	@:noCompletion
 	private var instance:Null<Instance>;
 
-	// @:noCompletion
+	@:noCompletion
 	private var mediaPlayer:MediaPlayer;
 
 	@:noCompletion
@@ -185,6 +185,12 @@ class Video extends Bitmap
 
 	@:noCompletion
 	private var audioOutput:Null<AudioOutput>;
+
+	@:noCompletion
+	private var alUseEXTFLOAT32:Null<Bool>;
+
+	@:noCompletion
+	private var alUseEXTMCFORMATS:Null<Bool>;
 
 	@:noCompletion
 	private var alSource:Null<ALSource>;
@@ -673,10 +679,15 @@ class Video extends Bitmap
 	@:noCompletion
 	private function setupAudio():Void
 	{
+		alUseEXTFLOAT32 ??= AL.isExtensionPresent('AL_EXT_FLOAT32');
+		alUseEXTMCFORMATS ??= AL.isExtensionPresent('AL_EXT_MCFORMATS');
 		alSource ??= AL.createSource();
 		alBufferPool ??= AL.genBuffers(255);
 
-		audioOutput = new AudioOutput(mediaPlayer, "S16N");
+		audioOutput = new AudioOutput(mediaPlayer);
+		audioOutput.onMapFormat = audioOutput_onMapFormat;
+		audioOutput.onMapChannels = audioOutput_onMapChannels;
+		audioOutput.onMapRate = audioOutput_onMapRate;
 		audioOutput.onFormatSetup = audioOutput_onFormatSetup;
 		audioOutput.onPlay = audioOutput_onPlay;
 		audioOutput.onPause = audioOutput_onPause;
@@ -685,11 +696,72 @@ class Video extends Bitmap
 	}
 
 	@:noCompletion
+	private function audioOutput_onMapFormat(format:String):String
+	{
+		return format == 'FL32' && alUseEXTFLOAT32 == true ? 'FL32' : 'S16N';
+	}
+
+	@:noCompletion
+	private function audioOutput_onMapChannels(channels:Int):Int
+	{
+		if (channels == 1)
+			return 1;
+
+		if (channels == 3 || channels == 5 || channels == 7)
+			return 2;
+
+		if (alUseEXTMCFORMATS != true)
+			return 2;
+
+		return channels;
+	}
+
+	@:noCompletion
+	private function audioOutput_onMapRate(rate:Int):Int
+	{
+		return rate;
+	}
+
+	@:noCompletion
 	private function audioOutput_onFormatSetup(format:String, rate:Int, channels:Int):Void
 	{
 		alSampleRate = rate;
-		alFormat = AL.FORMAT_STEREO16;
-		alFrameSize = Stdlib.sizeof(cpp.Int16) * channels;
+
+		switch (format)
+		{
+			case 'FL32':
+				switch (channels)
+				{
+					case 1:
+						alFormat = AL.getEnumValue('AL_FORMAT_MONO_FLOAT32');
+					case 2:
+						alFormat = AL.getEnumValue('AL_FORMAT_STEREO_FLOAT32');
+					case 4:
+						alFormat = AL.getEnumValue('AL_FORMAT_QUAD32');
+					case 6:
+						alFormat = AL.getEnumValue('AL_FORMAT_51CHN32');
+					case 8:
+						alFormat = AL.getEnumValue('AL_FORMAT_71CHN32');
+				}
+
+				alFrameSize = Stdlib.sizeof(Float32) * channels;
+			case 'S16N':
+				switch (channels)
+				{
+					case 1:
+						alFormat = AL.getEnumValue('AL_FORMAT_MONO16');
+					case 2:
+						alFormat = AL.getEnumValue('AL_FORMAT_STEREO16');
+					case 4:
+						alFormat = AL.getEnumValue('AL_FORMAT_QUAD16');
+					case 6:
+						alFormat = AL.getEnumValue('AL_FORMAT_51CHN16');
+					case 8:
+						alFormat = AL.getEnumValue('AL_FORMAT_71CHN16');
+				}
+
+				alFrameSize = Stdlib.sizeof(Int16) * channels;
+		}
 	}
 
 	@:noCompletion
