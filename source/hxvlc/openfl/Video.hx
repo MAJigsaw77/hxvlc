@@ -1,5 +1,8 @@
 package hxvlc.openfl;
 
+import lime.graphics.Image;
+import lime.utils.ArrayBuffer;
+
 import cpp.Char;
 import cpp.NativeArray;
 import cpp.RawConstPointer;
@@ -649,20 +652,22 @@ class Video extends Bitmap
 	@:noCompletion
 	private function videoOutput_onDisplay(pixels:BytesData):Void
 	{
-		if (bitmapData != null && bitmapData.image != null)
-		{
-			final dest:RawPointer<Char> = cast NativeArray.getBase(bitmapData.image.buffer.data.buffer.getData()).getBase();
+		if (bitmapData?.image?.buffer?.data?.buffer == null)
+			return;
 
-			final src:RawConstPointer<Char> = cast NativeArray.getBase(pixels).getBase();
+		final image:Image = bitmapData.image;
 
-			Stdlib.nativeMemcpy(untyped dest, untyped src, bitmapData.image.buffer.data.buffer.byteLength);
+		final dest:RawPointer<Char> = cast NativeArray.getBase(image.buffer.data.buffer.getData()).getBase();
 
-			bitmapData.image.dirty = true;
+		final src:RawConstPointer<Char> = cast NativeArray.getBase(pixels).getBase();
 
-			bitmapData.image.version++;
+		Stdlib.nativeMemcpy(untyped dest, untyped src, pixels.length);
 
-			onDisplay.dispatch();
-		}
+		image.dirty = true;
+
+		image.version++;
+
+		onDisplay.dispatch();
 	}
 
 	@:noCompletion
