@@ -141,19 +141,19 @@ class MediaPlayerEvents
 				case event if (event == LibVLC_MediaPlayerTimeChanged && mediaPlayerEvents.onTimeChanged != null):
 					final newTime:Int64 = untyped __cpp__('{0}.u.media_player_time_changed.new_time', p_event[0]);
 
-                    mediaPlayerEvents.onTimeChanged(newTime);
+					mediaPlayerEvents.onTimeChanged(newTime);
 				case event if (event == LibVLC_MediaPlayerPositionChanged && mediaPlayerEvents.onPositionChanged != null):
 					final newPosition:Single = untyped __cpp__('{0}.u.media_player_position_changed.new_position', p_event[0]);
 
-                    mediaPlayerEvents.onPositionChanged(newPosition);
+					mediaPlayerEvents.onPositionChanged(newPosition);
 				case event if (event == LibVLC_MediaPlayerLengthChanged && mediaPlayerEvents.onLengthChanged != null):
 					final newLength:Int64 = untyped __cpp__('{0}.u.media_player_length_changed.new_length', p_event[0]);
 
-                    mediaPlayerEvents.onLengthChanged(newLength);
+					mediaPlayerEvents.onLengthChanged(newLength);
 				case event if (event == LibVLC_MediaPlayerMediaChanged && mediaPlayerEvents.onMediaChanged != null):
-                    final newMedia:Media = new Media(false);
-                    newMedia.nativeMedia = untyped __cpp__('{0}.u.media_player_media_changed.new_media', p_event[0]);
-                    mediaPlayerEvents.onMediaChanged(newMedia);
+					final newMedia:Media = new Media(false);
+					newMedia.nativeMedia = untyped __cpp__('{0}.u.media_player_media_changed.new_media', p_event[0]);
+					mediaPlayerEvents.onMediaChanged(newMedia);
 			}
 
 			mediaPlayerEvents.mutex.release();
