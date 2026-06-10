@@ -1,8 +1,6 @@
 package hxvlc.openfl;
 
 import cpp.Char;
-import cpp.Float32;
-import cpp.Int16;
 import cpp.NativeArray;
 import cpp.RawConstPointer;
 import cpp.RawPointer;
@@ -744,7 +742,7 @@ class Video extends Bitmap
 						alFormat = AL.getEnumValue('AL_FORMAT_71CHN32');
 				}
 
-				alFrameSize = Stdlib.sizeof(Float32) * channels;
+				alFrameSize = Stdlib.sizeof(cpp.Float32) * channels;
 			case 'S16N':
 				switch (channels)
 				{
@@ -760,7 +758,7 @@ class Video extends Bitmap
 						alFormat = AL.getEnumValue('AL_FORMAT_71CHN16');
 				}
 
-				alFrameSize = Stdlib.sizeof(Int16) * channels;
+				alFrameSize = Stdlib.sizeof(cpp.Int16) * channels;
 		}
 	}
 
