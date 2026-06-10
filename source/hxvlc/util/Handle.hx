@@ -30,7 +30,23 @@ class Handle
 		#if HXVLC_LOGGING
 		sharedInstance.setLog(function(info:haxe.PosInfos, level:Int, msg:String):Void
 		{
-			haxe.Log.trace('[$level] $msg', info);
+			var message:String = msg;
+
+			#if HXVLC_SHOW_LOG_TYPE
+			switch (level)
+			{
+				case 0: /** Debug message */
+					message = '[DEBUG] $message';
+				case 2: /** Important informational message */
+					message = '[NOTICE] $message';
+				case 3: /** Warning (potential error) message */
+					message = '[WARNING] $message';
+				case 4: /** Error message */
+					message = '[ERROR] $message';
+			}
+			#end
+
+			haxe.Log.trace(message, info);
 		});
 		#end
 
