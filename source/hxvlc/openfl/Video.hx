@@ -9,7 +9,6 @@ import cpp.RawPointer;
 import cpp.Stdlib;
 
 import haxe.Int64;
-import haxe.MainLoop;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
 
@@ -24,6 +23,7 @@ import hxvlc.impl.output.AudioOutput;
 import hxvlc.impl.output.VideoOutput;
 import hxvlc.util.Handle;
 import hxvlc.util.Location;
+import hxvlc.util.MainLoop;
 
 import lime.app.Event;
 import lime.graphics.Image;

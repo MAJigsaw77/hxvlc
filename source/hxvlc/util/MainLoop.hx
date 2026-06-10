@@ -1,8 +1,6 @@
 package hxvlc.util;
 
 #if haxe5
-import haxe.EventLoop;
-
 /**
  * Wrapper for compatibility with Haxe 5.
  */
@@ -11,12 +9,12 @@ abstract MainLoop(haxe.MainLoop)
 {
 	public static inline function runInMainThread(f:Void->Void):Void
 	{
-		EventLoop.main.run(f);
+		haxe.EventLoop.main.run(f);
 	}
 
 	public static inline function addThread(f:Void->Void):Void
 	{
-		EventLoop.addTask(f);
+		haxe.EventLoop.addTask(f);
 	}
 }
 #else
