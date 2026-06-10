@@ -5,46 +5,25 @@ import cpp.vm.Gc;
 
 class Finalizeable
 {
-	private var name:Null<String>;
+	@:noCompletion
+	private var owned:Bool;
 
-	public function new(?name:String):Void
+	public function new(owned:Bool = true):Void
 	{
-		this.name = name;
+		this.owned = owned;
 
 		Gc.setFinalizer(this, Function.fromStaticFunction(finalize));
 	}
 
-	public function destroy():Bool
-	{
-		return false;
-	}
+	@:keep
+	public function destroy():Void {}
 
 	@:noCompletion
 	@:noDebug
 	@:unreflective
 	private static function finalize(finalizeable:Finalizeable):Void
 	{
-		if (finalizeable.name != null)
-		{
-			untyped __cpp__('printf("Destroying %s\\n", {0}.__s)', finalizeable.name);
-			untyped __cpp__('fflush(stdout)');
-		}
-
-		if (finalizeable.destroy())
-		{
-			if (finalizeable.name != null)
-			{
-				untyped __cpp__('printf("Destroyed %s\\n", {0}.__s)', finalizeable.name);
-				untyped __cpp__('fflush(stdout)');
-			}
-		}
-		else
-		{
-			if (finalizeable.name != null)
-			{
-				untyped __cpp__('printf("Already Destroyed or Handled %s\\n", {0}.__s)', finalizeable.name);
-				untyped __cpp__('fflush(stdout)');
-			}
-		}
+		if (finalizeable.owned)
+			finalizeable.destroy();
 	}
 }

@@ -1,23 +1,22 @@
 package hxvlc.impl;
 
-import haxe.Log;
-import haxe.extern.AsVar;
-import cpp.Stdlib;
 import cpp.CastCharStar;
-import haxe.io.Path;
-import cpp.UInt32;
-import sys.thread.Mutex;
-
-import haxe.PosInfos;
-
-import cpp.Function;
 import cpp.ConstCharStar;
+import cpp.Function;
 import cpp.RawConstPointer;
 import cpp.RawPointer;
 import cpp.StdVector;
+import cpp.Stdlib;
+import cpp.UInt32;
 import cpp.VarList;
 
+import haxe.PosInfos;
+import haxe.extern.AsVar;
+import haxe.io.Path;
+
 import hxvlc.impl.externs.LibVLC;
+
+import sys.thread.Mutex;
 
 @:cppInclude('stdarg.h')
 @:cppNamespaceCode('static int vsnprintf_safe(char* buffer, size_t size, const char* fmt, va_list args)
@@ -111,7 +110,7 @@ class Instance extends Finalizeable
 	 */
 	public function new(?options:Array<String>):Void
 	{
-		super('Instance');
+		super();
 
 		this.mutex = new Mutex();
 
@@ -163,18 +162,14 @@ class Instance extends Finalizeable
 	}
 
 	/** Destroys the native LibVLC instance (even if not called, the GC will be picking it up if unused) */
-	public override function destroy():Bool
+	public override function destroy():Void
 	{
 		if (nativeInstance != null)
 		{
 			LibVLC.release(nativeInstance);
 
 			nativeInstance = null;
-
-			return true;
 		}
-
-		return false;
 	}
 
 	@:noCompletion

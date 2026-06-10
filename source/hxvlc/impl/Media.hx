@@ -1,27 +1,23 @@
 package hxvlc.impl;
 
-import cpp.NativeArray;
-import cpp.Stdlib;
-import cpp.RawConstPointer;
-import cpp.Function;
-
-import haxe.io.BytesInput;
-
-import sys.thread.Mutex;
-
 import cpp.CastCharStar;
+import cpp.Function;
 import cpp.Int64;
+import cpp.NativeArray;
+import cpp.RawConstPointer;
 import cpp.RawPointer;
 import cpp.SSizeT;
 import cpp.SizeT;
+import cpp.Stdlib;
 import cpp.UInt64;
 import cpp.UInt8;
 
 import haxe.io.Bytes;
+import haxe.io.BytesInput;
 
 import hxvlc.impl.externs.LibVLC;
 
-import sys.FileSystem;
+import sys.thread.Mutex;
 
 @:access(haxe.io.BytesInput)
 class Media extends Finalizeable
@@ -38,7 +34,7 @@ class Media extends Finalizeable
 		if (instance == null || instance.nativeInstance == null)
 			return null;
 
-		if (path == null || path.length == 0 || !FileSystem.exists(path))
+		if (path == null || path.length == 0 || !sys.FileSystem.exists(path))
 			return null;
 
 		final media:Media = new Media();
@@ -109,23 +105,10 @@ class Media extends Finalizeable
 	public var nativeMedia:Null<RawPointer<LibVLC_Media_T>>;
 
 	@:noCompletion
-	private var owned:Bool = true;
-
-	@:noCompletion
 	private var mutex:Null<Mutex>;
 
 	@:noCompletion
 	private var input:Null<BytesInput>;
-
-	/**
-	 * Initializes the LibVLC media
-	 */
-	public function new(owned:Bool = true):Void
-	{
-		super('Media');
-
-		this.owned = owned;
-	}
 
 	/**
 	 * Adds an option to the LibVLC media instance.
@@ -228,18 +211,14 @@ class Media extends Finalizeable
 	}
 
 	/** Destroys the native LibVLC media (even if not called, the GC will be picking it up if unused) */
-	public override function destroy():Bool
+	public override function destroy():Void
 	{
-		if (nativeMedia != null && owned)
+		if (nativeMedia != null)
 		{
 			LibVLC.media_release(nativeMedia);
 
 			nativeMedia = null;
-
-			return true;
 		}
-
-		return false;
 	}
 
 	@:noCompletion

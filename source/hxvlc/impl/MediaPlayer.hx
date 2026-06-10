@@ -1,10 +1,10 @@
 package hxvlc.impl;
 
+import cpp.RawPointer;
+
 import haxe.Int64;
 
 import hxvlc.impl.externs.LibVLC;
-
-import cpp.RawPointer;
 
 class MediaPlayer extends Finalizeable
 {
@@ -58,7 +58,7 @@ class MediaPlayer extends Finalizeable
 	 */
 	public function new(instance:Instance):Void
 	{
-		super('MediaPlayer');
+		super();
 
 		if (instance.nativeInstance != null)
 			nativeMediaPlayer = LibVLC.media_player_new(instance.nativeInstance);
@@ -209,18 +209,14 @@ class MediaPlayer extends Finalizeable
 	}
 
 	/** Destroys the native LibVLC media (even if not called, the GC will be picking it up if unused) */
-	public override function destroy():Bool
+	public override function destroy():Void
 	{
 		if (nativeMediaPlayer != null)
 		{
 			LibVLC.media_player_release(nativeMediaPlayer);
 
 			nativeMediaPlayer = null;
-
-			return true;
 		}
-
-		return false;
 	}
 
 	@:noCompletion
