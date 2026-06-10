@@ -217,7 +217,7 @@ class Video extends Bitmap
 
 		if (instance == null)
 		{
-			if (Handle.sharedInstance == null)
+			while (Handle.loading)
 				Handle.init();
 
 			instance = Handle.sharedInstance;
