@@ -642,15 +642,21 @@ class Video extends Bitmap
 	@:noCompletion
 	private function videoOutput_onSetup(width:Int, height:Int):Void
 	{
-		if (bitmapData == null || (bitmapData.width != width || bitmapData.height != height))
+		MainLoop.runInMainThread(function():Void
 		{
-			if (bitmapData != null)
-				bitmapData.dispose();
+			if (videoOutput != null)
+			{
+				if (bitmapData == null || (bitmapData.width != width || bitmapData.height != height))
+				{
+					if (bitmapData != null)
+						bitmapData.dispose();
 
-			bitmapData = new BitmapData(width, height, true, 0x000000);
+					bitmapData = new BitmapData(width, height, true, 0x000000);
 
-			onFormatSetup.dispatch();
-		}
+					onFormatSetup.dispatch();
+				}
+			}
+		});
 	}
 
 	@:noCompletion
