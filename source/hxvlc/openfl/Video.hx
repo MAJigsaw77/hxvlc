@@ -1,5 +1,9 @@
 package hxvlc.openfl;
 
+import hxvlc.openfl.textures.VideoTexture;
+
+import openfl.Lib;
+
 import cpp.Char;
 import cpp.NativeArray;
 import cpp.RawConstPointer;
@@ -35,6 +39,8 @@ import openfl.display.BitmapData;
 
 using StringTools;
 
+@:access(openfl.display3D.textures.TextureBase)
+@:access(openfl.display.BitmapData)
 class Video extends Bitmap
 {
 	/**
@@ -602,6 +608,18 @@ class Video extends Bitmap
 		return __bitmapData;
 	}
 
+	@:noCompletion private override function __enterFrame(_):Void
+	{
+		if (__bitmapData != null && __bitmapData.image != null && __bitmapData.image.version != __imageVersion)
+		{
+			__setRenderDirty();
+		}
+		else if (__bitmapData != null && __bitmapData.__texture != null && bitmapData.__textureVersion != __imageVersion)
+		{
+			__setRenderDirty();
+		}
+	}
+
 	@:noCompletion
 	private function setMediaToMediaPlayer(media:Null<Media>, ?options:Array<String>):Bool
 	{
@@ -634,47 +652,46 @@ class Video extends Bitmap
 	private function setupVideo():Void
 	{
 		videoOutput = new VideoOutput(mediaPlayer, "RV32", 4);
-		videoOutput.onFormatSetup = videoOutput_onSetup;
-		videoOutput.onDisplay = videoOutput_onDisplay;
+		videoOutput.onFormatSetup = (width:Int, height:Int) -> MainLoop.runInMainThread(() -> videoOutput_onSetup(width, height));
+		videoOutput.onDisplay = (pixels:BytesData) -> MainLoop.runInMainThread(() -> videoOutput_onDisplay(pixels));
 	}
 
 	@:noCompletion
 	private function videoOutput_onSetup(width:Int, height:Int):Void
 	{
-		MainLoop.runInMainThread(function():Void
-		{
-			if (videoOutput != null)
-			{
-				if (bitmapData == null || (bitmapData.width != width || bitmapData.height != height))
-				{
-					if (bitmapData != null)
-						bitmapData.dispose();
+		if (videoOutput == null || Lib.current.stage?.context3D == null)
+			return;
 
-					bitmapData = new BitmapData(width, height, true, 0x000000);
+		if (bitmapData != null && (bitmapData.width == width && bitmapData.height == height))
+			return;
 
-					onFormatSetup.dispatch();
-				}
-			}
-		});
+		if (bitmapData != null)
+			bitmapData.dispose();
+
+		// This creates an image-less BitmapData
+		bitmapData = new BitmapData(0, 0, true, 0);
+
+		// Because the BitmapData doesnt have an image we set the bounds of it here
+		bitmapData.rect.setTo(0, 0, width, height);
+
+		// Allocates the Texture here so its a GPU BitmapData
+		bitmapData.__texture = new VideoTexture(Lib.current.stage.context3D, width, height);
+		bitmapData.__textureContext = bitmapData.__texture.__textureContext;
+		bitmapData.__resize(width, height);
+		bitmapData.__isValid = true;
+
+		onFormatSetup.dispatch();
 	}
 
 	@:noCompletion
 	private function videoOutput_onDisplay(pixels:BytesData):Void
 	{
-		if (bitmapData?.image?.buffer?.data?.buffer == null)
+		if (bitmapData == null || bitmapData.__texture == null)
 			return;
 
-		final image:Image = bitmapData.image;
+		cast(bitmapData.__texture, VideoTexture).uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(pixels)));
 
-		final dest:RawPointer<Char> = cast NativeArray.getBase(image.buffer.data.buffer.getData()).getBase();
-
-		final src:RawConstPointer<Char> = cast NativeArray.getBase(pixels).getBase();
-
-		Stdlib.nativeMemcpy(untyped dest, untyped src, pixels.length);
-
-		image.dirty = true;
-
-		image.version++;
+		bitmapData.__textureVersion++;
 	}
 
 	@:noCompletion
