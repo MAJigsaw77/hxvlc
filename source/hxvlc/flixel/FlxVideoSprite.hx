@@ -8,6 +8,8 @@ import flixel.util.FlxColor;
 
 import hxvlc.util.Location;
 
+import openfl.display.BitmapData;
+
 /**
  * This class extends `FlxSprite` to display video files in HaxeFlixel.
  *
@@ -52,8 +54,10 @@ class FlxVideoSprite extends FlxSprite
 		bitmap = new FlxInternalVideo(antialiasing);
 		bitmap.onFormatSetup.add(function():Void
 		{
-			if (bitmap != null && bitmap.bitmapData != null)
-				loadGraphic(FlxGraphic.fromBitmapData(bitmap.bitmapData, false, null, false));
+			final videoBitmapData:Null<BitmapData> = bitmap?.bitmapData;
+
+			if (videoBitmapData != null)
+				loadGraphic(FlxGraphic.fromBitmapData(videoBitmapData, false, null, false));
 		});
 		bitmap.visible = false;
 		FlxG.game.addChild(bitmap);
