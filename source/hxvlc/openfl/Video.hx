@@ -651,6 +651,10 @@ class Video extends Bitmap
 	@:noCompletion
 	private function setupVideo():Void
 	{
+		// The rendering is forced to be runned in the mainthread because of issues within openfl and flixel,
+		// so rather than having a crash, it would be best to keep it using this,
+		// it isnt the end of the world tho since, even with async rendering, the performance woudnt change,
+		// we aint losing nothing ¯\(ツ)/¯
 		videoOutput = new VideoOutput(mediaPlayer, "RV32", 4);
 		videoOutput.onFormatSetup = (width:Int, height:Int) -> MainLoop.runInMainThread(() -> videoOutput_onSetup(width, height));
 		videoOutput.onDisplay = (pixels:BytesData) -> MainLoop.runInMainThread(() -> videoOutput_onDisplay(pixels));
@@ -668,13 +672,10 @@ class Video extends Bitmap
 		if (bitmapData != null)
 			bitmapData.dispose();
 
-		// This creates an image-less BitmapData
 		bitmapData = new BitmapData(0, 0, true, 0);
 
-		// Because the BitmapData doesnt have an image we set the bounds of it here
 		bitmapData.rect.setTo(0, 0, width, height);
 
-		// Allocates the Texture here so its a GPU BitmapData
 		bitmapData.__texture = new VideoTexture(Lib.current.stage.context3D, width, height);
 		bitmapData.__textureContext = bitmapData.__texture.__textureContext;
 		bitmapData.__resize(width, height);
