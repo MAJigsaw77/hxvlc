@@ -6,6 +6,7 @@ import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.util.FlxColor;
 
+import hxvlc.impl.Instance;
 import hxvlc.util.Location;
 
 import openfl.display.BitmapData;
@@ -45,13 +46,13 @@ class FlxVideoSprite extends FlxSprite
 	 * @param x The initial X position of the sprite.
 	 * @param y The initial Y position of the sprite.
 	 */
-	public function new(?x:Float = 0, ?y:Float = 0):Void
+	public function new(?instance:Instance, ?x:Float = 0, ?y:Float = 0):Void
 	{
 		super(x, y);
 
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
-		bitmap = new FlxInternalVideo(antialiasing);
+		bitmap = new FlxInternalVideo(instance, antialiasing);
 		bitmap.onFormatSetup.add(function():Void
 		{
 			final videoBitmapData:Null<BitmapData> = bitmap?.bitmapData;

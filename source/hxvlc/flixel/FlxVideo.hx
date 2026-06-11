@@ -4,6 +4,8 @@ package hxvlc.flixel;
 import flixel.FlxG;
 import flixel.util.FlxAxes;
 
+import hxvlc.impl.Instance;
+
 /**
  * This class extends `FlxInternalVideo` to display video files in HaxeFlixel.
  *
@@ -27,9 +29,9 @@ class FlxVideo extends FlxInternalVideo
 	public var resizeMode(default, set):FlxAxes = FlxAxes.XY;
 
 	@:inheritDoc(hxvlc.openfl.Video.new)
-	public function new(smoothing:Bool = true):Void
+	public function new(?instance:Instance, smoothing:Bool = true):Void
 	{
-		super(smoothing);
+		super(instance, smoothing);
 
 		onFormatSetup.add(function():Void
 		{
