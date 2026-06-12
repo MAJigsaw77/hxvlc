@@ -713,7 +713,7 @@ class Video extends Bitmap
 		if (channels == 1)
 			return 1;
 
-		if (channels == 3 || channels == 5 || channels == 7)
+		if (channels == 3 || channels == 5)
 			return 2;
 
 		if (alUseEXTMCFORMATS != true)
@@ -746,6 +746,8 @@ class Video extends Bitmap
 						alFormat = AL.getEnumValue('AL_FORMAT_QUAD16');
 					case 6:
 						alFormat = AL.getEnumValue('AL_FORMAT_51CHN16');
+					case 7:
+						alFormat = AL.getEnumValue('AL_FORMAT_61CHN16');
 					case 8:
 						alFormat = AL.getEnumValue('AL_FORMAT_71CHN16');
 				}
@@ -762,6 +764,8 @@ class Video extends Bitmap
 						alFormat = AL.getEnumValue('AL_FORMAT_QUAD_I32');
 					case 6:
 						alFormat = AL.getEnumValue('AL_FORMAT_51CHN_I32');
+					case 7:
+						alFormat = AL.getEnumValue('AL_FORMAT_61CHN_I32');
 					case 8:
 						alFormat = AL.getEnumValue('AL_FORMAT_71CHN_I32');
 				}
@@ -778,6 +782,8 @@ class Video extends Bitmap
 						alFormat = AL.getEnumValue('AL_FORMAT_QUAD_FLOAT32');
 					case 6:
 						alFormat = AL.getEnumValue('AL_FORMAT_51CHN_FLOAT32');
+					case 7:
+						alFormat = AL.getEnumValue('AL_FORMAT_61CHN_FLOAT32');
 					case 8:
 						alFormat = AL.getEnumValue('AL_FORMAT_71CHN_FLOAT32');
 				}
