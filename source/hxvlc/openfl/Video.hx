@@ -419,6 +419,8 @@ class Video extends Bitmap
 	{
 		mediaPlayer.destroy();
 
+		bitmapData.dispose();
+
 		if (alSource != null)
 		{
 			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.STOPPED)

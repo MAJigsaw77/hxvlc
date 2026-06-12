@@ -138,15 +138,6 @@ class FlxVideoSprite extends FlxSprite
 		if (bitmap != null)
 		{
 			FlxG.removeChild(bitmap);
-
-			if (bitmap.bitmapData != null)
-			{
-				bitmap.bitmapData.dispose();
-
-				@:nullSafety(Off)
-				bitmap.bitmapData = null;
-			}
-
 			bitmap.dispose();
 			bitmap = null;
 		}
