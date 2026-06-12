@@ -1,13 +1,5 @@
 package hxvlc.openfl;
 
-import hxvlc.openfl.textures.VideoTexture;
-
-import openfl.Lib;
-
-import cpp.Char;
-import cpp.NativeArray;
-import cpp.RawConstPointer;
-import cpp.RawPointer;
 import cpp.Stdlib;
 
 import haxe.Int64;
@@ -23,17 +15,18 @@ import hxvlc.impl.events.MediaEvents;
 import hxvlc.impl.events.MediaPlayerEvents;
 import hxvlc.impl.output.AudioOutput;
 import hxvlc.impl.output.VideoOutput;
+import hxvlc.openfl.textures.VideoTexture;
 import hxvlc.util.Handle;
 import hxvlc.util.Location;
 import hxvlc.util.MainLoop;
 
 import lime.app.Event;
-import lime.graphics.Image;
 import lime.media.openal.AL;
 import lime.media.openal.ALBuffer;
 import lime.media.openal.ALSource;
 import lime.utils.UInt8Array;
 
+import openfl.Lib;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 
