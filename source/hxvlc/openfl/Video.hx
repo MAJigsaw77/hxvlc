@@ -171,6 +171,9 @@ class Video extends Bitmap
 	private var alUseEXTMCFORMATS:Null<Bool>;
 
 	@:noCompletion
+	private var alUseEXT32bit_formats:Null<Bool>;
+
+	@:noCompletion
 	private var alSource:Null<ALSource>;
 
 	@:noCompletion
@@ -678,6 +681,7 @@ class Video extends Bitmap
 	{
 		alUseEXTFLOAT32 ??= AL.isExtensionPresent('AL_EXT_FLOAT32');
 		alUseEXTMCFORMATS ??= AL.isExtensionPresent('AL_EXT_MCFORMATS');
+		alUseEXT32bit_formats ??= AL.getEnumValue('AL_FORMAT_MONO_I32') > 0;
 		alSource ??= AL.createSource();
 		alBufferPool ??= AL.genBuffers(255);
 
@@ -695,7 +699,12 @@ class Video extends Bitmap
 	@:noCompletion
 	private function audioOutput_onMapFormat(format:String):String
 	{
-		return format == 'FL32' && alUseEXTFLOAT32 == true ? 'FL32' : 'S16N';
+		if (format == 'S32N' && alUseEXT32bit_formats == true)
+			return 'S32N';
+		else if (format == 'FL32' && alUseEXTFLOAT32 == true)
+			return 'FL32';
+
+		return 'S16N';
 	}
 
 	@:noCompletion
@@ -726,22 +735,6 @@ class Video extends Bitmap
 
 		switch (format)
 		{
-			case 'FL32':
-				switch (channels)
-				{
-					case 1:
-						alFormat = AL.getEnumValue('AL_FORMAT_MONO_FLOAT32');
-					case 2:
-						alFormat = AL.getEnumValue('AL_FORMAT_STEREO_FLOAT32');
-					case 4:
-						alFormat = AL.getEnumValue('AL_FORMAT_QUAD32');
-					case 6:
-						alFormat = AL.getEnumValue('AL_FORMAT_51CHN32');
-					case 8:
-						alFormat = AL.getEnumValue('AL_FORMAT_71CHN32');
-				}
-
-				alFrameSize = Stdlib.sizeof(cpp.Float32) * channels;
 			case 'S16N':
 				switch (channels)
 				{
@@ -758,6 +751,38 @@ class Video extends Bitmap
 				}
 
 				alFrameSize = Stdlib.sizeof(cpp.Int16) * channels;
+			case 'S32N':
+				switch (channels)
+				{
+					case 1:
+						alFormat = AL.getEnumValue('AL_FORMAT_MONO_I32');
+					case 2:
+						alFormat = AL.getEnumValue('AL_FORMAT_STEREO_I32');
+					case 4:
+						alFormat = AL.getEnumValue('AL_FORMAT_QUAD_I32');
+					case 6:
+						alFormat = AL.getEnumValue('AL_FORMAT_51CHN_I32');
+					case 8:
+						alFormat = AL.getEnumValue('AL_FORMAT_71CHN_I32');
+				}
+
+				alFrameSize = Stdlib.sizeof(cpp.Int32) * channels;
+			case 'FL32':
+				switch (channels)
+				{
+					case 1:
+						alFormat = AL.getEnumValue('AL_FORMAT_MONO_FLOAT32');
+					case 2:
+						alFormat = AL.getEnumValue('AL_FORMAT_STEREO_FLOAT32');
+					case 4:
+						alFormat = AL.getEnumValue('AL_FORMAT_QUAD_FLOAT32');
+					case 6:
+						alFormat = AL.getEnumValue('AL_FORMAT_51CHN_FLOAT32');
+					case 8:
+						alFormat = AL.getEnumValue('AL_FORMAT_71CHN_FLOAT32');
+				}
+
+				alFrameSize = Stdlib.sizeof(cpp.Float32) * channels;
 		}
 	}
 
