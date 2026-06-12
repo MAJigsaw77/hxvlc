@@ -15,9 +15,7 @@ import sys.FileSystem;
 
 using StringTools;
 
-/**
- * A wrapper class for displaying video files in HaxeFlixel using the `Video` class.
- */
+/** A wrapper class for displaying video files in HaxeFlixel using the `Video` class. */
 class FlxInternalVideo extends Video
 {
 	/** The volume adjustment. */

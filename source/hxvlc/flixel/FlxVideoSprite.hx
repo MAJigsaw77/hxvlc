@@ -43,6 +43,7 @@ class FlxVideoSprite extends FlxSprite
 	/**
 	 * Creates a `FlxVideoSprite` at a specified position.
 	 * 
+	 * @param instance (Optional) The instance of LibVLC to be used for this Video object.
 	 * @param x The initial X position of the sprite.
 	 * @param y The initial Y position of the sprite.
 	 */

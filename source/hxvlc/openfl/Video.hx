@@ -39,28 +39,12 @@ import openfl.display.BitmapData;
 
 using StringTools;
 
+/** This class is a video player that uses LibVLC for seamless integration with OpenFL display objects. */
 @:access(openfl.display3D.textures.TextureBase)
 @:access(openfl.display.BitmapData)
 class Video extends Bitmap
 {
-	/**
-	 * Regular expression used to validate the structure of a URL.
-	 * 
-	 * This regex checks that the URL:
-	 * 
-	 * 1. Starts with a valid protocol (letters, digits, or special characters like '+', '.', or '-').
-	 * 2. Contains "://" after the protocol.
-	 * 3. Does not contain spaces after the "://".
-	 * 
-	 * This validation does not restrict specific protocols, so it allows any protocol
-	 * that follows the general URL format (e.g., https://, ftp://, file://).
-	 * 
-	 * Example:
-	 * - "https://example.com" -> valid
-	 * - "ftp://files.server" -> valid
-	 * - "invalid_url://something" -> invalid
-	 * - "https:// example.com" -> invalid (space after '://')
-	 */
+	/** Regular expression used to validate the structure of a URL. */
 	@:noCompletion
 	private static final URL_VERIFICATION_REGEX:EReg = ~/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\/[^\s]*$/;
 
@@ -211,6 +195,7 @@ class Video extends Bitmap
 	/**
 	 * Initializes a Video object.
 	 * 
+	 * @param instance (Optional) The instance of LibVLC to be used for this Video object.
 	 * @param smoothing Whether or not the object is smoothed when scaled.
 	 */
 	@:nullSafety(Off)

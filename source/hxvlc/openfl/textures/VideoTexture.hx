@@ -23,7 +23,6 @@ class VideoTexture extends TextureBase
 	 * @param context The context to use for texture operations.
 	 * @param width The width dimension to allocate for the texture.
 	 * @param height The height dimension to allocate for the texture.
-	 * @param data The pixel data to initializes the texture with.
 	 */
 	public function new(context:Context3D, width:Int, height:Int):Void
 	{
