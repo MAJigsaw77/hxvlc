@@ -51,6 +51,33 @@ class FlxInternalVideo extends Video
 		return loaded;
 	}
 
+	@:inheritDoc(hxvlc.openfl.Video.precache)
+	public override function precache(location:Location, ?options:Array<String>):Bool
+	{
+		final loaded:Bool = super.precache(location, options);
+
+		if (loaded)
+		{
+			if (!FlxG.signals.focusGained.has(onFocusGained))
+				FlxG.signals.focusGained.add(onFocusGained);
+
+			if (!FlxG.signals.focusLost.has(onFocusLost))
+				FlxG.signals.focusLost.add(onFocusLost);
+
+			#if (FLX_SOUND_SYSTEM && flixel >= version("5.9.0"))
+			if (!FlxG.sound.onVolumeChange.has(onVolumeChange))
+				FlxG.sound.onVolumeChange.add(onVolumeChange);
+			#elseif (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
+			if (!FlxG.signals.postUpdate.has(onVolumeUpdate))
+				FlxG.signals.postUpdate.add(onVolumeUpdate);
+			#end
+
+			onVolumeChange(#if FLX_SOUND_SYSTEM (FlxG.sound.muted ? 0 : 1) * FlxG.sound.volume #else 1 #end);
+		}
+
+		return loaded;
+	}
+
 	@:inheritDoc(hxvlc.openfl.Video.dispose)
 	public override function dispose():Void
 	{

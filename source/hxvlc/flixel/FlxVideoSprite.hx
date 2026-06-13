@@ -71,6 +71,12 @@ class FlxVideoSprite extends FlxSprite
 		return bitmap != null ? bitmap.load(location, options) : false;
 	}
 
+	@:inheritDoc(hxvlc.openfl.Video.precache)
+	public function precache(location:Location, ?options:Array<String>):Bool
+	{
+		return bitmap != null ? bitmap.precache(location, options) : false;
+	}
+
 	@:inheritDoc(hxvlc.openfl.Video.loadFromSubItem)
 	public function loadFromSubItem(index:Int, ?options:Array<String>):Bool
 	{

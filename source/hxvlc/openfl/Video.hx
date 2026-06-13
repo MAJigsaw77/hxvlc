@@ -238,7 +238,7 @@ class Video extends Bitmap
 	}
 
 	/**
-	 * Loads media from the specified location.
+	 * Loads a media from the specified location.
 	 * 
 	 * @param location The location of the media file or stream.
 	 * @param options Additional options to configure the media.
@@ -290,6 +290,31 @@ class Video extends Bitmap
 		}
 
 		return loadInternal(location, options);
+	}
+
+	/**
+	 * Precaches a media from the specified location.
+	 *
+	 * Unlike `load()`, this function temporarily starts playback after loading
+	 * the media, causing it to be opened and prepared by the media player so it
+	 * can begin playback more quickly later.
+	 *
+	 * The media is automatically paused once initialization is complete.
+	 * 
+	 * @param location The location of the media file or stream.
+	 * @param options Additional options to configure the media.
+	 * @return `true` if the media was loaded successfully, `false` otherwise.
+	 */
+	public function precache(location:Location, ?options:Array<String>):Bool
+	{
+		if (load(location, options) && play())
+		{
+			pause();
+
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
