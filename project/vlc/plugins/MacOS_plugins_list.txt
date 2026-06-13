@@ -1,4 +1,3 @@
-liba52_plugin.dylib
 libaccess_imem_plugin.dylib
 libaccess_output_dummy_plugin.dylib
 libaccess_srt_plugin.dylib
@@ -41,7 +40,6 @@ libconsole_logger_plugin.dylib
 libcroppadd_plugin.dylib
 libcvpx_plugin.dylib
 libdav1d_plugin.dylib
-libdca_plugin.dylib
 libddummy_plugin.dylib
 libdecomp_plugin.dylib
 libdeinterlace_plugin.dylib
@@ -100,7 +98,6 @@ libjpeg_plugin.dylib
 libkaraoke_plugin.dylib
 libkeychain_plugin.dylib
 liblibass_plugin.dylib
-liblibmpeg2_plugin.dylib
 liblive555_plugin.dylib
 liblogger_plugin.dylib
 liblogo_plugin.dylib

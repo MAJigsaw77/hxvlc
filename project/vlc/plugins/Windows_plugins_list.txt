@@ -1,4 +1,3 @@
-liba52_plugin.dll
 libaccess_imem_plugin.dll
 libaccess_output_dummy_plugin.dll
 libaccess_srt_plugin.dll
@@ -35,7 +34,6 @@ libcompressor_plugin.dll
 libconsole_logger_plugin.dll
 libcroppadd_plugin.dll
 libdav1d_plugin.dll
-libdca_plugin.dll
 libddummy_plugin.dll
 libdeinterlace_plugin.dll
 libdemux_stl_plugin.dll
@@ -92,7 +90,6 @@ libinvert_plugin.dll
 libjpeg_plugin.dll
 libkaraoke_plugin.dll
 liblibass_plugin.dll
-liblibmpeg2_plugin.dll
 liblive555_plugin.dll
 liblogger_plugin.dll
 liblogo_plugin.dll
