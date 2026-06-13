@@ -9,13 +9,13 @@
 	</section>
 
 	<section if="windows">
-		<assets path="project/vlc/lib/Windows" rename="" exclude="*.lib" library="libvlc" />
-		<assets path="project/vlc/plugins/Windows" rename="plugins" library="libvlc" />
+		<assets path="project/vlc/lib/Windows" rename="" include="*.dll" library="libvlc" />
+		<assets path="project/vlc/plugins/Windows" rename="plugins" include="*.dll" library="libvlc" />
 	</section>
 
 	<section if="mac">
-		<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" library="libvlc" />
-		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" library="libvlc" />
+		<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" include="*.dylib" library="libvlc" />
+		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" include="*.dylib" library="libvlc" />
 	</section>
 
 	<section if="android">
