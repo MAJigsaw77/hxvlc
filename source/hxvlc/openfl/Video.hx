@@ -15,7 +15,6 @@ import hxvlc.impl.events.MediaEvents;
 import hxvlc.impl.events.MediaPlayerEvents;
 import hxvlc.impl.output.AudioOutput;
 import hxvlc.impl.output.VideoOutput;
-import hxvlc.openfl.textures.VideoTexture;
 import hxvlc.util.Handle;
 import hxvlc.util.Location;
 import hxvlc.util.MainLoop;
