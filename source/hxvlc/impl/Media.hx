@@ -3,21 +3,15 @@ package hxvlc.impl;
 import cpp.CastCharStar;
 import cpp.Function;
 import cpp.Int64;
-import cpp.NativeArray;
-import cpp.RawConstPointer;
 import cpp.RawPointer;
 import cpp.SSizeT;
 import cpp.SizeT;
-import cpp.Stdlib;
 import cpp.UInt64;
 import cpp.UInt8;
 
 import haxe.io.Bytes;
-import haxe.io.BytesInput;
 
 import hxvlc.impl.externs.LibVLC;
-
-import sys.thread.Mutex;
 
 @:access(haxe.io.BytesInput)
 class Media extends Finalizeable
@@ -80,13 +74,10 @@ class Media extends Finalizeable
 
 		final media:Media = new Media();
 
-		media.mutex = new Mutex();
-
-		media.input = new BytesInput(bytes);
-
 		@:nullSafety(Off)
 		media.nativeMedia = LibVLC.media_new_callbacks(instance.nativeInstance, Function.fromStaticFunction(mediaOpen),
-			Function.fromStaticFunction(mediaRead), Function.fromStaticFunction(mediaSeek), null, untyped __cpp__('{0}.mPtr', media));
+			Function.fromStaticFunction(mediaRead), Function.fromStaticFunction(mediaSeek), Function.fromStaticFunction(mediaClose),
+			untyped __cpp__('new Input({0})', bytes));
 
 		return media;
 	}
@@ -103,12 +94,6 @@ class Media extends Finalizeable
 	/** The raw media of LibVLC. */
 	@:noCompletion
 	public var nativeMedia:Null<RawPointer<LibVLC_Media_T>>;
-
-	@:noCompletion
-	private var mutex:Null<Mutex>;
-
-	@:noCompletion
-	private var input:Null<BytesInput>;
 
 	/**
 	 * Adds an option to the LibVLC media instance.
@@ -260,9 +245,9 @@ class Media extends Finalizeable
 	@:unreflective
 	private static function mediaOpen(opaque:RawPointer<cpp.Void>, datap:RawPointer<RawPointer<cpp.Void>>, sizep:RawPointer<UInt64>):Int
 	{
-		final media:Media = untyped __cpp__('reinterpret_cast<Media_obj *>({0})', opaque);
+		final input:RawPointer<Input> = untyped __cpp__('reinterpret_cast<Input *>({0})', opaque);
 
-		if (media != null && media.mutex != null && (media.input != null && media.input.length > 0))
+		if (input != null && untyped __cpp__('{0} > {1}', input[0].size, 0))
 		{
 			datap[0] = opaque;
 
@@ -270,7 +255,7 @@ class Media extends Finalizeable
 
 			untyped __cpp__('hx::SetTopOfStack(&stackBase, true)');
 
-			sizep[0] = media.input.length;
+			sizep[0] = input[0].size;
 
 			untyped __cpp__('hx::SetTopOfStack((int *)0, true)');
 
@@ -285,38 +270,19 @@ class Media extends Finalizeable
 	@:unreflective
 	private static function mediaRead(opaque:RawPointer<cpp.Void>, buf:RawPointer<UInt8>, len:SizeT):SSizeT
 	{
-		final media:Media = untyped __cpp__('reinterpret_cast<Media_obj *>({0})', opaque);
+		final input:RawPointer<Input> = untyped __cpp__('reinterpret_cast<Input *>({0})', opaque);
 
-		if (media != null && media.mutex != null && (media.input != null && media.input.length > 0))
+		if (input != null)
 		{
 			untyped __cpp__('int stackBase');
 
 			untyped __cpp__('hx::SetTopOfStack(&stackBase, true)');
 
-			media.mutex.acquire();
-
-			final remaining:Int = media.input.length - media.input.position;
-
-			if (remaining <= 0)
-			{
-				media.mutex.release();
-
-				untyped __cpp__('hx::SetTopOfStack((int *)0, true)');
-
-				return 0;
-			}
-
-			final read:Int = len < remaining ? len : remaining;
-
-			Stdlib.nativeMemcpy(cast buf, cast RawConstPointer.addressOf(NativeArray.getBase(media.input.b).getBase()[media.input.position]), read);
-
-			media.input.position += read;
-
-			media.mutex.release();
+			final read:UInt64 = input[0].read(buf, len);
 
 			untyped __cpp__('hx::SetTopOfStack((int *)0, true)');
 
-			return read;
+			return untyped read;
 		}
 
 		return -1;
@@ -327,36 +293,45 @@ class Media extends Finalizeable
 	@:unreflective
 	private static function mediaSeek(opaque:RawPointer<cpp.Void>, offset:UInt64):Int
 	{
-		final media:Media = untyped __cpp__('reinterpret_cast<Media_obj *>({0})', opaque);
+		final input:RawPointer<Input> = untyped __cpp__('reinterpret_cast<Input *>({0})', opaque);
 
-		if (media != null && media.mutex != null && (media.input != null && media.input.length > 0))
+		if (input != null)
 		{
 			untyped __cpp__('int stackBase');
 
 			untyped __cpp__('hx::SetTopOfStack(&stackBase, true)');
 
-			media.mutex.acquire();
-
-			final offset:Int = cast offset;
-
-			if (offset > media.input.length)
-			{
-				media.mutex.release();
-
-				untyped __cpp__('hx::SetTopOfStack((int *)0, true)');
-
-				return -1;
-			}
-
-			media.input.position = offset;
-
-			media.mutex.release();
+			final result:Bool = input[0].seek(offset);
 
 			untyped __cpp__('hx::SetTopOfStack((int *)0, true)');
 
-			return 0;
+			return result ? 0 : -1;
 		}
 
 		return -1;
+	}
+
+	@:noCompletion
+	@:noDebug
+	@:unreflective
+	private static function mediaClose(opaque:RawPointer<cpp.Void>):Void
+	{
+		var input:RawPointer<Input> = untyped __cpp__('reinterpret_cast<Input *>({0})', opaque);
+
+		if (untyped __cpp__('{0}', input))
+		{
+			if (untyped __cpp__('{0}', input[0].data))
+			{
+				untyped __cpp__('delete {0}', input[0].data);
+
+				@:nullSafety(Off)
+				input[0].data = null;
+			}
+
+			untyped __cpp__('delete {0}', input);
+
+			@:nullSafety(Off)
+			input = null;
+		}
 	}
 }
