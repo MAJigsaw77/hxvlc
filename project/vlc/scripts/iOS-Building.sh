@@ -30,7 +30,16 @@ else
 fi
 
 # First, get "vlckit" source for thier libvlc patches.
-git clone https://code.videolan.org/videolan/VLCKit.git --depth=1 --recursive -b 3.0
+git clone https://code.videolan.org/videolan/VLCKit.git -b 3.0
+
+# Enter VLCKit
+cd VLCKit
+
+# Checkout to this ref
+git checkout 00ae8f8763e97fa2aa489de69942fb20f170d015
+
+# Exit VLCKit
+cd ..
 
 # Function to reoder Git patches.
 reorder_patches()
@@ -63,7 +72,7 @@ reorder_patches()
 # Function to download "vlc" and apply patches.
 download_vlc()
 {
-	TESTEDHASH="8c62ca27" # vlc hash that this version of VLCKit is build on
+	TESTEDHASH="3697ebcb2716cb4f9c7824b11ce33afefb0212ab" # vlc hash that this version of VLCKit is build on
 
 	if ! [ -e vlc ]; then
 		git clone https://code.videolan.org/videolan/vlc.git --branch 3.0.x --single-branch vlc

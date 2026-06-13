@@ -50,10 +50,13 @@ else
 fi
 
 # First, get "libvlcjni" source.
-git clone https://code.videolan.org/videolan/libvlcjni.git --depth=1 --recursive -b libvlcjni-3.x
+git clone https://code.videolan.org/videolan/libvlcjni.git -b libvlcjni-3.x
 
 # Enter "libvlcjni" source.
 cd libvlcjni
+
+# Checkout to this ref
+git checkout e655e7e97c06577f68cc10f1de1ea7f50281617f
 
 # Function to reoder Git patches.
 reorder_patches()
@@ -93,8 +96,11 @@ reorder_patches "libvlc/patches" \
 # Go back 2 dirs.
 cd ../../
 
+# Remove the empty submodule dir? Dont know why its there
+rm -rf vlc
+
 # Get "vlc" source.
-buildsystem/get-vlc.sh
+buildsystem/get-vlc.sh --vlchash 3697ebcb2716cb4f9c7824b11ce33afefb0212ab
 
 # Make prebuilt contribs bars.
 export VLC_CONTRIB_SHA=$(cd vlc && extras/ci/get-contrib-sha.sh android-$SHORT_ARCH)
