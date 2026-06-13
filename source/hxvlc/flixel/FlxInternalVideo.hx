@@ -27,118 +27,6 @@ class FlxInternalVideo extends Video
 	@:inheritDoc(hxvlc.openfl.Video.load)
 	public override function load(location:Location, ?options:Array<String>):Bool
 	{
-		if (location != null && !(location is Int) && !(location is Bytes) && (location is String))
-		{
-			final location:String = cast(location, String);
-
-			if (!Video.URL_VERIFICATION_REGEX.match(location))
-			{
-				final absolutePath:String = FileSystem.absolutePath(location);
-
-				if (FileSystem.exists(absolutePath))
-					return loadInternal(absolutePath, options);
-				else if (Assets.exists(location))
-				{
-					final assetPath:Null<String> = Assets.getPath(location);
-
-					if (assetPath != null)
-					{
-						if (FileSystem.exists(assetPath) && Path.isAbsolute(assetPath))
-							return loadInternal(assetPath, options);
-						else if (FileSystem.exists(assetPath) && !Path.isAbsolute(assetPath))
-							return loadInternal(FileSystem.absolutePath(assetPath), options);
-						else if (!Path.isAbsolute(assetPath))
-						{
-							try
-							{
-								final assetBytes:Bytes = Assets.getBytes(location);
-
-								if (assetBytes != null)
-									return loadInternal(assetBytes, options);
-							}
-							catch (e:Dynamic)
-							{
-								FlxG.log.error('Error loading asset bytes from location "$location": $e');
-
-								return false;
-							}
-						}
-					}
-
-					return false;
-				}
-				else
-				{
-					FlxG.log.warn('Unable to find the video file at location "$location".');
-
-					return false;
-				}
-			}
-		}
-
-		return loadInternal(location, options);
-	}
-
-	@:inheritDoc(hxvlc.openfl.Video.addSlave)
-	public override function addSlave(type:Int, location:String, select:Bool):Bool
-	{
-		function convertAbsToURL(path:String):String
-		{
-			#if windows
-			return 'file:///${Path.normalize(FileSystem.absolutePath(path))}';
-			#else
-			return 'file://${Path.normalize(FileSystem.absolutePath(path))}';
-			#end
-		}
-
-		if (!Video.URL_VERIFICATION_REGEX.match(location))
-		{
-			final absolutePath:String = FileSystem.absolutePath(location);
-
-			if (FileSystem.exists(absolutePath))
-				return super.addSlave(type, convertAbsToURL(location), select);
-			else if (Assets.exists(location))
-			{
-				final assetPath:Null<String> = Assets.getPath(location);
-
-				if (assetPath != null)
-				{
-					if (FileSystem.exists(assetPath) && Path.isAbsolute(assetPath))
-						return super.addSlave(type, convertAbsToURL(assetPath), select);
-					else if (FileSystem.exists(assetPath) && !Path.isAbsolute(assetPath))
-						return super.addSlave(type, FileSystem.absolutePath(assetPath), select);
-				}
-
-				return false;
-			}
-		}
-
-		return super.addSlave(type, location, select);
-	}
-
-	@:inheritDoc(hxvlc.openfl.Video.dispose)
-	public override function dispose():Void
-	{
-		if (FlxG.signals.focusGained.has(onFocusGained))
-			FlxG.signals.focusGained.remove(onFocusGained);
-
-		if (FlxG.signals.focusLost.has(onFocusLost))
-			FlxG.signals.focusLost.remove(onFocusLost);
-
-		#if (FLX_SOUND_SYSTEM && flixel >= version("5.9.0"))
-		if (FlxG.sound.onVolumeChange.has(onVolumeChange))
-			FlxG.sound.onVolumeChange.remove(onVolumeChange);
-		#elseif (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
-		if (FlxG.signals.postUpdate.has(onVolumeUpdate))
-			FlxG.signals.postUpdate.remove(onVolumeUpdate);
-		#end
-
-		super.dispose();
-	}
-
-	@:noCompletion
-	private function loadInternal(location:Location, ?options:Array<String>):Bool
-	{
 		final loaded:Bool = super.load(location, options);
 
 		if (loaded)
@@ -161,6 +49,26 @@ class FlxInternalVideo extends Video
 		}
 
 		return loaded;
+	}
+
+	@:inheritDoc(hxvlc.openfl.Video.dispose)
+	public override function dispose():Void
+	{
+		if (FlxG.signals.focusGained.has(onFocusGained))
+			FlxG.signals.focusGained.remove(onFocusGained);
+
+		if (FlxG.signals.focusLost.has(onFocusLost))
+			FlxG.signals.focusLost.remove(onFocusLost);
+
+		#if (FLX_SOUND_SYSTEM && flixel >= version("5.9.0"))
+		if (FlxG.sound.onVolumeChange.has(onVolumeChange))
+			FlxG.sound.onVolumeChange.remove(onVolumeChange);
+		#elseif (FLX_SOUND_SYSTEM && flixel < version("5.9.0"))
+		if (FlxG.signals.postUpdate.has(onVolumeUpdate))
+			FlxG.signals.postUpdate.remove(onVolumeUpdate);
+		#end
+
+		super.dispose();
 	}
 
 	@:noCompletion

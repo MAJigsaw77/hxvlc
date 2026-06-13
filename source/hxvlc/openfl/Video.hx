@@ -1,5 +1,8 @@
 package hxvlc.openfl;
 
+import haxe.io.Path;
+import openfl.utils.Assets;
+import sys.FileSystem;
 import cpp.Stdlib;
 
 import haxe.Int64;
@@ -36,10 +39,6 @@ using StringTools;
 @:access(openfl.display.BitmapData)
 class Video extends Bitmap
 {
-	/** Regular expression used to validate the structure of a URL. */
-	@:noCompletion
-	private static final URL_VERIFICATION_REGEX:EReg = ~/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\/[^\s]*$/;
-
 	/** The media resource locator (MRL). */
 	public var mrl(get, never):Null<String>;
 
@@ -247,31 +246,50 @@ class Video extends Bitmap
 	 */
 	public function load(location:Location, ?options:Array<String>):Bool
 	{
-		var media:Null<Media> = null;
-
-		if (location != null)
+		if (location != null && !(location is Bytes) && (location is String))
 		{
-			@:nullSafety(Off)
+			final location:String = cast(location, String);
+
+			if (!location.contains('://'))
 			{
-				if ((location is String))
+				final absolutePath:String = FileSystem.absolutePath(location);
+
+				if (FileSystem.exists(absolutePath))
+					return loadInternal(absolutePath, options);
+				else if (Assets.exists(location))
 				{
-					if (URL_VERIFICATION_REGEX.match(location))
-						media = Media.fromLocation(instance, location);
-					else
+					final assetPath:Null<String> = Assets.getPath(location);
+
+					if (assetPath != null)
 					{
-						#if windows
-						media = Media.fromPath(instance, haxe.io.Path.normalize(location).split('/').join('\\'));
-						#else
-						media = Media.fromPath(instance, haxe.io.Path.normalize(location));
-						#end
+						if (FileSystem.exists(assetPath) && Path.isAbsolute(assetPath))
+							return loadInternal(assetPath, options);
+						else if (FileSystem.exists(assetPath) && !Path.isAbsolute(assetPath))
+							return loadInternal(FileSystem.absolutePath(assetPath), options);
+						else if (!Path.isAbsolute(assetPath))
+						{
+							try
+							{
+								final assetBytes:Bytes = Assets.getBytes(location);
+
+								if (assetBytes != null)
+									return loadInternal(assetBytes, options);
+							}
+							catch (e:Dynamic)
+								return false;
+						}
 					}
+
+					return false;
 				}
-				else if ((location is Bytes))
-					media = Media.fromBytes(instance, cast(location, Bytes));
+				else
+				{
+					return false;
+				}
 			}
 		}
 
-		return setMediaToMediaPlayer(media, options);
+		return loadInternal(location, options);
 	}
 
 	/**
@@ -308,13 +326,44 @@ class Video extends Bitmap
 	 * Adds a slave to the current media player.
 	 * 
 	 * @param type The slave type.
-	 * @param uri URI of the slave (should contain a valid scheme).
+	 * @param location location of the slave.
 	 * @param select `true` if this slave should be selected when it's loaded.
 	 * @return `true` on success, `false` otherwise.
 	 */
-	public function addSlave(type:Int, url:String, select:Bool):Bool
+	public function addSlave(type:Int, location:String, select:Bool):Bool
 	{
-		return mediaPlayer.addSlave(type, url, select);
+		function convertAbsToURL(path:String):String
+		{
+			#if windows
+			return 'file:///${Path.normalize(FileSystem.absolutePath(path))}';
+			#else
+			return 'file://${Path.normalize(FileSystem.absolutePath(path))}';
+			#end
+		}
+
+		if (!location.contains('://'))
+		{
+			final absolutePath:String = FileSystem.absolutePath(location);
+
+			if (FileSystem.exists(absolutePath))
+				return mediaPlayer.addSlave(type, convertAbsToURL(location), select);
+			else if (Assets.exists(location))
+			{
+				final assetPath:Null<String> = Assets.getPath(location);
+
+				if (assetPath != null)
+				{
+					if (FileSystem.exists(assetPath) && Path.isAbsolute(assetPath))
+						return mediaPlayer.addSlave(type, convertAbsToURL(assetPath), select);
+					else if (FileSystem.exists(assetPath) && !Path.isAbsolute(assetPath))
+						return mediaPlayer.addSlave(type, FileSystem.absolutePath(assetPath), select);
+				}
+
+				return false;
+			}
+		}
+
+		return mediaPlayer.addSlave(type, location, select);
 	}
 
 	/**
@@ -600,6 +649,30 @@ class Video extends Bitmap
 		{
 			__setRenderDirty();
 		}
+	}
+
+	@:noCompletion
+	private function loadInternal(location:Location, ?options:Array<String>):Bool
+	{
+		var media:Null<Media> = null;
+
+		if (location != null)
+		{
+			@:nullSafety(Off)
+			{
+				if ((location is String))
+				{
+					if (location.contains('://'))
+						media = Media.fromLocation(instance, location);
+					else
+						media = Media.fromPath(instance, location);
+				}
+				else if ((location is Bytes))
+					media = Media.fromBytes(instance, cast(location, Bytes));
+			}
+		}
+
+		return setMediaToMediaPlayer(media, options);
 	}
 
 	@:noCompletion
