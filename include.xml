@@ -11,11 +11,13 @@
 	<section if="windows">
 		<assets path="project/vlc/lib/Windows" rename="" include="*.dll" library="libvlc" />
 		<assets path="project/vlc/plugins/Windows" rename="plugins" include="*.dll" library="libvlc" />
+		<assets path="project/vlc/plugins/Windows/plugins.dat" rename="plugins/plugins.dat" library="libvlc" />
 	</section>
 
 	<section if="mac">
 		<assets path="project/vlc/lib/MacOS" rename="../MacOS/lib" include="*.dylib" library="libvlc" />
 		<assets path="project/vlc/plugins/MacOS" rename="../MacOS/plugins" include="*.dylib" library="libvlc" />
+		<assets path="project/vlc/plugins/MacOS/plugins.dat" rename="../MacOS/plugins/plugins.dat" library="libvlc" />
 	</section>
 
 	<section if="android">
