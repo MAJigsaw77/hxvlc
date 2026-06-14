@@ -90,6 +90,12 @@ sudo xbps-install -S vlc
 nix-env -iA nixpkgs.vlc
 ```
 
+#### Bazzite ([Bazzite](https://bazzite.gg)):
+```bash
+sudo rpm-ostree install vlc vlc-devel
+pkg-config --cflags --libs libvlc
+```
+
 </details>
 
 ### Getting Started
