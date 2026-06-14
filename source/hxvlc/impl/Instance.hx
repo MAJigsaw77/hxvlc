@@ -54,7 +54,9 @@ class Instance extends Finalizeable
 	{
 		final args:Array<String> = [];
 
+		#if (android || ios)
 		args.push("--audio-resampler=soxr"); // High-quality audio resampler (default in VLC 4.0)
+		#end
 		args.push("--ignore-config"); // Ignore any existing VLC config files
 		args.push("--drop-late-frames"); // Drop late video frames instead of trying to render them
 		args.push("--aout=none"); // Disable audio output (we use amem)
