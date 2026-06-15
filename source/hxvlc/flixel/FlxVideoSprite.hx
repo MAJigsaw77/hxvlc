@@ -6,8 +6,6 @@ import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.util.FlxColor;
 
-import hxvlc.impl.Instance;
-
 import openfl.display.BitmapData;
 
 /**
@@ -46,7 +44,7 @@ class FlxVideoSprite extends FlxSprite
 	 * @param x The initial X position of the sprite.
 	 * @param y The initial Y position of the sprite.
 	 */
-	public function new(?instance:Instance, ?x:Float = 0, ?y:Float = 0):Void
+	public function new(?instance:hxvlc.impl.Instance, ?x:Float = 0, ?y:Float = 0):Void
 	{
 		super(x, y);
 

@@ -6,8 +6,6 @@ import flixel.FlxG;
 import haxe.io.Bytes;
 import haxe.io.Path;
 
-import hxvlc.openfl.Video;
-
 import openfl.utils.Assets;
 
 import sys.FileSystem;
@@ -15,7 +13,7 @@ import sys.FileSystem;
 using StringTools;
 
 /** A wrapper class for displaying video files in HaxeFlixel using the `Video` class. */
-class FlxInternalVideo extends Video
+class FlxInternalVideo extends hxvlc.openfl.Video
 {
 	/** The volume adjustment. */
 	public var volumeAdjust(default, set):Float = 1.0;
