@@ -757,7 +757,7 @@ class Video extends Bitmap
 
 		bitmapData.rect.setTo(0, 0, width, height);
 
-		bitmapData.__texture = new VideoTexture(Lib.current.stage.context3D, width, height);
+		bitmapData.__texture = new Texture(Lib.current.stage.context3D, width, height);
 		bitmapData.__textureContext = bitmapData.__texture.__textureContext;
 		bitmapData.__resize(width, height);
 		bitmapData.__isValid = true;
@@ -771,7 +771,7 @@ class Video extends Bitmap
 		if (bitmapData == null || bitmapData.__texture == null)
 			return;
 
-		cast(bitmapData.__texture, VideoTexture).uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(pixels)));
+		cast(bitmapData.__texture, Texture).uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(pixels)));
 
 		bitmapData.__textureVersion++;
 	}

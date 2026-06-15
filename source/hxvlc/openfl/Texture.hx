@@ -5,20 +5,15 @@ import lime.utils.UInt8Array;
 import openfl.display3D.Context3D;
 import openfl.display3D.textures.TextureBase;
 
-/**
- * This class is a video texture that extends TextureBase for efficient video frame rendering.
- * 
- * @see https://github.com/openfl/openfl/blob/develop/src/openfl/display3D/textures/RectangleTexture.hx
- * @see https://github.com/openfl/openfl/blob/3f24568a1dec5d971e167836ea84846607a86e9c/lib/draft-api/src/openfl/media/_internal/NativeVideoBackend.cpp#L500
- */
+/** This class is a texture that extends TextureBase for efficient video frame rendering. */
 @:access(openfl.display3D.Context3D)
-class VideoTexture extends TextureBase
+class Texture extends TextureBase
 {
 	@:noCompletion
 	private var __frameSize:Int = 0;
 
 	/**
-	 * Initializes a VideoTexture object.
+	 * Initializes a Texture object.
 	 * 
 	 * @param context The context to use for texture operations.
 	 * @param width The width dimension to allocate for the texture.
@@ -47,8 +42,6 @@ class VideoTexture extends TextureBase
 
 	/**
 	 * Updates the texture content with new data from a typed array.
-	 * 
-	 * This method is typically used for uploading new video frames efficiently.
 	 * 
 	 * @param data The new pixel data.
 	 */
