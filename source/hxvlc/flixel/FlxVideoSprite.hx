@@ -7,7 +7,6 @@ import flixel.graphics.FlxGraphic;
 import flixel.util.FlxColor;
 
 import hxvlc.impl.Instance;
-import hxvlc.util.Location;
 
 import openfl.display.BitmapData;
 
@@ -66,13 +65,13 @@ class FlxVideoSprite extends FlxSprite
 	}
 
 	@:inheritDoc(hxvlc.openfl.Video.load)
-	public function load(location:Location, ?options:Array<String>):Bool
+	public function load(location:hxvlc.openfl.Location, ?options:Array<String>):Bool
 	{
 		return bitmap != null ? bitmap.load(location, options) : false;
 	}
 
 	@:inheritDoc(hxvlc.openfl.Video.precache)
-	public function precache(location:Location, ?options:Array<String>):Bool
+	public function precache(location:hxvlc.openfl.Location, ?options:Array<String>):Bool
 	{
 		return bitmap != null ? bitmap.precache(location, options) : false;
 	}

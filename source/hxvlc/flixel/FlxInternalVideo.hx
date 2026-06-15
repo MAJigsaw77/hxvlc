@@ -7,7 +7,6 @@ import haxe.io.Bytes;
 import haxe.io.Path;
 
 import hxvlc.openfl.Video;
-import hxvlc.util.Location;
 
 import openfl.utils.Assets;
 
@@ -25,7 +24,7 @@ class FlxInternalVideo extends Video
 	private var resumeOnFocus:Bool = false;
 
 	@:inheritDoc(hxvlc.openfl.Video.load)
-	public override function load(location:Location, ?options:Array<String>):Bool
+	public override function load(location:hxvlc.openfl.Location, ?options:Array<String>):Bool
 	{
 		final loaded:Bool = super.load(location, options);
 
@@ -52,7 +51,7 @@ class FlxInternalVideo extends Video
 	}
 
 	@:inheritDoc(hxvlc.openfl.Video.precache)
-	public override function precache(location:Location, ?options:Array<String>):Bool
+	public override function precache(location:hxvlc.openfl.Location, ?options:Array<String>):Bool
 	{
 		final loaded:Bool = super.precache(location, options);
 
