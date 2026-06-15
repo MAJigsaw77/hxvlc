@@ -4,24 +4,16 @@ import cpp.Struct;
 
 import hxvlc.impl.externs.LibVLC;
 
-/**
- * Represents a description for video, audio tracks, and subtitles.
- */
+/** Represents a description for video, audio tracks, and subtitles. */
 class TrackDescription
 {
-	/**
-	 * The unique identifier for the track.
-	 */
+	/** The unique identifier for the track. */
 	public var i_id:Int;
 
-	/**
-	 * The name of the track as a string.
-	 */
+	/** The name of the track as a string. */
 	public var psz_name:String;
 
-	/**
-	 * Creates a new instance of `TrackDescription` with default values.
-	 */
+	/** Creates a new instance of `TrackDescription` with default values. */
 	public function new():Void
 	{
 		this.i_id = 0;

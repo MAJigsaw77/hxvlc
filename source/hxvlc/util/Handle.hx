@@ -3,6 +3,7 @@ package hxvlc.util;
 import hxvlc.impl.Instance;
 import hxvlc.impl.externs.LibVLC;
 
+/** This class manages the global instance of LibVLC used by the library. */
 class Handle
 {
 	/** The instance of LibVLC that is used globally. */
@@ -11,6 +12,13 @@ class Handle
 	/** Indicates whether the instance is still loading. */
 	public static var loading(default, null):Bool = false;
 
+	/**
+	 * Initializes the global instance of LibVLC if it isn't already.
+	 * 
+	 * @param options The additional options you can add to the instance.
+	 * 
+	 * @return `true` if the instance was created successfully or `false` if there was an error or the instance is still loading.
+	 */
 	public static function init(?options:Array<String>):Bool
 	{
 		if (!loading)
@@ -55,9 +63,9 @@ class Handle
 					final errmsg:String = LibVLC.errmsg();
 
 					if (errmsg != null && errmsg.length > 0)
-						throw 'Failed to initialize the LibVLC instance: $errmsg';
+						throw 'Failed to initialize the global instance of LibVLC: $errmsg';
 					else
-						throw 'Failed to initialize the LibVLC instance';
+						throw 'Failed to initialize the global instance of LibVLC';
 
 					result = false;
 				}
@@ -71,6 +79,12 @@ class Handle
 		return false;
 	}
 
+	/**
+	 * Initializes the global instance of LibVLC asynchronously if it isn't already.
+	 * 
+	 * @param options The additional options you can add to the instance.
+	 * @param finishCallback A callback that is called after it finishes loading.
+	 */
 	public static function initAsync(?options:Array<String>, ?finishCallback:Bool->Void):Void
 	{
 		if (loading)
@@ -85,6 +99,9 @@ class Handle
 		});
 	}
 
+	/**
+	 * Frees the global instance of LibVLC.
+	 */
 	public static function dispose():Void
 	{
 		if (sharedInstance == null)

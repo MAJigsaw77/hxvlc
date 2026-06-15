@@ -15,6 +15,7 @@ import hxvlc.impl.externs.LibVLC;
 
 import sys.thread.Mutex;
 
+/** Represents a LibVLC audio output handler that processes decoded audio samples through native callbacks. */
 class AudioOutput
 {
 	/** Maps the audio format to a supported format. */
@@ -216,21 +217,23 @@ class AudioOutput
 
 			untyped __cpp__('hx::SetTopOfStack(&stackBase, true)');
 
-			final inFormat:String = new String(untyped format);
-			final inRate:Int = rate[0];
-			final inChannels:Int = channels[0];
+			{
+				final inFormat:String = new String(untyped format);
+				final inRate:Int = rate[0];
+				final inChannels:Int = channels[0];
 
-			final outFormat:String = audioOutput.onMapFormat != null ? audioOutput.onMapFormat(inFormat) : inFormat;
-			final outRate:Int = audioOutput.onMapRate != null ? audioOutput.onMapRate(inRate) : inRate;
-			final outChannels:Int = audioOutput.onMapChannels != null ? audioOutput.onMapChannels(inChannels) : inChannels;
+				final outFormat:String = audioOutput.onMapFormat != null ? audioOutput.onMapFormat(inFormat) : inFormat;
+				final outRate:Int = audioOutput.onMapRate != null ? audioOutput.onMapRate(inRate) : inRate;
+				final outChannels:Int = audioOutput.onMapChannels != null ? audioOutput.onMapChannels(inChannels) : inChannels;
 
-			Stdlib.nativeMemcpy(untyped format, untyped cpp.CastCharStar.fromString(outFormat), outFormat.length);
+				Stdlib.nativeMemcpy(untyped format, untyped cpp.CastCharStar.fromString(outFormat), outFormat.length);
 
-			if (outRate > 0)
-				rate[0] = outRate;
+				if (outRate > 0)
+					rate[0] = outRate;
 
-			if (outChannels > 0)
-				channels[0] = outChannels;
+				if (outChannels > 0)
+					channels[0] = outChannels;
+			}
 
 			if (audioOutput.onFormatSetup != null)
 			{

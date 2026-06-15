@@ -14,6 +14,7 @@ import hxvlc.impl.externs.LibVLC;
 
 import sys.thread.Mutex;
 
+/** Represents a LibVLC video output handler that receives decoded frames through native callbacks. */
 class VideoOutput
 {
 	/** Called when video frame data is ready to be displayed. */
@@ -46,9 +47,9 @@ class VideoOutput
 	/**
 	 * Creates a new VideoOutput instance for rendering video frames.
 	 * 
-	 * @param mediaPlayer The media player to attach video callbacks to.
-	 * @param format The pixel format string (e.g., "RV32").
-	 * @param bytesPerPixel The number of bytes per pixel for the specified format.
+	 * @param mediaPlayer The media player to attach LibVLC video callbacks to.
+	 * @param format Pixel format string (e.g. "RV32").
+	 * @param bytesPerPixel Number of bytes per pixel for the chosen format.
 	 */
 	public function new(mediaPlayer:MediaPlayer, format:String, bytesPerPixel:Int):Void
 	{
@@ -153,17 +154,19 @@ class VideoOutput
 
 			videoOutput.mutex.acquire();
 
-			final originalWidth:UInt32 = width[0];
-			final originalHeight:UInt32 = height[0];
-
-			if (!calculateVideoSize(videoOutput.nativeMediaPlayer, width, height))
 			{
-				width[0] = originalWidth;
-				height[0] = originalHeight;
-			}
+				final originalWidth:UInt32 = width[0];
+				final originalHeight:UInt32 = height[0];
 
-			videoOutput.width = width[0];
-			videoOutput.height = height[0];
+				if (!calculateVideoSize(videoOutput.nativeMediaPlayer, width, height))
+				{
+					width[0] = originalWidth;
+					height[0] = originalHeight;
+				}
+
+				videoOutput.width = width[0];
+				videoOutput.height = height[0];
+			}
 
 			pitches[0] = videoOutput.width * videoOutput.bytesPerPixel;
 			lines[0] = videoOutput.height;

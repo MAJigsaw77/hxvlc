@@ -13,7 +13,7 @@ import haxe.io.Bytes;
 
 import hxvlc.impl.externs.LibVLC;
 
-@:access(haxe.io.BytesInput)
+/** Represents a implementation or wrapper for the native LibVLC media instance */
 class Media extends Finalizeable
 {
 	/**

@@ -6,6 +6,7 @@ import haxe.Int64;
 
 import hxvlc.impl.externs.LibVLC;
 
+/** Represents a implementation or wrapper for the native LibVLC media player instance */
 class MediaPlayer extends Finalizeable
 {
 	/** The media of the media player */

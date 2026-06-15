@@ -4,89 +4,55 @@ import cpp.Struct;
 
 import hxvlc.impl.externs.LibVLC;
 
-/**
- * Represents various statistics related to media processing.
- */
+/** Represents various statistics related to media processing. */
 class Stats
 {
-	/**
-	 * Number of bytes read from the input.
-	 */
+	/** Number of bytes read from the input. */
 	public var i_read_bytes:Int;
 
-	/**
-	 * Bitrate of the input in bits per second.
-	 */
+	/** * Bitrate of the input in bits per second. */
 	public var f_input_bitrate:Single;
 
-	/**
-	 * Number of bytes read by the demuxer.
-	 */
+	/** * Number of bytes read by the demuxer. */
 	public var i_demux_read_bytes:Int;
 
-	/**
-	 * Bitrate of the demuxer in bits per second.
-	 */
+	/** Bitrate of the demuxer in bits per second. */
 	public var f_demux_bitrate:Single;
 
-	/**
-	 * Number of corrupted packets encountered by the demuxer.
-	 */
+	/** Number of corrupted packets encountered by the demuxer. */
 	public var i_demux_corrupted:Int;
 
-	/**
-	 * Number of discontinuities encountered by the demuxer.
-	 */
+	/** Number of discontinuities encountered by the demuxer. */
 	public var i_demux_discontinuity:Int;
 
-	/**
-	 * Number of video frames decoded.
-	 */
+	/** Number of video frames decoded. */
 	public var i_decoded_video:Int;
 
-	/**
-	 * Number of audio frames decoded.
-	 */
+	/** Number of audio frames decoded. */
 	public var i_decoded_audio:Int;
 
-	/**
-	 * Number of pictures displayed.
-	 */
+	/** Number of pictures displayed. */
 	public var i_displayed_pictures:Int;
 
-	/**
-	 * Number of pictures lost.
-	 */
+	/** Number of pictures lost. */
 	public var i_lost_pictures:Int;
 
-	/**
-	 * Number of audio buffers played.
-	 */
+	/** Number of audio buffers played. */
 	public var i_played_abuffers:Int;
 
-	/**
-	 * Number of audio buffers lost.
-	 */
+	/** Number of audio buffers lost. */
 	public var i_lost_abuffers:Int;
 
-	/**
-	 * Number of packets sent by the stream output.
-	 */
+	/** Number of packets sent by the stream output. */
 	public var i_sent_packets:Int;
 
-	/**
-	 * Number of bytes sent by the stream output.
-	 */
+	/** Number of bytes sent by the stream output. */
 	public var i_sent_bytes:Int;
 
-	/**
-	 * Bitrate of the stream output in bits per second.
-	 */
+	/** Bitrate of the stream output in bits per second. */
 	public var f_send_bitrate:Single;
 
-	/**
-	 * Creates a new instance of `Stats` with default values.
-	 */
+	/** Creates a new instance of `Stats` with default values. */
 	public function new():Void
 	{
 		this.i_read_bytes = 0;
@@ -137,6 +103,7 @@ class Stats
 	 * Constructs a `Stats` object from raw LibVLC media statistics.
 	 * 
 	 * @param media_stats The LibVLC media statistics.
+	 * 
 	 * @return A `Stats` object populated with the provided media statistics.
 	 */
 	@:unreflective

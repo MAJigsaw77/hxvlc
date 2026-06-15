@@ -18,6 +18,7 @@ import hxvlc.impl.externs.LibVLC;
 
 import sys.thread.Mutex;
 
+/** Represents a implementation or wrapper for the native LibVLC instance */
 @:cppInclude('stdarg.h')
 @:cppNamespaceCode('static int vsnprintf_safe(char* buffer, size_t size, const char* fmt, va_list args)
 {

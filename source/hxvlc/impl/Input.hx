@@ -10,7 +10,7 @@ import cpp.UInt8;
 
 import haxe.io.Bytes;
 
-/** A Input stream using unmanaged memory so it can be safely passed as a stable pointer without being affected by GC. */
+/** Represents a input stream using unmanaged memory so it can be safely passed as a stable pointer without being affected by GC. */
 @:nativeGen
 @:structAccess
 class Input
