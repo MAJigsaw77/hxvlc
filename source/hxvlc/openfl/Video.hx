@@ -1,13 +1,11 @@
 package hxvlc.openfl;
 
-import haxe.io.Path;
-import openfl.utils.Assets;
-import sys.FileSystem;
 import cpp.Stdlib;
 
 import haxe.Int64;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
+import haxe.io.Path;
 
 import hxvlc.impl.Instance;
 import hxvlc.impl.Media;
@@ -31,6 +29,9 @@ import lime.utils.UInt8Array;
 import openfl.Lib;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
+import openfl.utils.Assets;
+
+import sys.FileSystem;
 
 using StringTools;
 
