@@ -11,6 +11,7 @@ import hxvlc.impl.externs.LibVLC;
 
 import sys.thread.Mutex;
 
+/** Represents a LibVLC media player handler that receives events and thier data through native callbacks. */
 class MediaPlayerEvents
 {
 	/** Event triggered when the media is opening. */
@@ -61,6 +62,11 @@ class MediaPlayerEvents
 	@:noCompletion
 	private var mutex:Mutex;
 
+	/**
+	 * Creates a new MediaPlayerEvents instance for handling media player event callbacks.
+	 *
+	 * @param mediaPlayer The media player to attach event callbacks to.
+	 */
 	public function new(mediaPlayer:MediaPlayer):Void
 	{
 		if (mediaPlayer.nativeMediaPlayer == null)
