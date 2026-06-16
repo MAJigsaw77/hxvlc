@@ -1,5 +1,6 @@
 package hxvlc.openfl;
 
+#if openfl
 import cpp.Stdlib;
 
 import haxe.Int64;
@@ -935,3 +936,4 @@ class Video extends Bitmap
 			AL.sourceStop(alSource);
 	}
 }
+#end

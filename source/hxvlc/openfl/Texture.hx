@@ -1,5 +1,6 @@
 package hxvlc.openfl;
 
+#if openfl
 import lime.utils.UInt8Array;
 
 import openfl.display3D.Context3D;
@@ -98,3 +99,4 @@ class Texture extends TextureBase
 		return false;
 	}
 }
+#end
