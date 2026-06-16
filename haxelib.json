@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "2.2.6",
-	"releasenote": "Fixed the video's texture being glitched for half a sec, Changed the volume from an Int to a Float and removed some unused / useless things.",
+	"version": "2.3.0",
+	"releasenote": "Rewritten the backend of the library to be far easier to manage aswell as updating LibVLC to 3.0.23 on all platforms except Linux.",
 	"contributors": [
 		"MAJigsaw77"
 	],
