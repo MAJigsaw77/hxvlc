@@ -107,9 +107,6 @@ class Video extends Bitmap
 	/** Event triggered when an error occurs. */
 	public var onEncounteredError(default, null):Event<String->Void> = new Event<String->Void>();
 
-	/** Event triggered when the media changes. */
-	public var onMediaChanged(default, null):Event<Void->Void> = new Event<Void->Void>();
-
 	/** Event triggered when a new Elementary Stream (ES) is added. */
 	public var onESAdded(default, null):Event<Int->Int->Void> = new Event<Int->Int->Void>();
 
@@ -134,14 +131,23 @@ class Video extends Bitmap
 	/** Event triggered when the length changes. */
 	public var onLengthChanged(default, null):Event<Int64->Void> = new Event<Int64->Void>();
 
-	/** Event triggered when the chapter changes. */
-	public var onChapterChanged(default, null):Event<Int->Void> = new Event<Int->Void>();
+	/** Event triggered when the media changes. */
+	public var onMediaChanged(default, null):Event<Media->Void> = new Event<Media->Void>();
 
 	/** Event triggered when the media metadata changes. */
 	public var onMediaMetaChanged(default, null):Event<Int->Void> = new Event<Int->Void>();
 
 	/** Event triggered when the media is parsed. */
 	public var onMediaParsedChanged(default, null):Event<Int->Void> = new Event<Int->Void>();
+
+	/** Event triggered when the media is parsed. */
+	public var onMediaSubItemAdded(default, null):Event<Media->Void> = new Event<Media->Void>();
+
+	/** Event triggered when the media is parsed. */
+	public var onMediaDurationChanged(default, null):Event<Int64->Void> = new Event<Int64->Void>();
+
+	/** Event triggered when the media is parsed. */
+	public var onMediaSubItemTreeAdded(default, null):Event<Media->Void> = new Event<Media->Void>();
 
 	/** Event triggered when the media format setup is initialized. */
 	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
@@ -232,7 +238,7 @@ class Video extends Bitmap
 		this.mediaPlayerEvents.onTimeChanged = (time:Int64) -> MainLoop.runInMainThread(() -> onTimeChanged.dispatch(time));
 		this.mediaPlayerEvents.onPositionChanged = (position:Single) -> MainLoop.runInMainThread(() -> onPositionChanged.dispatch(position));
 		this.mediaPlayerEvents.onLengthChanged = (length:Int64) -> MainLoop.runInMainThread(() -> onLengthChanged.dispatch(length));
-		this.mediaPlayerEvents.onMediaChanged = (media:Media) -> MainLoop.runInMainThread(() -> onMediaChanged.dispatch());
+		this.mediaPlayerEvents.onMediaChanged = (media:Media) -> MainLoop.runInMainThread(() -> onMediaChanged.dispatch(media));
 
 		setupVideo();
 
@@ -717,8 +723,11 @@ class Video extends Bitmap
 			// crashes the whole thing, so by dispatching the events inside the main thread we bypass this issue, obviously this isnt the best solution
 			// but it is what it is
 			mediaEvents = new MediaEvents(media);
-			mediaEvents.onMediaMetaChanged = (type:Int) -> MainLoop.runInMainThread(() -> onMediaMetaChanged.dispatch(type));
-			mediaEvents.onMediaParsedChanged = (status:Int) -> MainLoop.runInMainThread(() -> onMediaParsedChanged.dispatch(status));
+			mediaEvents.onMetaChanged = (type:Int) -> MainLoop.runInMainThread(() -> onMediaMetaChanged.dispatch(type));
+			mediaEvents.onParsedChanged = (status:Int) -> MainLoop.runInMainThread(() -> onMediaParsedChanged.dispatch(status));
+			mediaEvents.onSubItemAdded = (child:Media) -> MainLoop.runInMainThread(() -> onMediaSubItemAdded.dispatch(child));
+			mediaEvents.onDurationChanged = (duration:Int64) -> MainLoop.runInMainThread(() -> onMediaDurationChanged.dispatch(duration));
+			mediaEvents.onSubItemTreeAdded = (item:Media) -> MainLoop.runInMainThread(() -> onMediaSubItemTreeAdded.dispatch(item));
 
 			mediaPlayer.media = media;
 

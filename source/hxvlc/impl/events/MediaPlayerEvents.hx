@@ -78,21 +78,28 @@ class MediaPlayerEvents
 
 		if (eventManager != null)
 		{
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerOpening, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPlaying, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerStopped, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPaused, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEndReached, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerEncounteredError, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerCorked, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerUncorked, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerESAdded, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerESDeleted, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerESSelected, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerTimeChanged, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerPositionChanged, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerLengthChanged, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaPlayerMediaChanged, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaPlayerOpening, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaPlayerPlaying, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaPlayerStopped, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaPlayerPaused, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaPlayerEndReached, Function.fromStaticFunction(eventManagerCallbacks),
+				untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaPlayerEncounteredError, Function.fromStaticFunction(eventManagerCallbacks),
+				untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaPlayerCorked, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaPlayerUncorked, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaPlayerESAdded, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaPlayerESDeleted, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaPlayerESSelected, Function.fromStaticFunction(eventManagerCallbacks),
+				untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaPlayerTimeChanged, Function.fromStaticFunction(eventManagerCallbacks),
+				untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaPlayerPositionChanged, Function.fromStaticFunction(eventManagerCallbacks),
+				untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaPlayerLengthChanged, Function.fromStaticFunction(eventManagerCallbacks),
+				untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaPlayerMediaChanged, Function.fromStaticFunction(eventManagerCallbacks),
+				untyped __cpp__('this'));
 		}
 	}
 
@@ -113,50 +120,50 @@ class MediaPlayerEvents
 
 			switch (p_event[0].type)
 			{
-				case event if (event == LibVLC_MediaPlayerOpening && mediaPlayerEvents.onOpening != null):
+				case event if ((event == untyped libvlc_MediaPlayerOpening) && mediaPlayerEvents.onOpening != null):
 					mediaPlayerEvents.onOpening();
-				case event if (event == LibVLC_MediaPlayerPlaying && mediaPlayerEvents.onPlaying != null):
+				case event if ((event == untyped libvlc_MediaPlayerPlaying) && mediaPlayerEvents.onPlaying != null):
 					mediaPlayerEvents.onPlaying();
-				case event if (event == LibVLC_MediaPlayerStopped && mediaPlayerEvents.onStopped != null):
+				case event if ((event == untyped libvlc_MediaPlayerStopped) && mediaPlayerEvents.onStopped != null):
 					mediaPlayerEvents.onStopped();
-				case event if (event == LibVLC_MediaPlayerPaused && mediaPlayerEvents.onPaused != null):
+				case event if ((event == untyped libvlc_MediaPlayerPaused) && mediaPlayerEvents.onPaused != null):
 					mediaPlayerEvents.onPaused();
-				case event if (event == LibVLC_MediaPlayerEndReached && mediaPlayerEvents.onEndReached != null):
+				case event if ((event == untyped libvlc_MediaPlayerEndReached) && mediaPlayerEvents.onEndReached != null):
 					mediaPlayerEvents.onEndReached();
-				case event if (event == LibVLC_MediaPlayerEncounteredError && mediaPlayerEvents.onEncounteredError != null):
+				case event if ((event == untyped libvlc_MediaPlayerEncounteredError) && mediaPlayerEvents.onEncounteredError != null):
 					mediaPlayerEvents.onEncounteredError();
-				case event if (event == LibVLC_MediaPlayerCorked && mediaPlayerEvents.onCorked != null):
+				case event if ((event == untyped libvlc_MediaPlayerCorked) && mediaPlayerEvents.onCorked != null):
 					mediaPlayerEvents.onCorked();
-				case event if (event == LibVLC_MediaPlayerUncorked && mediaPlayerEvents.onUncorked != null):
+				case event if ((event == untyped libvlc_MediaPlayerUncorked) && mediaPlayerEvents.onUncorked != null):
 					mediaPlayerEvents.onUncorked();
-				case event if (event == LibVLC_MediaPlayerESAdded && mediaPlayerEvents.onESAdded != null):
+				case event if ((event == untyped libvlc_MediaPlayerESAdded) && mediaPlayerEvents.onESAdded != null):
 					final iType:LibVLC_Track_Type = untyped __cpp__('{0}.u.media_player_es_changed.i_type', p_event[0]);
 					final iID:Int = untyped __cpp__('{0}.u.media_player_es_changed.i_id', p_event[0]);
 
 					mediaPlayerEvents.onESAdded((iType : Int), iID);
-				case event if (event == LibVLC_MediaPlayerESDeleted && mediaPlayerEvents.onESDeleted != null):
+				case event if ((event == untyped libvlc_MediaPlayerESDeleted) && mediaPlayerEvents.onESDeleted != null):
 					final iType:LibVLC_Track_Type = untyped __cpp__('{0}.u.media_player_es_changed.i_type', p_event[0]);
 					final iID:Int = untyped __cpp__('{0}.u.media_player_es_changed.i_id', p_event[0]);
 
 					mediaPlayerEvents.onESDeleted((iType : Int), iID);
-				case event if (event == LibVLC_MediaPlayerESSelected && mediaPlayerEvents.onESSelected != null):
+				case event if ((event == untyped libvlc_MediaPlayerESSelected) && mediaPlayerEvents.onESSelected != null):
 					final iType:LibVLC_Track_Type = untyped __cpp__('{0}.u.media_player_es_changed.i_type', p_event[0]);
 					final iID:Int = untyped __cpp__('{0}.u.media_player_es_changed.i_id', p_event[0]);
 
 					mediaPlayerEvents.onESSelected((iType : Int), iID);
-				case event if (event == LibVLC_MediaPlayerTimeChanged && mediaPlayerEvents.onTimeChanged != null):
+				case event if ((event == untyped libvlc_MediaPlayerTimeChanged) && mediaPlayerEvents.onTimeChanged != null):
 					final newTime:Int64 = untyped __cpp__('{0}.u.media_player_time_changed.new_time', p_event[0]);
 
 					mediaPlayerEvents.onTimeChanged(newTime);
-				case event if (event == LibVLC_MediaPlayerPositionChanged && mediaPlayerEvents.onPositionChanged != null):
+				case event if ((event == untyped libvlc_MediaPlayerPositionChanged) && mediaPlayerEvents.onPositionChanged != null):
 					final newPosition:Single = untyped __cpp__('{0}.u.media_player_position_changed.new_position', p_event[0]);
 
 					mediaPlayerEvents.onPositionChanged(newPosition);
-				case event if (event == LibVLC_MediaPlayerLengthChanged && mediaPlayerEvents.onLengthChanged != null):
+				case event if ((event == untyped libvlc_MediaPlayerLengthChanged) && mediaPlayerEvents.onLengthChanged != null):
 					final newLength:Int64 = untyped __cpp__('{0}.u.media_player_length_changed.new_length', p_event[0]);
 
 					mediaPlayerEvents.onLengthChanged(newLength);
-				case event if (event == LibVLC_MediaPlayerMediaChanged && mediaPlayerEvents.onMediaChanged != null):
+				case event if ((event == untyped libvlc_MediaPlayerMediaChanged) && mediaPlayerEvents.onMediaChanged != null):
 					final newMedia:Media = new Media(false);
 					newMedia.nativeMedia = untyped __cpp__('{0}.u.media_player_media_changed.new_media', p_event[0]);
 					mediaPlayerEvents.onMediaChanged(newMedia);

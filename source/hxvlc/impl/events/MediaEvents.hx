@@ -1,8 +1,11 @@
 package hxvlc.impl.events;
 
 import cpp.Function;
+import cpp.Int64;
 import cpp.RawConstPointer;
 import cpp.RawPointer;
+
+import haxe.Int64 as HaxeInt64;
 
 import hxvlc.impl.externs.LibVLC;
 
@@ -12,10 +15,19 @@ import sys.thread.Mutex;
 class MediaEvents
 {
 	/** Event triggered when the media is parsed. */
-	public var onMediaParsedChanged:Null<Int->Void>;
+	public var onParsedChanged:Null<Int->Void>;
 
 	/** Event triggered when the media metadata changes. */
-	public var onMediaMetaChanged:Null<Int->Void>;
+	public var onMetaChanged:Null<Int->Void>;
+
+	/** Event triggered when a sub-item is added to the media. */
+	public var onSubItemAdded:Null<Media->Void>;
+
+	/** Event triggered when the media duration changes. */
+	public var onDurationChanged:Null<HaxeInt64->Void>;
+
+	/** Event triggered when a sub-item tree is added to the media. */
+	public var onSubItemTreeAdded:Null<Media->Void>;
 
 	@:noCompletion
 	private var mutex:Mutex;
@@ -36,8 +48,12 @@ class MediaEvents
 
 		if (eventManager != null)
 		{
-			LibVLC.event_attach(eventManager, LibVLC_MediaParsedChanged, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, LibVLC_MediaMetaChanged, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaParsedChanged, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaMetaChanged, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaSubItemAdded, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaDurationChanged, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaSubItemTreeAdded, Function.fromStaticFunction(eventManagerCallbacks),
+				untyped __cpp__('this'));
 		}
 	}
 
@@ -58,14 +74,26 @@ class MediaEvents
 
 			switch (p_event[0].type)
 			{
-				case event if (event == LibVLC_MediaParsedChanged && mediaEvents.onMediaParsedChanged != null):
+				case event if ((event == untyped libvlc_MediaParsedChanged) && mediaEvents.onParsedChanged != null):
 					final newStatus:Int = untyped __cpp__('{0}.u.media_parsed_changed.new_status', p_event[0]);
 
-					mediaEvents.onMediaParsedChanged(newStatus);
-				case event if (event == LibVLC_MediaMetaChanged && mediaEvents.onMediaMetaChanged != null):
+					mediaEvents.onParsedChanged(newStatus);
+				case event if ((event == untyped libvlc_MediaMetaChanged) && mediaEvents.onMetaChanged != null):
 					final metaType:LibVLC_Meta_T = untyped __cpp__('{0}.u.media_meta_changed.meta_type', p_event[0]);
 
-					mediaEvents.onMediaMetaChanged((metaType : Int));
+					mediaEvents.onMetaChanged((metaType : Int));
+				case event if ((event == untyped libvlc_MediaSubItemAdded) && mediaEvents.onSubItemAdded != null):
+					final newChild:Media = new Media(false);
+					newChild.nativeMedia = untyped __cpp__('{0}.u.media_subitem_added.new_child', p_event[0]);
+					mediaEvents.onSubItemAdded(newChild);
+				case event if ((event == untyped libvlc_MediaDurationChanged) && mediaEvents.onDurationChanged != null):
+					final newLength:Int64 = untyped __cpp__('{0}.u.media_duration_changed.new_duration', p_event[0]);
+
+					mediaEvents.onDurationChanged(newLength);
+				case event if ((event == untyped libvlc_MediaSubItemTreeAdded) && mediaEvents.onSubItemTreeAdded != null):
+					final item:Media = new Media(false);
+					item.nativeMedia = untyped __cpp__('{0}.u.media_subitemtree_added.item', p_event[0]);
+					mediaEvents.onSubItemTreeAdded(item);
 			}
 
 			mediaEvents.mutex.release();
