@@ -22,6 +22,8 @@
 
 	<!--Path Settings-->
 
+	<assets path="assets" />
+
 	<source path="source" />
 
 	<!--Libraries-->
@@ -38,11 +40,8 @@
 
 	<!--Libraries Settings-->
 
-	<section if="debug">
-		<haxedef name="HXVLC_VERBOSE" value="4" />
-		<haxedef name="HXVLC_SHOW_LOG_TYPE" />
-		<haxedef name="HXVLC_LOGGING" />
-	</section>
+	<haxedef name="HXVLC_SHOW_LOG_TYPE" />
+	<haxedef name="HXVLC_LOGGING" />
 
 	<!--Undefinitions-->
 

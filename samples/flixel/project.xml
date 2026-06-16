@@ -22,6 +22,8 @@
 
 	<!--Path Settings-->
 
+	<assets path="assets" />
+
 	<source path="source" />
 
 	<!--Libraries-->
@@ -32,8 +34,6 @@
 		<haxelib name="hxvlc" if="desktop || mobile" />
 	</section>
 
-	<haxelib name="extension-androidtools" if="android" />
-
 	<haxelib name="hxcpp-debug-server" if="debug" unless="mobile" optional="true" />
 
 	<!--Libraries Settings-->
@@ -41,11 +41,8 @@
 	<haxedef name="FLX_NO_TOUCH" if="desktop" />
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
 
-	<section if="debug">
-		<haxedef name="HXVLC_VERBOSE" value="4" />
-		<haxedef name="HXVLC_SHOW_LOG_TYPE" />
-		<haxedef name="HXVLC_LOGGING" />
-	</section>
+	<haxedef name="HXVLC_SHOW_LOG_TYPE" />
+	<haxedef name="HXVLC_LOGGING" />
 
 	<!--Undefinitions-->
 

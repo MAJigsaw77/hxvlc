@@ -1,21 +1,31 @@
 package;
 
-import openfl.display.FPS;
-
 import hxvlc.openfl.Video;
 
+import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
-import openfl.utils.Assets;
+import openfl.text.TextFormat;
 
 class Main extends Sprite
 {
+	var resumeOnFocus:Bool = false;
 	var video:Video;
 	var fps:FPS;
 
 	public function new():Void
 	{
 		super();
+
+		#if run_uncapped
+		#if lime_funkin
+		stage.window.frameRate = 0;
+		#else
+		stage.window.frameRate = 999;
+		#end
+		#else
+		stage.window.frameRate = stage.window.displayMode.refreshRate;
+		#end
 
 		video = new Video();
 		video.onOpening.add(function():Void
@@ -57,14 +67,18 @@ class Main extends Sprite
 			if (!stage.hasEventListener(Event.ENTER_FRAME))
 				stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame);
 		});
-
+		video.precache('assets/video.mp4');
 		addChild(video);
 
-		if (video.load('assets/video.mp4'))
-			video.play();
-
 		fps = new FPS(10, 10, 0xFF0000);
+
+		final fpsDefaultTextFormat:TextFormat = fps.defaultTextFormat;
+		fpsDefaultTextFormat.align = JUSTIFY;
+		fps.setTextFormat(fpsDefaultTextFormat);
+
 		addChild(fps);
+
+		video.play();
 	}
 
 	@:noCompletion
@@ -85,12 +99,19 @@ class Main extends Sprite
 	@:noCompletion
 	private function stage_onActivate(event:Event):Void
 	{
-		video.resume();
+		if (resumeOnFocus)
+		{
+			resumeOnFocus = false;
+
+			video.resume();
+		}
 	}
 
 	@:noCompletion
 	private function stage_onDeactivate(event:Event):Void
 	{
+		resumeOnFocus = video.isPlaying;
+
 		video.pause();
 	}
 }

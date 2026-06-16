@@ -10,23 +10,59 @@ import flixel.util.FlxTimer;
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.impl.Instance;
 
-import sys.FileSystem;
-
-@:nullSafety
 class VideoState extends FlxState
 {
-	var video:Null<FlxVideoSprite>;
-	var versionInfo:Null<FlxText>;
+	var video:FlxVideoSprite;
+	var versionInfo:FlxText;
 
 	override function create():Void
 	{
 		FlxG.autoPause = false;
 
-		setupUI();
+		versionInfo = new FlxText(10, FlxG.height - 10, 0, 'Version: ${Instance.version} | Changeset: ${Instance.changeset}', 17);
+		versionInfo.setBorderStyle(OUTLINE, FlxColor.BLACK, 2);
+		versionInfo.font = FlxAssets.FONT_DEBUGGER;
+		versionInfo.active = false;
+		versionInfo.alignment = JUSTIFY;
+		versionInfo.antialiasing = true;
+		versionInfo.y -= versionInfo.height;
+		add(versionInfo);
 
-		setupVideo();
+		video = new FlxVideoSprite(0, 0);
+
+		video.bitmap.onEndReached.add(function():Void
+		{
+			if (video != null)
+			{
+				remove(video);
+				video.destroy();
+				video = null;
+			}
+		});
+
+		video.bitmap.onFormatSetup.add(function():Void
+		{
+			if (video.bitmap != null && video.bitmap.bitmapData != null)
+			{
+				final scale:Float = Math.min(FlxG.width / video.bitmap.bitmapData.width, FlxG.height / video.bitmap.bitmapData.height);
+
+				video.setGraphicSize(video.bitmap.bitmapData.width * scale, video.bitmap.bitmapData.height * scale);
+				video.updateHitbox();
+				video.screenCenter();
+			}
+		});
+
+		video.precache('assets/video.webm');
+
+		if (versionInfo != null)
+			insert(members.indexOf(versionInfo), video);
 
 		super.create();
+
+		FlxTimer.wait(0.001, function():Void
+		{
+			video.play();
+		});
 	}
 
 	override function update(elapsed:Float):Void
@@ -41,9 +77,7 @@ class VideoState extends FlxState
 				if (FlxG.keys.justPressed.R)
 				{
 					video.pause();
-
 					video.bitmap.position = 0.0;
-
 					video.resume();
 				}
 
@@ -53,70 +87,12 @@ class VideoState extends FlxState
 					video.bitmap.position += 0.1;
 
 				if (FlxG.keys.justPressed.A)
-					video.bitmap.rate -= 0.01;
+					video.bitmap.rate -= 0.1;
 				else if (FlxG.keys.justPressed.D)
-					video.bitmap.rate += 0.01;
+					video.bitmap.rate += 0.1;
 			}
 		}
 
 		super.update(elapsed);
-	}
-
-	private function setupUI():Void
-	{
-		final versionInfoArray:Array<String> = [];
-
-		versionInfoArray.push('Version: ${Instance.version}');
-		versionInfoArray.push('Compiler: ${Instance.compiler}');
-		versionInfoArray.push('Changeset: ${Instance.changeset}');
-
-		versionInfo = new FlxText(10, FlxG.height - 10, 0, versionInfoArray.join('\n'), 17);
-		versionInfo.setBorderStyle(OUTLINE, FlxColor.BLACK, 2);
-		versionInfo.font = FlxAssets.FONT_DEBUGGER;
-		versionInfo.active = false;
-		versionInfo.alignment = JUSTIFY;
-		versionInfo.antialiasing = true;
-		versionInfo.y -= versionInfo.height;
-		add(versionInfo);
-	}
-
-	@:nullSafety(Off)
-	private function setupVideo():Void
-	{
-		function finishVideo():Void
-		{
-			if (video != null)
-			{
-				remove(video);
-				video.destroy();
-				video = null;
-			}
-		}
-
-		video = new FlxVideoSprite(0, 0);
-		video.active = false;
-		video.antialiasing = true;
-		video.bitmap.onEndReached.add(finishVideo);
-		video.bitmap.onFormatSetup.add(function():Void
-		{
-			if (video.bitmap != null && video.bitmap.bitmapData != null)
-			{
-				final scale:Float = Math.min(FlxG.width / video.bitmap.bitmapData.width, FlxG.height / video.bitmap.bitmapData.height);
-
-				video.setGraphicSize(video.bitmap.bitmapData.width * scale, video.bitmap.bitmapData.height * scale);
-				video.updateHitbox();
-				video.screenCenter();
-			}
-		});
-
-		video.load('assets/video.mp4');
-
-		if (versionInfo != null)
-			insert(members.indexOf(versionInfo), video);
-
-		FlxTimer.wait(0.001, function():Void
-		{
-			video.play();
-		});
 	}
 }
