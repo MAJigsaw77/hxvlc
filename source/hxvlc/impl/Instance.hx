@@ -41,6 +41,10 @@ class Instance extends Finalizeable
 	}
 	#end
 
+	/** The possible source paths that the LibVLC logs can come from */
+	@:noCompletion
+	private static final POSSIBLE_LIBVLC_LOG_PATHS:Array<String> = ['src', 'modules'];
+
 	/** Retrieves the LibVLC version. */
 	public static var version(get, never):String;
 
@@ -223,18 +227,20 @@ class Instance extends Finalizeable
 	{
 		final len:Int = untyped vsnprintf_safe(untyped nullptr, 0, fmt, args);
 
-		if (len <= 0)
-			return '';
+		if (len > 0)
+		{
+			final buffer:CastCharStar = cast Stdlib.nativeMalloc(len + 1);
 
-		final buffer:CastCharStar = cast Stdlib.nativeMalloc(len + 1);
+			untyped vsnprintf_safe(buffer, len + 1, fmt, args);
 
-		untyped vsnprintf_safe(buffer, len + 1, fmt, args);
+			final msg:String = new String(untyped buffer);
 
-		final msg:String = new String(untyped buffer);
+			Stdlib.nativeFree(untyped buffer);
 
-		Stdlib.nativeFree(untyped buffer);
+			return msg;
+		}
 
-		return msg;
+		return '';
 	}
 
 	@:noCompletion
@@ -248,8 +254,24 @@ class Instance extends Finalizeable
 
 		LibVLC.log_get_context(ctx, untyped nullptr, RawPointer.addressOf(fileName), RawPointer.addressOf(lineNumber));
 
+		var normalizedPath:String = fileName != null ? Path.normalize(fileName) : '';
+
+		if (normalizedPath.length > 0)
+		{
+			for (logPath in POSSIBLE_LIBVLC_LOG_PATHS)
+			{
+				final index:Int = normalizedPath.indexOf(logPath, 0);
+
+				if (index != -1)
+				{
+					normalizedPath = normalizedPath.substring(index, normalizedPath.length);
+					break;
+				}
+			}
+		}
+
 		return {
-			fileName: fileName != null ? Path.normalize(fileName) : '',
+			fileName: normalizedPath,
 			lineNumber: lineNumber,
 			className: '',
 			methodName: ''
