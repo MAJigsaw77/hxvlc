@@ -33,6 +33,12 @@ class VideoOutput
 	private var height:Null<Int>;
 
 	@:noCompletion
+	private var outputWidth:Null<Int>;
+
+	@:noCompletion
+	private var outputHeight:Null<Int>;
+
+	@:noCompletion
 	private var format:Null<String>;
 
 	@:noCompletion
@@ -47,16 +53,22 @@ class VideoOutput
 	/**
 	 * Creates a new VideoOutput instance for rendering video frames.
 	 * 
+	 * NOTE: In order to force the output size, you need to set both `outputWidth` and `outputHeight`, otherwise itll be ignored.
+	 * 
 	 * @param mediaPlayer The media player to attach LibVLC video callbacks to.
+	 * @param width (Optional) Pixel width to force the LibVLC output to.
+	 * @param height (Optional) Pixel height to force the LibVLC output to.
 	 * @param format Pixel format string (e.g. "RV32").
 	 * @param bytesPerPixel Number of bytes per pixel for the chosen format.
 	 */
-	public function new(mediaPlayer:MediaPlayer, format:String, bytesPerPixel:Int):Void
+	public function new(mediaPlayer:MediaPlayer, ?outputWidth:Int, ?outputHeight:Int, format:String, bytesPerPixel:Int):Void
 	{
 		if (mediaPlayer.nativeMediaPlayer == null)
 			return;
 
 		this.mutex = new Mutex();
+		this.outputWidth = outputWidth;
+		this.outputHeight = outputHeight;
 		this.format = format;
 		this.bytesPerPixel = bytesPerPixel;
 		this.nativeMediaPlayer = mediaPlayer.nativeMediaPlayer;
@@ -154,6 +166,13 @@ class VideoOutput
 
 			videoOutput.mutex.acquire();
 
+			if ((videoOutput.outputWidth != null && videoOutput.outputWidth > 0)
+				&& (videoOutput.outputHeight != null && videoOutput.outputHeight > 0))
+			{
+				width[0] = videoOutput.outputWidth;
+				height[0] = videoOutput.outputHeight;
+			}
+			else
 			{
 				final originalWidth:UInt32 = width[0];
 				final originalHeight:UInt32 = height[0];
@@ -163,10 +182,10 @@ class VideoOutput
 					width[0] = originalWidth;
 					height[0] = originalHeight;
 				}
-
-				videoOutput.width = width[0];
-				videoOutput.height = height[0];
 			}
+
+			videoOutput.width = width[0];
+			videoOutput.height = height[0];
 
 			pitches[0] = videoOutput.width * videoOutput.bytesPerPixel;
 			lines[0] = videoOutput.height;
