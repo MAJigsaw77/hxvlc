@@ -39,7 +39,7 @@ class VideoOutput
 	private var outputHeight:Null<Int>;
 
 	@:noCompletion
-	private var format:Null<String>;
+	private var chroma:Null<String>;
 
 	@:noCompletion
 	private var bytesPerPixel:Int;
@@ -58,10 +58,10 @@ class VideoOutput
 	 * @param mediaPlayer The media player to attach LibVLC video callbacks to.
 	 * @param width (Optional) Pixel width to force the LibVLC output to.
 	 * @param height (Optional) Pixel height to force the LibVLC output to.
-	 * @param format Pixel format string (e.g. "RV32").
-	 * @param bytesPerPixel Number of bytes per pixel for the chosen format.
+	 * @param chroma Pixel chroma string (e.g. "RV32").
+	 * @param bytesPerPixel Number of bytes per pixel for the chosen chroma.
 	 */
-	public function new(mediaPlayer:MediaPlayer, ?outputWidth:Int, ?outputHeight:Int, format:String, bytesPerPixel:Int):Void
+	public function new(mediaPlayer:MediaPlayer, ?outputWidth:Int, ?outputHeight:Int, chroma:String, bytesPerPixel:Int):Void
 	{
 		if (mediaPlayer.nativeMediaPlayer == null)
 			return;
@@ -69,7 +69,7 @@ class VideoOutput
 		this.mutex = new Mutex();
 		this.outputWidth = outputWidth;
 		this.outputHeight = outputHeight;
-		this.format = format;
+		this.chroma = chroma;
 		this.bytesPerPixel = bytesPerPixel;
 		this.nativeMediaPlayer = mediaPlayer.nativeMediaPlayer;
 
@@ -156,13 +156,13 @@ class VideoOutput
 	{
 		final videoOutput:VideoOutput = untyped __cpp__('reinterpret_cast<VideoOutput_obj *>(*{0})', opaque);
 
-		if (videoOutput != null && videoOutput.onFormatSetup != null && videoOutput.format != null && videoOutput.bytesPerPixel > 0)
+		if (videoOutput != null && videoOutput.onFormatSetup != null && videoOutput.chroma != null && videoOutput.bytesPerPixel > 0)
 		{
 			untyped __cpp__('int stackBase');
 
 			untyped __cpp__('hx::SetTopOfStack(&stackBase, true)');
 
-			Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString(videoOutput.format), videoOutput.format.length);
+			Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString(videoOutput.chroma), videoOutput.chroma.length);
 
 			videoOutput.mutex.acquire();
 
