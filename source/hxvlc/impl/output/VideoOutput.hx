@@ -33,6 +33,9 @@ class VideoOutput
 	private var height:Null<Int>;
 
 	@:noCompletion
+	private var pixels:Null<BytesData>;
+
+	@:noCompletion
 	private var outputWidth:Null<Int>;
 
 	@:noCompletion
@@ -43,9 +46,6 @@ class VideoOutput
 
 	@:noCompletion
 	private var bytesPerPixel:Int;
-
-	@:noCompletion
-	private var pixels:Null<BytesData>;
 
 	@:noCompletion
 	private var nativeMediaPlayer:RawPointer<LibVLC_Media_Player_T>;
