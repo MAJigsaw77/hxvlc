@@ -4,11 +4,6 @@ package hxvlc.flixel;
 import flixel.FlxG;
 
 import haxe.io.Bytes;
-import haxe.io.Path;
-
-import openfl.utils.Assets;
-
-import sys.FileSystem;
 
 using StringTools;
 
