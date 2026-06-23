@@ -6,10 +6,6 @@ import flixel.FlxG;
 import haxe.io.Bytes;
 import haxe.io.Path;
 
-import openfl.utils.Assets;
-
-import sys.FileSystem;
-
 using StringTools;
 
 /** A wrapper class for displaying video files in HaxeFlixel using the `Video` class. */
