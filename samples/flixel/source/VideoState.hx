@@ -19,14 +19,6 @@ class VideoState extends FlxState
 	{
 		FlxG.autoPause = false;
 
-		versionInfo = new FlxText(10, FlxG.height - 10, 0, 'Version: ${Instance.version} | Changeset: ${Instance.changeset}', 17);
-		versionInfo.setBorderStyle(OUTLINE, FlxColor.BLACK, 2);
-		versionInfo.font = FlxAssets.FONT_DEBUGGER;
-		versionInfo.active = false;
-		versionInfo.alignment = JUSTIFY;
-		versionInfo.antialiasing = true;
-		versionInfo.y -= versionInfo.height;
-		add(versionInfo);
 
 		video = new FlxVideoSprite(0, 0);
 
@@ -39,7 +31,6 @@ class VideoState extends FlxState
 				video = null;
 			}
 		});
-
 		video.bitmap.onFormatSetup.add(function():Void
 		{
 			if (video.bitmap != null && video.bitmap.bitmapData != null)
@@ -51,11 +42,17 @@ class VideoState extends FlxState
 				video.screenCenter();
 			}
 		});
+		video.precache('assets/video.mp4');
+		add(video);
 
-		video.precache('assets/video.webm');
-
-		if (versionInfo != null)
-			insert(members.indexOf(versionInfo), video);
+		versionInfo = new FlxText(10, FlxG.height - 10, 0, 'Version: ${Instance.version} | Changeset: ${Instance.changeset}', 17);
+		versionInfo.setBorderStyle(OUTLINE, FlxColor.BLACK, 2);
+		versionInfo.font = FlxAssets.FONT_DEBUGGER;
+		versionInfo.active = false;
+		versionInfo.alignment = JUSTIFY;
+		versionInfo.antialiasing = true;
+		versionInfo.y -= versionInfo.height;
+		add(versionInfo);
 
 		super.create();
 
