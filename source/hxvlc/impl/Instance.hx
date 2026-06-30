@@ -64,9 +64,9 @@ class Instance extends Finalizeable
 		#end
 		args.push("--ignore-config"); // Ignore any existing VLC config files
 		args.push("--drop-late-frames"); // Drop late video frames instead of trying to render them
-		args.push("--aout=none"); // Disable audio output (we use amem)
+		args.push("--aout=adummy"); // Disable audio output (we use amem)
 		args.push("--intf=none"); // Disable interface / UI
-		args.push("--vout=none"); // Disable video output (we use vmem)
+		args.push("--vout=vdummy"); // Disable video output (we use vmem)
 		args.push("--text-renderer=freetype"); // Use Freetype for subtitles/text overlays
 		args.push("--no-color"); // Disable colored console output
 		args.push("--no-lua"); // Disable Lua scripting engine
