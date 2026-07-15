@@ -179,6 +179,11 @@ class Video extends Bitmap
 	@:noCompletion
 	private var alUseEXT32bit_formats:Null<Bool>;
 
+	#if lime_funkin
+	@:noCompletion
+	private var alUseSOFT_direct_channels:Null<Bool>;
+	#end
+
 	@:noCompletion
 	private var alSource:Null<ALSource>;
 
@@ -792,8 +797,18 @@ class Video extends Bitmap
 		alUseEXTFLOAT32 ??= AL.isExtensionPresent('AL_EXT_FLOAT32');
 		alUseEXTMCFORMATS ??= AL.isExtensionPresent('AL_EXT_MCFORMATS');
 		alUseEXT32bit_formats ??= AL.getEnumValue('AL_FORMAT_MONO_I32') > 0;
+		#if lime_funkin
+		alUseSOFT_direct_channels ??= AL.isExtensionPresent("AL_SOFT_direct_channels") && AL.isExtensionPresent("AL_SOFT_direct_channels_remix");
+		#end
 		alSource ??= AL.createSource();
 		alBufferPool ??= AL.genBuffers(255);
+
+		#if lime_funkin
+		if (alUseSOFT_direct_channels == true)
+		{
+			AL.sourcei(alSource, AL.DIRECT_CHANNELS_SOFT, AL.REMIX_UNMATCHED_SOFT);
+		}
+		#end
 
 		audioOutput = new AudioOutput(mediaPlayer);
 		audioOutput.onMapFormat = audioOutput_onMapFormat;
