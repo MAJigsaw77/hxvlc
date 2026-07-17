@@ -50,15 +50,7 @@ class Main extends Sprite
 			if (video != null)
 			{
 				removeChild(video);
-
-				if (video.bitmapData != null)
-				{
-					video.bitmapData.dispose();
-					video.bitmapData = null;
-				}
-
 				video.dispose();
-
 				video = null;
 			}
 		});
