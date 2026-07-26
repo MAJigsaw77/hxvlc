@@ -673,21 +673,11 @@ class Video extends Bitmap
 	{
 		__bitmapData = value;
 		__setRenderDirty();
-		__imageVersion = -1;
 		return __bitmapData;
 	}
 
-	@:noCompletion private override function __enterFrame(_):Void
-	{
-		if (__bitmapData != null && __bitmapData.image != null && __bitmapData.image.version != __imageVersion)
-		{
-			__setRenderDirty();
-		}
-		else if (__bitmapData != null && __bitmapData.__texture != null && bitmapData.__textureVersion != __imageVersion)
-		{
-			__setRenderDirty();
-		}
-	}
+	@:noCompletion
+	private override function __enterFrame(_):Void {}
 
 	@:noCompletion
 	private function loadInternal(location:Location, ?options:Array<String>):Bool
@@ -788,7 +778,7 @@ class Video extends Bitmap
 
 		cast(bitmapData.__texture, Texture).uploadFromTypedArray(UInt8Array.fromBytes(Bytes.ofData(pixels)));
 
-		bitmapData.__textureVersion++;
+		__setRenderDirty();
 	}
 
 	@:noCompletion
@@ -798,7 +788,8 @@ class Video extends Bitmap
 		alUseEXTMCFORMATS ??= AL.isExtensionPresent('AL_EXT_MCFORMATS');
 		alUseEXT32bit_formats ??= AL.getEnumValue('AL_FORMAT_MONO_I32') > 0;
 		#if lime_funkin
-		alUseSOFT_direct_channels ??= AL.isExtensionPresent("AL_SOFT_direct_channels") && AL.isExtensionPresent("AL_SOFT_direct_channels_remix");
+		alUseSOFT_direct_channels ??= AL.isExtensionPresent("AL_SOFT_direct_channels")
+			&& AL.isExtensionPresent("AL_SOFT_direct_channels_remix");
 		#end
 		alSource ??= AL.createSource();
 		alBufferPool ??= AL.genBuffers(255);
