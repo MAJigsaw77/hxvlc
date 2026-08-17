@@ -28,10 +28,13 @@ class Texture extends TextureBase
 
 		__height = height;
 
+		#if (lime_opengl || lime_opengles)
 		__textureTarget = __context.gl.TEXTURE_2D;
+		#end
 
 		__frameSize = width * height * 4;
 
+		#if (lime_opengl || lime_opengles)
 		__context.__bindGLTexture2D(__textureID);
 
 		__context.gl.texImage2D(__textureTarget, 0, __internalFormat, __width, __height, 0, __format, __context.gl.UNSIGNED_BYTE, new UInt8Array(__frameSize));
@@ -39,7 +42,10 @@ class Texture extends TextureBase
 		@:nullSafety(Off)
 		__context.__bindGLTexture2D(null);
 
-		__getGLFramebuffer(false, 0, 0);
+		__getFramebuffer(false, 0, 0);
+		#elseif lime_bgfx
+		__textureID = __context.bgfx.createTexture2D(__width, __height, false, 1, __internalFormat, __context.bgfx.TEXTURE_RT, null);
+		#end
 	}
 
 	/**
@@ -52,12 +58,16 @@ class Texture extends TextureBase
 		if (data.length != __frameSize)
 			return;
 
+		#if (lime_opengl || lime_opengles)
 		__context.__bindGLTexture2D(__textureID);
 
 		__context.gl.texSubImage2D(__textureTarget, 0, 0, 0, __width, __height, __format, __context.gl.UNSIGNED_BYTE, data);
 
 		@:nullSafety(Off)
 		__context.__bindGLTexture2D(null);
+		#elseif lime_bgfx
+		__context.bgfx.updateTexture2D(__textureID, 0, 0, 0, 0, __width, __height, __context.bgfx.copy(data));
+		#end
 	}
 
 	@:noCompletion
@@ -65,7 +75,8 @@ class Texture extends TextureBase
 	{
 		if (super.__setSamplerState(state))
 		{
-			if (Context3D.__glMaxTextureMaxAnisotropy != 0)
+			#if (lime_opengl || lime_opengles)
+			if (__context.__maxTextureMaxAnisotropy != 0)
 			{
 				var aniso:Int = -1;
 
@@ -86,11 +97,23 @@ class Texture extends TextureBase
 					}
 				}
 
-				if (aniso > Context3D.__glMaxTextureMaxAnisotropy)
-					aniso = Context3D.__glMaxTextureMaxAnisotropy;
+				if (aniso > __context.__maxTextureMaxAnisotropy)
+					aniso = __context.__maxTextureMaxAnisotropy;
 
-				__context.gl.texParameterf(__context.gl.TEXTURE_2D, Context3D.__glTextureMaxAnisotropy, aniso);
+				__context.gl.texParameterf(__context.gl.TEXTURE_2D, __context.__textureMaxAnisotropy, aniso);
 			}
+			#elseif lime_bgfx
+			if (state != null && state.filter != null)
+			{
+				switch (state.filter)
+				{
+					case ANISOTROPIC2X, ANISOTROPIC4X, ANISOTROPIC8X, ANISOTROPIC16X:
+						__samplerStateFlags |= __context.bgfx.SAMPLER_MAG_ANISOTROPIC;
+						__samplerStateFlags |= __context.bgfx.SAMPLER_MIN_ANISOTROPIC;
+					default:
+				}
+			}
+			#end
 
 			return true;
 		}
