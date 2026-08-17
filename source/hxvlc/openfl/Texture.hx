@@ -25,18 +25,19 @@ class Texture extends TextureBase
 		super(context);
 
 		__width = width;
+
 		__height = height;
+
 		__textureTarget = __context.gl.TEXTURE_2D;
+
 		__frameSize = width * height * 4;
 
+		__context.__bindGLTexture2D(__textureID);
+
+		__context.gl.texImage2D(__textureTarget, 0, __internalFormat, __width, __height, 0, __format, __context.gl.UNSIGNED_BYTE, new UInt8Array(__frameSize));
+
 		@:nullSafety(Off)
-		{
-			__context.__bindGLTexture2D(__textureID);
-
-			__context.gl.texImage2D(__textureTarget, 0, __internalFormat, __width, __height, 0, __format, __context.gl.UNSIGNED_BYTE, new UInt8Array(__frameSize));
-
-			__context.__bindGLTexture2D(null);
-		}
+		__context.__bindGLTexture2D(null);
 
 		__getGLFramebuffer(false, 0, 0);
 	}
@@ -51,14 +52,12 @@ class Texture extends TextureBase
 		if (data.length != __frameSize)
 			return;
 
+		__context.__bindGLTexture2D(__textureID);
+
+		__context.gl.texSubImage2D(__textureTarget, 0, 0, 0, __width, __height, __format, __context.gl.UNSIGNED_BYTE, data);
+
 		@:nullSafety(Off)
-		{
-			__context.__bindGLTexture2D(__textureID);
-
-			__context.gl.texSubImage2D(__textureTarget, 0, 0, 0, __width, __height, __format, __context.gl.UNSIGNED_BYTE, data);
-
-			__context.__bindGLTexture2D(null);
-		}
+		__context.__bindGLTexture2D(null);
 	}
 
 	@:noCompletion
