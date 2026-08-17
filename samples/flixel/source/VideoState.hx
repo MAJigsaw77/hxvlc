@@ -19,7 +19,6 @@ class VideoState extends FlxState
 	{
 		FlxG.autoPause = false;
 
-
 		video = new FlxVideoSprite(0, 0);
 
 		video.bitmap.onEndReached.add(function():Void

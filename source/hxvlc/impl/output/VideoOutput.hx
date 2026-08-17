@@ -73,17 +73,23 @@ class VideoOutput
 		this.bytesPerPixel = bytesPerPixel;
 		this.nativeMediaPlayer = mediaPlayer.nativeMediaPlayer;
 
-		LibVLC.video_set_callbacks(nativeMediaPlayer, Function.fromStaticFunction(videoLock), Function.fromStaticFunction(videoUnlock),
-			Function.fromStaticFunction(videoDisplay), untyped __cpp__('this'));
+		LibVLC.video_set_callbacks(nativeMediaPlayer, Function.fromStaticFunction(VideoOutputCallbacks.videoLock),
+			Function.fromStaticFunction(VideoOutputCallbacks.videoUnlock), Function.fromStaticFunction(VideoOutputCallbacks.videoDisplay),
+			untyped __cpp__('this'));
 
 		@:nullSafety(Off)
-		LibVLC.video_set_format_callbacks(nativeMediaPlayer, Function.fromStaticFunction(videoFormatSetup), null);
+		LibVLC.video_set_format_callbacks(nativeMediaPlayer, Function.fromStaticFunction(VideoOutputCallbacks.videoFormatSetup), null);
 	}
+}
 
+@:access(hxvlc.impl.output.VideoOutput)
+@:unreflective
+private class VideoOutputCallbacks
+{
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function videoLock(data:RawPointer<cpp.Void>, p_pixels:RawPointer<RawPointer<cpp.Void>>):cpp.RawPointer<cpp.Void>
+	public static function videoLock(data:RawPointer<cpp.Void>, p_pixels:RawPointer<RawPointer<cpp.Void>>):cpp.RawPointer<cpp.Void>
 	{
 		final videoOutput:VideoOutput = untyped __cpp__('reinterpret_cast<VideoOutput_obj *>({0})', data);
 
@@ -108,7 +114,7 @@ class VideoOutput
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function videoUnlock(data:RawPointer<cpp.Void>, id:RawPointer<cpp.Void>, p_pixels:VoidStarConstStar):Void
+	public static function videoUnlock(data:RawPointer<cpp.Void>, id:RawPointer<cpp.Void>, p_pixels:VoidStarConstStar):Void
 	{
 		final videoOutput:VideoOutput = untyped __cpp__('reinterpret_cast<VideoOutput_obj *>({0})', data);
 
@@ -127,7 +133,7 @@ class VideoOutput
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function videoDisplay(opaque:RawPointer<cpp.Void>, picture:RawPointer<cpp.Void>):Void
+	public static function videoDisplay(opaque:RawPointer<cpp.Void>, picture:RawPointer<cpp.Void>):Void
 	{
 		final videoOutput:VideoOutput = untyped __cpp__('reinterpret_cast<VideoOutput_obj *>({0})', opaque);
 
@@ -151,8 +157,8 @@ class VideoOutput
 	@:noDebug
 	@:nullSafety(Off)
 	@:unreflective
-	private static function videoFormatSetup(opaque:RawPointer<RawPointer<cpp.Void>>, chroma:CastCharStar, width:RawPointer<UInt32>,
-			height:RawPointer<UInt32>, pitches:RawPointer<UInt32>, lines:RawPointer<UInt32>):UInt32
+	public static function videoFormatSetup(opaque:RawPointer<RawPointer<cpp.Void>>, chroma:CastCharStar, width:RawPointer<UInt32>, height:RawPointer<UInt32>,
+			pitches:RawPointer<UInt32>, lines:RawPointer<UInt32>):UInt32
 	{
 		final videoOutput:VideoOutput = untyped __cpp__('reinterpret_cast<VideoOutput_obj *>(*{0})', opaque);
 
@@ -213,7 +219,7 @@ class VideoOutput
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function calculateVideoSize(mediaPlayer:RawPointer<LibVLC_Media_Player_T>, width:RawPointer<UInt32>, height:RawPointer<UInt32>):Bool
+	public static function calculateVideoSize(mediaPlayer:RawPointer<LibVLC_Media_Player_T>, width:RawPointer<UInt32>, height:RawPointer<UInt32>):Bool
 	{
 		if (mediaPlayer != null)
 		{

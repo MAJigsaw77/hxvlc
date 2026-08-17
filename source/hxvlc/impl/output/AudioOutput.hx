@@ -63,20 +63,26 @@ class AudioOutput
 
 		this.mutex = new Mutex();
 
-		LibVLC.audio_set_callbacks(mediaPlayer.nativeMediaPlayer, Function.fromStaticFunction(audioPlay), Function.fromStaticFunction(audioPause),
-			Function.fromStaticFunction(audioResume), Function.fromStaticFunction(audioFlush), Function.fromStaticFunction(audioDrain),
+		LibVLC.audio_set_callbacks(mediaPlayer.nativeMediaPlayer, Function.fromStaticFunction(AudioOutputCallbacks.audioPlay),
+			Function.fromStaticFunction(AudioOutputCallbacks.audioPause), Function.fromStaticFunction(AudioOutputCallbacks.audioResume),
+			Function.fromStaticFunction(AudioOutputCallbacks.audioFlush), Function.fromStaticFunction(AudioOutputCallbacks.audioDrain),
 			untyped __cpp__('this'));
 
-		LibVLC.audio_set_volume_callback(mediaPlayer.nativeMediaPlayer, Function.fromStaticFunction(audioSetVolume));
+		LibVLC.audio_set_volume_callback(mediaPlayer.nativeMediaPlayer, Function.fromStaticFunction(AudioOutputCallbacks.audioSetVolume));
 
 		@:nullSafety(Off)
-		LibVLC.audio_set_format_callbacks(mediaPlayer.nativeMediaPlayer, Function.fromStaticFunction(audioFormatSetup), null);
+		LibVLC.audio_set_format_callbacks(mediaPlayer.nativeMediaPlayer, Function.fromStaticFunction(AudioOutputCallbacks.audioFormatSetup), null);
 	}
+}
 
+@:access(hxvlc.impl.output.AudioOutput)
+@:unreflective
+private class AudioOutputCallbacks
+{
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function audioPlay(data:RawPointer<cpp.Void>, samples:RawConstPointer<cpp.Void>, count:UInt32, pts:Int64):Void
+	public static function audioPlay(data:RawPointer<cpp.Void>, samples:RawConstPointer<cpp.Void>, count:UInt32, pts:Int64):Void
 	{
 		final audioOutput:AudioOutput = untyped __cpp__('reinterpret_cast<AudioOutput_obj *>({0})', data);
 
@@ -104,7 +110,7 @@ class AudioOutput
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function audioPause(data:RawPointer<cpp.Void>, pts:Int64):Void
+	public static function audioPause(data:RawPointer<cpp.Void>, pts:Int64):Void
 	{
 		final audioOutput:AudioOutput = untyped __cpp__('reinterpret_cast<AudioOutput_obj *>({0})', data);
 
@@ -127,7 +133,7 @@ class AudioOutput
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function audioResume(data:RawPointer<cpp.Void>, pts:Int64):Void
+	public static function audioResume(data:RawPointer<cpp.Void>, pts:Int64):Void
 	{
 		final audioOutput:AudioOutput = untyped __cpp__('reinterpret_cast<AudioOutput_obj *>({0})', data);
 
@@ -150,7 +156,7 @@ class AudioOutput
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function audioFlush(data:RawPointer<cpp.Void>, pts:Int64):Void
+	public static function audioFlush(data:RawPointer<cpp.Void>, pts:Int64):Void
 	{
 		final audioOutput:AudioOutput = untyped __cpp__('reinterpret_cast<AudioOutput_obj *>({0})', data);
 
@@ -173,7 +179,7 @@ class AudioOutput
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function audioDrain(data:RawPointer<cpp.Void>):Void
+	public static function audioDrain(data:RawPointer<cpp.Void>):Void
 	{
 		final audioOutput:AudioOutput = untyped __cpp__('reinterpret_cast<AudioOutput_obj *>({0})', data);
 
@@ -196,7 +202,7 @@ class AudioOutput
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function audioSetVolume(data:RawPointer<cpp.Void>, volume:Single, mute:Bool):Void
+	public static function audioSetVolume(data:RawPointer<cpp.Void>, volume:Single, mute:Bool):Void
 	{
 		// Empty because the way LibVLC handles the audio volume's isnt really nice,
 		// and this callback cant be removed as if removed,
@@ -206,7 +212,7 @@ class AudioOutput
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function audioFormatSetup(opaque:RawPointer<RawPointer<cpp.Void>>, format:CastCharStar, rate:RawPointer<UInt32>,
+	public static function audioFormatSetup(opaque:RawPointer<RawPointer<cpp.Void>>, format:CastCharStar, rate:RawPointer<UInt32>,
 			channels:RawPointer<UInt32>):Int
 	{
 		final audioOutput:AudioOutput = untyped __cpp__('reinterpret_cast<AudioOutput_obj *>(*{0})', opaque);
