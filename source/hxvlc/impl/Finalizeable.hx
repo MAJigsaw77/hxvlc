@@ -22,7 +22,9 @@ class Finalizeable
 	{
 		this.owned = owned;
 
+		#if !cppia
 		Gc.setFinalizer(this, Function.fromStaticFunction(finalize));
+		#end
 	}
 
 	/**
@@ -32,6 +34,7 @@ class Finalizeable
 	 */
 	public function destroy():Void {}
 
+	#if !cppia
 	@:noCompletion
 	@:noDebug
 	@:unreflective
@@ -40,4 +43,5 @@ class Finalizeable
 		if (finalizeable.owned)
 			finalizeable.destroy();
 	}
+	#end
 }

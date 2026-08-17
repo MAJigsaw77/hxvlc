@@ -19,15 +19,6 @@ import hxvlc.impl.externs.LibVLC;
 import sys.thread.Mutex;
 
 /** Represents a implementation or wrapper for the native LibVLC instance */
-@:cppInclude('stdarg.h')
-@:cppNamespaceCode('static int vsnprintf_safe(char* buffer, size_t size, const char* fmt, va_list args)
-{
-    va_list copy;
-    va_copy(copy, args);
-    int len = vsnprintf(buffer, size, fmt, copy);
-    va_end(copy);
-    return len;
-}')
 class Instance extends Finalizeable
 {
 	#if (windows || macos)
@@ -158,7 +149,7 @@ class Instance extends Finalizeable
 		{
 			onLog = cb;
 
-			LibVLC.log_set(nativeInstance, Function.fromStaticFunction(logCallback), untyped __cpp__('this'));
+			LibVLC.log_set(nativeInstance, Function.fromStaticFunction(InstanceCallbacks.logCallback), untyped __cpp__('this'));
 		}
 		else if (onLog != null)
 		{
@@ -196,11 +187,25 @@ class Instance extends Finalizeable
 	{
 		return LibVLC.get_changeset();
 	}
+}
 
+@:access(hxvlc.impl.Instance)
+@:cppInclude('stdarg.h')
+@:cppNamespaceCode('static int vsnprintf_safe(char* buffer, size_t size, const char* fmt, va_list args)
+{
+    va_list copy;
+    va_copy(copy, args);
+    int len = vsnprintf(buffer, size, fmt, copy);
+    va_end(copy);
+    return len;
+}')
+@:unreflective
+private class InstanceCallbacks
+{
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	static function logCallback(data:RawPointer<cpp.Void>, level:Int, ctx:RawConstPointer<LibVLC_Log_T>, fmt:ConstCharStar, args:VarList):Void
+	public static function logCallback(data:RawPointer<cpp.Void>, level:Int, ctx:RawConstPointer<LibVLC_Log_T>, fmt:ConstCharStar, args:VarList):Void
 	{
 		final instance:Instance = untyped __cpp__('reinterpret_cast<Instance_obj *>({0})', data);
 
@@ -223,7 +228,7 @@ class Instance extends Finalizeable
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	public static function getStringFromFormat(fmt:ConstCharStar, args:VarList):String
+	private static function getStringFromFormat(fmt:ConstCharStar, args:VarList):String
 	{
 		final len:Int = untyped vsnprintf_safe(untyped nullptr, 0, fmt, args);
 
@@ -258,7 +263,7 @@ class Instance extends Finalizeable
 
 		if (normalizedPath.length > 0)
 		{
-			for (logPath in POSSIBLE_LIBVLC_LOG_PATHS)
+			for (logPath in Instance.POSSIBLE_LIBVLC_LOG_PATHS)
 			{
 				final index:Int = normalizedPath.indexOf(logPath, 0);
 

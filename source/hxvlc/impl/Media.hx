@@ -72,12 +72,14 @@ class Media extends Finalizeable
 		if (bytes == null || bytes.length == 0)
 			return null;
 
+		final input:RawPointer<Input> = untyped __cpp__('new Input({0})', bytes);
+
 		final media:Media = new Media();
 
 		@:nullSafety(Off)
-		media.nativeMedia = LibVLC.media_new_callbacks(instance.nativeInstance, Function.fromStaticFunction(mediaOpen),
-			Function.fromStaticFunction(mediaRead), Function.fromStaticFunction(mediaSeek), Function.fromStaticFunction(mediaClose),
-			untyped __cpp__('new Input({0})', bytes));
+		media.nativeMedia = LibVLC.media_new_callbacks(instance.nativeInstance, Function.fromStaticFunction(MediaCallbacks.mediaOpen),
+			Function.fromStaticFunction(MediaCallbacks.mediaRead), Function.fromStaticFunction(MediaCallbacks.mediaSeek),
+			Function.fromStaticFunction(MediaCallbacks.mediaClose), untyped input);
 
 		return media;
 	}
@@ -239,11 +241,16 @@ class Media extends Finalizeable
 
 		return null;
 	}
+}
 
+@:access(hxvlc.impl.Media)
+@:unreflective
+private class MediaCallbacks
+{
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function mediaOpen(opaque:RawPointer<cpp.Void>, datap:RawPointer<RawPointer<cpp.Void>>, sizep:RawPointer<UInt64>):Int
+	public static function mediaOpen(opaque:RawPointer<cpp.Void>, datap:RawPointer<RawPointer<cpp.Void>>, sizep:RawPointer<UInt64>):Int
 	{
 		final input:RawPointer<Input> = untyped __cpp__('reinterpret_cast<Input *>({0})', opaque);
 
@@ -268,7 +275,7 @@ class Media extends Finalizeable
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function mediaRead(opaque:RawPointer<cpp.Void>, buf:RawPointer<UInt8>, len:SizeT):SSizeT
+	public static function mediaRead(opaque:RawPointer<cpp.Void>, buf:RawPointer<UInt8>, len:SizeT):SSizeT
 	{
 		final input:RawPointer<Input> = untyped __cpp__('reinterpret_cast<Input *>({0})', opaque);
 
@@ -291,7 +298,7 @@ class Media extends Finalizeable
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function mediaSeek(opaque:RawPointer<cpp.Void>, offset:UInt64):Int
+	public static function mediaSeek(opaque:RawPointer<cpp.Void>, offset:UInt64):Int
 	{
 		final input:RawPointer<Input> = untyped __cpp__('reinterpret_cast<Input *>({0})', opaque);
 
@@ -314,7 +321,7 @@ class Media extends Finalizeable
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function mediaClose(opaque:RawPointer<cpp.Void>):Void
+	public static function mediaClose(opaque:RawPointer<cpp.Void>):Void
 	{
 		var input:RawPointer<Input> = untyped __cpp__('reinterpret_cast<Input *>({0})', opaque);
 

@@ -48,19 +48,28 @@ class MediaEvents
 
 		if (eventManager != null)
 		{
-			LibVLC.event_attach(eventManager, untyped libvlc_MediaParsedChanged, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, untyped libvlc_MediaMetaChanged, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, untyped libvlc_MediaSubItemAdded, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, untyped libvlc_MediaDurationChanged, Function.fromStaticFunction(eventManagerCallbacks), untyped __cpp__('this'));
-			LibVLC.event_attach(eventManager, untyped libvlc_MediaSubItemTreeAdded, Function.fromStaticFunction(eventManagerCallbacks),
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaParsedChanged, Function.fromStaticFunction(MediaEventsCallbacks.eventManagerCallbacks),
+				untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaMetaChanged, Function.fromStaticFunction(MediaEventsCallbacks.eventManagerCallbacks),
+				untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaSubItemAdded, Function.fromStaticFunction(MediaEventsCallbacks.eventManagerCallbacks),
+				untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaDurationChanged, Function.fromStaticFunction(MediaEventsCallbacks.eventManagerCallbacks),
+				untyped __cpp__('this'));
+			LibVLC.event_attach(eventManager, untyped libvlc_MediaSubItemTreeAdded, Function.fromStaticFunction(MediaEventsCallbacks.eventManagerCallbacks),
 				untyped __cpp__('this'));
 		}
 	}
+}
 
+@:access(hxvlc.impl.events.MediaEvents)
+@:unreflective
+private class MediaEventsCallbacks
+{
 	@:noCompletion
 	@:noDebug
 	@:unreflective
-	private static function eventManagerCallbacks(p_event:RawConstPointer<LibVLC_Event_T>, p_data:RawPointer<cpp.Void>):Void
+	public static function eventManagerCallbacks(p_event:RawConstPointer<LibVLC_Event_T>, p_data:RawPointer<cpp.Void>):Void
 	{
 		final mediaEvents:MediaEvents = untyped __cpp__('reinterpret_cast<MediaEvents_obj *>({0})', p_data);
 
