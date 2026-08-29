@@ -208,7 +208,7 @@ class Video extends Bitmap
 	@:nullSafety(Off)
 	public function new(?instance:Instance, smoothing:Bool = true):Void
 	{
-		super(new BitmapData(1, 1, true, 0x000000), AUTO, smoothing);
+		super(new BitmapData(1, 1, true, 0x000000), NEVER, smoothing);
 
 		if (instance == null)
 		{
