@@ -2,6 +2,7 @@ package;
 
 import hxvlc.openfl.Video;
 
+import openfl.Lib;
 import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
@@ -9,6 +10,11 @@ import openfl.text.TextFormat;
 
 class Main extends Sprite
 {
+	public static function main():Void
+	{
+		Lib.current.addChild(new Main());
+	}
+
 	var resumeOnFocus:Bool = false;
 	var video:Video;
 	var fps:FPS;
@@ -16,6 +22,17 @@ class Main extends Sprite
 	public function new():Void
 	{
 		super();
+
+		if (stage != null)
+			onAddedToStage();
+		else
+			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+	}
+
+	private function onAddedToStage(?event:Event):Void
+	{
+		if (hasEventListener(Event.ADDED_TO_STAGE))
+			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 
 		#if run_uncapped
 		#if lime_funkin
