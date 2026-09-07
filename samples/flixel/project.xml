@@ -18,7 +18,7 @@
 
 	<window orientation="landscape" width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false" fullscreen="false" resizable="true" />
 
-	<window fullscreen="true" resizable="false" if="mobile" />
+	<window width="0" height="0" fullscreen="true" resizable="false" if="mobile" />
 
 	<!--Path Settings-->
 
