@@ -792,7 +792,7 @@ class Video extends Bitmap
 			&& AL.isExtensionPresent("AL_SOFT_direct_channels_remix");
 		#end
 		alSource ??= AL.createSource();
-		alBufferPool ??= AL.genBuffers(255);
+		alBufferPool ??= AL.genBuffers(64);
 
 		#if lime_funkin
 		if (alUseSOFT_direct_channels == true)
@@ -916,7 +916,10 @@ class Video extends Bitmap
 			for (alBuffer in AL.sourceUnqueueBuffers(alSource, AL.getSourcei(alSource, AL.BUFFERS_PROCESSED)))
 				alBufferPool.push(alBuffer);
 
-			final alBuffer:Null<ALBuffer> = alBufferPool.shift();
+			var alBuffer:Null<ALBuffer> = alBufferPool.shift();
+
+			if (alBuffer == null)
+				alBuffer = AL.createBuffer();
 
 			if (alBuffer != null)
 			{
