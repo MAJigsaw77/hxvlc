@@ -191,6 +191,9 @@ class Video extends Bitmap
 	private var alBufferPool:Null<Array<ALBuffer>>;
 
 	@:noCompletion
+	private var alQueuedBuffers:Null<Array<ALBuffer>>;
+
+	@:noCompletion
 	private var alSampleRate:Null<Int>;
 
 	@:noCompletion
@@ -512,8 +515,11 @@ class Video extends Bitmap
 			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.STOPPED)
 				AL.sourceStop(alSource);
 
-			for (alBuffer in AL.sourceUnqueueBuffers(alSource, AL.getSourcei(alSource, AL.BUFFERS_QUEUED)))
-				AL.deleteBuffer(alBuffer);
+			if (alBufferPool != null)
+			{
+				for (alBuffer in AL.sourceUnqueueBuffers(alSource, AL.getSourcei(alSource, AL.BUFFERS_QUEUED)))
+					alBufferPool.push(alBuffer);
+			}
 
 			AL.deleteSource(alSource);
 
@@ -525,6 +531,8 @@ class Video extends Bitmap
 			AL.deleteBuffers(alBufferPool);
 			alBufferPool = null;
 		}
+
+		alQueuedBuffers = null;
 	}
 
 	@:noCompletion
@@ -793,6 +801,7 @@ class Video extends Bitmap
 		#end
 		alSource ??= AL.createSource();
 		alBufferPool ??= AL.genBuffers(64);
+		alQueuedBuffers ??= [];
 
 		#if lime_funkin
 		if (alUseSOFT_direct_channels == true)
@@ -911,15 +920,25 @@ class Video extends Bitmap
 	@:noCompletion
 	private function audioOutput_onPlay(samples:BytesData):Void
 	{
-		if (alSource != null && alBufferPool != null && alFormat != null && alFrameSize != null && alSampleRate != null)
+		if (alSource != null && alBufferPool != null && alQueuedBuffers != null && alFormat != null && alFrameSize != null && alSampleRate != null)
 		{
-			for (alBuffer in AL.sourceUnqueueBuffers(alSource, AL.getSourcei(alSource, AL.BUFFERS_PROCESSED)))
-				alBufferPool.push(alBuffer);
+			final processed:Int = AL.getSourcei(alSource, AL.BUFFERS_PROCESSED);
+
+			if (processed > 0)
+			{
+				final alUnqueuedBuffers:Array<ALBuffer> = AL.sourceUnqueueBuffers(alSource, processed);
+
+				for (alBuffer in alUnqueuedBuffers)
+				{
+					alBufferPool.push(alBuffer);
+				}
+
+				alQueuedBuffers.splice(0, processed);
+			}
 
 			var alBuffer:Null<ALBuffer> = alBufferPool.shift();
 
-			if (alBuffer == null)
-				alBuffer = AL.createBuffer();
+			alBuffer ??= AL.createBuffer();
 
 			if (alBuffer != null)
 			{
@@ -927,6 +946,8 @@ class Video extends Bitmap
 
 				AL.sourceQueueBuffer(alSource, alBuffer);
 
+				alQueuedBuffers.push(alBuffer);
+ 
 				if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
 					AL.sourcePlay(alSource);
 			}

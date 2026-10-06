@@ -92,6 +92,10 @@ private class AudioOutputCallbacks
 
 			untyped __cpp__('hx::SetTopOfStack(&stackBase, true)');
 
+			#if HXCPP_GC_GENERATIONAL
+			untyped __cpp__('HX_CTX = HX_CTX_GET');
+			#end
+
 			audioOutput.mutex.acquire();
 
 			if (audioOutput.samples == null)
