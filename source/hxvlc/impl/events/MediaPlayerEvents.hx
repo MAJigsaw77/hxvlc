@@ -129,6 +129,10 @@ private class MediaPlayerEventsCallbacks
 
 			untyped __cpp__('hx::SetTopOfStack(&stackBase, true)');
 
+			#if HXCPP_GC_GENERATIONAL
+			untyped __cpp__('HX_CTX = HX_CTX_GET');
+			#end
+
 			mediaPlayerEvents.mutex.acquire();
 
 			switch (p_event[0].type)

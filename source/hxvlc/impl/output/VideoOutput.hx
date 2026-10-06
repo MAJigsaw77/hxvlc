@@ -168,6 +168,10 @@ private class VideoOutputCallbacks
 
 			untyped __cpp__('hx::SetTopOfStack(&stackBase, true)');
 
+			#if HXCPP_GC_GENERATIONAL
+			untyped __cpp__('HX_CTX = HX_CTX_GET');
+			#end
+
 			Stdlib.nativeMemcpy(untyped chroma, untyped cpp.CastCharStar.fromString(videoOutput.chroma), videoOutput.chroma.length);
 
 			videoOutput.mutex.acquire();
