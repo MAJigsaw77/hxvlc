@@ -190,6 +190,10 @@ class Video extends Bitmap
 	@:noCompletion
 	private var alBufferPool:Null<Array<ALBuffer>>;
 
+	// Buffers currently queued on the source, bookkeeping for memory management.
+	@:noCompletion
+	private var alQueuedBuffers:Null<Array<ALBuffer>>;
+
 	@:noCompletion
 	private var alSampleRate:Null<Int>;
 
@@ -201,7 +205,7 @@ class Video extends Bitmap
 
 	/**
 	 * Initializes a Video object.
-	 * 
+	 *
 	 * @param instance (Optional) The instance of LibVLC to be used for this Video object.
 	 * @param smoothing Whether or not the object is smoothed when scaled.
 	 */
@@ -252,7 +256,7 @@ class Video extends Bitmap
 
 	/**
 	 * Loads a media from the specified location.
-	 * 
+	 *
 	 * @param location The location of the media file or stream.
 	 * @param options Additional options to configure the media.
 	 * @return `true` if the media was loaded successfully, `false` otherwise.
@@ -313,7 +317,7 @@ class Video extends Bitmap
 	 * can begin playback more quickly later.
 	 *
 	 * The media is automatically paused once initialization is complete.
-	 * 
+	 *
 	 * @param location The location of the media file or stream.
 	 * @param options Additional options to configure the media.
 	 * @return `true` if the media was loaded successfully, `false` otherwise.
@@ -332,7 +336,7 @@ class Video extends Bitmap
 
 	/**
 	 * Loads a media subitem from the current media's subitems list at the specified index.
-	 * 
+	 *
 	 * @param index The index of the subitem to load.
 	 * @param options Additional options to configure the loaded subitem.
 	 * @return `true` if the subitem was loaded successfully, `false` otherwise.
@@ -344,7 +348,7 @@ class Video extends Bitmap
 
 	/**
 	 * Parses the current media item with the specified options.
-	 * 
+	 *
 	 * @param parse_flag The parsing option.
 	 * @param timeout The timeout in milliseconds.
 	 * @return `true` if parsing succeeded, `false` otherwise.
@@ -362,7 +366,7 @@ class Video extends Bitmap
 
 	/**
 	 * Adds a slave to the current media player.
-	 * 
+	 *
 	 * @param type The slave type.
 	 * @param location location of the slave.
 	 * @param select `true` if this slave should be selected when it's loaded.
@@ -406,7 +410,7 @@ class Video extends Bitmap
 
 	/**
 	 * Gets the description of available audio tracks of the current media player.
-	 * 
+	 *
 	 * @return The list containing descriptions of available audio tracks.
 	 */
 	public function getVideoDescription():Array<TrackDescription>
@@ -416,7 +420,7 @@ class Video extends Bitmap
 
 	/**
 	 * Gets the description of available audio tracks of the current media player.
-	 * 
+	 *
 	 * @return The list containing descriptions of available audio tracks.
 	 */
 	public function getAudioDescription():Array<TrackDescription>
@@ -426,7 +430,7 @@ class Video extends Bitmap
 
 	/**
 	 * Gets the description of available available video subtitles of the current media player.
-	 * 
+	 *
 	 * @return The list containing descriptions of available available video subtitles.
 	 */
 	public function getSpuDescription():Array<TrackDescription>
@@ -436,7 +440,7 @@ class Video extends Bitmap
 
 	/**
 	 * Starts playback.
-	 * 
+	 *
 	 * @return `true` if playback started successfully, `false` otherwise.
 	 */
 	public function play():Bool
@@ -470,7 +474,7 @@ class Video extends Bitmap
 
 	/**
 	 * Retrieves metadata for the current media item.
-	 * 
+	 *
 	 * @param e_meta The metadata type.
 	 * @return The metadata value as a string, or `null` if not available.
 	 */
@@ -481,7 +485,7 @@ class Video extends Bitmap
 
 	/**
 	 * Sets metadata for the current media item.
-	 * 
+	 *
 	 * @param e_meta The metadata type.
 	 * @param value The metadata value.
 	 */
@@ -492,7 +496,7 @@ class Video extends Bitmap
 
 	/**
 	 * Saves the metadata of the current media item.
-	 * 
+	 *
 	 * @return `true` if the metadata was saved successfully, `false` otherwise.
 	 */
 	public function saveMeta():Bool
@@ -519,6 +523,8 @@ class Video extends Bitmap
 
 			alSource = null;
 		}
+
+		alQueuedBuffers = null;
 
 		if (alBufferPool != null)
 		{
@@ -793,6 +799,7 @@ class Video extends Bitmap
 		#end
 		alSource ??= AL.createSource();
 		alBufferPool ??= AL.genBuffers(64);
+		alQueuedBuffers ??= [];
 
 		#if lime_funkin
 		if (alUseSOFT_direct_channels == true)
@@ -914,7 +921,12 @@ class Video extends Bitmap
 		if (alSource != null && alBufferPool != null && alFormat != null && alFrameSize != null && alSampleRate != null)
 		{
 			for (alBuffer in AL.sourceUnqueueBuffers(alSource, AL.getSourcei(alSource, AL.BUFFERS_PROCESSED)))
+			{
+				if (alQueuedBuffers != null)
+					alQueuedBuffers.remove(alBuffer);
+
 				alBufferPool.push(alBuffer);
+			}
 
 			var alBuffer:Null<ALBuffer> = alBufferPool.shift();
 
@@ -926,6 +938,9 @@ class Video extends Bitmap
 				AL.bufferData(alBuffer, alFormat, UInt8Array.fromBytes(Bytes.ofData(samples)), samples.length * alFrameSize, alSampleRate);
 
 				AL.sourceQueueBuffer(alSource, alBuffer);
+
+				if (alQueuedBuffers != null)
+					alQueuedBuffers.push(alBuffer);
 
 				if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PLAYING)
 					AL.sourcePlay(alSource);
