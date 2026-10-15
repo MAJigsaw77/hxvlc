@@ -22,9 +22,11 @@ import hxvlc.util.Handle;
 import hxvlc.util.MainLoop;
 
 import lime.app.Event;
+#if lime_openal
 import lime.media.openal.AL;
 import lime.media.openal.ALBuffer;
 import lime.media.openal.ALSource;
+#end
 import lime.utils.UInt8Array;
 
 import openfl.Lib;
@@ -170,6 +172,7 @@ class Video extends Bitmap
 	@:noCompletion
 	private var audioOutput:Null<AudioOutput>;
 
+	#if lime_openal
 	@:noCompletion
 	private var alUseEXTFLOAT32:Null<Bool>;
 
@@ -201,6 +204,7 @@ class Video extends Bitmap
 
 	@:noCompletion
 	private var alFrameSize:Null<Int>;
+	#end
 
 	/**
 	 * Initializes a Video object.
@@ -510,6 +514,7 @@ class Video extends Bitmap
 
 		bitmapData.dispose();
 
+		#if lime_openal
 		if (alSource != null)
 		{
 			if (AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.STOPPED)
@@ -533,6 +538,7 @@ class Video extends Bitmap
 		}
 
 		alQueuedBuffers = null;
+		#end
 	}
 
 	@:noCompletion
@@ -604,14 +610,20 @@ class Video extends Bitmap
 	@:noCompletion
 	private function get_volume():Float
 	{
-		return alSource != null ? AL.getSourcef(alSource, AL.GAIN) : -1;
+		#if lime_openal
+		return alSource != null ? AL.getSourcef(alSource, AL.GAIN) : 1;
+		#else
+		return 1;
+		#end
 	}
 
 	@:noCompletion
 	private function set_volume(value:Float):Float
 	{
+		#if lime_openal
 		if (alSource != null)
 			AL.sourcef(alSource, AL.GAIN, value);
+		#end
 
 		return value;
 	}
@@ -792,6 +804,7 @@ class Video extends Bitmap
 	@:noCompletion
 	private function setupAudio():Void
 	{
+		#if lime_openal
 		alUseEXTFLOAT32 ??= AL.isExtensionPresent('AL_EXT_FLOAT32');
 		alUseEXTMCFORMATS ??= AL.isExtensionPresent('AL_EXT_MCFORMATS');
 		alUseEXT32bit_formats ??= AL.getEnumValue('AL_FORMAT_MONO_I32') > 0;
@@ -819,8 +832,10 @@ class Video extends Bitmap
 		audioOutput.onPause = audioOutput_onPause;
 		audioOutput.onResume = audioOutput_onResume;
 		audioOutput.onFlush = audioOutput_onFlush;
+		#end
 	}
 
+	#if lime_openal
 	@:noCompletion
 	private function audioOutput_onMapFormat(format:String):String
 	{
@@ -852,10 +867,12 @@ class Video extends Bitmap
 	{
 		return rate;
 	}
+	#end
 
 	@:noCompletion
 	private function audioOutput_onFormatSetup(format:String, rate:Int, channels:Int):Void
 	{
+		#if lime_openal
 		alSampleRate = rate;
 
 		switch (format)
@@ -915,11 +932,13 @@ class Video extends Bitmap
 
 				alFrameSize = Stdlib.sizeof(cpp.Float32) * channels;
 		}
+		#end
 	}
 
 	@:noCompletion
 	private function audioOutput_onPlay(samples:BytesData):Void
 	{
+		#if lime_openal
 		if (alSource != null && alBufferPool != null && alQueuedBuffers != null && alFormat != null && alFrameSize != null && alSampleRate != null)
 		{
 			final processed:Int = AL.getSourcei(alSource, AL.BUFFERS_PROCESSED);
@@ -952,27 +971,34 @@ class Video extends Bitmap
 					AL.sourcePlay(alSource);
 			}
 		}
+		#end
 	}
 
 	@:noCompletion
 	private function audioOutput_onPause():Void
 	{
+		#if lime_openal
 		if (alSource != null && AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PAUSED)
 			AL.sourcePause(alSource);
+		#end
 	}
 
 	@:noCompletion
 	private function audioOutput_onResume():Void
 	{
+		#if lime_openal
 		if (alSource != null && AL.getSourcei(alSource, AL.SOURCE_STATE) == AL.PAUSED)
 			AL.sourcePlay(alSource);
+		#end
 	}
 
 	@:noCompletion
 	private function audioOutput_onFlush():Void
 	{
+		#if lime_openal
 		if (alSource != null && AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.STOPPED)
 			AL.sourceStop(alSource);
+		#end
 	}
 }
 #end
