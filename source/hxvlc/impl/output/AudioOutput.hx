@@ -43,7 +43,7 @@ class AudioOutput
 	public var onDrain:Null<Void->Void>;
 
 	/** Called when the audio format is set up with format string, sample rate, and channel count. */
-	public var onFormatSetup:Null<(format:String, rate:Int, channels:Int) -> Void>;
+	public var onFormatSetup:Null<(format:String, rate:Int, channels:Int) -> Bool>;
 
 	@:noCompletion
 	private var mutex:Mutex;
@@ -245,18 +245,20 @@ private class AudioOutputCallbacks
 					channels[0] = outChannels;
 			}
 
+			var formatSetupSuccess:Bool = false;
+
 			if (audioOutput.onFormatSetup != null)
 			{
 				audioOutput.mutex.acquire();
 
-				audioOutput.onFormatSetup(new String(untyped format), rate[0], channels[0]);
+				formatSetupSuccess = audioOutput.onFormatSetup(new String(untyped format), rate[0], channels[0]);
 
 				audioOutput.mutex.release();
 			}
 
 			untyped __cpp__('hx::SetTopOfStack((int *)0, true)');
 
-			return 0;
+			return formatSetupSuccess ? 0 : 1;
 		}
 
 		return 1;

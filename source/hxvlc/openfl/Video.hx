@@ -870,7 +870,7 @@ class Video extends Bitmap
 	#end
 
 	@:noCompletion
-	private function audioOutput_onFormatSetup(format:String, rate:Int, channels:Int):Void
+	private function audioOutput_onFormatSetup(format:String, rate:Int, channels:Int):Bool
 	{
 		#if lime_openal
 		alSampleRate = rate;
@@ -932,6 +932,10 @@ class Video extends Bitmap
 
 				alFrameSize = Stdlib.sizeof(cpp.Float32) * channels;
 		}
+
+		return true;
+		#else
+		return false;
 		#end
 	}
 
