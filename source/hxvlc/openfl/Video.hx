@@ -1,7 +1,8 @@
 package hxvlc.openfl;
 
 #if openfl
-import cpp.Stdlib;
+import cpp.Pointer;
+import cpp.RawPointer;
 
 import haxe.Int64;
 import haxe.io.Bytes;
@@ -22,11 +23,6 @@ import hxvlc.util.Handle;
 import hxvlc.util.MainLoop;
 
 import lime.app.Event;
-#if lime_openal
-import lime.media.openal.AL;
-import lime.media.openal.ALBuffer;
-import lime.media.openal.ALSource;
-#end
 import lime.utils.UInt8Array;
 
 import openfl.Lib;
@@ -37,6 +33,12 @@ import openfl.utils.Assets;
 import sys.FileSystem;
 
 using StringTools;
+
+#if lime_openal
+import lime.media.openal.AL;
+import lime.media.openal.ALBuffer;
+import lime.media.openal.ALSource;
+#end
 
 /** This class is a video player that uses LibVLC for seamless integration with OpenFL display objects. */
 @:access(openfl.display3D.textures.TextureBase)
@@ -173,15 +175,6 @@ class Video extends Bitmap
 	private var audioOutput:Null<AudioOutput>;
 
 	#if lime_openal
-	@:noCompletion
-	private var alUseEXTFLOAT32:Null<Bool>;
-
-	@:noCompletion
-	private var alUseEXTMCFORMATS:Null<Bool>;
-
-	@:noCompletion
-	private var alUseEXT32bit_formats:Null<Bool>;
-
 	#if lime_funkin
 	@:noCompletion
 	private var alUseSOFT_direct_channels:Null<Bool>;
@@ -622,7 +615,9 @@ class Video extends Bitmap
 	{
 		#if lime_openal
 		if (alSource != null)
+		{
 			AL.sourcef(alSource, AL.GAIN, value);
+		}
 		#end
 
 		return value;
@@ -805,9 +800,6 @@ class Video extends Bitmap
 	private function setupAudio():Void
 	{
 		#if lime_openal
-		alUseEXTFLOAT32 ??= AL.isExtensionPresent('AL_EXT_FLOAT32');
-		alUseEXTMCFORMATS ??= AL.isExtensionPresent('AL_EXT_MCFORMATS');
-		alUseEXT32bit_formats ??= AL.getEnumValue('AL_FORMAT_MONO_I32') > 0;
 		#if lime_funkin
 		alUseSOFT_direct_channels ??= AL.isExtensionPresent("AL_SOFT_direct_channels")
 			&& AL.isExtensionPresent("AL_SOFT_direct_channels_remix");
@@ -822,6 +814,7 @@ class Video extends Bitmap
 			AL.sourcei(alSource, AL.DIRECT_CHANNELS_SOFT, AL.REMIX_UNMATCHED_SOFT);
 		}
 		#end
+		#end
 
 		audioOutput = new AudioOutput(mediaPlayer);
 		audioOutput.onMapFormat = audioOutput_onMapFormat;
@@ -832,34 +825,26 @@ class Video extends Bitmap
 		audioOutput.onPause = audioOutput_onPause;
 		audioOutput.onResume = audioOutput_onResume;
 		audioOutput.onFlush = audioOutput_onFlush;
-		#end
 	}
 
-	#if lime_openal
 	@:noCompletion
 	private function audioOutput_onMapFormat(format:String):String
 	{
-		if (format == 'S32N' && alUseEXT32bit_formats == true)
-			return 'S32N';
-		else if (format == 'FL32' && alUseEXTFLOAT32 == true)
-			return 'FL32';
-
+		#if lime_openal
 		return 'S16N';
+		#else
+		return format;
+		#end
 	}
 
 	@:noCompletion
 	private function audioOutput_onMapChannels(channels:Int):Int
 	{
-		if (channels == 1)
-			return 1;
-
-		if (channels == 3 || channels == 5)
-			return 2;
-
-		if (alUseEXTMCFORMATS != true)
-			return 2;
-
+		#if lime_openal
+		return channels == 1 ? 1 : 2;
+		#else
 		return channels;
+		#end
 	}
 
 	@:noCompletion
@@ -867,7 +852,6 @@ class Video extends Bitmap
 	{
 		return rate;
 	}
-	#end
 
 	@:noCompletion
 	private function audioOutput_onFormatSetup(format:String, rate:Int, channels:Int):Bool
@@ -875,63 +859,15 @@ class Video extends Bitmap
 		#if lime_openal
 		alSampleRate = rate;
 
-		switch (format)
+		switch (channels)
 		{
-			case 'S16N':
-				switch (channels)
-				{
-					case 1:
-						alFormat = AL.getEnumValue('AL_FORMAT_MONO16');
-					case 2:
-						alFormat = AL.getEnumValue('AL_FORMAT_STEREO16');
-					case 4:
-						alFormat = AL.getEnumValue('AL_FORMAT_QUAD16');
-					case 6:
-						alFormat = AL.getEnumValue('AL_FORMAT_51CHN16');
-					case 7:
-						alFormat = AL.getEnumValue('AL_FORMAT_61CHN16');
-					case 8:
-						alFormat = AL.getEnumValue('AL_FORMAT_71CHN16');
-				}
-
-				alFrameSize = Stdlib.sizeof(cpp.Int16) * channels;
-			case 'S32N':
-				switch (channels)
-				{
-					case 1:
-						alFormat = AL.getEnumValue('AL_FORMAT_MONO_I32');
-					case 2:
-						alFormat = AL.getEnumValue('AL_FORMAT_STEREO_I32');
-					case 4:
-						alFormat = AL.getEnumValue('AL_FORMAT_QUAD_I32');
-					case 6:
-						alFormat = AL.getEnumValue('AL_FORMAT_51CHN_I32');
-					case 7:
-						alFormat = AL.getEnumValue('AL_FORMAT_61CHN_I32');
-					case 8:
-						alFormat = AL.getEnumValue('AL_FORMAT_71CHN_I32');
-				}
-
-				alFrameSize = Stdlib.sizeof(cpp.Int32) * channels;
-			case 'FL32':
-				switch (channels)
-				{
-					case 1:
-						alFormat = AL.getEnumValue('AL_FORMAT_MONO_FLOAT32');
-					case 2:
-						alFormat = AL.getEnumValue('AL_FORMAT_STEREO_FLOAT32');
-					case 4:
-						alFormat = AL.getEnumValue('AL_FORMAT_QUAD_FLOAT32');
-					case 6:
-						alFormat = AL.getEnumValue('AL_FORMAT_51CHN_FLOAT32');
-					case 7:
-						alFormat = AL.getEnumValue('AL_FORMAT_61CHN_FLOAT32');
-					case 8:
-						alFormat = AL.getEnumValue('AL_FORMAT_71CHN_FLOAT32');
-				}
-
-				alFrameSize = Stdlib.sizeof(cpp.Float32) * channels;
+			case 1:
+				alFormat = AL.getEnumValue('AL_FORMAT_MONO16');
+			case 2:
+				alFormat = AL.getEnumValue('AL_FORMAT_STEREO16');
 		}
+
+		alFrameSize = Stdlib.sizeof(cpp.Int16) * channels;
 
 		return true;
 		#else
@@ -983,7 +919,9 @@ class Video extends Bitmap
 	{
 		#if lime_openal
 		if (alSource != null && AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.PAUSED)
+		{
 			AL.sourcePause(alSource);
+		}
 		#end
 	}
 
@@ -992,7 +930,9 @@ class Video extends Bitmap
 	{
 		#if lime_openal
 		if (alSource != null && AL.getSourcei(alSource, AL.SOURCE_STATE) == AL.PAUSED)
+		{
 			AL.sourcePlay(alSource);
+		}
 		#end
 	}
 
@@ -1001,7 +941,9 @@ class Video extends Bitmap
 	{
 		#if lime_openal
 		if (alSource != null && AL.getSourcei(alSource, AL.SOURCE_STATE) != AL.STOPPED)
+		{
 			AL.sourceStop(alSource);
+		}
 		#end
 	}
 }
