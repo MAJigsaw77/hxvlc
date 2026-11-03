@@ -11,8 +11,8 @@
 		"haxeflixel"
 	],
 	"description": "A Haxe/OpenFL library for @:native video playback using libVLC.",
-	"version": "2.3.1",
-	"releasenote": "Added support for CPPIA and some general improvements.",
+	"version": "2.3.2",
+	"releasenote": "Optimization, Gen GC fixes and adjustments to the audio implementation.",
 	"contributors": [
 		"MAJigsaw77"
 	],
