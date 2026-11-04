@@ -166,6 +166,9 @@ class Video extends Bitmap
 	/** Event triggered when the media format setup is initialized. */
 	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
 
+	/** Event triggered when the audio format setup is initialized. */
+	public var onAudioFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
+
 	@:noCompletion
 	private var instance:Null<Instance>;
 
@@ -939,6 +942,8 @@ class Video extends Bitmap
 			audioSource.init();
 
 			audioSource.gain = audioSourceInitialGain;
+
+			onAudioFormatSetup.dispatch();
 
 			return true;
 		}
