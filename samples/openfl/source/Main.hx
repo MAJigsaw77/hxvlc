@@ -71,7 +71,7 @@ class Main extends Sprite
 				video = null;
 			}
 		});
-		video.onFormatSetup.add(function():Void
+		video.onVideoFormatSetup.add(function():Void
 		{
 			if (!stage.hasEventListener(Event.ENTER_FRAME))
 				stage.addEventListener(Event.ENTER_FRAME, stage_onEnterFrame);

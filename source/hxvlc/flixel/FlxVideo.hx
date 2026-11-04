@@ -31,7 +31,7 @@ class FlxVideo extends FlxInternalVideo
 	{
 		super(instance, smoothing);
 
-		onFormatSetup.add(function():Void
+		onVideoFormatSetup.add(function():Void
 		{
 			if (!FlxG.signals.gameResized.has(onGameResized))
 				FlxG.signals.gameResized.add(onGameResized);

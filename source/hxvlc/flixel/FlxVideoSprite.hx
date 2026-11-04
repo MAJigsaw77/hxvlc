@@ -14,7 +14,7 @@ import openfl.display.BitmapData;
  * ```haxe
  * final video:FlxVideoSprite = new FlxVideoSprite(0, 0);
  * video.antialiasing = true;
- * video.bitmap.onFormatSetup.add(function():Void
+ * video.bitmap.onVideoFormatSetup.add(function():Void
  * {
  * 	if (video.bitmap != null && video.bitmap.bitmapData != null)
  * 	{
@@ -51,7 +51,7 @@ class FlxVideoSprite extends FlxSprite
 		makeGraphic(1, 1, FlxColor.TRANSPARENT);
 
 		bitmap = new FlxInternalVideo(instance, antialiasing);
-		bitmap.onFormatSetup.add(function():Void
+		bitmap.onVideoFormatSetup.add(function():Void
 		{
 			final videoBitmapData:Null<BitmapData> = bitmap?.bitmapData;
 

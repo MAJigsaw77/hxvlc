@@ -53,6 +53,7 @@ import lime.media.miniaudio.MAAudioRingBufferConfig;
 #end
 @:access(openfl.display3D.textures.TextureBase)
 @:access(openfl.display.BitmapData)
+@:haxe.warning("-WDeprecated")
 class Video extends Bitmap
 {
 	/** The media resource locator (MRL). */
@@ -164,7 +165,11 @@ class Video extends Bitmap
 	public var onMediaSubItemTreeAdded(default, null):Event<Media->Void> = new Event<Media->Void>();
 
 	/** Event triggered when the media format setup is initialized. */
+	@:deprecated('onFormatSetup is deprecated, use onVideoFormatSetup instead')
 	public var onFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
+
+	/** Event triggered when the video format setup is initialized. */
+	public var onVideoFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
 
 	/** Event triggered when the audio format setup is initialized. */
 	public var onAudioFormatSetup(default, null):Event<Void->Void> = new Event<Void->Void>();
@@ -827,6 +832,8 @@ class Video extends Bitmap
 		bitmapData.__isValid = true;
 
 		onFormatSetup.dispatch();
+
+		onVideoFormatSetup.dispatch();
 	}
 
 	@:noCompletion
