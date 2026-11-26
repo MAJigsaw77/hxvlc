@@ -30,7 +30,7 @@ class VideoState extends FlxState
 				video = null;
 			}
 		});
-		video.bitmap.onFormatSetup.add(function():Void
+		video.bitmap.onVideoFormatSetup.add(function():Void
 		{
 			if (video.bitmap != null && video.bitmap.bitmapData != null)
 			{
